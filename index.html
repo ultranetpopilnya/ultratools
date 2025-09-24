@@ -252,7 +252,7 @@
     </div>
     
     <div class="global-version-info">
-        Версія 1.1 🙃</div>
+        Версія 1.2 🙃</div>
 
 <script>
     // --- Функціонал Генератора Логінів ---
@@ -387,6 +387,31 @@
     
     // --- Функціонал Калькулятора Дат ---
 
+    // Функція для правильного відмінювання
+    function getCorrectDayWord(number) {
+        if (number === 0) {
+            return "днів";
+        }
+        
+        let lastTwoDigits = number % 100;
+        let lastDigit = number % 10;
+
+        // Виняток для 11-19
+        if (lastTwoDigits >= 11 && lastTwoDigits <= 19) {
+            return "днів";
+        }
+
+        // Правила для чисел, що не є винятками
+        if (lastDigit === 1) {
+            return "день";
+        } else if (lastDigit >= 2 && lastDigit <= 4) {
+            return "дні";
+        } else {
+            return "днів";
+        }
+    }
+
+
     function formatDate(date) {
         const year = date.getFullYear();
         const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -415,8 +440,6 @@
         calculateDifference();
     }
     
-    // Функція openCalendar була прибрана, щоб уникнути автоматичного фокусування
-
     function calculateDifference() {
         const startDateInput = document.getElementById('start-date').value;
         const endDateValue = document.getElementById('end-date').value;
@@ -440,8 +463,11 @@
         // Кількість днів (тривалість, не включаючи початковий день)
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
         
-        // КІЛЬКІСТЬ ДНІВ ВКЛЮЧНО (початковий + кінцевий) - зміна тут!
+        // КІЛЬКІСТЬ ДНІВ ВКЛЮЧНО (початковий + кінцевий)
         const totalDaysInclusive = diffDays + 1;
+
+        // Визначаємо правильне відмінювання для загальної кількості
+        const dayWord = getCorrectDayWord(totalDaysInclusive);
 
 
         const startYear = startDate.getFullYear();
@@ -460,10 +486,18 @@
             const prevMonthDate = new Date(endYear, endMonth, 0); 
             days += prevMonthDate.getDate();
         }
+        
+        // *** ФІКС ДЛЯ ІНКЛЮЗИВНОГО РОЗРАХУНКУ МІСЯЦІВ/ДНІВ (ЗАПИТАННЯ КОРИСТУВАЧА) ***
+        // Якщо календарна різниця дала рівно X місяців (days === 0), 
+        // ми додаємо 1 день до "днів", щоб відобразити інклюзивну природу підрахунку.
+        if (days === 0 && months > 0 && diffDays > 0) {
+            days += 1;
+        }
+
 
         // Фінальний вивід
         if (diffDays === 0) {
-             resultDisplay.innerHTML = `<span class="total-days-text" style="color: #38c172;">Дати збігаються. Включно: ${totalDaysInclusive} день.</span>`;
+             resultDisplay.innerHTML = `<span class="total-days-text" style="color: #38c172;">Дати збігаються. Включно: ${totalDaysInclusive} ${dayWord}.</span>`;
         } else {
             let resultText = '';
             let durationText = '';
@@ -471,6 +505,7 @@
             // Точна різниця (місяці та дні)
             if (months >= 0 && (months > 0 || days > 0)) {
                 let monthsText = months > 0 ? `${months} міс.` : '';
+                // Якщо days == 1, це буде "1 дн.", що коректно.
                 let daysText = days > 0 ? `${days} дн.` : '';
                 
                 durationText = [monthsText, daysText].filter(Boolean).join(' та ');
@@ -481,8 +516,8 @@
                 resultText += `<span class="duration-text">Різниця: ${durationText}</span><br>`;
             }
             
-            // Загальна кількість днів (ВКЛЮЧНО)
-            resultText += `<span class="total-days-text">Загальна кількість (включно): ${totalDaysInclusive} днів.</span>`;
+            // Загальна кількість днів (ВКЛЮЧНО) з коректним відмінюванням
+            resultText += `<span class="total-days-text">Загальна кількість (включно): ${totalDaysInclusive} ${dayWord}.</span>`;
             
             resultDisplay.innerHTML = resultText;
         }
