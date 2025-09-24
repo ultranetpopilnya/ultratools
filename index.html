@@ -32,10 +32,10 @@
         /* Стилі для нового підзаголовка, щоб імітувати шрифт і розмір H1 */
         .subtitle {
             color: #444;
-            margin-bottom: 0.5rem; /* Зменшений відступ, щоб наблизити до h1 */
+            margin-bottom: 0.5rem;
             text-align: center;
-            font-size: 2.5rem; /* Ідентичний розмір шрифту H1 */
-            font-weight: normal; /* Можливо, потрібно, щоб виглядав менш акцентовано, якби h1 був bold */
+            font-size: 2.5rem;
+            font-weight: normal;
         }
         
         .main-content-wrapper {
@@ -164,11 +164,11 @@
             line-height: 1.4;
         }
         .date-calculator-container .duration-text {
-            color: #007bff; /* Синій для точної різниці (місяці та дні) */
+            color: #007bff;
             font-weight: bold;
         }
         .date-calculator-container .total-days-text {
-            color: #ff5722; /* Помаранчевий для загальної кількості днів */
+            color: #ff5722;
             font-weight: bold;
         }
 
@@ -192,7 +192,7 @@
 </head>
     <style>
         .page-title {
-            margin-top: -10px; /* Сюди вказуємо, на скільки підняти */
+            margin-top: -10px;
         }
     </style>
 </head>
@@ -236,7 +236,7 @@
     </div>
     
     <div class="global-version-info">
-        Версія 0.8 </div>
+        Версія 0.9 </div>
 
 <script>
     // --- Функціонал Генератора Логінів ---
@@ -264,7 +264,6 @@
             const char = text[i];
             const isFirstChar = (i === 0);
             
-            // Handle specific Ukrainian combinations
             if (char === 'з' && i + 1 < text.length && text[i + 1] === 'г') {
                 result += 'zgh';
                 i++;
@@ -275,10 +274,9 @@
                 result += isFirstChar ? positionalRules[char].start : positionalRules[char].other;
             } else if (mapping[char]) {
                 result += mapping[char];
-            } else if (!isNaN(parseInt(char))) { // Check if the character is a digit
+            } else if (!isNaN(parseInt(char))) {
                 result += char;
             } else {
-                // Ignore other characters like spaces and special symbols
                 continue;
             }
         }
@@ -396,18 +394,13 @@
         calculateDifference();
     }
     
-    // Додаткова функція для автоматичного відкриття календаря
     function openCalendar(inputElementId) {
         const input = document.getElementById(inputElementId);
         if (input) {
-            // Цей метод програмно викликає календар, але його підтримка залежить від браузера.
-            // Настільні Chrome/Edge/Firefox можуть вимагати кліку.
-            // На мобільних пристроях це зазвичай працює.
             input.focus();
             input.showPicker && input.showPicker();
         }
     }
-
 
     function calculateDifference() {
         const startDateInput = document.getElementById('start-date').value;
@@ -423,91 +416,4 @@
         const endDate = new Date(endDateValue + 'T00:00:00');
 
         if (startDate > endDate) {
-            resultDisplay.innerHTML = '<span style="color: red;">Початкова дата не може бути пізнішою за Кінцеву. Спробуйте навпаки.</span>';
-            return;
-        }
-
-        const diffTime = endDate - startDate;
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-        const startYear = startDate.getFullYear();
-        const startMonth = startDate.getMonth();
-        const startDay = startDate.getDate();
-
-        const endYear = endDate.getFullYear();
-        const endMonth = endDate.getMonth();
-        const endDay = endDate.getDate();
-
-        let months = (endYear - startYear) * 12 + (endMonth - startMonth);
-        let days = endDay - startDay;
-
-        if (days < 0) {
-            months--;
-            const prevMonthDate = new Date(endYear, endMonth, 0); 
-            days += prevMonthDate.getDate();
-        }
-
-        // Фінальний вивід
-        if (diffDays === 0) {
-             resultDisplay.innerHTML = '<span class="total-days-text" style="color: #38c172;">Дати збігаються. Різниця: 0 днів.</span>';
-        } else {
-            let resultText = '';
-            let durationText = '';
-
-            // Точна різниця (місяці та дні)
-            if (months >= 0 && (months > 0 || days > 0)) {
-                let monthsText = months > 0 ? `${months} міс.` : '';
-                let daysText = days > 0 ? `${days} дн.` : '';
-                
-                durationText = [monthsText, daysText].filter(Boolean).join(' та ');
-            }
-            
-            if (durationText) {
-                // Додаємо напис "Різниця"
-                resultText += `<span class="duration-text">Різниця: ${durationText}</span><br>`;
-            }
-            
-            // Загальна різниця в днях
-            resultText += `<span class="total-days-text">Загальна різниця: ${diffDays} днів.</span>`;
-            
-            resultDisplay.innerHTML = resultText;
-        }
-    }
-    
-    // --- Ініціалізація ---
-
-    document.addEventListener('DOMContentLoaded', () => {
-        // Ініціалізація Генератора Логінів
-        const fullNameInput = document.getElementById('fullNameInput');
-        fullNameInput.addEventListener('input', generateLogins);
-        
-        // Ініціалізація Калькулятора Дат
-        const today = new Date().toISOString().split('T')[0];
-        const startDateInput = document.getElementById('start-date');
-        
-        startDateInput.value = today;
-        
-        // Встановлюємо наступний день і розраховуємо різницю
-        updateEndDateAndCalculate();
-        
-        // Автоматичне відкриття календаря при завантаженні сторінки/елемента в фокусі
-        // Використовуємо таймаут, щоб дати браузеру завершити рендеринг
-        setTimeout(() => {
-             openCalendar('start-date');
-        }, 100);
-    });
-</script>
-    
-</body>
-</html>
-
-
-
-
-
-
-
-
-
-
-
+            resultDisplay.innerHTML = '<span style
