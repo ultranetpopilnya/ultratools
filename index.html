@@ -234,7 +234,8 @@
             'е': 'e', 'ж': 'zh', 'з': 'z', 'и': 'y', 'і': 'i', 'й': 'i',
             'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n', 'о': 'o', 'п': 'p',
             'р': 'r', 'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'kh',
-            'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'shch', 'ь': '', "'": ''
+            'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'shch', 'ь': '', "'": '',
+            'і': 'i', 'й': 'i', '’': '', '`': ''
         };
         const positionalRules = {
             'є': { start: 'ye', other: 'ie' },
@@ -245,7 +246,241 @@
         };
 
         let result = '';
-        text = text.toLowerCase();
+        text = text.trim().toLowerCase().replace(/[^a-zа-яґєіїьюя\s']/g, '');
 
-        for (let i = 0
+        for (let i = 0; i < text.length; i++) {
+            let char = text[i];
+            
+            if (char in positionalRules) {
+                if (i === 0) {
+                    result += positionalRules[char].start;
+                } else {
+                    const prevChar = text[i - 1];
+                    const vowels = 'аеиіоуяюєї';
+                    if (vowels.includes(prevChar)) {
+                        result += positionalRules[char].other;
+                    } else {
+                        result += positionalRules[char].start;
+                    }
+                }
+            } else if (char in mapping) {
+                result += mapping[char];
+            } else if (char === ' ') {
+                 result += '-';
+            } else {
+                result += char;
+            }
+        }
+        
+        result = result.replace(/fop/g, 'fop-').replace(/tov/g, 'tov-').replace(/pp/g, 'pp-');
+        result = result.replace(/-+/g, '-').replace(/^-|-$/g, '');
+        
+        return result;
+    }
+    
+    function createLogin(name, type) {
+        let parts = name.split(/\s+/).filter(p => p.length > 0);
+        let login = '';
+        
+        if (parts.length >= 3) {
+            const p = parts[0];
+            const i = parts[1];
+            const b = parts[2];
 
+            switch (type) {
+                case 'pib': login = `${transliterate(p)}${transliterate(i.charAt(0))}${transliterate(b.charAt(0))}`; break; 
+                case 'ip': login = `${transliterate(i.charAt(0))}${transliterate(p)}`; break;
+                case 'p_i': login = `${transliterate(p)}_${transliterate(i)}`; break;
+                case 'translit': login = transliterate(p); break;
+            }
+        } else if (parts.length > 0) {
+            login = transliterate(name);
+        }
+        
+        return login.toLowerCase();
+    }
+    
+    function generateLogins() {
+        const input = document.getElementById('fullNameInput').value;
+        const names = input.split('\n').map(name => name.trim()).filter(name => name.length > 0);
+        const resultsContainer = document.getElementById('results-container');
+        resultsContainer.innerHTML = '';
+        
+        if (names.length === 0) {
+            resultsContainer.innerHTML = '<p style="text-align: center; color: #6c757d;">Введіть ПІБ або назву для генерації.</p>';
+            return;
+        }
+
+        names.forEach(fullName => {
+            const row = document.createElement('div');
+            row.className = 'result-item';
+
+            let generatedLogin = '';
+            let loginType = '';
+            
+            const parts = fullName.split(/\s+/).filter(p => p.length > 0);
+            
+            if (parts.length >= 3) {
+                generatedLogin = createLogin(fullName, 'pib');
+                loginType = 'pib';
+            } else {
+                generatedLogin = transliterate(fullName);
+                loginType = 'translit';
+            }
+            
+            if (generatedLogin) {
+                const nameSpan = document.createElement('span');
+                nameSpan.className = 'original-name';
+                nameSpan.textContent = fullName;
+                row.appendChild(nameSpan);
+
+                const loginSpan = document.createElement('span');
+                loginSpan.textContent = generatedLogin;
+                row.appendChild(loginSpan);
+
+                const button = document.createElement('button');
+                button.textContent = 'Копіювати';
+                button.onclick = () => copyToClipboard(generatedLogin, button);
+                row.appendChild(button);
+
+                resultsContainer.appendChild(row);
+            }
+        });
+    }
+    
+    function copyToClipboard(text, button) {
+        navigator.clipboard.writeText(text).then(() => {
+            button.textContent = 'Скопійовано!';
+            button.classList.add('copied');
+            setTimeout(() => {
+                button.textContent = 'Копіювати';
+                button.classList.remove('copied');
+            }, 2000);
+        });
+    }
+    
+    document.getElementById('fullNameInput').addEventListener('input', generateLogins);
+    document.addEventListener('DOMContentLoaded', generateLogins);
+
+
+    // --- Функціонал Калькулятора Дат ---
+    
+    /**
+     * @description Функція для форматування об'єкта Date у рядок YYYY-MM-DD, 
+     * необхідний для встановлення значення поля <input type="date">
+     * @param {Date} date 
+     * @returns {string} Дату у форматі "YYYY-MM-DD"
+     */
+    function getFormattedDate(date) {
+        const year = date.getFullYear();
+        let month = date.getMonth() + 1; // getMonth() повертає місяці від 0 до 11
+        let day = date.getDate();
+
+        // Додаємо нуль спереду, якщо число менше 10
+        if (month < 10) month = '0' + month;
+        if (day < 10) day = '0' + day;
+
+        return `${year}-${month}-${day}`;
+    }
+
+    /**
+     * @description Функція для встановлення дат за замовчуванням: сьогодні та завтра.
+     */
+    function setDefaultDates() {
+        const startDateInput = document.getElementById('start-date');
+        const endDateInput = document.getElementById('end-date');
+        
+        // 1. Встановлюємо "Початкова дата" на СЬОГОДНІ
+        const today = new Date();
+        startDateInput.value = getFormattedDate(today);
+
+        // 2. Встановлюємо "Кінцева дата" на ЗАВТРА
+        const tomorrow = new Date(today);
+        // setDate() автоматично обробляє перехід на наступний місяць/рік
+        tomorrow.setDate(today.getDate() + 1); 
+        endDateInput.value = getFormattedDate(tomorrow);
+        
+        // Викликаємо розрахунок після встановлення дат
+        calculateDateDifference();
+    }
+    
+    /**
+     * @description Розраховує різницю між двома обраними датами.
+     */
+    function calculateDateDifference() {
+        const startDateInput = document.getElementById('start-date').value;
+        const endDateInput = document.getElementById('end-date').value;
+        const resultDisplay = document.getElementById('result-display');
+
+        if (!startDateInput || !endDateInput) {
+            resultDisplay.innerHTML = 'Оберіть обидві дати для розрахунку.';
+            return;
+        }
+
+        // Парсинг дат як UTC (щоб уникнути проблем з часовими поясами)
+        const dateFrom = new Date(startDateInput);
+        const dateTo = new Date(endDateInput);
+        
+        const start = new Date(Date.UTC(dateFrom.getFullYear(), dateFrom.getMonth(), dateFrom.getDate()));
+        const end = new Date(Date.UTC(dateTo.getFullYear(), dateTo.getMonth(), dateTo.getDate()));
+
+        if (start > end) {
+            resultDisplay.innerHTML = '<span style="color: red; font-weight: bold;">Початкова дата не може бути пізнішою за кінцеву!</span>';
+            return;
+        }
+
+        // 1. Розрахунок загальної кількості днів
+        const oneDay = 1000 * 60 * 60 * 24;
+        const totalDays = Math.round(Math.abs((end - start) / oneDay));
+        
+        // 2. Розрахунок різниці у роках, місяцях та днях (календарний метод)
+        let date1 = new Date(start);
+        let date2 = new Date(end);
+
+        let years = date2.getUTCFullYear() - date1.getUTCFullYear();
+        let months = date2.getUTCMonth() - date1.getUTCMonth();
+        let days = date2.getUTCDate() - date1.getUTCDate();
+
+        if (days < 0) {
+            months--;
+            const prevMonth = new Date(Date.UTC(date2.getUTCFullYear(), date2.getUTCMonth(), 0));
+            days += prevMonth.getUTCDate();
+        }
+
+        if (months < 0) {
+            years--;
+            months += 12;
+        }
+
+        const durationParts = [];
+        if (years > 0) durationParts.push(`${years} ${getNounEnding(years, 'рік', 'роки', 'років')}`);
+        if (months > 0) durationParts.push(`${months} ${getNounEnding(months, 'місяць', 'місяці', 'місяців')}`);
+        if (days > 0) durationParts.push(`${days} ${getNounEnding(days, 'день', 'дні', 'днів')}`);
+        
+        const durationText = durationParts.join(', ');
+
+        // 3. Формування результату
+        resultDisplay.innerHTML = `
+            <div>**Період між датами:** <span class="duration-text">${durationText || '0 днів'}</span></div>
+            <div>**Всього повних днів:** <span class="total-days-text">${totalDays} ${getNounEnding(totalDays, 'день', 'дні', 'днів')}</span></div>
+        `;
+    }
+    
+    // Допоміжна функція для відмінювання числівників
+    function getNounEnding(number, singular, plural2_4, plural5_0) {
+        if (number === 1) return singular;
+        if (number >= 2 && number <= 4) return plural2_4;
+        return plural5_0;
+    }
+
+
+    // --- Ініціалізація та обробники подій ---
+    
+    // Встановлюємо слухачів на зміни дат
+    document.getElementById('start-date').addEventListener('change', calculateDateDifference);
+    document.getElementById('end-date').addEventListener('change', calculateDateDifference);
+
+    // Встановлюємо дати за замовчуванням при завантаженні сторінки (виклик функції-виправлення)
+    window.addEventListener('DOMContentLoaded', setDefaultDates); 
+</script>
+</html>
