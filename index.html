@@ -72,6 +72,8 @@
             box-sizing: border-box;
             margin-bottom: 1rem;
             min-height: 120px;
+            /* ЗМІНА: Вимкнення зміни розміру */
+            resize: none;
         }
         
         .login-generator-container #results-container {
@@ -209,6 +211,14 @@
             font-size: 14px;
             color: #888;
         }
+        
+        /* Стиль для відображення таймера */
+        #reset-timer-display {
+            font-size: 0.9em;
+            color: #dc3545;
+            margin-top: 5px;
+            min-height: 1.1em;
+        }
     </style>
 </head>
 <body>
@@ -233,12 +243,13 @@
             <div class="date-inputs-row">
                 <div class="date-input-group">
                     <label for="start-date">🗓️ Початкова дата:</label>
-                    <input type="date" id="start-date" name="start-date" onchange="updateEndDateAndCalculate()" required>
+                    <input type="date" id="start-date" name="start-date" onchange="handleStartDateChange()" required>
                 </div>
         
                 <div class="date-input-group">
                     <label for="end-date">➡️ Кінцева дата:</label>
-                    <input type="date" id="end-date" name="end-date" onchange="calculateDifference()" required>
+                    <input type="date" id="end-date" name="end-date" onchange="handleEndDateChange()" required>
+                    <div id="reset-timer-display"></div>
                 </div>
             </div>
 
@@ -252,9 +263,7 @@
     </div>
     
     <div class="global-version-info">
-        Версія 1.2 🙃</div>
-
-<script>
+        Версія 1.3 🚀</div> <script>
     // --- Функціонал Генератора Логінів ---
 
     function transliterate(text) {
@@ -386,6 +395,10 @@
     }
     
     // --- Функціонал Калькулятора Дат ---
+    
+    // Глобальні змінні для таймера
+    let endDateResetTimer;
+    const RESET_DELAY_SECONDS = 20;
 
     // Функція для правильного відмінювання
     function getCorrectDayWord(number) {
@@ -418,26 +431,84 @@
         const day = String(date.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
     }
+
+    // Допоміжна функція для отримання дати наступного дня
+    function getNextDayDateString(startDateString) {
+        const startDate = new Date(startDateString + 'T00:00:00');
+        const nextDayTime = startDate.getTime() + (1000 * 60 * 60 * 24);
+        const nextDayDate = new Date(nextDayTime);
+        return formatDate(nextDayDate);
+    }
+    
+    function resetEndDateToNextDay() {
+        const startDateInput = document.getElementById('start-date').value;
+        const endDateInput = document.getElementById('end-date');
+        const timerDisplay = document.getElementById('reset-timer-display');
+
+        if (startDateInput) {
+            endDateInput.value = getNextDayDateString(startDateInput);
+            calculateDifference();
+            timerDisplay.innerHTML = '';
+        }
+        
+        // Очищаємо таймер, оскільки він спрацював
+        clearTimeout(endDateResetTimer);
+    }
+
+    function startResetTimer() {
+        // Скидаємо попередній таймер, якщо він існує
+        clearTimeout(endDateResetTimer);
+
+        const timerDisplay = document.getElementById('reset-timer-display');
+        let timeLeft = RESET_DELAY_SECONDS;
+
+        function countdown() {
+            if (timeLeft <= 0) {
+                resetEndDateToNextDay();
+                return;
+            }
+
+            timerDisplay.innerHTML = `⚠️ Скидання на завтра через: ${timeLeft} сек.`;
+            timeLeft--;
+            endDateResetTimer = setTimeout(countdown, 1000);
+        }
+
+        countdown(); // Запускаємо відлік
+    }
     
     function updateEndDateAndCalculate() {
         const startDateInput = document.getElementById('start-date').value;
         const endDateInput = document.getElementById('end-date');
+        const timerDisplay = document.getElementById('reset-timer-display');
+        
+        // Очищаємо таймер і його відображення при зміні початкової дати
+        clearTimeout(endDateResetTimer);
+        timerDisplay.innerHTML = '';
 
         if (startDateInput) {
             const startDate = new Date(startDateInput + 'T00:00:00');
-            
-            const nextDayTime = startDate.getTime() + (1000 * 60 * 60 * 24);
-            const nextDayDate = new Date(nextDayTime);
+            const nextDayDateString = getNextDayDateString(startDateInput);
             
             const endDateValue = endDateInput.value;
             const currentEndDate = endDateValue ? new Date(endDateValue + 'T00:00:00') : null;
 
+            // Скидаємо кінцеву дату на наступний день, якщо вона порожня або менша/рівна початковій
             if (!currentEndDate || startDate >= currentEndDate) {
-                endDateInput.value = formatDate(nextDayDate);
+                endDateInput.value = nextDayDateString;
             }
         }
         
         calculateDifference();
+    }
+    
+    function handleStartDateChange() {
+        updateEndDateAndCalculate();
+    }
+
+    function handleEndDateChange() {
+        // Просто запускаємо розрахунок, а потім таймер
+        calculateDifference();
+        startResetTimer();
     }
     
     function calculateDifference() {
@@ -490,10 +561,30 @@
         // *** ФІКС ДЛЯ ІНКЛЮЗИВНОГО РОЗРАХУНКУ МІСЯЦІВ/ДНІВ (ЗАПИТАННЯ КОРИСТУВАЧА) ***
         // Якщо календарна різниця дала рівно X місяців (days === 0), 
         // ми додаємо 1 день до "днів", щоб відобразити інклюзивну природу підрахунку.
-        if (days === 0 && months > 0 && diffDays > 0) {
-            days += 1;
+        // Змінено логіку: оскільки ми розраховуємо $X$ місяців і $Y$ днів,
+        // а повний проміжок $Z$ днів, то для "Різниця" ми маємо відображати 
+        // реальну календарну різницю, яка може не бути інклюзивною.
+        // Якщо користувач хоче інклюзивності, він додасть 1 день до кінцевої дати.
+        
+        // Виправляємо, щоб days = 0, якщо endDay = startDay (календарно)
+        if (days === 0 && endDay === startDay && diffDays > 0) {
+            // Це означає, що endDay припадає на той же календарний день, але через N місяців (або років)
+            // У цьому випадку повна різниця вже відображає правильну кількість днів (diffDays)
         }
-
+        
+        // Однак, для відображення "Різниця: X міс. та Y дн."
+        // якщо, наприклад, 01.01 до 01.02, це 1 місяць і 0 днів.
+        // Це і є "повна" календарна різниця. Інклюзивність покривається загальною кількістю днів.
+        // Повертаємося до логіки, де різниця $X$ міс. та $Y$ дн. - це точна календарна різниця.
+        
+        // Змінні `months` та `days` вже містять точну календарну різницю
+        // (наприклад, 01.01 до 01.03 це 2 міс. 0 дн.)
+        // Якщо хочемо, щоб кінцева дата була включена, то це має робити користувач, 
+        // вибираючи наступний день. Але для робочих цілей, імовірно, 
+        // потрібна *точна* різниця в міс./дн.
+        
+        // Залишаємо вихідну логіку: 01.01 до 01.02 - це 1 місяць.
+        // 01.01 до 02.01 - це 0 місяців, 1 день.
 
         // Фінальний вивід
         if (diffDays === 0) {
