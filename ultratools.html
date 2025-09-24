@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Об'єднаний інструмент</title>
+    <title>Ультранет та ISP Energy Інструменти</title>
     <link rel="icon" href="log-in.png" type="image/png">
     <style>
         * {
@@ -31,10 +31,10 @@
         
         .main-content-wrapper {
             display: flex;
-            justify-content: center; /* Вирівнювання по центру */
-            gap: 20px; /* Відстань між контейнерами */
+            justify-content: center;
+            gap: 20px;
             width: 90%;
-            max-width: 1200px; /* Максимальна ширина для двох контейнерів */
+            max-width: 1200px;
             margin-bottom: 2rem;
         }
         
@@ -44,11 +44,11 @@
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             text-align: center;
-            width: 50%; /* Кожен контейнер займає 50% доступної ширини */
-            min-width: 300px; /* Мінімальна ширина для кращого вигляду на малих екранах */
+            width: 50%;
+            min-width: 300px;
         }
         
-        /* Стилі для Генератора Логінів (з index112.html) */
+        /* Стилі для Генератора Логінів (Лівий контейнер) */
         .login-generator-container textarea {
             width: 100%;
             padding: 0.75rem;
@@ -78,6 +78,8 @@
             font-weight: bold;
             color: #28a745;
             margin: 0 10px;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         .login-generator-container .result-item .original-name {
             font-weight: normal;
@@ -103,14 +105,8 @@
         .login-generator-container .result-item button.copied {
             background-color: #28a745;
         }
-        .login-generator-container .version-info {
-            margin-top: 1.5rem;
-            font-size: 14px;
-            color: #888;
-            text-align: center;
-        }
 
-        /* Стилі для Калькулятора Дат (з index1.html) */
+        /* Стилі для Калькулятора Дат (Правий контейнер) */
         .date-calculator-container {
             text-align: center;
         }
@@ -155,17 +151,16 @@
         }
         .date-calculator-container #result-display {
             font-size: 1.2em;
-            font-weight: bold;
-            color: #38c172;
             min-height: 1.5em;
             line-height: 1.4;
         }
-        .date-calculator-container #version-info {
-            font-size: 0.8em;
-            color: #6c757d;
-            border-top: 1px solid #c3e6cb;
-            padding-top: 10px;
-            margin-top: 10px;
+        .date-calculator-container .duration-text {
+            color: #007bff; /* Синій для точної різниці (місяці та дні) */
+            font-weight: bold;
+        }
+        .date-calculator-container .total-days-text {
+            color: #ff5722; /* Помаранчевий для загальної кількості днів */
+            font-weight: bold;
         }
 
         /* Адаптивність */
@@ -178,11 +173,20 @@
                 width: 100%;
             }
         }
+        
+        .global-version-info {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #888;
+        }
     </style>
 </head>
 <body>
 
-    <h1>замінити текст</h1>
+    <h1>
+        <span style="color: #811e71;">Ультранет</span> та 
+        <span style="color: #fff200;">I</span><span style="color: #00c100;">S</span><span style="color: #00d4ff;">P</span> Energy
+    </h1>
 
     <div class="main-content-wrapper">
         
@@ -191,10 +195,6 @@
             <p>Введіть повністю одне або декілька ПІБ, кожне — з нового рядка. Також можливий трансліт ФОП, ТОВ, ПП.</p>
             <textarea id="fullNameInput" rows="5" placeholder="Прізвище, Ім'я, та по Батькові"></textarea>
             <div id="results-container"></div>
-            
-            <div class="version-info">
-                <p>Версія 1.12🙃</p>
-            </div>
         </div>
 
         <div class="container date-calculator-container">
@@ -202,7 +202,7 @@
             <div style="display: flex; justify-content: space-around; gap: 10px; margin-bottom: 20px;">
                 <div class="date-input-group">
                     <label for="start-date">🗓️ Початкова дата:</label>
-                    <input type="date" id="start-date" name="start-date" onchange="updateEndDateAndCalculate()" required>
+                    <input type="date" id="start-date" name="start-date" onchange="updateEndDateAndCalculate()" required autofocus>
                 </div>
         
                 <div class="date-input-group">
@@ -216,16 +216,16 @@
                 <div id="result-display">
                     Оберіть дві дати для розрахунку.
                 </div>
-                
-                <div id="version-info">
-                    Версія 1.0 </div>
-                </div>
+            </div>
         </div>
-
+    </div>
+    
+    <div class="global-version-info">
+        Версія 0.2
     </div>
 
 <script>
-    // --- Функціонал Генератора Логінів (index112.html) ---
+    // --- Функціонал Генератора Логінів ---
 
     function transliterate(text) {
         const mapping = {
@@ -310,14 +310,11 @@
             const isCompany = lowerCaseFullName.includes('тов') || lowerCaseFullName.includes('фоп') || lowerCaseFullName.includes('пп');
             
             let login = '';
-            const parts = fullName.split(/\s+/).filter(p => p.length > 0); // Фільтруємо пусті елементи
+            const parts = fullName.split(/\s+/).filter(p => p.length > 0);
 
             if (isCompany || parts.length > 3) {
-                // Transliterate the entire line and allow numbers
                 login = transliterate(fullName);
             } else {
-                // Original logic for individuals (P.I.B.)
-                
                 let transliteratedLastName = '';
                 let firstNameInitial = '';
                 let patronymicInitial = '';
@@ -355,7 +352,7 @@
         });
     }
     
-    // --- Функціонал Калькулятора Дат (index1.html) ---
+    // --- Функціонал Калькулятора Дат ---
 
     function formatDate(date) {
         const year = date.getFullYear();
@@ -371,11 +368,9 @@
         if (startDateInput) {
             const startDate = new Date(startDateInput + 'T00:00:00');
             
-            // Додаємо один день (86400000 мілісекунд)
             const nextDayTime = startDate.getTime() + (1000 * 60 * 60 * 24);
             const nextDayDate = new Date(nextDayTime);
             
-            // Встановлюємо значення лише якщо кінцева дата порожня або раніше початкової
             const endDateValue = endDateInput.value;
             const currentEndDate = endDateValue ? new Date(endDateValue + 'T00:00:00') : null;
 
@@ -386,6 +381,19 @@
         
         calculateDifference();
     }
+    
+    // Додаткова функція для автоматичного відкриття календаря
+    function openCalendar(inputElementId) {
+        const input = document.getElementById(inputElementId);
+        if (input) {
+            // Цей метод програмно викликає календар, але його підтримка залежить від браузера.
+            // Настільні Chrome/Edge/Firefox можуть вимагати кліку.
+            // На мобільних пристроях це зазвичай працює.
+            input.focus();
+            input.showPicker && input.showPicker();
+        }
+    }
+
 
     function calculateDifference() {
         const startDateInput = document.getElementById('start-date').value;
@@ -397,20 +405,17 @@
             return;
         }
 
-        // Додаємо 'T00:00:00', щоб уникнути проблем з часовими поясами
         const startDate = new Date(startDateInput + 'T00:00:00');
         const endDate = new Date(endDateValue + 'T00:00:00');
 
         if (startDate > endDate) {
-            resultDisplay.innerHTML = 'Початкова дата **не може** бути пізнішою за Кінцеву. Спробуйте навпаки.';
+            resultDisplay.innerHTML = '<span style="color: red;">Початкова дата не може бути пізнішою за Кінцеву. Спробуйте навпаки.</span>';
             return;
         }
 
         const diffTime = endDate - startDate;
-        // Math.ceil використовується для включення кінцевого дня
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-        // Розрахунок різниці в місяцях і днях (точний)
         const startYear = startDate.getFullYear();
         const startMonth = startDate.getMonth();
         const startDay = startDate.getDate();
@@ -424,31 +429,32 @@
 
         if (days < 0) {
             months--;
-            // Отримуємо останній день попереднього місяця
             const prevMonthDate = new Date(endYear, endMonth, 0); 
             days += prevMonthDate.getDate();
         }
 
         // Фінальний вивід
         if (diffDays === 0) {
-             resultDisplay.innerHTML = 'Дати **збігаються**. Різниця: 0 днів.';
+             resultDisplay.innerHTML = '<span class="total-days-text" style="color: #38c172;">Дати збігаються. Різниця: 0 днів.</span>';
         } else {
             let resultText = '';
+            let durationText = '';
 
-            // Частина з місяцями та днями виводиться першою
+            // Точна різниця (місяці та дні)
             if (months >= 0 && (months > 0 || days > 0)) {
                 let monthsText = months > 0 ? `${months} міс.` : '';
                 let daysText = days > 0 ? `${days} дн.` : '';
                 
-                const durationText = [monthsText, daysText].filter(Boolean).join(' та ');
-
-                if (durationText) {
-                     resultText += `(Це становить **${durationText}**)<br>`
-                }
+                durationText = [monthsText, daysText].filter(Boolean).join(' та ');
             }
             
-            // Загальна різниця в днях виводиться наступною
-            resultText += `Загальна різниця: **${diffDays}** днів.`;
+            if (durationText) {
+                // Додаємо напис "Різниця"
+                resultText += `<span class="duration-text">Різниця: ${durationText}</span><br>`;
+            }
+            
+            // Загальна різниця в днях
+            resultText += `<span class="total-days-text">Загальна різниця: ${diffDays} днів.</span>`;
             
             resultDisplay.innerHTML = resultText;
         }
@@ -463,10 +469,18 @@
         
         // Ініціалізація Калькулятора Дат
         const today = new Date().toISOString().split('T')[0];
-        document.getElementById('start-date').value = today;
+        const startDateInput = document.getElementById('start-date');
+        
+        startDateInput.value = today;
         
         // Встановлюємо наступний день і розраховуємо різницю
         updateEndDateAndCalculate();
+        
+        // Автоматичне відкриття календаря при завантаженні сторінки/елемента в фокусі
+        // Використовуємо таймаут, щоб дати браузеру завершити рендеринг
+        setTimeout(() => {
+             openCalendar('start-date');
+        }, 100);
     });
 </script>
     
