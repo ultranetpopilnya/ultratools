@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Набір інструментів для Ультранет та ISP Energy</title>
-    <link rel="icon" href="tools.png" type="image/png">
+    <link rel="icon" href="log-in.png" type="image/png">
     <style>
         * {
             box-sizing: border-box;
@@ -22,39 +22,20 @@
             color: #333;
         }
         
-        /* ГРУПА ЗАГОЛОВКІВ */
-        .page-title-group {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 1.5rem; 
-        }
-
-        /* КОНТЕЙНЕР ДЛЯ ІКОНКИ */
-        .logo-container {
-            width: 100px; /* Адаптуйте розмір під вашу іконку */
-            height: 100px;
-            margin-bottom: 10px;
-        }
-        .logo-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain; /* Зберігає пропорції PNG */
-        }
-        
-        .top-subtitle {
-            color: #444; 
-            font-size: 2.5rem; /* Однаковий розмір, як і h1 */
-            margin-bottom: -10px; 
-            font-weight: 500;
-        }
-
         h1 {
             color: #444;
-            margin-top: 0.5rem; 
-            margin-bottom: 0; 
+            margin-bottom: 1.5rem;
             text-align: center;
             font-size: 2.5rem;
+        }
+
+        /* Стилі для нового підзаголовка, щоб імітувати шрифт і розмір H1 */
+        .subtitle {
+            color: #444;
+            margin-bottom: 0.5rem; /* Зменшений відступ, щоб наблизити до h1 */
+            text-align: center;
+            font-size: 2.5rem; /* Ідентичний розмір шрифту H1 */
+            font-weight: normal; /* Можливо, потрібно, щоб виглядав менш акцентовано, якби h1 був bold */
         }
         
         .main-content-wrapper {
@@ -183,11 +164,11 @@
             line-height: 1.4;
         }
         .date-calculator-container .duration-text {
-            color: #007bff; 
+            color: #007bff; /* Синій для точної різниці (місяці та дні) */
             font-weight: bold;
         }
         .date-calculator-container .total-days-text {
-            color: #ff5722; 
+            color: #ff5722; /* Помаранчевий для загальної кількості днів */
             font-weight: bold;
         }
 
@@ -211,17 +192,12 @@
 </head>
 <body>
 
-    <div class="page-title-group">
-        <div class="logo-container">
-            <img src="your_icon_name.png" alt="Логотип">
-        </div>
-
-        <div class="top-subtitle">Ультимативний набір інструментів</div>
-        <h1>
-            <span style="color: #811e71;">Ультранет</span> та 
-            <span style="color: #fff200;">I</span><span style="color: #00c100;">S</span><span style="color: #00d4ff;">P</span> Energy
-        </h1>
-    </div>
+    <h2 class="subtitle">Ультимативний набір інструментів</h2>
+    
+    <h1>
+        <span style="color: #811e71;">Ультранет</span> та 
+        <span style="color: #fff200;">I</span><span style="color: #00c100;">S</span><span style="color: #00d4ff;">P</span> Energy
+    </h1>
 
     <div class="main-content-wrapper">
         
@@ -256,8 +232,7 @@
     </div>
     
     <div class="global-version-info">
-        Версія 0.7
-    </div>
+        Версія 0.7 </div>
 
 <script>
     // --- Функціонал Генератора Логінів ---
@@ -421,6 +396,9 @@
     function openCalendar(inputElementId) {
         const input = document.getElementById(inputElementId);
         if (input) {
+            // Цей метод програмно викликає календар, але його підтримка залежить від браузера.
+            // Настільні Chrome/Edge/Firefox можуть вимагати кліку.
+            // На мобільних пристроях це зазвичай працює.
             input.focus();
             input.showPicker && input.showPicker();
         }
@@ -509,6 +487,7 @@
         updateEndDateAndCalculate();
         
         // Автоматичне відкриття календаря при завантаженні сторінки/елемента в фокусі
+        // Використовуємо таймаут, щоб дати браузеру завершити рендеринг
         setTimeout(() => {
              openCalendar('start-date');
         }, 100);
@@ -517,4 +496,3 @@
     
 </body>
 </html>
-
