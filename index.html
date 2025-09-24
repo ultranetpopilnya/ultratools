@@ -29,6 +29,11 @@
             font-size: 2.5rem;
         }
 
+        /* Стиль для підняття заголовка */
+        .page-title {
+            margin-top: -20px;
+        }
+
         /* Стилі для нового підзаголовка, щоб імітувати шрифт і розмір H1 */
         .subtitle {
             color: #444;
@@ -119,11 +124,22 @@
         .date-calculator-container {
             text-align: center;
         }
+        
+        /* НОВИЙ СТИЛЬ: Гарантує, що два поля дати стоять поруч і рівномірно розподіляють простір */
+        .date-inputs-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px; /* Збільшений проміжок для кращого вигляду */
+            margin-bottom: 20px;
+            width: 100%;
+        }
+
         .date-calculator-container .date-input-group {
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 0px; /* Прибрано, щоб не конфліктувало з gap */
+            flex-grow: 1; /* КЛЮЧОВА ЗМІНА: Обидва елементи мають однакову ширину */
         }
         .date-calculator-container .date-input-group label {
             margin-bottom: 8px;
@@ -190,12 +206,6 @@
         }
     </style>
 </head>
-    <style>
-        .page-title {
-            margin-top: -20px; /* Сюди вказуємо, на скільки підняти */
-        }
-    </style>
-</head>
 <body>
     <h1 class="page-title">Ультимативний набір інструментів
         <br>
@@ -214,10 +224,10 @@
 
         <div class="container date-calculator-container">
             <h2 style="color: #444; margin-top: 0;">📅 Розрахунок різниці років/місяців/днів між датами</h2>
-            <div style="display: flex; justify-content: space-around; gap: 10px; margin-bottom: 20px;">
+            <div class="date-inputs-row">
                 <div class="date-input-group">
                     <label for="start-date">🗓️ Початкова дата:</label>
-                    <input type="date" id="start-date" name="start-date" onchange="updateEndDateAndCalculate()" required autofocus>
+                    <input type="date" id="start-date" name="start-date" onchange="updateEndDateAndCalculate()" required>
                 </div>
         
                 <div class="date-input-group">
@@ -236,7 +246,7 @@
     </div>
     
     <div class="global-version-info">
-        Версія 0.8a </div>
+        Версія 1.0 </div>
 
 <script>
     // --- Функціонал Генератора Логінів ---
@@ -292,7 +302,7 @@
             buttonElement.classList.add('copied');
             buttonElement.disabled = true;
             
-            document.getElementById('fullNameInput').value = '';
+            // document.getElementById('fullNameInput').value = ''; // Видалено очищення для кращого UX
             
             setTimeout(() => {
                 buttonElement.textContent = originalText;
@@ -347,6 +357,9 @@
                 }
             }
 
+            // Додаткова обробка для видалення пробілів/спецсимволів, якщо вони залишилися
+            login = login.replace(/[^a-z0-9]/g, '');
+
             if (login === '') {
                 const errorElement = document.createElement('div');
                 errorElement.className = 'result-item';
@@ -400,9 +413,6 @@
     function openCalendar(inputElementId) {
         const input = document.getElementById(inputElementId);
         if (input) {
-            // Цей метод програмно викликає календар, але його підтримка залежить від браузера.
-            // Настільні Chrome/Edge/Firefox можуть вимагати кліку.
-            // На мобільних пристроях це зазвичай працює.
             input.focus();
             input.showPicker && input.showPicker();
         }
@@ -493,6 +503,7 @@
         // Автоматичне відкриття календаря при завантаженні сторінки/елемента в фокусі
         // Використовуємо таймаут, щоб дати браузеру завершити рендеринг
         setTimeout(() => {
+             // Викликаємо openCalendar, але тепер поле не має autofocus
              openCalendar('start-date');
         }, 100);
     });
@@ -500,4 +511,3 @@
     
 </body>
 </html>
-
