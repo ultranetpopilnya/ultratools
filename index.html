@@ -252,7 +252,7 @@
     </div>
     
     <div class="global-version-info">
-        Версія 1.0 🙃</div>
+        Версія 1.1 🙃</div>
 
 <script>
     // --- Функціонал Генератора Логінів ---
@@ -415,16 +415,7 @@
         calculateDifference();
     }
     
-    /* Ця функція більше не використовується для автоматичного відкриття при завантаженні
-    function openCalendar(inputElementId) {
-        const input = document.getElementById(inputElementId);
-        if (input) {
-            input.focus();
-            input.showPicker && input.showPicker();
-        }
-    }
-    */
-
+    // Функція openCalendar була прибрана, щоб уникнути автоматичного фокусування
 
     function calculateDifference() {
         const startDateInput = document.getElementById('start-date').value;
@@ -445,7 +436,13 @@
         }
 
         const diffTime = endDate - startDate;
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        
+        // Кількість днів (тривалість, не включаючи початковий день)
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+        
+        // КІЛЬКІСТЬ ДНІВ ВКЛЮЧНО (початковий + кінцевий) - зміна тут!
+        const totalDaysInclusive = diffDays + 1;
+
 
         const startYear = startDate.getFullYear();
         const startMonth = startDate.getMonth();
@@ -466,7 +463,7 @@
 
         // Фінальний вивід
         if (diffDays === 0) {
-             resultDisplay.innerHTML = '<span class="total-days-text" style="color: #38c172;">Дати збігаються. Різниця: 0 днів.</span>';
+             resultDisplay.innerHTML = `<span class="total-days-text" style="color: #38c172;">Дати збігаються. Включно: ${totalDaysInclusive} день.</span>`;
         } else {
             let resultText = '';
             let durationText = '';
@@ -484,8 +481,8 @@
                 resultText += `<span class="duration-text">Різниця: ${durationText}</span><br>`;
             }
             
-            // Загальна різниця в днях
-            resultText += `<span class="total-days-text">Загальна різниця: ${diffDays} днів.</span>`;
+            // Загальна кількість днів (ВКЛЮЧНО)
+            resultText += `<span class="total-days-text">Загальна кількість (включно): ${totalDaysInclusive} днів.</span>`;
             
             resultDisplay.innerHTML = resultText;
         }
@@ -506,10 +503,6 @@
         
         // Встановлюємо наступний день і розраховуємо різницю
         updateEndDateAndCalculate();
-        
-        // *** ВИДАЛЕНО АВТОМАТИЧНЕ ВІДКРИТТЯ КАЛЕНДАРЯ ***
-        // Було: setTimeout(() => { openCalendar('start-date'); }, 100);
-        // Тепер: просто очікуємо, що користувач обере дату сам.
     });
 </script>
     
