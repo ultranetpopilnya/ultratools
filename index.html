@@ -17,7 +17,7 @@
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            padding: 2rem 0;
+            padding: 1rem 0; /* ЗМЕНШЕНО ВЕРХНІЙ ВІДСТУП */
             background-color: #f4f4f9;
             color: #333;
         }
@@ -222,7 +222,7 @@
     </div>
     
     <div class="global-version-info">
-        Версія 0.4
+        Версія 0.5
     </div>
 
 <script>
@@ -294,178 +294,4 @@
     function generateLogins() {
         const fullNameInput = document.getElementById('fullNameInput');
         const fullNames = fullNameInput.value.trim();
-        const resultsContainer = document.getElementById('results-container');
-        resultsContainer.innerHTML = '';
-
-        if (!fullNames) {
-            return;
-        }
-
-        const lines = fullNames.split('\n');
-
-        lines.forEach(line => {
-            const fullName = line.trim();
-            if (fullName === '') return;
-
-            const lowerCaseFullName = fullName.toLowerCase();
-            const isCompany = lowerCaseFullName.includes('тов') || lowerCaseFullName.includes('фоп') || lowerCaseFullName.includes('пп');
-            
-            let login = '';
-            const parts = fullName.split(/\s+/).filter(p => p.length > 0);
-
-            if (isCompany || parts.length > 3) {
-                login = transliterate(fullName);
-            } else {
-                let transliteratedLastName = '';
-                let firstNameInitial = '';
-                let patronymicInitial = '';
-
-                if (parts.length >= 1) {
-                    transliteratedLastName = transliterate(parts[0]);
-                    login += transliteratedLastName;
-                }
-                if (parts.length >= 2) {
-                    firstNameInitial = transliterate(parts[1].charAt(0));
-                    login += firstNameInitial;
-                }
-                if (parts.length >= 3) {
-                    patronymicInitial = transliterate(parts[2].charAt(0));
-                    login += patronymicInitial;
-                }
-            }
-
-            if (login === '') {
-                const errorElement = document.createElement('div');
-                errorElement.className = 'result-item';
-                errorElement.innerHTML = `<span class="original-name" style="color: #dc3545;">"${fullName}" - Некоректний формат</span>`;
-                resultsContainer.appendChild(errorElement);
-                return;
-            }
-            
-            const resultItem = document.createElement('div');
-            resultItem.className = 'result-item';
-            resultItem.innerHTML = `
-                <div class="original-name" title="${fullName}">${fullName}</div>
-                <span>${login}</span>
-                <button onclick="copyLogin('${login}', this)">Копіювати</button>
-            `;
-            resultsContainer.appendChild(resultItem);
-        });
-    }
-    
-    // --- Функціонал Калькулятора Дат ---
-
-    function formatDate(date) {
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
-    }
-    
-    function updateEndDateAndCalculate() {
-        const startDateInput = document.getElementById('start-date').value;
-        const endDateInput = document.getElementById('end-date');
-
-        if (startDateInput) {
-            const startDate = new Date(startDateInput + 'T00:00:00');
-            
-            const nextDayTime = startDate.getTime() + (1000 * 60 * 60 * 24);
-            const nextDayDate = new Date(nextDayTime);
-            
-            const endDateValue = endDateInput.value;
-            const currentEndDate = endDateValue ? new Date(endDateValue + 'T00:00:00') : null;
-
-            if (!currentEndDate || startDate >= currentEndDate) {
-                endDateInput.value = formatDate(nextDayDate);
-            }
-        }
-        
-        calculateDifference();
-    }
-    
-    // Додаткова функція для автоматичного відкриття календаря
-    function openCalendar(inputElementId) {
-        const input = document.getElementById(inputElementId);
-        if (input) {
-            // Цей метод програмно викликає календар, але його підтримка залежить від браузера.
-            // Настільні Chrome/Edge/Firefox можуть вимагати кліку.
-            // На мобільних пристроях це зазвичай працює.
-            input.focus();
-            input.showPicker && input.showPicker();
-        }
-    }
-
-
-    function calculateDifference() {
-        const startDateInput = document.getElementById('start-date').value;
-        const endDateValue = document.getElementById('end-date').value;
-        const resultDisplay = document.getElementById('result-display');
-
-        if (!startDateInput || !endDateValue) {
-            resultDisplay.innerHTML = 'Оберіть дві дати для розрахунку.';
-            return;
-        }
-
-        const startDate = new Date(startDateInput + 'T00:00:00');
-        const endDate = new Date(endDateValue + 'T00:00:00');
-
-        if (startDate > endDate) {
-            resultDisplay.innerHTML = '<span style="color: red;">Початкова дата не може бути пізнішою за Кінцеву. Спробуйте навпаки.</span>';
-            return;
-        }
-
-        const diffTime = endDate - startDate;
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-        const startYear = startDate.getFullYear();
-        const startMonth = startDate.getMonth();
-        const startDay = startDate.getDate();
-
-        const endYear = endDate.getFullYear();
-        const endMonth = endDate.getMonth();
-        const endDay = endDate.getDate();
-
-        let months = (endYear - startYear) * 12 + (endMonth - startMonth);
-        let days = endDay - startDay;
-
-        if (days < 0) {
-            months--;
-            const prevMonthDate = new Date(endYear, endMonth, 0); 
-            days += prevMonthDate.getDate();
-        }
-
-        // Фінальний вивід
-        if (diffDays === 0) {
-             resultDisplay.innerHTML = '<span class="total-days-text" style="color: #38c172;">Дати збігаються. Різниця: 0 днів.</span>';
-        } else {
-            let resultText = '';
-            let durationText = '';
-
-            // Точна різниця (місяці та дні)
-            if (months >= 0 && (months > 0 || days > 0)) {
-                let monthsText = months > 0 ? `${months} міс.` : '';
-                let daysText = days > 0 ? `${days} дн.` : '';
-                
-                durationText = [monthsText, daysText].filter(Boolean).join(' та ');
-            }
-            
-            if (durationText) {
-                // Додаємо напис "Різниця"
-                resultText += `<span class="duration-text">Різниця: ${durationText}</span><br>`;
-            }
-            
-            // Загальна різниця в днях
-            resultText += `<span class="total-days-text">Загальна різниця: ${diffDays} днів.</span>`;
-            
-            resultDisplay.innerHTML = resultText;
-        }
-    }
-    
-    // --- Ініціалізація ---
-
-    document.addEventListener('DOMContentLoaded', () => {
-        // Ініціалізація Генератора Логінів
-        const fullNameInput = document.getElementById('fullNameInput');
-        fullNameInput.addEventListener('input', generateLogins);
-        
-        // І
+        const resultsContainer = document.
