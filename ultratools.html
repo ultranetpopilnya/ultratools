@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Об'єднаний інструмент</title>
+    <link rel="icon" href="log-in.png" type="image/png">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 2rem 0;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        
+        h1 {
+            color: #444;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-size: 2.5rem;
+        }
+        
+        .main-content-wrapper {
+            display: flex;
+            justify-content: center; /* Вирівнювання по центру */
+            gap: 20px; /* Відстань між контейнерами */
+            width: 90%;
+            max-width: 1200px; /* Максимальна ширина для двох контейнерів */
+            margin-bottom: 2rem;
+        }
+        
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+            width: 50%; /* Кожен контейнер займає 50% доступної ширини */
+            min-width: 300px; /* Мінімальна ширина для кращого вигляду на малих екранах */
+        }
+        
+        /* Стилі для Генератора Логінів (з index112.html) */
+        .login-generator-container textarea {
+            width: 100%;
+            padding: 0.75rem;
+            font-size: 1rem;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+            margin-bottom: 1rem;
+            min-height: 120px;
+        }
+        
+        .login-generator-container #results-container {
+            margin-top: 1.5rem;
+            text-align: left;
+        }
+        .login-generator-container .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            margin-top: 0.5rem;
+            background-color: #f9f9f9;
+        }
+        .login-generator-container .result-item span {
+            font-weight: bold;
+            color: #28a745;
+            margin: 0 10px;
+        }
+        .login-generator-container .result-item .original-name {
+            font-weight: normal;
+            color: #555;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .login-generator-container .result-item button {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.9rem;
+            background-color: #6c757d;
+            min-width: 110px;
+            border: none;
+            color: white;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .login-generator-container .result-item button:hover {
+            background-color: #5a6268;
+        }
+        .login-generator-container .result-item button.copied {
+            background-color: #28a745;
+        }
+        .login-generator-container .version-info {
+            margin-top: 1.5rem;
+            font-size: 14px;
+            color: #888;
+            text-align: center;
+        }
+
+        /* Стилі для Калькулятора Дат (з index1.html) */
+        .date-calculator-container {
+            text-align: center;
+        }
+        .date-calculator-container .date-input-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .date-calculator-container .date-input-group label {
+            margin-bottom: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #555;
+        }
+        .date-calculator-container .date-input-group input[type="date"] {
+            padding: 10px;
+            border: 2px solid #ccc;
+            border-radius: 6px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: border-color 0.3s;
+            width: 100%;
+        }
+        .date-calculator-container .date-input-group input[type="date"]:hover,
+        .date-calculator-container .date-input-group input[type="date"]:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+        .date-calculator-container #result-section {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e9f7e9;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border: 1px solid #c3e6cb;
+        }
+        .date-calculator-container #result-section h2 {
+            margin-top: 0;
+            color: #28a745;
+            font-size: 1.3em;
+        }
+        .date-calculator-container #result-display {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #38c172;
+            min-height: 1.5em;
+            line-height: 1.4;
+        }
+        .date-calculator-container #version-info {
+            font-size: 0.8em;
+            color: #6c757d;
+            border-top: 1px solid #c3e6cb;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+
+        /* Адаптивність */
+        @media (max-width: 800px) {
+            .main-content-wrapper {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+            .container {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>замінити текст</h1>
+
+    <div class="main-content-wrapper">
+        
+        <div class="container login-generator-container">
+            <h2 style="color: #444; margin-top: 0;">Генератор логінів</h2>
+            <p>Введіть повністю одне або декілька ПІБ, кожне — з нового рядка. Також можливий трансліт ФОП, ТОВ, ПП.</p>
+            <textarea id="fullNameInput" rows="5" placeholder="Прізвище, Ім'я, та по Батькові"></textarea>
+            <div id="results-container"></div>
+            
+            <div class="version-info">
+                <p>Версія 1.12🙃</p>
+            </div>
+        </div>
+
+        <div class="container date-calculator-container">
+            <h2 style="color: #007bff; margin-top: 0;">📅 Розрахунок різниці дат</h2>
+            <div style="display: flex; justify-content: space-around; gap: 10px; margin-bottom: 20px;">
+                <div class="date-input-group">
+                    <label for="start-date">🗓️ Початкова дата:</label>
+                    <input type="date" id="start-date" name="start-date" onchange="updateEndDateAndCalculate()" required>
+                </div>
+        
+                <div class="date-input-group">
+                    <label for="end-date">➡️ Кінцева дата:</label>
+                    <input type="date" id="end-date" name="end-date" onchange="calculateDifference()" required>
+                </div>
+            </div>
+
+            <div id="result-section">
+                <h2>⏱️ Результат розрахунку</h2>
+                <div id="result-display">
+                    Оберіть дві дати для розрахунку.
+                </div>
+                
+                <div id="version-info">
+                    Версія 1.0 </div>
+                </div>
+        </div>
+
+    </div>
+
+<script>
+    // --- Функціонал Генератора Логінів (index112.html) ---
+
+    function transliterate(text) {
+        const mapping = {
+            'а': 'a', 'б': 'b', 'в': 'v', 'г': 'h', 'ґ': 'g', 'д': 'd',
+            'е': 'e', 'ж': 'zh', 'з': 'z', 'и': 'y', 'і': 'i', 'й': 'i',
+            'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n', 'о': 'o', 'п': 'p',
+            'р': 'r', 'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'kh',
+            'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'shch', 'ь': '', "'": ''
+        };
+        const positionalRules = {
+            'є': { start: 'ye', other: 'ie' },
+            'ї': { start: 'yi', other: 'i' },
+            'й': { start: 'y', other: 'i' },
+            'ю': { start: 'yu', other: 'iu' },
+            'я': { start: 'ya', other: 'ia' }
+        };
+
+        let result = '';
+        text = text.toLowerCase();
+
+        for (let i = 0; i < text.length; i++) {
+            const char = text[i];
+            const isFirstChar = (i === 0);
+            
+            // Handle specific Ukrainian combinations
+            if (char === 'з' && i + 1 < text.length && text[i + 1] === 'г') {
+                result += 'zgh';
+                i++;
+                continue;
+            }
+            
+            if (positionalRules[char]) {
+                result += isFirstChar ? positionalRules[char].start : positionalRules[char].other;
+            } else if (mapping[char]) {
+                result += mapping[char];
+            } else if (!isNaN(parseInt(char))) { // Check if the character is a digit
+                result += char;
+            } else {
+                // Ignore other characters like spaces and special symbols
+                continue;
+            }
+        }
+        return result;
+    }
+
+    function copyLogin(textToCopy, buttonElement) {
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            const originalText = buttonElement.textContent;
+            buttonElement.textContent = 'Скопійовано!';
+            buttonElement.classList.add('copied');
+            buttonElement.disabled = true;
+            
+            document.getElementById('fullNameInput').value = '';
+            
+            setTimeout(() => {
+                buttonElement.textContent = originalText;
+                buttonElement.classList.remove('copied');
+                buttonElement.disabled = false;
+            }, 2000);
+        }).catch(err => {
+            console.error('Не вдалося скопіювати текст: ', err);
+        });
+    }
+
+    function generateLogins() {
+        const fullNameInput = document.getElementById('fullNameInput');
+        const fullNames = fullNameInput.value.trim();
+        const resultsContainer = document.getElementById('results-container');
+        resultsContainer.innerHTML = '';
+
+        if (!fullNames) {
+            return;
+        }
+
+        const lines = fullNames.split('\n');
+
+        lines.forEach(line => {
+            const fullName = line.trim();
+            if (fullName === '') return;
+
+            const lowerCaseFullName = fullName.toLowerCase();
+            const isCompany = lowerCaseFullName.includes('тов') || lowerCaseFullName.includes('фоп') || lowerCaseFullName.includes('пп');
+            
+            let login = '';
+            const parts = fullName.split(/\s+/).filter(p => p.length > 0); // Фільтруємо пусті елементи
+
+            if (isCompany || parts.length > 3) {
+                // Transliterate the entire line and allow numbers
+                login = transliterate(fullName);
+            } else {
+                // Original logic for individuals (P.I.B.)
+                
+                let transliteratedLastName = '';
+                let firstNameInitial = '';
+                let patronymicInitial = '';
+
+                if (parts.length >= 1) {
+                    transliteratedLastName = transliterate(parts[0]);
+                    login += transliteratedLastName;
+                }
+                if (parts.length >= 2) {
+                    firstNameInitial = transliterate(parts[1].charAt(0));
+                    login += firstNameInitial;
+                }
+                if (parts.length >= 3) {
+                    patronymicInitial = transliterate(parts[2].charAt(0));
+                    login += patronymicInitial;
+                }
+            }
+
+            if (login === '') {
+                const errorElement = document.createElement('div');
+                errorElement.className = 'result-item';
+                errorElement.innerHTML = `<span class="original-name" style="color: #dc3545;">"${fullName}" - Некоректний формат</span>`;
+                resultsContainer.appendChild(errorElement);
+                return;
+            }
+            
+            const resultItem = document.createElement('div');
+            resultItem.className = 'result-item';
+            resultItem.innerHTML = `
+                <div class="original-name" title="${fullName}">${fullName}</div>
+                <span>${login}</span>
+                <button onclick="copyLogin('${login}', this)">Копіювати</button>
+            `;
+            resultsContainer.appendChild(resultItem);
+        });
+    }
+    
+    // --- Функціонал Калькулятора Дат (index1.html) ---
+
+    function formatDate(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+    
+    function updateEndDateAndCalculate() {
+        const startDateInput = document.getElementById('start-date').value;
+        const endDateInput = document.getElementById('end-date');
+
+        if (startDateInput) {
+            const startDate = new Date(startDateInput + 'T00:00:00');
+            
+            // Додаємо один день (86400000 мілісекунд)
+            const nextDayTime = startDate.getTime() + (1000 * 60 * 60 * 24);
+            const nextDayDate = new Date(nextDayTime);
+            
+            // Встановлюємо значення лише якщо кінцева дата порожня або раніше початкової
+            const endDateValue = endDateInput.value;
+            const currentEndDate = endDateValue ? new Date(endDateValue + 'T00:00:00') : null;
+
+            if (!currentEndDate || startDate >= currentEndDate) {
+                endDateInput.value = formatDate(nextDayDate);
+            }
+        }
+        
+        calculateDifference();
+    }
+
+    function calculateDifference() {
+        const startDateInput = document.getElementById('start-date').value;
+        const endDateValue = document.getElementById('end-date').value;
+        const resultDisplay = document.getElementById('result-display');
+
+        if (!startDateInput || !endDateValue) {
+            resultDisplay.innerHTML = 'Оберіть дві дати для розрахунку.';
+            return;
+        }
+
+        // Додаємо 'T00:00:00', щоб уникнути проблем з часовими поясами
+        const startDate = new Date(startDateInput + 'T00:00:00');
+        const endDate = new Date(endDateValue + 'T00:00:00');
+
+        if (startDate > endDate) {
+            resultDisplay.innerHTML = 'Початкова дата **не може** бути пізнішою за Кінцеву. Спробуйте навпаки.';
+            return;
+        }
+
+        const diffTime = endDate - startDate;
+        // Math.ceil використовується для включення кінцевого дня
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+        // Розрахунок різниці в місяцях і днях (точний)
+        const startYear = startDate.getFullYear();
+        const startMonth = startDate.getMonth();
+        const startDay = startDate.getDate();
+
+        const endYear = endDate.getFullYear();
+        const endMonth = endDate.getMonth();
+        const endDay = endDate.getDate();
+
+        let months = (endYear - startYear) * 12 + (endMonth - startMonth);
+        let days = endDay - startDay;
+
+        if (days < 0) {
+            months--;
+            // Отримуємо останній день попереднього місяця
+            const prevMonthDate = new Date(endYear, endMonth, 0); 
+            days += prevMonthDate.getDate();
+        }
+
+        // Фінальний вивід
+        if (diffDays === 0) {
+             resultDisplay.innerHTML = 'Дати **збігаються**. Різниця: 0 днів.';
+        } else {
+            let resultText = '';
+
+            // Частина з місяцями та днями виводиться першою
+            if (months >= 0 && (months > 0 || days > 0)) {
+                let monthsText = months > 0 ? `${months} міс.` : '';
+                let daysText = days > 0 ? `${days} дн.` : '';
+                
+                const durationText = [monthsText, daysText].filter(Boolean).join(' та ');
+
+                if (durationText) {
+                     resultText += `(Це становить **${durationText}**)<br>`
+                }
+            }
+            
+            // Загальна різниця в днях виводиться наступною
+            resultText += `Загальна різниця: **${diffDays}** днів.`;
+            
+            resultDisplay.innerHTML = resultText;
+        }
+    }
+    
+    // --- Ініціалізація ---
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // Ініціалізація Генератора Логінів
+        const fullNameInput = document.getElementById('fullNameInput');
+        fullNameInput.addEventListener('input', generateLogins);
+        
+        // Ініціалізація Калькулятора Дат
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('start-date').value = today;
+        
+        // Встановлюємо наступний день і розраховуємо різницю
+        updateEndDateAndCalculate();
+    });
+</script>
+    
+</body>
+</html>
