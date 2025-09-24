@@ -22,9 +22,25 @@
             color: #333;
         }
         
+        /* НОВИЙ СТИЛЬ ДЛЯ ВЕРХНЬОГО НАПИСУ */
+        .page-title-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 1.5rem; /* Замінює margin-bottom h1 */
+        }
+        
+        .top-subtitle {
+            color: #444; /* Колір 444 */
+            font-size: 1.2rem; /* Адаптуйте розмір на свій розсуд */
+            margin-bottom: -5px; /* Піднімаємо напис, щоб візуально вирівняти */
+            font-weight: 500;
+        }
+
         h1 {
             color: #444;
-            margin-bottom: 1.5rem;
+            margin-top: 0.5rem; /* Додаємо невеликий відступ зверху, якщо треба */
+            margin-bottom: 0; /* Видаляємо нижній відступ, оскільки він у .page-title-group */
             text-align: center;
             font-size: 2.5rem;
         }
@@ -183,10 +199,13 @@
 </head>
 <body>
 
-    <h1>
-        <span style="color: #811e71;">Ультранет</span> та 
-        <span style="color: #fff200;">I</span><span style="color: #00c100;">S</span><span style="color: #00d4ff;">P</span> Energy
-    </h1>
+    <div class="page-title-group">
+        <div class="top-subtitle">Ультимативний набір інструментів</div>
+        <h1>
+            <span style="color: #811e71;">Ультранет</span> та 
+            <span style="color: #fff200;">I</span><span style="color: #00c100;">S</span><span style="color: #00d4ff;">P</span> Energy
+        </h1>
+    </div>
 
     <div class="main-content-wrapper">
         
@@ -221,7 +240,7 @@
     </div>
     
     <div class="global-version-info">
-        Версія 0.3
+        Версія 0.5
     </div>
 
 <script>
@@ -486,5 +505,3 @@
     
 </body>
 </html>
-
-
