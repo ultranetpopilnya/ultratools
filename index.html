@@ -22,25 +22,37 @@
             color: #333;
         }
         
-        /* НОВИЙ СТИЛЬ ДЛЯ ВЕРХНЬОГО НАПИСУ */
+        /* ГРУПА ЗАГОЛОВКІВ */
         .page-title-group {
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-bottom: 1.5rem; /* Замінює margin-bottom h1 */
+            margin-bottom: 1.5rem; 
+        }
+
+        /* КОНТЕЙНЕР ДЛЯ ІКОНКИ */
+        .logo-container {
+            width: 100px; /* Адаптуйте розмір під вашу іконку */
+            height: 100px;
+            margin-bottom: 10px;
+        }
+        .logo-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* Зберігає пропорції PNG */
         }
         
         .top-subtitle {
-            color: #444; /* Колір 444 */
-            font-size: 1.2rem; /* Адаптуйте розмір на свій розсуд */
-            margin-bottom: -5px; /* Піднімаємо напис, щоб візуально вирівняти */
+            color: #444; 
+            font-size: 2.5rem; /* Однаковий розмір, як і h1 */
+            margin-bottom: -10px; 
             font-weight: 500;
         }
 
         h1 {
             color: #444;
-            margin-top: 0.5rem; /* Додаємо невеликий відступ зверху, якщо треба */
-            margin-bottom: 0; /* Видаляємо нижній відступ, оскільки він у .page-title-group */
+            margin-top: 0.5rem; 
+            margin-bottom: 0; 
             text-align: center;
             font-size: 2.5rem;
         }
@@ -171,11 +183,11 @@
             line-height: 1.4;
         }
         .date-calculator-container .duration-text {
-            color: #007bff; /* Синій для точної різниці (місяці та дні) */
+            color: #007bff; 
             font-weight: bold;
         }
         .date-calculator-container .total-days-text {
-            color: #ff5722; /* Помаранчевий для загальної кількості днів */
+            color: #ff5722; 
             font-weight: bold;
         }
 
@@ -200,6 +212,10 @@
 <body>
 
     <div class="page-title-group">
+        <div class="logo-container">
+            <img src="your_icon_name.png" alt="Логотип">
+        </div>
+
         <div class="top-subtitle">Ультимативний набір інструментів</div>
         <h1>
             <span style="color: #811e71;">Ультранет</span> та 
@@ -240,7 +256,7 @@
     </div>
     
     <div class="global-version-info">
-        Версія 0.5
+        Версія 0.6
     </div>
 
 <script>
@@ -405,9 +421,6 @@
     function openCalendar(inputElementId) {
         const input = document.getElementById(inputElementId);
         if (input) {
-            // Цей метод програмно викликає календар, але його підтримка залежить від браузера.
-            // Настільні Chrome/Edge/Firefox можуть вимагати кліку.
-            // На мобільних пристроях це зазвичай працює.
             input.focus();
             input.showPicker && input.showPicker();
         }
@@ -496,7 +509,6 @@
         updateEndDateAndCalculate();
         
         // Автоматичне відкриття календаря при завантаженні сторінки/елемента в фокусі
-        // Використовуємо таймаут, щоб дати браузеру завершити рендеринг
         setTimeout(() => {
              openCalendar('start-date');
         }, 100);
