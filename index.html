@@ -260,14 +260,14 @@
     </div>
     
     <div class="global-version-info">
-        Версія 1.3 🙃</div> <script>
+        Версія 1.3a 🙃</div> <script>
     // --- Функціонал Генератора Логінів ---
 
     function transliterate(text) {
         const mapping = {
             'а': 'a', 'б': 'b', 'в': 'v', 'г': 'h', 'ґ': 'g', 'д': 'd',
             'е': 'e', 'ж': 'zh', 'з': 'z', 'и': 'y', 'і': 'i', 'й': 'i',
-            'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n', 'о': 'o', 'п': 'p',
+            'к': 'k', 'л': 'l', 'м': 'm', 'н': 'm', 'о': 'o', 'п': 'p',
             'р': 'r', 'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'kh',
             'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'shch', 'ь': '', "'": ''
         };
@@ -510,44 +510,58 @@
             return;
         }
 
-        const diffTime = endDate - startDate;
-        
+        // --- РОЗРАХУНОК ДНІВ ВКЛЮЧНО ---
+        // Визначаємо різницю в мілісекундах і ділимо на кількість мілісекунд у добі (включно з початковою датою)
+        const diffTime = endDate.getTime() - startDate.getTime();
         // Кількість днів (тривалість, не включаючи початковий день)
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+        const diffDaysDuration = diffTime / (1000 * 60 * 60 * 24); 
         
-        // КІЛЬКІСТЬ ДНІВ ВКЛЮЧНО (початковий + кінцевий)
-        const totalDaysInclusive = diffDays + 1;
-
+        // КІЛЬКІСТЬ ДНІВ ВКЛЮЧНО (початковий + кінцевий). Додаємо 1, оскільки це включно
+        const totalDaysInclusive = Math.ceil(diffDaysDuration) + 1;
+        
         // Визначаємо правильне відмінювання для загальної кількості
         const dayWord = getCorrectDayWord(totalDaysInclusive);
 
 
-        const startYear = startDate.getFullYear();
-        const startMonth = startDate.getMonth();
-        const startDay = startDate.getDate();
-
-        const endYear = endDate.getFullYear();
-        const endMonth = endDate.getMonth();
-        const endDay = endDate.getDate();
-
-        let months = (endYear - startYear) * 12 + (endMonth - startMonth);
-        let days = endDay - startDay;
+        // --- РОЗРАХУНОК МІСЯЦІВ/ДНІВ (ЗА НОВИМИ ПРАВИЛАМИ "З ДАТИ ПО ДАТУ" ВКЛЮЧНО) ---
+        
+        let d1 = new Date(startDateInput + 'T00:00:00');
+        let d2 = new Date(endDateValue + 'T00:00:00');
+        
+        let years = d2.getFullYear() - d1.getFullYear();
+        let months = d2.getMonth() - d1.getMonth();
+        let days = d2.getDate() - d1.getDate();
+        
+        // Ваш приклад: 25.09 - 25.10 -> 1 місяць. Якщо рахувати включно, це 1 місяць та 1 день.
+        // Для коректного відображення "включно", ми додаємо 1 день до "днів"
+        // для розрахунку різниці.
+        days += 1; 
 
         if (days < 0) {
             months--;
-            const prevMonthDate = new Date(endYear, endMonth, 0); 
+            const prevMonthDate = new Date(d2.getFullYear(), d2.getMonth(), 0); 
             days += prevMonthDate.getDate();
         }
 
+        if (months < 0) {
+            years--;
+            months += 12;
+        }
+        
+        // Перетворення років у місяці
+        months += years * 12;
+
+
         // Фінальний вивід
-        if (diffDays === 0) {
+        if (diffDaysDuration === 0) { // Випадок, коли дати збігаються
              resultDisplay.innerHTML = `<span class="total-days-text" style="color: #38c172;">Дати збігаються. Включно: ${totalDaysInclusive} ${dayWord}.</span>`;
         } else {
             let resultText = '';
             let durationText = '';
-
-            // Точна різниця (місяці та дні)
-            if (months >= 0 && (months > 0 || days > 0)) {
+            
+            // Якщо дні=0 і місяці=0, це означає, що дати збігаються, але ми вже обробили цей випадок вище.
+            // Тут ми відображаємо точну різницю.
+            if (months > 0 || days > 0) {
                 let monthsText = months > 0 ? `${months} міс.` : '';
                 let daysText = days > 0 ? `${days} дн.` : '';
                 
