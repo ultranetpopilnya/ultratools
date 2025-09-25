@@ -260,14 +260,14 @@
     </div>
     
     <div class="global-version-info">
-        Версія 1.3b 🙃</div> <script>
+        Версія 1.3 🙃</div> <script>
     // --- Функціонал Генератора Логінів ---
 
     function transliterate(text) {
         const mapping = {
             'а': 'a', 'б': 'b', 'в': 'v', 'г': 'h', 'ґ': 'g', 'д': 'd',
             'е': 'e', 'ж': 'zh', 'з': 'z', 'и': 'y', 'і': 'i', 'й': 'i',
-            'к': 'k', 'л': 'l', 'м': 'm', 'н': 'm', 'о': 'o', 'п': 'p',
+            'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n', 'о': 'o', 'п': 'p',
             'р': 'r', 'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'kh',
             'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'shch', 'ь': '', "'": ''
         };
@@ -510,68 +510,44 @@
             return;
         }
 
-        // --- РОЗРАХУНОК ДНІВ ВКЛЮЧНО ---
-        // Різниця в мілісекундах.
-        const diffTime = endDate.getTime() - startDate.getTime();
+        const diffTime = endDate - startDate;
         
         // Кількість днів (тривалість, не включаючи початковий день)
-        const diffDaysDuration = diffTime / (1000 * 60 * 60 * 24); 
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
         
-        // КІЛЬКІСТЬ ДНІВ ВКЛЮЧНО (початковий + кінцевий). Додаємо 1.
-        const totalDaysInclusive = Math.ceil(diffDaysDuration) + 1;
-        
+        // КІЛЬКІСТЬ ДНІВ ВКЛЮЧНО (початковий + кінцевий)
+        const totalDaysInclusive = diffDays + 1;
+
         // Визначаємо правильне відмінювання для загальної кількості
         const dayWord = getCorrectDayWord(totalDaysInclusive);
 
 
-        // --- РОЗРАХУНОК МІСЯЦІВ/ДНІВ (КОРЕКТНА РІЗНИЦЯ) ---
-        
-        let d1 = new Date(startDateInput + 'T00:00:00');
-        let d2 = new Date(endDateValue + 'T00:00:00');
-        
-        let years = d2.getFullYear() - d1.getFullYear();
-        let months = d2.getMonth() - d1.getMonth();
-        let days = d2.getDate() - d1.getDate();
-        
-        // ВИПРАВЛЕННЯ: Повертаємо логіку до розрахунку чистої різниці.
-        // Ваш приклад 25.09 - 25.10 (30 днів) має давати 1 місяць.
-        // Ваш приклад 25.09 - 26.09 (1 день) має давати 1 день.
-        // Для коректного відображення "Різниці" (тривалості), кінцеву дату потрібно змістити на 1 день вперед
-        // (тому що кінцевий день "включений" у діапазон, а ми хочемо знайти чисту різницю).
-        // Але оскільки ми вже маємо d2, просто коригуємо дні:
-        days += 0; // Залишаємо days як чисту різницю дат.
+        const startYear = startDate.getFullYear();
+        const startMonth = startDate.getMonth();
+        const startDay = startDate.getDate();
+
+        const endYear = endDate.getFullYear();
+        const endMonth = endDate.getMonth();
+        const endDay = endDate.getDate();
+
+        let months = (endYear - startYear) * 12 + (endMonth - startMonth);
+        let days = endDay - startDay;
 
         if (days < 0) {
             months--;
-            const prevMonthDate = new Date(d2.getFullYear(), d2.getMonth(), 0); 
+            const prevMonthDate = new Date(endYear, endMonth, 0); 
             days += prevMonthDate.getDate();
         }
-        
-        // Логіка для "з дати по дату" (включно з кінцевою датою)
-        // Для 25.09 по 25.10 (30 днів) ми отримаємо months=1, days=0.
-        // Для 25.09 по 26.10 (31 день) ми отримаємо months=1, days=1.
-        // Для 25.09 по 26.09 (1 день) ми отримаємо months=0, days=1.
-        
-        // Цей підхід (із d2.getDate() - d1.getDate()) дає правильну РІЗНИЦЮ (duration)
-        // для відображення "місяців/днів".
-
-        if (months < 0) {
-            years--;
-            months += 12;
-        }
-        
-        // Перетворення років у місяці
-        months += years * 12;
 
         // Фінальний вивід
-        if (diffDaysDuration < 0.5) { // Випадок, коли дати збігаються (diffDaysDuration = 0)
+        if (diffDays === 0) {
              resultDisplay.innerHTML = `<span class="total-days-text" style="color: #38c172;">Дати збігаються. Включно: ${totalDaysInclusive} ${dayWord}.</span>`;
         } else {
             let resultText = '';
             let durationText = '';
-            
-            // Відображаємо точну різницю.
-            if (months > 0 || days > 0) {
+
+            // Точна різниця (місяці та дні)
+            if (months >= 0 && (months > 0 || days > 0)) {
                 let monthsText = months > 0 ? `${months} міс.` : '';
                 let daysText = days > 0 ? `${days} дн.` : '';
                 
@@ -581,9 +557,6 @@
             if (durationText) {
                 // Додаємо напис "Різниця"
                 resultText += `<span class="duration-text">Різниця: ${durationText}</span><br>`;
-            } else {
-                // Випадок, який не мав би траплятися, якщо diffDaysDuration > 0.5, але для безпеки.
-                 resultText += `<span class="duration-text">Різниця: ${totalDaysInclusive - 1} ${getCorrectDayWord(totalDaysInclusive - 1)}.</span><br>`;
             }
             
             // Загальна кількість днів (ВКЛЮЧНО) з коректним відмінюванням
