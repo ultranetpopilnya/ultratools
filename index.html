@@ -299,7 +299,7 @@
         </div>
 
         <div class="container date-calculator-container">
-            <h2 style="color: #444; margin-top: 0;">📅 Калькулятор різниці в роках/місяцях/днях<br>між датами</h2>
+            <h2 style="color: #444; margin-top: 0;">📅 Розрахунок різниці років/місяців/днів<br>між датами</h2>
 
             <div class="date-inputs-row">
                 <div class="date-input-group">
@@ -331,7 +331,7 @@
     </div>
 
     <div class="global-version-info">
-        Версія 1.3b 🙃</div> <script>
+        Версія 1.4 🚀</div> <script>
     // --- Функціонал Генератора Логінів ---
 
     function transliterate(text) {
@@ -603,53 +603,63 @@
             return;
         }
 
-        const diffTime = endDate - startDate;
-
-        // Кількість днів (тривалість, не включаючи початковий день)
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-        // КІЛЬКІСТЬ ДНІВ ВКЛЮЧНО (початковий + кінцевий)
-        const totalDaysInclusive = diffDays + 1;
-
-        // Визначаємо правильне відмінювання для загальної кількості
-        const dayWord = getCorrectDayWord(totalDaysInclusive);
-
+        /* * НОВА ЛОГІКА: Розрахунок періоду включно з кінцевою датою (наприклад, 25.09 до 25.10 = 1 міс. 1 дн.)
+        * Ми додаємо 1 день до кінцевої дати і рахуємо різницю до цієї "наступної" дати.
+        */
+        const endDateInclusive = new Date(endDate);
+        endDateInclusive.setDate(endDateInclusive.getDate() + 1);
 
         const startYear = startDate.getFullYear();
         const startMonth = startDate.getMonth();
         const startDay = startDate.getDate();
 
-        const endYear = endDate.getFullYear();
-        const endMonth = endDate.getMonth();
-        const endDay = endDate.getDate();
-
-        let months = (endYear - startYear) * 12 + (endMonth - startMonth);
-        let days = endDay - startDay;
-
+        const endYearInclusive = endDateInclusive.getFullYear();
+        const endMonthInclusive = endDateInclusive.getMonth();
+        const endDayInclusive = endDateInclusive.getDate();
+        
+        let months = (endYearInclusive - startYear) * 12 + (endMonthInclusive - startMonth);
+        let days = endDayInclusive - startDay;
+        
+        // Коригування, якщо кількість днів від'ємна
         if (days < 0) {
             months--;
-            const prevMonthDate = new Date(endYear, endMonth, 0);
+            // Кількість днів у місяці, що передує endMonthInclusive
+            const prevMonthDate = new Date(endYearInclusive, endMonthInclusive, 0); 
             days += prevMonthDate.getDate();
         }
 
+        let years = 0;
+        if (months >= 12) {
+            years = Math.floor(months / 12);
+            months = months % 12;
+        }
+
+        // Розрахунок загальної кількості днів (потрібен для другого рядка виводу)
+        const diffTime = endDate - startDate;
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        const totalDaysInclusive = diffDays + 1; // КІЛЬКІСТЬ ДНІВ ВКЛЮЧНО
+        const dayWord = getCorrectDayWord(totalDaysInclusive); // Правильне відмінювання
+
+
         // Фінальний вивід
-        if (diffDays === 0) {
+        if (totalDaysInclusive === 1) { // Якщо дати збігаються (тобто totalDaysInclusive = 1)
              resultDisplay.innerHTML = `<span class="total-days-text" style="color: #38c172;">Дати збігаються. Включно: ${totalDaysInclusive} ${dayWord}.</span>`;
         } else {
             let resultText = '';
             let durationText = '';
+            
+            // Формування точної різниці (роки, місяці та дні)
+            let parts = [];
+            if (years > 0) parts.push(`${years} рок.`);
+            if (months > 0) parts.push(`${months} міс.`);
+            if (days > 0) parts.push(`${days} дн.`);
 
-            // Точна різниця (місяці та дні)
-            if (months >= 0 && (months > 0 || days > 0)) {
-                let monthsText = months > 0 ? `${months} міс.` : '';
-                let daysText = days > 0 ? `${days} дн.` : '';
+            durationText = parts.filter(Boolean).join(' та ');
 
-                durationText = [monthsText, daysText].filter(Boolean).join(' та ');
-            }
 
             if (durationText) {
-                // Додаємо напис "Різниця"
-                resultText += `<span class="duration-text">Різниця: ${durationText}</span><br>`;
+                // Додаємо напис "Період"
+                resultText += `<span class="duration-text">Період (включно): ${durationText}</span><br>`;
             }
 
             // Загальна кількість днів (ВКЛЮЧНО) з коректним відмінюванням
@@ -679,4 +689,3 @@
 
 </body>
 </html>
-
