@@ -89,6 +89,8 @@
             border-radius: 4px;
             margin-top: 0.5rem;
             background-color: #f9f9f9;
+            /* ФІКС: Гарантує, що висота буде сталою */
+            min-height: 45px; 
         }
         .login-generator-container .result-item span {
             font-weight: bold;
@@ -96,6 +98,11 @@
             margin: 0 10px;
             overflow: hidden;
             text-overflow: ellipsis;
+            /* ФІКС: Обмежуємо ширину логіну та запобігаємо його розтягуванню */
+            max-width: 150px; 
+            white-space: nowrap; 
+            flex-grow: 0; 
+            flex-shrink: 0; 
         }
         .login-generator-container .result-item .original-name {
             font-weight: normal;
@@ -103,17 +110,25 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            /* ФІКС: Дозволяємо імені займати доступний простір */
+            flex-grow: 1; 
+            min-width: 50px; 
+            text-align: left;
         }
         .login-generator-container .result-item button {
             padding: 0.4rem 0.8rem;
             font-size: 0.9rem;
             background-color: #6c757d;
+            /* ФІКС: Задаємо фіксовану ширину для кнопки */
+            width: 110px; 
             min-width: 110px;
             border: none;
             color: white;
             cursor: pointer;
             border-radius: 4px;
             transition: background-color 0.2s;
+            /* ФІКС: Запобігаємо стисканню */
+            flex-shrink: 0; 
         }
         .login-generator-container .result-item button:hover {
             background-color: #5a6268;
@@ -689,8 +704,3 @@
 
 </body>
 </html>
-
-
-
-
-
