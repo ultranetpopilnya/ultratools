@@ -62,6 +62,11 @@
             background-color: #333333;
             border-color: #444444;
         }
+
+        /* ✅ ДОДАНО: КОЛІР ЗГЕНЕРОВАНОГО ЛОГІНУ ДЛЯ ТЕМНОЇ ТЕМИ */
+        body.dark .login-generator-container .result-item span {
+            color: #38c172 !important; /* Яскраво-зелений для кращого контрасту */
+        }
         
         /* ЗМІНЕНО: Сірий фон для полів вводу дати */
         body.dark .date-calculator-container .date-input-group input[type="date"] {
@@ -75,6 +80,33 @@
         body.dark .date-calculator-container #result-section {
             background-color: #2b2b2b; /* Трохи світліше сірий для акценту */
             border: 1px solid #555555;
+        }
+        /* ЗМІНЕНО: Колір результату калькулятора дат (заголовок) */
+        body.dark .date-calculator-container #result-section h2 {
+            color: #38c172; /* Колір, що відповідає новому логіну */
+        }
+        /* ЗМІНЕНО: Колір тексту тривалості */
+        body.dark .date-calculator-container .duration-text {
+            color: #00d4ff; /* Яскраво-синій/бірюзовий для акценту */
+        }
+        /* ЗМІНЕНО: Колір тексту загальної кількості днів */
+        body.dark .date-calculator-container .total-days-text {
+            color: #ff9800; /* Помаранчевий для акценту */
+        }
+        /* ЗМІНЕНО: Колір тексту перемикача автоскидання */
+        body.dark .toggle-switch-label {
+            color: #e0e0e0; 
+        }
+        /* ЗМІНЕНО: Колір кнопки копіювання */
+        body.dark .login-generator-container .result-item button {
+            background-color: #5a6268;
+            color: #e0e0e0;
+        }
+        body.dark .login-generator-container .result-item button:hover {
+            background-color: #6c757d;
+        }
+        body.dark .login-generator-container .result-item button.copied {
+            background-color: #38c172; 
         }
 
         /* --- ВАШІ ОРИГІНАЛЬНІ СТИЛІ (ТАБЛИЦЯ) --- */
@@ -156,7 +188,7 @@
         
         .login-generator-container .result-item span {
             font-weight: bold;
-            color: #28a745;
+            color: #28a745; /* Оригінальний колір для світлої теми */
             margin: 0 5px 0 10px; 
             overflow: hidden;
             text-overflow: ellipsis;
@@ -454,7 +486,7 @@
     </div>
 
     <div class="global-version-info">
-        Версія 1.5 🌘</div> <script>
+        Версія 1.5.1 🌘</div> <script>
     // --- Функціонал Генератора Логінів (Без змін) ---
 
     function transliterate(text) {
@@ -818,6 +850,3 @@
 
 </body>
 </html>
-
-
-
