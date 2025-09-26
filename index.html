@@ -5,7 +5,79 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Набір інструментів для Ультранет та ISP Energy</title>
     <link rel="icon" href="tools.png" type="image/png">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
     <style>
+        /* --- АДАПТОВАНІ СТИЛІ З ВАШОГО КОДУ ДЛЯ ТЕМИ --- */
+        body.dark {
+            background-color: #1b1c1d; /* Дуже темний, майже чорний фон */
+            color: #e0e0e0; /* Світлий текст для всього Body */
+        }
+
+        /* ВИПРАВЛЕНО: Робимо всі заголовки, параграфи та мітки світлими */
+        body.dark h1,
+        body.dark h2,
+        body.dark p,
+        body.dark label, 
+        body.dark .page-title,
+        body.dark .global-version-info {
+            color: #e0e0e0 !important; 
+        }
+
+        /* ВАЖЛИВО: Забезпечуємо, що кольори Ультранет та ISP Energy залишаються незмінними */
+        body.dark .page-title .ultranet-color {
+            color: #811e71 !important; 
+        }
+        body.dark .page-title .isp-e-color-i {
+            color: #ffcf00 !important; 
+        }
+        body.dark .page-title .isp-e-color-s {
+            color: #00c100 !important; 
+        }
+        body.dark .page-title .isp-e-color-p {
+            color: #00d4ff !important; 
+        }
+
+        /* Стилі для Калькулятора Дат: робимо мітки світлими */
+        body.dark .date-calculator-container .date-input-group label {
+            color: #e0e0e0; 
+        }
+        
+        /* ЗМІНЕНО: Сірий фон для контейнерів */
+        body.dark .container {
+            background: #282a2c; 
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+        }
+        
+        /* ЗМІНЕНО: Сірий фон для полів вводу */
+        body.dark .login-generator-container textarea {
+            background-color: #333333;
+            border-color: #555555;
+            color: #fff;
+        }
+
+        /* ЗМІНЕНО: Сірий фон для елементів результатів логінів */
+        body.dark .login-generator-container .result-item {
+            background-color: #333333;
+            border-color: #444444;
+        }
+        
+        /* ЗМІНЕНО: Сірий фон для полів вводу дати */
+        body.dark .date-calculator-container .date-input-group input[type="date"] {
+            background-color: #333333;
+            border-color: #555555;
+            color-scheme: dark; 
+            color: #fff;
+        }
+
+        /* ЗМІНЕНО: Сірий фон для секції результатів калькулятора дат */
+        body.dark .date-calculator-container #result-section {
+            background-color: #2b2b2b; /* Трохи світліше сірий для акценту */
+            border: 1px solid #555555;
+        }
+
+        /* --- ВАШІ ОРИГІНАЛЬНІ СТИЛІ (ТАБЛИЦЯ) --- */
         * {
             box-sizing: border-box;
         }
@@ -20,6 +92,7 @@
             padding: 2rem 0;
             background-color: #f4f4f9;
             color: #333;
+            transition: background 0.2s linear; 
         }
 
         h1 {
@@ -29,18 +102,8 @@
             font-size: 2.5rem;
         }
 
-        /* Стиль для підняття заголовка */
         .page-title {
             margin-top: -20px;
-        }
-
-        /* Стилі для нового підзаголовка, щоб імітувати шрифт і розмір H1 */
-        .subtitle {
-            color: #444;
-            margin-bottom: 0.5rem; /* Зменшений відступ, щоб наблизити до h1 */
-            text-align: center;
-            font-size: 2.5rem; /* Ідентичний розмір шрифту H1 */
-            font-weight: normal; /* Можливо, потрібно, щоб виглядав менш акцентовано, якби h1 був bold */
         }
 
         .main-content-wrapper {
@@ -72,7 +135,6 @@
             box-sizing: border-box;
             margin-bottom: 1rem;
             min-height: 120px;
-            /* ЗМІНА: Вимкнення зміни розміру */
             resize: none;
         }
 
@@ -89,30 +151,23 @@
             border-radius: 4px;
             margin-top: 0.5rem;
             background-color: #f9f9f9;
-            /* ФІКС: Гарантує, що висота буде сталою */
             min-height: 45px; 
         }
         
-        /* >>>>>>>>> ПОТРІБНІ ЗМІНИ ДЛЯ ЛОГІНУ <<<<<<<<< */
         .login-generator-container .result-item span {
             font-weight: bold;
             color: #28a745;
-            /* ЗМІНА: Зменшення відступу праворуч до мінімального, щоб логін був ближче до кнопки */
             margin: 0 5px 0 10px; 
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap; 
-            /* ЗМІНА: Дозволяємо елементу розтягуватися (забирати весь вільний простір) */
             flex-grow: 1; 
-            /* ЗМІНА: Прибираємо обмеження ширини */
             max-width: none;
-            flex-shrink: 1; /* Дозволяємо стискатися, якщо не вистачає місця */
+            flex-shrink: 1;
             text-align: left;
             min-width: 50px;
         }
-        /* >>>>>>>>> КІНЕЦЬ ЗМІН <<<<<<<<< */
 
-        /* Приховуємо оригінальне ім'я */
         .login-generator-container .result-item .original-name {
             display: none; 
             font-weight: normal;
@@ -120,13 +175,12 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            flex-grow: 0; /* Цей елемент більше не росте */
+            flex-grow: 0;
         }
         .login-generator-container .result-item button {
             padding: 0.4rem 0.8rem;
             font-size: 0.9rem;
             background-color: #6c757d;
-            /* ФІКС: Задаємо фіксовану ширину для кнопки */
             width: 110px; 
             min-width: 110px;
             border: none;
@@ -134,7 +188,6 @@
             cursor: pointer;
             border-radius: 4px;
             transition: background-color 0.2s;
-            /* ФІКС: Запобігаємо стисканню */
             flex-shrink: 0; 
         }
         .login-generator-container .result-item button:hover {
@@ -149,10 +202,9 @@
             text-align: center;
         }
 
-        /* Гарантує, що два поля дати стоять поруч і рівномірно розподіляють простір */
         .date-inputs-row {
             display: flex;
-            justify-content: center; /* Центруємо обидва вузькі поля разом */
+            justify-content: center;
             gap: 15px;
             margin-bottom: 20px;
             width: 100%;
@@ -162,7 +214,6 @@
             display: flex;
             flex-direction: column;
             margin-bottom: 0px;
-            /* Вужчі поля */
             max-width: 170px;
             width: 100%;
         }
@@ -171,7 +222,6 @@
             font-size: 1.1em;
             font-weight: bold;
             color: #555;
-            /* Вирівнювання по горизонталі: Центруємо текст мітки */
             text-align: center;
             width: 100%;
         }
@@ -182,7 +232,6 @@
             font-size: 1em;
             cursor: pointer;
             transition: border-color 0.3s;
-            /* Вирівнювання: Займає 100% ширини групи */
             width: 100%;
         }
         .date-calculator-container .date-input-group input[type="date"]:hover,
@@ -191,13 +240,13 @@
             outline: none;
         }
 
-        /* НОВИЙ СТИЛЬ: для гарного слайдер-перемикача */
+        /* Стилі для гарного слайдер-перемикача */
         .reset-toggle-container {
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-top: -5px; /* Підняти ближче до календарів */
-            margin-bottom: 15px; /* Відступ від блоку результату */
+            margin-top: -5px;
+            margin-bottom: 15px;
             padding: 5px;
         }
         .toggle-switch-label {
@@ -210,27 +259,24 @@
         }
         
         .toggle-switch-label input {
-            /* Приховуємо стандартний чекбокс */
             opacity: 0;
             width: 0;
             height: 0;
         }
         
         .toggle-slider {
-            /* База для слайдера */
             position: relative;
             cursor: pointer;
-            width: 44px; /* Ширина слайдера */
-            height: 24px; /* Висота слайдера */
-            background-color: #ccc; /* Колір вимкненого стану */
-            border-radius: 24px; /* Округлі кути */
+            width: 44px;
+            height: 24px;
+            background-color: #ccc;
+            border-radius: 24px;
             transition: background-color 0.4s;
             margin-right: 10px;
-            flex-shrink: 0; /* Не дає зменшуватися */
+            flex-shrink: 0;
         }
         
         .toggle-slider:before {
-            /* Коло (ручка) перемикача */
             content: "";
             position: absolute;
             height: 18px;
@@ -243,16 +289,13 @@
             box-shadow: 0 1px 3px rgba(0,0,0,0.4);
         }
         
-        /* Коли чекбокс увімкнений */
         .toggle-switch-label input:checked + .toggle-slider {
-            background-color: #28a745; /* Зелений колір увімкненого стану */
+            background-color: #28a745;
         }
         
-        /* Рух ручки вправо */
         .toggle-switch-label input:checked + .toggle-slider:before {
             transform: translateX(20px);
         }
-        /* КІНЕЦЬ НОВОГО СТИЛЮ */
 
         .date-calculator-container #result-section {
             margin-top: 20px;
@@ -273,11 +316,11 @@
             line-height: 1.4;
         }
         .date-calculator-container .duration-text {
-            color: #007bff; /* Синій для точної різниці (місяці та дні) */
+            color: #007bff;
             font-weight: bold;
         }
         .date-calculator-container .total-days-text {
-            color: #ff5722; /* Помаранчевий для загальної кількості днів */
+            color: #ff5722;
             font-weight: bold;
         }
 
@@ -290,6 +333,10 @@
             .container {
                 width: 100%;
             }
+            .toggle-button-wrapper {
+                top: 10px;
+                right: 10px;
+            }
         }
 
         .global-version-info {
@@ -298,17 +345,71 @@
             color: #888;
         }
 
-        /* Стиль для приховування відображення таймера */
         #reset-timer-display {
             display: none;
         }
+
+
+        /* --- СТИЛІ ДЛЯ ПЕРЕМИКАЧА ТЕМ (ПРАВИЙ ВЕРХНІЙ КУТ) --- */
+        .toggle-button-wrapper {
+            position: absolute; 
+            top: 30px; 
+            right: 30px; 
+            z-index: 100; 
+        }
+        
+        .checkbox {
+            opacity: 0;
+            position: absolute;
+        }
+
+        .checkbox-label {
+            background-color: #14062f;
+            width: 50px;
+            height: 26px;
+            border-radius: 50px;
+            position: relative;
+            padding: 5px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .fa-moon {color: #f1c40f;} 
+        .fa-sun {color: #f39c12;}
+
+        .checkbox-label .ball {
+            background-color: #fff;
+            width: 22px;
+            height: 22px;
+            position: absolute;
+            left: 2px;
+            top: 2px;
+            border-radius: 50%;
+            transition: transform 0.2s linear;
+        }
+
+        .checkbox:checked + .checkbox-label .ball {
+            transform: translateX(24px);
+        }
+
     </style>
 </head>
 <body>
+    
+    <div class="toggle-button-wrapper">
+        <input type="checkbox" class="checkbox" id="dark-mode-checkbox">
+        <label for="dark-mode-checkbox" class="checkbox-label">
+            <i class="fas fa-moon"></i>
+            <i class="fas fa-sun"></i>
+            <span class="ball"></span>
+        </label>
+    </div>
     <h1 class="page-title">Ультимативний набір інструментів
         <br>
-        <span style="color: #811e71;">Ультранет</span> та
-        <span style="color: #ffcf00;">I</span><span style="color: #00c100;">S</span><span style="color: #00d4ff;">P</span> Energy
+        <span class="ultranet-color" style="color: #811e71;">Ультранет</span> та
+        <span class="isp-e-color-i" style="color: #ffcf00;">I</span><span class="isp-e-color-s" style="color: #00c100;">S</span><span class="isp-e-color-p" style="color: #00d4ff;">P</span> Energy
     </h1>
 
     <div class="main-content-wrapper">
@@ -353,8 +454,8 @@
     </div>
 
     <div class="global-version-info">
-        Версія 1.4.1 🎃</div> <script>
-    // --- Функціонал Генератора Логінів ---
+        Версія 1.5 🌘</div> <script>
+    // --- Функціонал Генератора Логінів (Без змін) ---
 
     function transliterate(text) {
         const mapping = {
@@ -407,7 +508,6 @@
             buttonElement.classList.add('copied');
             buttonElement.disabled = true;
 
-            // Скидаємо текст у полі вводу, але зберігаємо список згенерованих логінів
             document.getElementById('fullNameInput').value = ''; 
             
             setTimeout(() => {
@@ -424,10 +524,9 @@
         const fullNameInput = document.getElementById('fullNameInput');
         const fullNames = fullNameInput.value.trim();
         const resultsContainer = document.getElementById('results-container');
-        resultsContainer.innerHTML = ''; // Очищення контейнера перед генерацією
+        resultsContainer.innerHTML = ''; 
 
         if (!fullNames) {
-            // Якщо поле вводу порожнє, очистити контейнер результатів
             return;
         }
 
@@ -464,13 +563,11 @@
                 }
             }
 
-            // Додаткова обробка для видалення пробілів/спецсимволів, якщо вони залишилися
             login = login.replace(/[^a-z0-9]/g, '');
 
             if (login === '') {
                 const errorElement = document.createElement('div');
                 errorElement.className = 'result-item';
-                // Використовуємо <span> для виведення повідомлення про помилку
                 errorElement.innerHTML = `<span style="color: #dc3545;">"${fullName}" - Некоректний формат</span>`; 
                 resultsContainer.appendChild(errorElement);
                 return;
@@ -478,7 +575,6 @@
 
             const resultItem = document.createElement('div');
             resultItem.className = 'result-item';
-            // Логін йде першим, прихований ПІБ - другим
             resultItem.innerHTML = `
                 <span>${login}</span>
                 <div class="original-name" title="${fullName}">${fullName}</div>
@@ -488,14 +584,12 @@
         });
     }
 
-    // --- Функціонал Калькулятора Дат ---
-
-    // Глобальні змінні для таймера та стану
+    // --- Функціонал Калькулятора Дат (Без змін) ---
+    
     let endDateResetTimer;
     const RESET_DELAY_SECONDS = 20;
-    let isAutoResetEnabled = true; // За замовчуванням увімкнено
+    let isAutoResetEnabled = true;
 
-    // Функція для правильного відмінювання
     function getCorrectDayWord(number) {
         if (number === 0) {
             return "днів";
@@ -504,12 +598,10 @@
         let lastTwoDigits = number % 100;
         let lastDigit = number % 10;
 
-        // Виняток для 11-19
         if (lastTwoDigits >= 11 && lastTwoDigits <= 19) {
             return "днів";
         }
 
-        // Правила для чисел, що не є винятками
         if (lastDigit === 1) {
             return "день";
         } else if (lastDigit >= 2 && lastDigit <= 4) {
@@ -527,7 +619,6 @@
         return `${year}-${month}-${day}`;
     }
 
-    // Допоміжна функція для отримання дати наступного дня
     function getNextDayDateString(startDateString) {
         const startDate = new Date(startDateString + 'T00:00:00');
         const nextDayTime = startDate.getTime() + (1000 * 60 * 60 * 24);
@@ -544,20 +635,16 @@
             calculateDifference();
         }
 
-        // Очищаємо таймер, оскільки він спрацював
         clearTimeout(endDateResetTimer);
     }
 
     function startResetTimer() {
-        // Якщо функція вимкнена, просто виходимо
         if (!isAutoResetEnabled) {
             return;
         }
 
-        // Скидаємо попередній таймер, якщо він існує
         clearTimeout(endDateResetTimer);
 
-        // Запускаємо новий таймер
         endDateResetTimer = setTimeout(resetEndDateToNextDay, RESET_DELAY_SECONDS * 1000);
     }
 
@@ -565,7 +652,6 @@
         const startDateInput = document.getElementById('start-date').value;
         const endDateInput = document.getElementById('end-date');
 
-        // Очищаємо таймер при зміні початкової дати
         clearTimeout(endDateResetTimer);
 
         if (startDateInput) {
@@ -575,7 +661,6 @@
             const endDateValue = endDateInput.value;
             const currentEndDate = endDateValue ? new Date(endDateValue + 'T00:00:00') : null;
 
-            // Скидаємо кінцеву дату на наступний день, якщо вона порожня або менша/рівна початковій
             if (!currentEndDate || startDate >= currentEndDate) {
                 endDateInput.value = nextDayDateString;
             }
@@ -589,21 +674,17 @@
     }
 
     function handleEndDateChange() {
-        // Просто запускаємо розрахунок, а потім тихий таймер
         calculateDifference();
         startResetTimer();
     }
 
-    // НОВА ФУНКЦІЯ: Обробник перемикача
     function handleAutoResetToggle() {
         const toggle = document.getElementById('auto-reset-toggle');
         isAutoResetEnabled = toggle.checked;
 
-        // Якщо вимикаємо, то очищаємо будь-який активний таймер
         if (!isAutoResetEnabled) {
             clearTimeout(endDateResetTimer);
         } else {
-            // Якщо вмикаємо, і кінцева дата вже встановлена, запускаємо таймер
             if (document.getElementById('end-date').value) {
                 startResetTimer();
             }
@@ -629,9 +710,6 @@
             return;
         }
 
-        /* * НОВА ЛОГІКА: Розрахунок періоду включно з кінцевою датою (наприклад, 25.09 до 25.10 = 1 міс. 1 дн.)
-        * Ми додаємо 1 день до кінцевої дати і рахуємо різницю до цієї "наступної" дати.
-        */
         const endDateInclusive = new Date(endDate);
         endDateInclusive.setDate(endDateInclusive.getDate() + 1);
 
@@ -646,10 +724,8 @@
         let months = (endYearInclusive - startYear) * 12 + (endMonthInclusive - startMonth);
         let days = endDayInclusive - startDay;
         
-        // Коригування, якщо кількість днів від'ємна
         if (days < 0) {
             months--;
-            // Кількість днів у місяці, що передує endMonthInclusive
             const prevMonthDate = new Date(endYearInclusive, endMonthInclusive, 0); 
             days += prevMonthDate.getDate();
         }
@@ -660,21 +736,18 @@
             months = months % 12;
         }
 
-        // Розрахунок загальної кількості днів (потрібен для другого рядка виводу)
         const diffTime = endDate - startDate;
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        const totalDaysInclusive = diffDays + 1; // КІЛЬКІСТЬ ДНІВ ВКЛЮЧНО
-        const dayWord = getCorrectDayWord(totalDaysInclusive); // Правильне відмінювання
+        const totalDaysInclusive = diffDays + 1;
+        const dayWord = getCorrectDayWord(totalDaysInclusive);
 
 
-        // Фінальний вивід
-        if (totalDaysInclusive === 1) { // Якщо дати збігаються (тобто totalDaysInclusive = 1)
+        if (totalDaysInclusive === 1) {
              resultDisplay.innerHTML = `<span class="total-days-text" style="color: #38c172;">Дати збігаються. Включно: ${totalDaysInclusive} ${dayWord}.</span>`;
         } else {
             let resultText = '';
             let durationText = '';
             
-            // Формування точної різниці (роки, місяці та дні)
             let parts = [];
             if (years > 0) parts.push(`${years} рік.`);
             if (months > 0) parts.push(`${months} міс.`);
@@ -684,20 +757,50 @@
 
 
             if (durationText) {
-                // Додаємо напис "Період"
                 resultText += `<span class="duration-text">Період (включно): ${durationText}</span><br>`;
             }
 
-            // Загальна кількість днів (ВКЛЮЧНО) з коректним відмінюванням
             resultText += `<span class="total-days-text">Загальна кількість (включно): ${totalDaysInclusive} ${dayWord}.</span>`;
 
             resultDisplay.innerHTML = resultText;
         }
     }
 
+    // --- ДОДАНО: Функціонал Перемикача Тем ---
+
+    const checkbox = document.getElementById("dark-mode-checkbox");
+
+    function applyTheme(isDark) {
+        if (isDark) {
+            document.body.classList.add("dark");
+            localStorage.setItem('theme', 'dark');
+        } else {
+            document.body.classList.remove("dark");
+            localStorage.setItem('theme', 'light');
+        }
+    }
+
+    function loadTheme() {
+        const savedTheme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+        let isDark = savedTheme === 'dark' || (savedTheme === null && prefersDark);
+        
+        checkbox.checked = isDark;
+        applyTheme(isDark);
+    }
+
+
+    checkbox.addEventListener("change", () => {
+        applyTheme(checkbox.checked);
+    });
+
     // --- Ініціалізація ---
 
     document.addEventListener('DOMContentLoaded', () => {
+        // Ініціалізація Темної теми
+        loadTheme();
+        
         // Ініціалізація Генератора Логінів
         const fullNameInput = document.getElementById('fullNameInput');
         fullNameInput.addEventListener('input', generateLogins); 
