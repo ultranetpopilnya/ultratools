@@ -104,7 +104,9 @@
             flex-grow: 0; 
             flex-shrink: 0; 
         }
+        /* ЗМІНА: Приховуємо оригінальне ім'я, як було запрошено */
         .login-generator-container .result-item .original-name {
+            display: none; 
             font-weight: normal;
             color: #555;
             white-space: nowrap;
@@ -309,7 +311,7 @@
         <div class="container login-generator-container">
             <h2 style="color: #444; margin-top: 0;">👨‍💼 Генератор логінів</h2>
             <p>Введіть повністю одне або декілька ПІБ, кожне — з нового рядка.<br>Також можливий трансліт ФОП, ТОВ, ПП.</p>
-            <textarea id="fullNameInput" rows="5" placeholder="Прізвище, Ім'я, та по Батькові"></textarea>
+            <textarea id="fullNameInput" rows="5" placeholder="Прізвище, Ім'я, та по Батькові" oninput="generateLogins()"></textarea>
             <div id="results-container"></div>
         </div>
 
@@ -400,8 +402,10 @@
             buttonElement.classList.add('copied');
             buttonElement.disabled = true;
 
-            // document.getElementById('fullNameInput').value = ''; // Видалено очищення для кращого UX
-
+            // ЗМІНА: Скидаємо текст у полі вводу, але НЕ викликаємо generateLogins(), 
+            // щоб згенерований список ЛОГІНІВ залишився.
+            document.getElementById('fullNameInput').value = ''; 
+            
             setTimeout(() => {
                 buttonElement.textContent = originalText;
                 buttonElement.classList.remove('copied');
@@ -416,9 +420,10 @@
         const fullNameInput = document.getElementById('fullNameInput');
         const fullNames = fullNameInput.value.trim();
         const resultsContainer = document.getElementById('results-container');
-        resultsContainer.innerHTML = '';
+        resultsContainer.innerHTML = ''; // Очищення контейнера перед генерацією
 
         if (!fullNames) {
+            // Якщо поле вводу порожнє, очистити контейнер результатів (вже зроблено вище)
             return;
         }
 
@@ -461,16 +466,18 @@
             if (login === '') {
                 const errorElement = document.createElement('div');
                 errorElement.className = 'result-item';
-                errorElement.innerHTML = `<span class="original-name" style="color: #dc3545;">"${fullName}" - Некоректний формат</span>`;
+                // Використовуємо <span> для виведення повідомлення про помилку
+                errorElement.innerHTML = `<span style="color: #dc3545;">"${fullName}" - Некоректний формат</span>`; 
                 resultsContainer.appendChild(errorElement);
                 return;
             }
 
             const resultItem = document.createElement('div');
             resultItem.className = 'result-item';
+            // Логін йде першим, прихований ПІБ - другим
             resultItem.innerHTML = `
-                <div class="original-name" title="${fullName}">${fullName}</div>
                 <span>${login}</span>
+                <div class="original-name" title="${fullName}">${fullName}</div>
                 <button onclick="copyLogin('${login}', this)">Копіювати</button>
             `;
             resultsContainer.appendChild(resultItem);
@@ -689,7 +696,8 @@
     document.addEventListener('DOMContentLoaded', () => {
         // Ініціалізація Генератора Логінів
         const fullNameInput = document.getElementById('fullNameInput');
-        fullNameInput.addEventListener('input', generateLogins);
+        // Додаємо oninput для очищення списку, коли користувач починає вводити новий текст
+        fullNameInput.addEventListener('input', generateLogins); 
 
         // Ініціалізація Калькулятора Дат
         const today = new Date().toISOString().split('T')[0];
