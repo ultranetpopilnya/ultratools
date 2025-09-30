@@ -471,7 +471,7 @@
 
             <div class="reset-toggle-container">
                 <label class="toggle-switch-label">
-                    <input type="checkbox" id="auto-reset-toggle" checked onchange="handleAutoResetToggle()">
+                    <input type="checkbox" id="auto-reset-toggle" onchange="handleAutoResetToggle()">
                     <span class="toggle-slider"></span>
                     Автоматичне скидання кінцевої дати (20 сек.)
                 </label>
@@ -486,7 +486,7 @@
     </div>
 
     <div class="global-version-info">
-        Версія 1.5.1 🌘</div> <script>
+        Версія 1.5.2 🌘</div> <script>
     // --- Функціонал Генератора Логінів (Без змін) ---
 
     function transliterate(text) {
@@ -616,11 +616,12 @@
         });
     }
 
-    // --- Функціонал Калькулятора Дат (Без змін) ---
+    // --- Функціонал Калькулятора Дат (ОНОВЛЕНО) ---
     
     let endDateResetTimer;
     const RESET_DELAY_SECONDS = 20;
-    let isAutoResetEnabled = true;
+    // Значення за замовчуванням: true, буде оновлено функцією loadAutoResetState
+    let isAutoResetEnabled = true; 
 
     function getCorrectDayWord(number) {
         if (number === 0) {
@@ -710,9 +711,13 @@
         startResetTimer();
     }
 
+    // ✅ ОНОВЛЕНО: Функція для збереження стану перемикача
     function handleAutoResetToggle() {
         const toggle = document.getElementById('auto-reset-toggle');
         isAutoResetEnabled = toggle.checked;
+
+        // Зберігаємо поточний стан у localStorage
+        localStorage.setItem('autoResetEnabled', isAutoResetEnabled);
 
         if (!isAutoResetEnabled) {
             clearTimeout(endDateResetTimer);
@@ -720,6 +725,28 @@
             if (document.getElementById('end-date').value) {
                 startResetTimer();
             }
+        }
+    }
+
+    // ✅ ДОДАНО: Функція для завантаження стану перемикача
+    function loadAutoResetState() {
+        const savedState = localStorage.getItem('autoResetEnabled');
+        const toggle = document.getElementById('auto-reset-toggle');
+        
+        // Якщо стан є в сховищі, використовуємо його. savedState буде 'true' або 'false' як рядок.
+        if (savedState !== null) {
+            // Конвертуємо рядок у булеве значення
+            isAutoResetEnabled = savedState === 'true'; 
+            toggle.checked = isAutoResetEnabled;
+        } else {
+            // Якщо нічого не збережено, використовуємо значення за замовчуванням (checked = true)
+            isAutoResetEnabled = true; 
+            toggle.checked = true;
+        }
+        
+        // Перевіряємо, чи потрібно запустити таймер після завантаження
+        if (isAutoResetEnabled && document.getElementById('end-date').value) {
+            startResetTimer();
         }
     }
 
@@ -798,7 +825,7 @@
         }
     }
 
-    // --- ДОДАНО: Функціонал Перемикача Тем ---
+    // --- Функціонал Перемикача Тем (Без змін) ---
 
     const checkbox = document.getElementById("dark-mode-checkbox");
 
@@ -827,7 +854,7 @@
         applyTheme(checkbox.checked);
     });
 
-    // --- Ініціалізація ---
+    // --- Ініціалізація (ОНОВЛЕНО) ---
 
     document.addEventListener('DOMContentLoaded', () => {
         // Ініціалізація Темної теми
@@ -842,6 +869,9 @@
         const startDateInput = document.getElementById('start-date');
 
         startDateInput.value = today;
+
+        // ✅ Завантажуємо стан перемикача Автоскидання
+        loadAutoResetState(); 
 
         // Встановлюємо наступний день і розраховуємо різницю
         updateEndDateAndCalculate();
