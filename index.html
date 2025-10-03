@@ -69,7 +69,8 @@
         }
         
         /* ЗМІНЕНО: Сірий фон для полів вводу дати */
-        body.dark .date-calculator-container .date-input-group input[type="date"] {
+        body.dark .date-calculator-container .date-input-group input[type="date"],
+        body.dark .date-calculator-container .date-input-group input[type="time"] { /* ⬅️ ДОДАНО TIME */
             background-color: #333333;
             border-color: #555555;
             color-scheme: dark; 
@@ -93,6 +94,11 @@
         body.dark .date-calculator-container .total-days-text {
             color: #ff9800; /* Помаранчевий для акценту */
         }
+        /* ✅ ОНОВЛЕНО: Колір тексту загальної кількості годин (НОВЕ) - ТЕМНА ТЕМА */
+        body.dark .date-calculator-container .total-hours-text {
+            color: #9370db; /* Світлий, нейтральний фіолетовий */
+        }
+
         /* ЗМІНЕНО: Колір тексту перемикача автоскидання */
         body.dark .toggle-switch-label {
             color: #e0e0e0; 
@@ -257,7 +263,8 @@
             text-align: center;
             width: 100%;
         }
-        .date-calculator-container .date-input-group input[type="date"] {
+        .date-calculator-container .date-input-group input[type="date"],
+        .date-calculator-container .date-input-group input[type="time"] { /* ⬅️ ДОДАНО TIME */
             padding: 10px;
             border: 2px solid #ccc;
             border-radius: 6px;
@@ -265,13 +272,16 @@
             cursor: pointer;
             transition: border-color 0.3s;
             width: 100%;
+            margin-bottom: 5px; /* Невеликий відступ під полем */
         }
         .date-calculator-container .date-input-group input[type="date"]:hover,
-        .date-calculator-container .date-input-group input[type="date"]:focus {
+        .date-calculator-container .date-input-group input[type="time"]:hover, /* ⬅️ ДОДАНО TIME */
+        .date-calculator-container .date-input-group input[type="date"]:focus,
+        .date-calculator-container .date-input-group input[type="time"]:focus { /* ⬅️ ДОДАНО TIME */
             border-color: #007bff;
             outline: none;
         }
-
+        
         /* Стилі для гарного слайдер-перемикача */
         .reset-toggle-container {
             display: flex;
@@ -353,6 +363,11 @@
         }
         .date-calculator-container .total-days-text {
             color: #ff5722;
+            font-weight: bold;
+        }
+        /* ✅ ОНОВЛЕНО: Колір тексту загальної кількості годин (НОВЕ) - СВІТЛА ТЕМА */
+        .date-calculator-container .total-hours-text {
+            color: #6a0dad; /* Темний, насичений фіолетовий для хорошої читабельності */
             font-weight: bold;
         }
 
@@ -454,17 +469,19 @@
         </div>
 
         <div class="container date-calculator-container">
-            <h2 style="color: #444; margin-top: 0;">📅 Калькулятор різниці в роках/місяцях/днях між датами</h2>
+            <h2 style="color: #444; margin-top: 0;">📅 Калькулятор різниці в роках/місяцях/днях/годинах між датами</h2>
 
             <div class="date-inputs-row">
                 <div class="date-input-group">
                     <label for="start-date">🗓️ Початкова дата:</label>
                     <input type="date" id="start-date" name="start-date" onchange="handleStartDateChange()" required>
+                    <input type="time" id="start-time" name="start-time" onchange="calculateDifference()" value="00:00" required>
                 </div>
 
                 <div class="date-input-group">
                     <label for="end-date">➡️ Кінцева дата:</label>
                     <input type="date" id="end-date" name="end-date" onchange="handleEndDateChange()" required>
+                    <input type="time" id="end-time" name="end-time" onchange="handleEndDateChange()" value="00:00" required>
                     <div id="reset-timer-display"></div>
                 </div>
             </div>
@@ -486,7 +503,7 @@
     </div>
 
     <div class="global-version-info">
-        Версія 1.5.2 🌘</div> <script>
+        Версія 1.5.3 🌓</div> <script>
     // --- Функціонал Генератора Логінів (Без змін) ---
 
     function transliterate(text) {
@@ -616,7 +633,7 @@
         });
     }
 
-    // --- Функціонал Калькулятора Дат (ОНОВЛЕНО) ---
+    // --- Функціонал Калькулятора Дат (ОНОВЛЕНО ДЛЯ ЧАСУ) ---
     
     let endDateResetTimer;
     const RESET_DELAY_SECONDS = 20;
@@ -662,9 +679,11 @@
     function resetEndDateToNextDay() {
         const startDateInput = document.getElementById('start-date').value;
         const endDateInput = document.getElementById('end-date');
+        const endTimeInput = document.getElementById('end-time'); 
 
         if (startDateInput) {
             endDateInput.value = getNextDayDateString(startDateInput);
+            endTimeInput.value = document.getElementById('start-time').value; 
             calculateDifference();
         }
 
@@ -683,30 +702,37 @@
 
     function updateEndDateAndCalculate() {
         const startDateInput = document.getElementById('start-date').value;
+        const startTimeInput = document.getElementById('start-time').value; 
         const endDateInput = document.getElementById('end-date');
+        const endTimeInput = document.getElementById('end-time'); 
 
         clearTimeout(endDateResetTimer);
 
         if (startDateInput) {
-            const startDate = new Date(startDateInput + 'T00:00:00');
+            const startDate = new Date(startDateInput + 'T' + startTimeInput + ':00'); 
             const nextDayDateString = getNextDayDateString(startDateInput);
 
             const endDateValue = endDateInput.value;
-            const currentEndDate = endDateValue ? new Date(endDateValue + 'T00:00:00') : null;
+            const currentEndDate = endDateValue ? new Date(endDateValue + 'T' + endTimeInput.value + ':00') : null; 
 
+            // Перевіряємо, чи кінцева дата/час не встановлена або дорівнює/пізніше початкової дати/часу (для автоматичного встановлення)
             if (!currentEndDate || startDate >= currentEndDate) {
+                // Якщо кінцева дата не встановлена або менша, встановлюємо наступний день з тим самим часом
                 endDateInput.value = nextDayDateString;
+                endTimeInput.value = startTimeInput; 
             }
         }
-
+        
         calculateDifference();
     }
 
     function handleStartDateChange() {
+        // Також оновлюємо кінцеву дату, коли змінюється початкова дата.
         updateEndDateAndCalculate();
     }
 
     function handleEndDateChange() {
+        // Оновлюємо розрахунок, коли змінюється кінцева дата чи час
         calculateDifference();
         startResetTimer();
     }
@@ -753,76 +779,142 @@
 
     function calculateDifference() {
         const startDateInput = document.getElementById('start-date').value;
+        const startTimeInput = document.getElementById('start-time').value; 
         const endDateValue = document.getElementById('end-date').value;
+        const endTimeValue = document.getElementById('end-time').value; 
         const resultDisplay = document.getElementById('result-display');
 
-        if (!startDateInput || !endDateValue) {
-            resultDisplay.innerHTML = 'Оберіть дві дати для розрахунку.';
+        if (!startDateInput || !endDateValue || !startTimeInput || !endTimeValue) {
+            resultDisplay.innerHTML = 'Оберіть дві дати та час для розрахунку.';
             return;
         }
 
-        const startDate = new Date(startDateInput + 'T00:00:00');
-        const endDate = new Date(endDateValue + 'T00:00:00');
+        // Створення об'єктів Date з урахуванням часу
+        const startDate = new Date(startDateInput + 'T' + startTimeInput + ':00');
+        const endDate = new Date(endDateValue + 'T' + endTimeValue + ':00');
 
         if (startDate > endDate) {
-            resultDisplay.innerHTML = '<span style="color: red;">Початкова дата не може бути пізнішою за Кінцеву. Спробуйте навпаки.</span>';
+            resultDisplay.innerHTML = '<span style="color: red;">Початкова дата та час не можуть бути пізнішими за Кінцеву.</span>';
+            return;
+        }
+        
+        // --- РОЗРАХУНОК: Загальна кількість годин/днів (на основі мілісекунд) ---
+        const diffTime = endDate.getTime() - startDate.getTime();
+
+        const totalHours = Math.floor(diffTime / (1000 * 60 * 60));
+        const totalMinutesRemainder = Math.floor((diffTime % (1000 * 60 * 60)) / (1000 * 60));
+
+        let totalHoursText = `${totalHours} год.`;
+        if (totalMinutesRemainder > 0) {
+            totalHoursText += ` та ${totalMinutesRemainder} хв.`;
+        }
+        
+        const totalDaysInclusive = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // Округлюємо вгору, щоб коректно показати "днів"
+        const dayWord = getCorrectDayWord(totalDaysInclusive);
+        
+        // --- РОЗРАХУНОК: Період (повний) у роках/місяцях/днях (календарний розрахунок) ---
+        
+        let tempStartDate = new Date(startDate);
+        let tempEndDate = new Date(endDate);
+        
+        // Якщо час кінця менший за час початку, кінцева дата "неповна", тому беремо попередній день
+        const startTotalMinutes = startDate.getHours() * 60 + startDate.getMinutes();
+        const endTotalMinutes = endDate.getHours() * 60 + endDate.getMinutes();
+        
+        if (endTotalMinutes < startTotalMinutes) {
+            // Якщо час кінця раніше часу початку, то останній день рахуємо "неповним"
+            tempEndDate.setDate(tempEndDate.getDate() - 1);
+        }
+        
+        // Якщо дати однакові, але час різний (тобто різниця менше доби)
+        if (tempStartDate.toDateString() === tempEndDate.toDateString() && diffTime > 0) {
+            // Різниця менше доби, виводимо лише час у "Період (повний)"
+            let durationText = `${totalHours} год. та ${totalMinutesRemainder} хв.`;
+            
+            resultDisplay.innerHTML = `
+                <span class="total-hours-text">Кількість годин (загальна): ${totalHoursText}</span><br>
+                <span class="duration-text">Період (повний): ${durationText}</span><br>
+                <span class="total-days-text">Загальна кількість (днів): ${totalDaysInclusive} ${dayWord}.</span>
+            `;
             return;
         }
 
-        const endDateInclusive = new Date(endDate);
-        endDateInclusive.setDate(endDateInclusive.getDate() + 1);
 
-        const startYear = startDate.getFullYear();
-        const startMonth = startDate.getMonth();
-        const startDay = startDate.getDate();
+        let years = 0;
+        let months = 0;
+        let days = 0;
+        
+        const endDay = tempEndDate.getDate();
+        const endMonth = tempEndDate.getMonth();
+        const endYear = tempEndDate.getFullYear();
+        
+        const startDay = tempStartDate.getDate();
+        const startMonth = tempStartDate.getMonth();
+        const startYear = tempStartDate.getFullYear();
 
-        const endYearInclusive = endDateInclusive.getFullYear();
-        const endMonthInclusive = endDateInclusive.getMonth();
-        const endDayInclusive = endDateInclusive.getDate();
+        // 1. Різниця в роках та місяцях
+        months = (endYear - startYear) * 12 + (endMonth - startMonth);
         
-        let months = (endYearInclusive - startYear) * 12 + (endMonthInclusive - startMonth);
-        let days = endDayInclusive - startDay;
-        
+        // 2. Різниця в днях
+        days = endDay - startDay;
+
+        // Коригування, якщо день кінця раніше дня початку
         if (days < 0) {
             months--;
-            const prevMonthDate = new Date(endYearInclusive, endMonthInclusive, 0); 
+            // Кількість днів у попередньому місяці кінцевої дати
+            const prevMonthDate = new Date(endYear, endMonth, 0); 
             days += prevMonthDate.getDate();
         }
 
-        let years = 0;
+        // 3. Коригування місяців до 12
         if (months >= 12) {
             years = Math.floor(months / 12);
             months = months % 12;
         }
-
-        const diffTime = endDate - startDate;
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        const totalDaysInclusive = diffDays + 1;
-        const dayWord = getCorrectDayWord(totalDaysInclusive);
-
-
-        if (totalDaysInclusive === 1) {
-             resultDisplay.innerHTML = `<span class="total-days-text" style="color: #38c172;">Дати збігаються. Включно: ${totalDaysInclusive} ${dayWord}.</span>`;
-        } else {
-            let resultText = '';
-            let durationText = '';
-            
-            let parts = [];
-            if (years > 0) parts.push(`${years} рік.`);
-            if (months > 0) parts.push(`${months} міс.`);
-            if (days > 0) parts.push(`${days} дн.`);
-
-            durationText = parts.filter(Boolean).join(' та ');
-
-
-            if (durationText) {
-                resultText += `<span class="duration-text">Період (включно): ${durationText}</span><br>`;
-            }
-
-            resultText += `<span class="total-days-text">Загальна кількість (включно): ${totalDaysInclusive} ${dayWord}.</span>`;
-
-            resultDisplay.innerHTML = resultText;
+        
+        // 4. Додавання +1 день, якщо час початку = часу кінця (для інклюзивності)
+        // АБО якщо час кінця більший/рівний часу початку
+        if (endTotalMinutes >= startTotalMinutes) {
+             days++;
         }
+        
+        // Коригування днів, якщо стало більше, ніж у поточному місяці
+        let tempDateForDayCorrection = new Date(tempEndDate);
+        let maxDaysInMonth = new Date(tempDateForDayCorrection.getFullYear(), tempDateForDayCorrection.getMonth() + 1, 0).getDate();
+        
+        if (days > maxDaysInMonth) {
+            days -= maxDaysInMonth;
+            months++;
+        }
+        
+        // Фінальне коригування місяців/років після додавання дня
+        if (months >= 12) {
+            years++;
+            months -= 12;
+        }
+        
+        
+        let resultText = '';
+        let durationText = '';
+        
+        let parts = [];
+        if (years > 0) parts.push(`${years} р.`);
+        if (months > 0) parts.push(`${months} міс.`);
+        if (days > 0) parts.push(`${days} дн.`);
+        
+        durationText = parts.filter(Boolean).join(' та ');
+        
+        if (durationText === '') {
+            durationText = '0 дн.';
+        }
+        
+        // Формування результату
+        resultText += `<span class="total-hours-text">Кількість годин (загальна): ${totalHoursText}</span><br>`;
+        resultText += `<span class="duration-text">Період (повний): ${durationText}</span><br>`;
+        resultText += `<span class="total-days-text">Загальна кількість (днів): ${totalDaysInclusive} ${dayWord}.</span>`;
+
+
+        resultDisplay.innerHTML = resultText;
     }
 
     // --- Функціонал Перемикача Тем (Без змін) ---
@@ -867,8 +959,15 @@
         // Ініціалізація Калькулятора Дат
         const today = new Date().toISOString().split('T')[0];
         const startDateInput = document.getElementById('start-date');
+        const startTimeInput = document.getElementById('start-time');
+        const endTimeInput = document.getElementById('end-time');
 
         startDateInput.value = today;
+        
+        // Встановлення часу за замовчуванням
+        const defaultTime = "00:00"; 
+        startTimeInput.value = defaultTime; 
+        endTimeInput.value = defaultTime; 
 
         // ✅ Завантажуємо стан перемикача Автоскидання
         loadAutoResetState(); 
