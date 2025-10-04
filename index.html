@@ -386,10 +386,14 @@
             }
         }
 
+        /* ЗМІНА CSS ДЛЯ ВИРІВНЮВАННЯ */
         .global-version-info {
             margin-top: 20px;
             font-size: 14px;
             color: #888;
+            /* ✅ Додано Flexbox для вирівнювання по центру */
+            display: inline-flex;
+            align-items: center; 
         }
 
         #reset-timer-display {
@@ -423,7 +427,7 @@
             align-items: center;
         }
 
-        .fa-moon {color: #f1c40f;} 
+        .fa- {color: #f1c40f;} 
         .fa-sun {color: #f39c12;}
 
         .checkbox-label .ball {
@@ -441,6 +445,16 @@
             transform: translateX(24px);
         }
 
+        /* ✅ ВИПРАВЛЕНО: СТИЛІ ДЛЯ СМАЙЛА ВЕРСІЇ */
+        .global-version-info .version-icon {
+            width: 23px; 
+            height: 23px; 
+            /* vertical-align: middle; - Видалено, використовуємо Flexbox */
+            margin-left: 5px; 
+            margin-right: 5px; 
+            /* Корекція пікселів, якщо потрібна точність */
+            margin-top: 1px; 
+        }
     </style>
 </head>
 <body>
@@ -448,7 +462,7 @@
     <div class="toggle-button-wrapper">
         <input type="checkbox" class="checkbox" id="dark-mode-checkbox">
         <label for="dark-mode-checkbox" class="checkbox-label">
-            <i class="fas fa-moon"></i>
+            <i class="fas fa-"></i>
             <i class="fas fa-sun"></i>
             <span class="ball"></span>
         </label>
@@ -503,7 +517,10 @@
     </div>
 
     <div class="global-version-info">
-        Версія 1.5.3 🌓</div> <script>
+        Версія 1.5.4 
+        <img src="emoji.webp" alt="Анімований смайл місяця" class="version-icon">
+    </div> 
+    <script>
     // --- Функціонал Генератора Логінів (Без змін) ---
 
     function transliterate(text) {
@@ -979,5 +996,3 @@
 
 </body>
 </html>
-
-
