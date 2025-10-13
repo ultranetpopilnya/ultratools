@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+	<meta charset="UTF-8">
     <title>Набір інструментів для Ультранет та ISP Energy</title>
     <link rel="icon" href="tools.png" type="image/png">
     
@@ -11,12 +11,38 @@
     <style>
         /* --- АДАПТОВАНІ СТИЛІ З ВАШОГО КОДУ ДЛЯ ТЕМИ --- */
         body.dark {
-            /* ✅ ВІДНОВЛЕНО: Оригінальний темний фон */
             background-color: #1b1c1d; 
-            color: #e0e0e0; 
+            color: #e0e0e0;
+			font-family: 'Inter', sans-serif; 
+ 
         }
 
-        /* ВИПРАВЛЕНО: Робимо всі заголовки, параграфи та мітки світлими */
+        /* Стилі прокрутки (залишені як є) */
+        body.dark ::-webkit-scrollbar {
+            width: 10px; 
+            height: 10px; 
+        }
+
+        body.dark ::-webkit-scrollbar-track {
+            background: #242526; 
+            border-radius: 5px;
+        }
+
+        body.dark ::-webkit-scrollbar-thumb {
+            background-color: #5d6063; 
+            border-radius: 5px;
+            border: 2px solid #242526; 
+        }
+
+        body.dark ::-webkit-scrollbar-thumb:hover {
+            background-color: #8c8f94; 
+        }
+
+        body.dark {
+            scrollbar-color: #5d6063 #242526; 
+            scrollbar-width: thin; 
+        }
+
         body.dark h1,
         body.dark h2,
         body.dark p,
@@ -38,15 +64,17 @@
         body.dark .page-title .isp-e-color-p {
             color: #00d4ff !important; 
         }
-
+        
         body.dark .date-calculator-container .date-input-group label {
             color: #e0e0e0; 
         }
         
+        /* ✅ ЗМІНА: Темний стиль контейнера - фон та тінь ПРИБРАНО */
         body.dark .container {
-            background: #282a2c; 
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+            background: transparent; /* Зроблено прозорим */
+            box-shadow: none; /* Прибрано тінь */
         }
+        /* Кінець змін темного стилю контейнера */
         
         body.dark .login-generator-container textarea {
             background-color: #333333;
@@ -55,7 +83,7 @@
         }
 
         body.dark .login-generator-container .result-item {
-            background-color: #333333;
+            background-color: #242526; /* Змінено на основний фон контейнера */
             border-color: #444444;
         }
 
@@ -88,9 +116,6 @@
             color: #9370db; 
         }
 
-        body.dark .toggle-switch-label {
-            color: #e0e0e0; 
-        }
         body.dark .login-generator-container .result-item button {
             background-color: #5a6268;
             color: #e0e0e0;
@@ -101,20 +126,187 @@
         body.dark .login-generator-container .result-item button.copied {
             background-color: #38c172; 
         }
+        
+        body.dark .template-field-group textarea {
+            background-color: #333333;
+            border-color: #555555;
+            color: #fff;
+        }
+        
+        body.dark .template-name-input {
+            background-color: #333333;
+            border-color: #555555;
+            color: #fff;
+        }
+        
+        /* ✅ ЗМІНА: Повернено на прозорий фон, щоб відповідати прозорості контейнера */
+        body.dark .template-field-group {
+            background-color: transparent; 
+            border-color: #555555;
+        }
+        
+        body.dark .copy-template-btn {
+            background-color: #38c172; 
+        }
+        body.dark .copy-template-btn:hover {
+            background-color: #2e9f56;
+        }
+        body.dark .delete-template-btn {
+            background-color: #fa4a61; 
+        }
+        body.dark .delete-template-btn:hover {
+            background-color: #d13f53;
+        }
+        
+        /* ================================================= */
+        /* === ОНОВЛЕНІ СТИЛІ ДЛЯ МІНІМАЛІЗМУ (command-list) === */
+        /* ================================================= */
+        .gpon-commands-container label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+        
+        body.dark .gpon-commands-container label {
+             color: #e0e0e0;
+        }
 
-        /* --- ВАШІ ОРИГІНАЛЬНІ СТИЛІ (ТАБЛИЦЯ) --- */
+        .gpon-commands-container select {
+            width: 17%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+            background-color: #fff;
+            color: #333;
+        }
+        
+        body.dark .gpon-commands-container select {
+            background-color: #333333;
+            border-color: #555555;
+            color: #fff;
+        }
+
+        /* ✅ МІНІМАЛІЗМ: Прибрано рамки та фоновий колір */
+        .command-list {
+            border: none;
+            border-radius: 0px;
+            padding: 0; /* Зменшено внутрішній відступ */
+            min-height: 100px; 
+            background-color: transparent; /* Зроблено прозорим */
+            flex-grow: 1; 
+            overflow-y: auto;
+			
+        }
+        
+        body.dark .command-list {
+            border: none;
+            background-color: transparent;
+        }
+
+        /* ✅ МІНІМАЛІЗМ: Зроблено прозорим за замовчуванням, тонка лінія-розділювач */
+        .command-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px; /* Зменшено padding */
+            margin-bottom: 5px;
+            background-color: transparent; /* Зроблено прозорим */
+            cursor: pointer;
+            transition: background-color 0.2s, box-shadow 0.2s;
+            border-bottom: 1px solid #eee; /* Тонка лінія-розділювач */
+        }
+        
+        body.dark .command-item {
+            background-color: transparent; 
+            border-bottom: 1px solid #333;
+        }
+
+        /* ✅ МІНІМАЛІЗМ: Ледь помітний фон при наведенні */
+        .command-item:hover {
+            background-color: #dbe9ff; 
+            box-shadow: none; /* Прибрано тінь */
+        }
+        
+        body.dark .command-item:hover {
+            background-color: #333333; /* Ненасичений фон при наведенні */
+        }
+        
+        .command-item:active {
+            background-color: #e0e0e0;
+        }
+        
+        body.dark .command-item:active {
+            background-color: #444444;
+        }
+
+        /* ✅ МІНІМАЛІЗМ: Команди схожі на код */
+        .command-text {
+            font-family: 'Fira Code', monospace;
+            font-weight: 600;
+            color: #333; /* Менш насичений колір */
+            user-select: none; 
+            flex-shrink: 0;
+            margin-right: 15px;
+        }
+        
+        body.dark .command-text {
+            color: #E6A22E; /* Акцентний колір з теми */
+        }
+
+        /* ✅ МІНІМАЛІЗМ: Опис сірий, дрібний */
+        .command-description {
+            font-size: 0.9em;
+            color: #888; /* Сірий колір */
+            flex-grow: 1; 
+            text-align: right;
+            user-select: none;
+        }
+        
+        body.dark .command-description {
+            color: #aaa;
+        }
+        
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #38c172; /* Зелений з вашої теми */
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+            transform: translateY(100%);
+            z-index: 1000;
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        /* ================================================= */
+        /* ================== КІНЕЦЬ ОНОВЛЕНИХ СТИЛІВ ================== */
+        /* ================================================= */
+
+        /* --- ВАШІ ОРИГІНАЛЬНІ СТИЛІ (без змін) --- */
         * {
             box-sizing: border-box;
         }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Inter', sans-serif; 
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            padding: 2rem 0;
+            padding-top: 2rem; 
+            padding-bottom: 2rem; 
             background-color: #f4f4f9;
             color: #333;
             transition: background 0.2s linear; 
@@ -129,43 +321,64 @@
         body.dark h1 {
             color: #e0e0e0 !important;
         }
-
+        
         .page-title {
             margin-top: -20px;
         }
+        
+        /* --- КОНФІГУРАЦІЯ ШИРИНИ ЧЕРЕЗ CSS-ЗМІННІ --- */
+        :root {
+            --layout-max-width: 1100px; 
+        }
 
+        /* ЗМІНЕНИЙ СТИЛЬ: Головний контейнер тепер не має бокової панелі */
         .main-content-wrapper {
             display: flex;
-            justify-content: center;
-            gap: 20px;
-            width: 90%;
-            max-width: 1200px;
-            margin-bottom: 2rem;
-        }
-
-        /* ✅ ВИПРАВЛЕННЯ: Встановлюємо фіксовану висоту для контейнерів */
-        .container {
-            background: white;
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            text-align: center;
-            width: 50%;
-            min-width: 300px;
-            
-            /* ФІКСОВАНА ВИСОТА */
-            height: 490px; /* Приблизно розрахована висота */
-            min-height: 490px;
-            display: flex;
-            flex-direction: column;
-            
+            flex-direction: column; /* Змінено на вертикальне розташування */
+            max-width: 100%; 
+            width: 100%;
+            margin: 0 auto 2rem auto; 
+            gap: 0; /* Прибрано проміжок */
+            align-items: center; /* Центрування вмісту */
         }
         
-        /* ✅ ВИПРАВЛЕННЯ: Для генератора логінів використовуємо flex-grow: 1 для результатів, щоб заповнити простір */
-        .login-generator-container {
-            /* Додаткові стилі для контейнера Генератора логінів, якщо потрібно */
+        /* НОВИЙ СТИЛЬ: Вміст вкладки займає всю ширину */
+        .tab-content-wrapper {
+            width: 100%; 
+            max-width: 100%; 
+            flex-grow: 1; 
+            position: relative;
+            min-width: 0; 
+            padding-top: 0px; 
+			margin: 0 auto; 
         }
 
+        /* ✅ ЗМІНА: Оновлений стиль контейнера */
+        .container {
+            background: transparent; /* Прибрано білий фон */
+            padding: 2rem;
+            border-radius: 0 0 8px 8px; /* Залишаємо радіус лише знизу */
+            box-shadow: none; /* Прибрано тінь */
+            
+            /* Використання локальних змінних, які встановлюються JS на основі data-default-* */
+            width: var(--local-width, 100%); 
+            min-width: var(--local-width-min, 300px); 
+            height: var(--local-height, 600px); 
+            min-height: var(--local-height-min, 0px);
+            
+            display: none; 
+            flex-direction: column;
+            resize: none; 
+            overflow: auto; 
+            margin: 0 auto; /* Центрування контейнера */
+        }
+        
+        .container.active {
+            display: flex; 
+        }
+        /* Кінець оновленого стилю контейнера */
+        
+        /* --- КІНЕЦЬ ОНОВЛЕНИХ СТИЛІВ ДЛЯ КОНТЕЙНЕРА ТА КАРОУСЕЛІ --- */
 
         .login-generator-container textarea {
             width: 100%;
@@ -179,13 +392,12 @@
             resize: none;
         }
 
-        /* ✅ ВИПРАВЛЕННЯ: Обмежуємо висоту контейнера результатів і додаємо прокрутку */
         .login-generator-container #results-container {
             margin-top: 0rem;
             text-align: left;
-            flex-grow: 1; /* Дозволяє заповнити доступний простір */
-            overflow-y: auto; /* Додає прокрутку, коли вміст перевищує висоту */
-            padding-right: 5px; /* Невеликий відступ, щоб прокрутка не прилипала до краю */
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding-right: 5px;			
         }
         
         .login-generator-container .result-item {
@@ -216,12 +428,6 @@
 
         .login-generator-container .result-item .original-name {
             display: none; 
-            font-weight: normal;
-            color: #555;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            flex-grow: 0;
         }
         .login-generator-container .result-item button {
             padding: 0.4rem 0.8rem;
@@ -240,10 +446,9 @@
             background-color: #5a6268;
         }
         .login-generator-container .result-item button.copied {
-            background-color: #28a745;
+            background-color: #38c172; 
         }
-
-        /* Стилі для Калькулятора Дат (Правий контейнер) */
+        
         .date-calculator-container {
             text-align: center;
         }
@@ -270,9 +475,13 @@
             color: #555;
             text-align: center;
             width: 100%;
+			 white-space: nowrap;
         }
+        /* Стилі полів вводу дати/часу (залишені як є) */
         .date-calculator-container .date-input-group input[type="date"],
-        .date-calculator-container .date-input-group input[type="time"] { 
+        body.dark .date-calculator-container .date-input-group input[type="date"],
+        .date-calculator-container .date-input-group input[type="time"],
+        body.dark .date-calculator-container .date-input-group input[type="time"] { 
             padding: 10px;
             border: 2px solid #ccc;
             border-radius: 6px;
@@ -290,7 +499,6 @@
             outline: none;
         }
         
-        /* Стилі для гарного слайдер-перемикача */
         .reset-toggle-container {
             display: flex;
             align-items: center;
@@ -299,54 +507,29 @@
             margin-bottom: 15px;
             padding: 5px;
         }
-        .toggle-switch-label {
-            display: flex;
+        
+        /* --- СТИЛІ ДЛЯ НОВИХ ЕЛЕМЕНТІВ --- */
+        .toggle-switch-wrapper {
+            display: flex; 
             align-items: center;
-            cursor: pointer;
+        }
+
+        /* Стиль для неклікабельного тексту */
+        .reset-toggle-text {
+            user-select: none;
             font-size: 1em;
             color: #555;
             font-weight: normal;
-            margin-right: 10px; 
-        }
-        
-        .toggle-switch-label input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-        
-        .toggle-slider {
-            position: relative;
-            cursor: pointer;
-            width: 44px;
-            height: 24px;
-            background-color: #ccc;
-            border-radius: 24px;
-            transition: background-color 0.4s;
-            flex-shrink: 0;
-        }
-        
-        .toggle-slider:before {
-            content: "";
-            position: absolute;
-            height: 18px;
-            width: 18px;
-            left: 3px;
-            bottom: 3px;
-            background-color: white;
-            border-radius: 50%;
-            transition: transform 0.4s;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.4);
-        }
-        
-        .toggle-switch-label input:checked + .toggle-slider {
-            background-color: #28a745;
-        }
-        
-        .toggle-switch-label input:checked + .toggle-slider:before {
-            transform: translateX(20px);
+            margin-left: 10px; /* Зберігаємо відступ від слайдера */
         }
 
+        body.dark .reset-toggle-text {
+            color: #e0e0e0; 
+        }
+        /* --- КІНЕЦЬ СТИЛІВ ДЛЯ НОВИХ ЕЛЕМЕНТІВ --- */
+        
+        
+        /* Стилі для секції результату (залишені як є) */
         .date-calculator-container #result-section {
             margin-top: 5px;
             padding: 15px;
@@ -354,7 +537,10 @@
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
             border: 1px solid #c3e6cb;
-            flex-grow: 0; /* Дозволяє заповнити доступний простір усередині контейнера Калькулятора */
+            flex-grow: 0;
+            min-width: 450px;
+            margin-right: auto;
+            margin-left: auto;			
         }
         .date-calculator-container #result-section h2 {
             margin-top: 0;
@@ -379,52 +565,167 @@
             font-weight: bold;
         }
 
-        /* Адаптивність */
-        @media (max-width: 800px) {
-            .main-content-wrapper {
-                flex-direction: column;
-                gap: 1.5rem;
-            }
-            .container {
-                width: 100%;
-                /* Знімаємо фіксовану висоту для мобільних */
-                height: auto;
-                min-height: auto;
-            }
-            .toggle-button-wrapper {
-                top: 10px;
-                right: 10px;
-            }
-            /* На мобільних дозволяємо результатам займати стільки місця, скільки потрібно */
-            .login-generator-container #results-container {
-                max-height: 3000px; /* Обмежуємо розумною висотою */
-            }
+        /* --- СТИЛІ ДЛЯ ГОРИЗОНТАЛЬНИХ Вкладок (ОНОВЛЕНО) --- */
+        .tabs {
+            display: flex;
+            flex-direction: row; 
+            width: 100%; 
+            max-width: 100%;
+            margin: 0; 
+            background-color: transparent; 
+            padding: 0;
+            box-shadow: none;
+            flex-shrink: 0; 
+            border-bottom: 0px solid #ccc; 
+            /* ✅ ДОДАНО: Для позиціонування псевдоелемента */
+            position: relative;
+			padding: 0 max(0px, calc((100% - var(--layout-max-width)) / 2));
+            box-sizing: border-box;
+        }
+
+        /* ✅ НОВИЙ СТИЛЬ: Псевдоелемент для сірої смуги-фону (30px заввишки) */
+        .tabs::before {
+            content: "";
+            position: absolute;
+			margin: 0 auto;
+            top: 0;
+            left: 0;
+			right: 0; 
+            width: 100vw;
+            height: 50px; /* Висота 30 пікселів */
+            background-color: #E8E8E8; 
+            z-index: -1; /* Позиціонуємо позаду кнопок */
+        }
+
+        body.dark .tabs::before {
+            background-color: #2D223D; 
+        }
+        
+        body.dark .tabs {
+            background-color: transparent;
+            box-shadow: none;
+            border-bottom: 0px solid #333639;
+        }
+
+        /* Стилі кнопок вкладок (залишені як є) */
+        .tab-button {
+            flex-grow: 1; 
+            padding: 12px 15px; 
+            cursor: pointer;
+            display: flex;
+            justify-content: center; 
+            align-items: center; 
+            background-color: transparent; 
+            color: #555; 
+            border: none; 
+            border-radius: 0; 
+            transition: all 0.2s ease;
+            font-size: 1.0rem;
+            font-weight: bold;
+            user-select: none;
+            margin: 0; 
+            border-bottom: 4px solid transparent; 
+            /* ✅ ДОДАНО: Для гарантії, що кнопки над фоном */
+            position: relative; 
+            z-index: 1; 
+        }
+        
+        .tab-button i {
+            margin-right: 8px; 
+            min-width: unset; 
+        }
+
+        .tab-button:hover:not(.active) {
+            background-color: ; 
+            color: #333;
+        }
+
+        .tab-button.active {
+            background-color: transparent; 
+            color: #007bff; 
+            box-shadow: none;
+            z-index: 2; 
+            border-bottom: 4px solid #007bff; 
+            transform: none; 
+        }
+
+        /* Стилі темної теми для вкладок (залишені як є) */
+        body.dark .tab-button {
+            background-color: transparent;
+            color: #e0e0e0;
+        }
+
+        body.dark .tab-button:hover:not(.active) {
+            background-color: ; 
+            color: #e0e0e0;
+        }
+
+        body.dark .tab-button.active {
+            background-color: transparent; 
+            color: #E6A22E; 
+            box-shadow: none;
+            border-bottom: 4px solid #E6A22E; 
+        }
+        /* END of HORIZONTAL TABS STYLE */
+
+
+        /* Стилі для кнопки "додати шаблон" та загальної інформації (ОНОВЛЕНО) */
+        #add-template-button {
+            /* Змінено позиціонування */
+            position: static; 
+            margin-top: 0; 
+            margin-left: 15px;
+            padding: 5px 15px; 
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%; 
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2); 
+            line-height: 1.1; 
+            min-width: 35px; 
+            width: 35px; 
+            height: 35px; 
+            text-align: center;
+            z-index: 10; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        
+        #add-template-button:hover {
+            background-color: #0056b3;
+        }
+        
+        #add-template-button:active {
+            transform: scale(0.98);
         }
 
         .global-version-info {
-            margin-top: 20px;
+            bottom: 20px;
             font-size: 14px;
             color: #888;
             display: flex;
             align-items: center; 
-            justify-content: center; 
+            justify-content: center;
+            position: fixed;			
         }
 
         .global-version-info .version-emoji {
-            width: 23px;
-            height: 23px;
+            width: 25px;
+            height: 25px;
             margin-left: 5px; 
         }
         
         body.dark .global-version-info {
-            color: #e0e0e0;
+            color: white;
         }
-
-        /* ✅ ВИДАЛЕНО: Секція відображення таймера прихована */
-        /* #reset-timer-display { ... } */
-
-
-        /* --- СТИЛІ ДЛЯ ПЕРЕМИКАЧА ТЕМ (ПРАВИЙ ВЕРХНІЙ КУТ) --- */
+        
+        /* Стилі перемикача тем (залишені як є) */
         .toggle-button-wrapper {
             position: absolute; 
             top: 30px; 
@@ -493,9 +794,209 @@
             transform: translateX(24px); 
         }
 
-.login-generator-container h2 {
-    margin-bottom: 0px; /* Або інше значення, яке вам підходить */
-}
+        .login-generator-container h2 {
+            margin-bottom: 0px; 
+        }
+
+        /* --- СТИЛІ ДЛЯ КОНТЕЙНЕРА ТЕКСТОВИХ ШАБЛОНІВ (Змінено фон для світлої теми) --- */
+
+        #templates-grid-wrapper {
+            display: flex;
+            flex-wrap: wrap; 
+            gap: 15px; 
+            width: 100%;
+            text-align: left;
+            justify-content: flex-start;
+            padding-top: 0px; 
+        }
+        
+        /* ✅ НОВИЙ СТИЛЬ: Контейнер для заголовка та кнопки */
+        .templates-header-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center; /* Центруємо заголовок + кнопку */
+            margin-bottom: 10px; /* Додаємо відступ */
+        }
+        
+
+        .template-field-group {
+            position: relative; 
+            border: 1px solid #ccc; 
+            padding: 10px;
+            border-radius: 8px;
+            background-color: #fff; /* Білий фон для груп полів у світлій темі */
+            overflow: hidden; 
+            min-height: 170px; 
+            width: 400px; 
+            min-width: 400px;
+            max-width: 100%; 
+            display: flex; 
+            flex-direction: column;
+			resize: both;
+			overflow: auto;
+        }
+        
+        /* ✅ ЗМІНА: Повернено на прозорий фон */
+        body.dark .template-field-group {
+            background-color: transparent; 
+        }
+        
+        .template-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px; 
+            flex-shrink: 0; 
+        }
+
+        .template-name-input {
+            flex-grow: 1; 
+            padding: 8px 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            color: #333;
+            background-color: #fff;
+            min-width: 150px; 
+        }
+        
+        body.dark .template-name-input {
+            background-color: #333333;
+            border-color: #555555;
+            color: #fff;
+        }
+        
+        /* Стилі кнопок та полів вводу в шаблонах (залишені як є) */
+        .template-field-group textarea {
+            width: 100%;
+            flex-grow: 1; 
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            box-sizing: border-box;
+            font-size: 1rem;
+            resize: none !important; 
+            transition: border-color 0.2s;
+            margin-bottom: 0px; 
+            margin-top: 0;
+			white-space: pre-wrap;      /* Зберігає пробіли та переноси рядків */
+            overflow-wrap: normal; /* Забороняє браузеру переносити слова для вміщення */
+            word-break: normal;    /* Забороняє розрив довгих слів */
+			font-family: 'Fira Code', monospace !important; 
+        }
+        
+        .template-field-group textarea:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+        
+        /* Старі стилі для кнопки "+" - перевизначені вище, але залишені для надійності */
+        /* #add-template-button { ... } */
+
+
+        .template-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 0; 
+            flex-shrink: 0; 
+        }
+        
+        .template-actions button {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.2s;
+        }
+        
+        .copy-template-btn {
+            background-color: #28a745;
+            color: white;
+        }
+        .copy-template-btn:hover {
+            background-color: #1e7e34;
+        }
+
+        .delete-template-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+        .delete-template-btn:hover {
+            background-color: #c82333;
+        }
+        
+        /* --- НОВІ СТИЛІ ДЛЯ СЛАЙДЕРА КАЛЬКУЛЯТОРА ДАТ (МОДИФІКОВАНІ) --- */
+        
+        /* ОНОВЛЕННЯ: Стиль для toggle-switch-label, що тепер містить лише перемикач */
+        .date-calculator-container .toggle-switch-label {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            cursor: pointer; /* Клікабельний лише тут */
+            padding: 0;
+            margin: 0; 
+        }
+
+        /* Приховати стандартний чекбокс */
+        .date-calculator-container .toggle-switch-label input[type="checkbox"] {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            margin: 0;
+            position: absolute;
+        }
+
+        /* Стиль для візуального слайдера */
+        .date-calculator-container .slider {
+            position: relative;
+            cursor: pointer;
+            width: 44px; /* Ширина слайдера */
+            height: 22px; /* Висота слайдера */
+            background-color: #ccc;
+            transition: background-color 0.4s;
+            border-radius: 22px; 
+            flex-shrink: 0;
+        }
+
+        .date-calculator-container .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: transform 0.4s, background-color 0.2s;
+            border-radius: 50%;
+        }
+
+        /* Коли чекбокс позначено */
+        .date-calculator-container .toggle-switch-label input[type="checkbox"]:checked ~ .slider {
+            background-color: #38c172; /* Зелений колір при активації */
+        }
+
+        .date-calculator-container .toggle-switch-label input[type="checkbox"]:checked ~ .slider:before {
+            transform: translateX(22px); 
+        }
+        
+        /* Стилі темної теми для слайдера */
+        body.dark .date-calculator-container .slider {
+            background-color: #555555;
+        }
+        
+        body.dark .date-calculator-container .toggle-switch-label input[type="checkbox"]:checked ~ .slider {
+            background-color: #8c8f94; 
+        }
+        
+        body.dark .date-calculator-container .slider:before {
+            background-color: #e0e0e0;
+        }
+
+        /* --- КІНЕЦЬ НОВИХ СТИЛІВ ДЛЯ СЛАЙДЕРА КАЛЬКУЛЯТОРА ДАТ --- */
+
     </style>
 </head>
 <body>
@@ -513,63 +1014,167 @@
         <span class="ultranet-color" style="color: #811e71;">Ультранет</span> та
         <span class="isp-e-color-i" style="color: #ffcf00;">I</span><span class="isp-e-color-s" style="color: #00c100;">S</span><span class="isp-e-color-p" style="color: #00d4ff;">P</span> Energy
     </h1>
-
-    <div class="main-content-wrapper">
-
-        <div class="container login-generator-container">
-            <h2 style="color: #444; margin-top: 0;">👨‍💼 Генератор логінів</h2>
-            <p>Введіть повністю одне або декілька ПІБ, кожне — з нового рядка.<br>Також можливий трансліт ФОП, ТОВ, ПП, АТ, КБ.</p>
-            <textarea id="fullNameInput" rows="5" placeholder="Прізвище, Ім'я, та по Батькові" oninput="generateLogins()"></textarea>
-            <div id="results-container"></div>
+    
+    <div class="main-content-wrapper"> 
+        <div class="tabs"> 
+            <div class="tab-button active" data-tab="login-generator"><i class="fas fa-key"></i> Генератор логінів</div>
+            <div class="tab-button" data-tab="date-calculator"><i class="fas fa-calendar-alt"></i> Калькулятор дат</div>
+            <div class="tab-button" data-tab="gpon-commands"><i class="fas fa-terminal"></i> Команди GPON/EPON/BDCOM</div>
+            <div class="tab-button" data-tab="text-templates"><i class="fas fa-file-alt"></i> Шаблони</div>
         </div>
 
-        <div class="container date-calculator-container">
-            <h2 style="color: #444; margin-top: 0;">📅 Калькулятор тривалості між датами</h2>
+        <div class="tab-content-wrapper"> 
 
-            <div class="date-inputs-row">
-                <div class="date-input-group">
-                    <label for="start-date">🗓️ Початкова дата:</label>
-                    <input type="date" id="start-date" name="start-date" onchange="handleInputAndTimer()" required>
-                    <input type="time" id="start-time" name="start-time" onchange="handleInputAndTimer()" value="00:00" required>
+            <div class="container login-generator-container active" data-content="login-generator" data-default-width="700px" data-default-height="510px">
+                <h2 style="color: #444; margin-top: 0;">🔐 Генератор логінів</h2>
+                <p>Введіть повністю одне або декілька ПІБ, кожне — з нового рядка.<br>Також можливий трансліт ФОП, ТОВ, ПП, АТ, КБ.</p>
+                <textarea id="fullNameInput" rows="5" placeholder="Прізвище, Ім'я, та по Батькові" oninput="generateLogins()"></textarea>
+                <div id="results-container"></div>
+            </div>
+
+            <div class="container date-calculator-container" data-content="date-calculator" data-default-width="700px" data-default-height="490px">
+                <h2 style="color: #444; margin-top: 0;">🗓️ Калькулятор тривалості між датами</h2>
+
+                <div class="date-inputs-row">
+                    <div class="date-input-group">
+                        <label for="start-date">🗓️ Початкова дата:</label>
+                        <input type="date" id="start-date" name="start-date" onchange="handleInputAndTimer()" required>
+                        <input type="time" id="start-time" name="start-time" onchange="handleInputAndTimer()" value="00:00" required>
+                    </div>
+
+                    <div class="date-input-group">
+                        <label for="end-date">➡️ Кінцева дата:</label>
+                        <input type="date" id="end-date" name="end-date" onchange="handleInputAndTimer()" required>
+                        <input type="time" id="end-time" name="end-time" onchange="handleInputAndTimer()" value="00:00" required>
+                        </div>
                 </div>
 
-                <div class="date-input-group">
-                    <label for="end-date">➡️ Кінцева дата:</label>
-                    <input type="date" id="end-date" name="end-date" onchange="handleInputAndTimer()" required>
-                    <input type="time" id="end-time" name="end-time" onchange="handleInputAndTimer()" value="00:00" required>
+                <div class="reset-toggle-container">
+                    <div class="toggle-switch-wrapper"> 
+                        <label class="toggle-switch-label" for="auto-reset-toggle">
+                            <input type="checkbox" id="auto-reset-toggle" onchange="handleAutoResetToggle()">
+                            <span class="slider"></span> 
+                        </label>
+                    </div>
+                    <span class="reset-toggle-text">Автоматичне скидання дати та часу (20 сек.)</span>
+                </div>
+                
+                <div id="result-section">
+                    <h2>⏱️ Результат розрахунку</h2>
+                    <div id="result-display">
+                        Оберіть дві дати для розрахунку.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="container gpon-commands-container" data-content="gpon-commands" data-default-width="900px" data-default-height="650px">
+                <h2 style="color: #444; margin-top: 0;">💻 Команди GPON/EPON/BDCOM</h2>
+                
+                <label for="device-type">Виберіть Тип Обладнання:</label>
+                <select id="device-type" onchange="displayCommands(this.value)">
+                    <option value="gpon">GPON</option>
+                    <option value="epon">EPON</option>
+                    <option value="bdcom">BDCOM</option>
+                </select>
+
+                <div id="command-output" class="command-list">
                     </div>
             </div>
-
-            <div class="reset-toggle-container">
-                <label class="toggle-switch-label" for="auto-reset-toggle">
-                    <input type="checkbox" id="auto-reset-toggle" onchange="handleAutoResetToggle()">
-                    <span class="toggle-slider"></span>
-                </label>
-                <span style="user-select: none;">Автоматичне скидання дати та часу (20 сек.)</span>
-            </div>
-            <div id="result-section">
-                <h2>⏱️ Результат розрахунку</h2>
-                <div id="result-display">
-                    Оберіть дві дати для розрахунку.
+            <div class="container" data-content="text-templates" data-default-width="1700px" data-default-height="650px">
+                <div class="templates-header-wrapper">
+                    <h2 style="color: #444;">📝 Текстові шаблони</h2>
+                    <button id="add-template-button">+</button>
                 </div>
+                <div id="templates-grid-wrapper">
+                    </div>
             </div>
-        </div>
-    </div>
-
-    <div class="global-version-info">
-        Версія 1.6<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
+            
+        </div> 
     </div> 
     
+    <div class="global-version-info">
+        Версія 2.0<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
+    </div> 
+    
+    <div id="notification" class="notification">
+        Команда скопійована!
+    </div>
+    
     <script>
-    // --- Функціонал Генератора Логінів (ОНОВЛЕНО) ---
+    // --- Функціонал ВКЛАДОК ---
+    let endDateResetTimer;
+    const RESET_DELAY_SECONDS = 20;
+    let isAutoResetEnabled = true; 
+    
+    
+    function switchTab(tabId) {
+        const tabs = document.querySelectorAll('.tab-button');
+        const contents = document.querySelectorAll('.container[data-content]');
+        
+        // Зберігаємо активну вкладку
+        localStorage.setItem('activeTab', tabId); 
+        
+        contents.forEach(content => content.classList.remove('active'));
+        tabs.forEach(tab => tab.classList.remove('active'));
+
+        const activeContent = document.querySelector(`.container[data-content="${tabId}"]`);
+        const activeButton = document.querySelector(`.tab-button[data-tab="${tabId}"]`);
+
+        if (activeContent) {
+            activeContent.classList.add('active');
+            
+            // ✅ ФІКС: застосувати розмір, використовуючи data-default-*
+            const defaultWidth = activeContent.getAttribute('data-default-width') || '100%';
+            const defaultHeight = activeContent.getAttribute('data-default-height') || '600px';
+            
+            // Оскільки вкладки тепер горизонтальні, контенер займає 90% головного контейнера. 
+            // Використовуємо його ширину для центрування, але також встановлюємо стилі.
+            activeContent.style.setProperty('--local-width', defaultWidth);
+            activeContent.style.setProperty('--local-height', defaultHeight);
+            
+            // ✅ НОВА ЛОГІКА: Ініціалізація команд GPON/EPON/BDCOM при перемиканні на цю вкладку
+            if (tabId === 'gpon-commands') {
+                 const deviceSelect = document.getElementById('device-type');
+                 if (deviceSelect) {
+                    displayCommands(deviceSelect.value);
+                 }
+            }
+        }
+        if (activeButton) {
+            activeButton.classList.add('active');
+        }
+        
+        // ВИДАЛЕНО: Логіка керування таймером. Тепер він працює завжди, незалежно від вкладки.
+    }
+
+    function setupTabs() {
+        const tabs = document.querySelectorAll('.tab-button');
+        let initialTab = localStorage.getItem('activeTab') || 'login-generator';
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabId = tab.getAttribute('data-tab');
+                switchTab(tabId);
+            });
+        });
+        
+        // Встановлення активної вкладки при завантаженні з невеликою затримкою для гарантії
+        setTimeout(() => {
+            switchTab(initialTab); 
+        }, 50); 
+        
+    }
+    
+    // --- Функціонал Генератора Логінів ---
 
     function transliterate(text) {
         const mapping = {
             'а': 'a', 'б': 'b', 'в': 'v', 'г': 'h', 'ґ': 'g', 'д': 'd',
             'е': 'e', 'ж': 'zh', 'з': 'z', 'и': 'y', 'і': 'i', 'й': 'i',
-            'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n', 'о': 'o', 'п': 'p',
+            'к': 'k', 'л': 'k', 'м': 'm', 'н': 'n', 'о': 'o', 'п': 'p',
             'р': 'r', 'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'kh',
-            'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'shch', 'ь': '', "'": ''
+            'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'shch', 'ь': '', "'": '',
+            'є': 'ie', 'ї': 'i', 'ю': 'iu', 'я': 'ia', 'l':'l' // Додано латинську 'l', щоб не зламати код
         };
         const positionalRules = {
             'є': { start: 'ye', other: 'ie' },
@@ -593,17 +1198,29 @@
             }
 
             if (positionalRules[char]) {
-                result += isFirstChar ? positionalRules[char].start : positionalRules[char].other;
+                // Правила для "є", "ї", "й", "ю", "я"
+                // Перевірка, чи це початок слова (або після пробілу)
+                const isStartOfWord = (i === 0 || text[i-1] === ' ');
+                result += isStartOfWord ? positionalRules[char].start : positionalRules[char].other;
             } else if (mapping[char]) {
                 result += mapping[char];
             } else if (!isNaN(parseInt(char))) { 
                 result += char;
             } else {
-                continue;
+                // Видаляємо пробіли, тире та інші символи в результаті
+                if (char === ' ' || char === '-') continue; 
+                
+                // Додаємо незмінені латинські символи
+                if (/[a-z0-9]/.test(char)) {
+                    result += char;
+                } else {
+                    continue;
+                }
             }
         }
         return result;
     }
+
 
     function copyLogin(textToCopy, buttonElement) {
         navigator.clipboard.writeText(textToCopy).then(() => {
@@ -636,7 +1253,6 @@
 
         const lines = fullNames.split('\n');
         
-        // Регулярний вираз для перевірки абревіатур компаній як окремих слів
         const companyRegex = /(^|\s)(фоп|тов|пп|ат|кб)(\s|$)/i; 
 
 
@@ -646,16 +1262,14 @@
 
             const lowerCaseFullName = fullName.toLowerCase();
             const parts = fullName.split(/\s+/).filter(p => p.length > 0);
-            const wordCount = parts.length; // ✅ НОВЕ: Рахуємо кількість слів
+            const wordCount = parts.length; 
 
-            // Перевірка на окреме слово "ФОП", "ТОВ", "ПП", "АТ", "КБ"
             const isCompany = companyRegex.test(lowerCaseFullName);
             
             let login = '';
 
-            // ✅ ОНОВЛЕНА ЛОГІКА: Повний трансліт, якщо це компанія АБО більше 3 слів
             if (isCompany || wordCount > 3) {
-                // Повна транслітерація
+                // Повна транслітерація для компаній та довгих фраз
                 login = transliterate(fullName);
             } else {
                 // Логіка для ПІБ (3 слова або менше)
@@ -699,12 +1313,8 @@
         });
     }
 
-    // --- Функціонал Калькулятора Дат (ВИПРАВЛЕНО) ---
+    // --- Функціонал Калькулятора Дат ---
     
-    let endDateResetTimer;
-    const RESET_DELAY_SECONDS = 20;
-    let isAutoResetEnabled = true; 
-
     function getCorrectDayWord(number) {
         if (number === 0) {
             return "днів";
@@ -734,7 +1344,6 @@
         return `${year}-${month}-${day}`;
     }
     
-    // Функція для виконання повного скидання на Сьогодні/Завтра 00:00
     function setDatesToTodayAndTomorrowAtMidnight() {
         const today = new Date();
         const todayString = formatDate(today);
@@ -749,17 +1358,18 @@
         document.getElementById('end-time').value = "00:00"; 
     }
     
-    // ✅ ОНОВЛЕНО: Функція, що виконує скидання після закінчення таймера
     function resetDatesOnTimerEnd() {
         clearTimeout(endDateResetTimer);
 
-        // 1. Виконуємо запитане скидання
+        // ✅ ПОТРІБНО ПЕРЕВІРИТИ, ЧИ АКТИВНИЙ КАЛЬКУЛЯТОР ДАТ, ЩОБ ПЕРЕРАХУВАТИ
+        const isDateCalculatorActive = document.querySelector('.container[data-content="date-calculator"]').classList.contains('active');
+        
         setDatesToTodayAndTomorrowAtMidnight();
 
-        // 2. Оновлюємо розрахунок
-        calculateDifference();
+        if (isDateCalculatorActive) {
+            calculateDifference();
+        }
         
-        // 3. Перезапускаємо таймер одразу, щоб підтримувати цикл (якщо перемикач активовано)
         if (isAutoResetEnabled) {
              startResetTimer();
         }
@@ -772,21 +1382,18 @@
 
         clearTimeout(endDateResetTimer);
 
-        // Встановлюємо таймер на 20 секунд
         endDateResetTimer = setTimeout(resetDatesOnTimerEnd, RESET_DELAY_SECONDS * 1000);
     }
     
-    // ✅ УНІВЕРСАЛЬНА ФУНКЦІЯ: Обробник будь-якої зміни дати/часу
     function handleInputAndTimer() {
         if (isAutoResetEnabled) {
-            startResetTimer(); // Перезапускаємо таймер
+            startResetTimer(); 
         } else {
-             clearTimeout(endDateResetTimer); // Зупиняємо, якщо вимкнено
+             clearTimeout(endDateResetTimer); 
         }
         calculateDifference();
     }
     
-    // ✅ ОНОВЛЕНО: Функція для збереження стану перемикача
     function handleAutoResetToggle() {
         const toggle = document.getElementById('auto-reset-toggle');
         isAutoResetEnabled = toggle.checked;
@@ -794,11 +1401,12 @@
         localStorage.setItem('autoResetEnabled', isAutoResetEnabled);
 
         if (!isAutoResetEnabled) {
-            clearTimeout(endDateResetTimer); // Зупиняємо таймер
+            clearTimeout(endDateResetTimer); 
         } else {
-            startResetTimer(); // Запускаємо таймер
+            startResetTimer(); 
         }
-        calculateDifference(); // Оновлюємо розрахунок
+        // Розрахунок при перемиканні, незалежно від стану
+        calculateDifference(); 
     }
 
     function loadAutoResetState() {
@@ -851,9 +1459,10 @@
         let tempStartDate = new Date(startDate);
         let tempEndDate = new Date(endDate);
         
-        const startTotalMinutes = startDate.getHours() * 60 + startDate.getMinutes();
-        const endTotalMinutes = endDate.getHours() * 60 + endDate.getMinutes();
+        const startTotalMinutes = tempStartDate.getHours() * 60 + tempStartDate.getMinutes();
+        const endTotalMinutes = tempEndDate.getHours() * 60 + tempEndDate.getMinutes();
         
+        // Корекція для розрахунку місяців/років: якщо кінцевий час раніше початкового, віднімаємо день
         if (endTotalMinutes < startTotalMinutes) {
             tempEndDate.setDate(tempEndDate.getDate() - 1);
         }
@@ -897,16 +1506,20 @@
             months = months % 12;
         }
         
-        if (endTotalMinutes >= startTotalMinutes) {
+        // Додаємо 1 день, якщо кінцевий час пізніший або дорівнює початковому
+        if (endTotalMinutes >= startTotalMinutes && diffTime > 0) {
              days++;
         }
         
-        let tempDateForDayCorrection = new Date(tempEndDate);
-        let maxDaysInMonth = new Date(tempDateForDayCorrection.getFullYear(), tempDateForDayCorrection.getMonth() + 1, 0).getDate();
-        
-        if (days > maxDaysInMonth) {
-            days -= maxDaysInMonth;
-            months++;
+        // Коригуємо місяці, якщо днів забагато (дуже рідкісний випадок, але для точності)
+        if (days > 0) {
+            let tempDateForDayCorrection = new Date(tempEndDate);
+            let maxDaysInMonth = new Date(tempDateForDayCorrection.getFullYear(), tempDateForDayCorrection.getMonth() + 1, 0).getDate();
+            
+            if (days > maxDaysInMonth && months > 0) {
+                days -= maxDaysInMonth;
+                months++;
+            }
         }
         
         if (months >= 12) {
@@ -921,7 +1534,8 @@
         let parts = [];
         if (years > 0) parts.push(`${years} р.`);
         if (months > 0) parts.push(`${months} міс.`);
-        if (days > 0) parts.push(`${days} дн.`);
+        // Відображаємо 0 дн. лише якщо роки і місяці відсутні
+        if (days > 0 || (years === 0 && months === 0)) parts.push(`${days} дн.`);
         
         durationText = parts.filter(Boolean).join(' та ');
         
@@ -936,8 +1550,228 @@
 
         resultDisplay.innerHTML = resultText;
     }
+    
+    // =======================================================
+    // === НОВІ ФУНКЦІЇ ДЛЯ КОМАНД GPON/EPON/BDCOM ===
+    // =======================================================
+    
+    // 1. Словник команд
+    const COMMANDS = {
+        gpon: [
+            { command: 'show gpon onu uncfg', description: 'Показати незареєстровані ONU на PON' },
+            { command: 'interface gpon 0/1', description: 'Перейти в інтерфейс GPON-порту' },
+            { command: 'onu add 1 type ZTE s/n ZTEA80C9C001', description: 'Зареєструвати ONU за серійним номером' },
+            { command: 'show run int gpon 0/1', description: 'Показати конфігурацію GPON-порту' },
+            { command: 'int gpon 0/1/1', description: 'Перейти в інтерфейс GPON ONU (port/slot/onu)' },
+            { command: 'onu-vlan 100 tag', description: 'Додати VLAN (Tag) до ONU' }
+        ],
+        epon: [
+            { command: 'show epon onu uncfg', description: 'Показати незареєстровані ONU на EPON' },
+            { command: 'interface epon 0/1', description: 'Перейти в інтерфейс EPON-порту' },
+            { command: 'epon onu add 1 mac 00:1A:B6:00:C0:01', description: 'Зареєструвати ONU за MAC-адресою' },
+            { command: 'show epon interface 0/1', description: 'Показати стан EPON-порту' },
+            { command: 'int epon 0/1/1', description: 'Перейти в інтерфейс EPON ONU' },
+            { command: 'onu-vlan 100 tag', description: 'Додати VLAN (Tag) до ONU (схоже на GPON)' }
+        ],
+        bdcom: [
+            { command: 'show onu auto-find', description: 'Показати незареєстровані ONU (BDCOM)' },
+            { command: 'interface gpon 0/1', description: 'Перейти в інтерфейс GPON-порту (BDCOM)' },
+            { command: 'onu 1 add gpon mac-address 00-1A-B6-00-C0-01', description: 'Зареєструвати ONU за MAC (GPON BDCOM)' },
+            { command: 'show gpon onu detail 0/1/1:1', description: 'Показати деталі ONU' },
+            { command: 'interface gpon-onu 0/1/1:1', description: 'Перейти в інтерфейс ONU' },
+            { command: 'switchport mode trunk vlan 100 tag', description: 'Додати VLAN (Tag) до ONU (BDCOM)' }
+        ]
+    };
 
-    // --- Функціонал Перемикача Тем (Без змін) ---
+    const commandOutput = document.getElementById('command-output');
+    const notification = document.getElementById('notification');
+    
+    /**
+     * Відображає список команд для обраного типу.
+     * @param {string} deviceType - 'gpon', 'epon' або 'bdcom'.
+     */
+    function displayCommands(deviceType) {
+        commandOutput.innerHTML = ''; // Очистити попередні команди
+        const commands = COMMANDS[deviceType] || [];
+
+        if (commands.length === 0) {
+            commandOutput.innerHTML = '<p style="text-align: center; color: #888; padding: 20px;">Команди для цього типу обладнання ще не додано.</p>';
+            return;
+        }
+
+        commands.forEach(item => {
+            const commandDiv = document.createElement('div');
+            commandDiv.classList.add('command-item');
+            commandDiv.setAttribute('data-command', item.command); // Зберігаємо команду як атрибут
+
+            const commandTextSpan = document.createElement('span');
+            commandTextSpan.classList.add('command-text');
+            commandTextSpan.textContent = item.command;
+
+            const commandDescriptionSpan = document.createElement('span');
+            commandDescriptionSpan.classList.add('command-description');
+            commandDescriptionSpan.textContent = `(${item.description})`;
+
+            commandDiv.appendChild(commandTextSpan);
+            commandDiv.appendChild(commandDescriptionSpan);
+
+            commandDiv.addEventListener('click', handleCommandClick); // Додаємо обробник кліку
+            
+            commandOutput.appendChild(commandDiv);
+        });
+    }
+
+    /**
+     * Обробник кліку: копіює команду і показує сповіщення.
+     * @param {Event} event - Подія кліку.
+     */
+    async function handleCommandClick(event) {
+        const clickedItem = event.currentTarget; 
+        const command = clickedItem.getAttribute('data-command');
+        const commandText = clickedItem.querySelector('.command-text').textContent; // Отримати чистий текст команди
+        
+        if (!command) return;
+
+        try {
+            // Використовуємо Clipboard API для копіювання
+            await navigator.clipboard.writeText(command);
+            showNotification(`Команда скопійована: ${commandText}`);
+        } catch (err) {
+            console.error('Не вдалося скопіювати команду: ', err);
+            // Резервний варіант для старих браузерів
+            showNotification('Помилка копіювання. Спробуйте вручну.');
+        }
+    }
+
+    /**
+     * Показує сповіщення про копіювання.
+     * @param {string} message - Текст сповіщення.
+     */
+    function showNotification(message) {
+        notification.textContent = message;
+        notification.classList.add('show');
+        
+        // Автоматично приховуємо сповіщення через 2 секунди
+        setTimeout(() => {
+            notification.classList.remove('show');
+        }, 2000);
+    }
+    
+    // =======================================================
+    // === КІНЕЦЬ НОВИХ ФУНКЦІЙ ДЛЯ КОМАНД GPON/EPON/BDCOM ===
+    // =======================================================
+
+
+    // --- ФУНКЦІОНАЛ ТЕКСТОВИХ ШАБЛОНІВ ---
+    
+    function autoResizeTextarea(el) {
+        const minHeight = 80; 
+        el.style.height = 'auto'; 
+        el.style.height = Math.max(el.scrollHeight, minHeight) + 'px';
+    }
+
+
+    function createTemplateField(initialName = '', initialContent = '', isNew = false) {
+        const container = document.getElementById('templates-grid-wrapper'); 
+        const fieldGroup = document.createElement('div');
+        fieldGroup.className = 'template-field-group'; 
+        
+        const headerDiv = document.createElement('div');
+        headerDiv.className = 'template-header';
+        
+        const nameInput = document.createElement('input');
+        nameInput.type = 'text';
+        nameInput.className = 'template-name-input';
+        nameInput.placeholder = 'Назва шаблону (наприклад, "Привітання")';
+        nameInput.value = initialName;
+        nameInput.oninput = saveTemplates; 
+
+        const actionsDiv = document.createElement('div');
+        actionsDiv.className = 'template-actions';
+        
+        const copyButton = document.createElement('button');
+        copyButton.textContent = 'Копіювати';
+        copyButton.className = 'copy-template-btn';
+        copyButton.onclick = () => {
+            const textarea = fieldGroup.querySelector('textarea');
+            navigator.clipboard.writeText(textarea.value).then(() => {
+                const originalText = copyButton.textContent;
+                copyButton.textContent = 'Скопійовано!';
+                setTimeout(() => { copyButton.textContent = originalText; }, 1500);
+            }).catch(err => {
+                console.error('Не вдалося скопіювати текст: ', err);
+            });
+        };
+        
+        const deleteButton = document.createElement('button');
+        deleteButton.textContent = 'Видалити';
+        deleteButton.className = 'delete-template-btn';
+        deleteButton.onclick = () => {
+            fieldGroup.remove();
+            saveTemplates(); 
+        };
+
+        const textarea = document.createElement('textarea');
+        textarea.rows = 4;
+        textarea.placeholder = 'Введіть свій шаблон тексту тут...';
+        textarea.value = initialContent;
+        textarea.style.resize = 'vertical'; // Дозволяємо зміну розміру тільки по вертикалі для внутрішнього textarea
+        
+        textarea.oninput = () => {
+            saveTemplates(); 
+            autoResizeTextarea(textarea); 
+        };
+
+        headerDiv.appendChild(nameInput);
+        actionsDiv.appendChild(copyButton);
+        actionsDiv.appendChild(deleteButton);
+        headerDiv.appendChild(actionsDiv); 
+        
+        fieldGroup.appendChild(headerDiv); 
+        fieldGroup.appendChild(textarea);
+        
+        container.appendChild(fieldGroup); 
+        
+        setTimeout(() => autoResizeTextarea(textarea), 0);
+        
+        return fieldGroup;
+    }
+
+    function addTemplate() {
+        const newField = createTemplateField('', '', true); 
+        newField.querySelector('.template-name-input').focus(); 
+        saveTemplates(); 
+    }
+
+    function saveTemplates() {
+        const templates = [];
+        const fieldGroups = document.querySelectorAll('#templates-grid-wrapper .template-field-group'); 
+        fieldGroups.forEach(group => {
+            const nameInput = group.querySelector('.template-name-input');
+            const textarea = group.querySelector('textarea');
+            templates.push({
+                name: nameInput ? nameInput.value : '',
+                content: textarea ? textarea.value : ''
+            });
+        });
+        localStorage.setItem('textTemplates', JSON.stringify(templates));
+    }
+
+    function loadTemplates() {
+        const templatesJson = localStorage.getItem('textTemplates');
+        const templatesGrid = document.getElementById('templates-grid-wrapper');
+        templatesGrid.innerHTML = ''; 
+
+        if (templatesJson) {
+            const templates = JSON.parse(templatesJson);
+            templates.forEach(template => {
+                createTemplateField(template.name, template.content); 
+            });
+        }
+    }
+
+
+    // --- Функціонал Перемикача Тем ---
 
     const checkbox = document.getElementById("dark-mode-checkbox");
 
@@ -966,37 +1800,53 @@
         applyTheme(checkbox.checked);
     });
 
-    // --- Ініціалізація (Без змін) ---
+    // --- Ініціалізація ---
 
     document.addEventListener('DOMContentLoaded', () => {
         loadTheme();
-        
-        const fullNameInput = document.getElementById('fullNameInput');
-        fullNameInput.addEventListener('input', generateLogins); 
-
+		
         // Ініціалізація Калькулятора Дат
         const today = new Date().toISOString().split('T')[0];
         const startDateInput = document.getElementById('start-date');
         const startTimeInput = document.getElementById('start-time');
         const endTimeInput = document.getElementById('end-time');
 
-        // Встановлюємо значення за замовчуванням
         startDateInput.value = today;
         startTimeInput.value = "00:00"; 
-        // Встановлюємо кінцеву дату на завтра
         const tomorrow = new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString().split('T')[0];
         document.getElementById('end-date').value = tomorrow;
         endTimeInput.value = "00:00"; 
 
-
         loadAutoResetState(); 
+        calculateDifference(); 
         
-        // Якщо автоскидання увімкнено, запускаємо таймер одразу. 
+        // ✅ НОВА ЛОГІКА: Запускаємо таймер одразу, якщо він увімкнений, незалежно від активної вкладки
         if (isAutoResetEnabled) {
-            startResetTimer();
+             startResetTimer();
         }
 
-        calculateDifference(); 
+        setupTabs();
+
+        const fullNameInput = document.getElementById('fullNameInput');
+        fullNameInput.addEventListener('input', generateLogins); 
+        
+        // Ініціалізація Текстових Шаблонів
+        document.getElementById('add-template-button').onclick = addTemplate;
+        loadTemplates();
+        
+        // Переконатися, що генератор логінів працює на старті, якщо це активна вкладка
+        const initialTab = localStorage.getItem('activeTab') || 'login-generator';
+        if (initialTab === 'login-generator') {
+            generateLogins(); 
+        }
+        
+        // ✅ НОВА ЛОГІКА: Ініціалізація команди GPON при завантаженні, якщо це активна вкладка
+        if (initialTab === 'gpon-commands') {
+             const deviceSelect = document.getElementById('device-type');
+             if (deviceSelect) {
+                displayCommands(deviceSelect.value);
+             }
+        }
     });
 </script>
 
