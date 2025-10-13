@@ -397,11 +397,12 @@
             text-align: left;
             flex-grow: 1; 
             overflow-y: auto; 
-            padding-right: 5px;			
+            padding-right: 5px;
+            height: auto;			
         }
         
         .login-generator-container .result-item {
-            display: flex;
+			display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 0.75rem;
@@ -1026,7 +1027,7 @@
 
         <div class="tab-content-wrapper"> 
 
-            <div class="container login-generator-container active" data-content="login-generator" data-default-width="700px" data-default-height="510px">
+            <div class="container login-generator-container active" data-content="login-generator" data-default-width="700px" data-default-height="670px">
                 <h2 style="color: #444; margin-top: 0; text-align: center;">🔐 Генератор логінів</h2>
                 <p style="text-align: center;">Введіть повністю одне або декілька ПІБ, кожне — з нового рядка.<br>Також можливий трансліт ФОП, ТОВ, ПП, АТ, КБ.</p>
                 <textarea id="fullNameInput" rows="5" placeholder="Прізвище, Ім'я, та по Батькові" oninput="generateLogins()"></textarea>
@@ -1094,14 +1095,14 @@
     </div> 
     
     <div class="global-version-info">
-        Версія 2.0a<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
+        Версія 2.0b<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
     </div> 
     
     <div id="notification" class="notification">
         Команда скопійована!
     </div>
     
-    <script>
+<script>
     // --- Функціонал ВКЛАДОК ---
     let endDateResetTimer;
     const RESET_DELAY_SECONDS = 20;
@@ -1261,6 +1262,19 @@
             const fullName = line.trim();
             if (fullName === '') return;
 
+            // ✅ ОНОВЛЕННЯ: СТРОГА ПЕРЕВІРКА на будь-яку латинську літеру ([a-z]/i)
+            if (/[a-z]/i.test(fullName)) { 
+                const errorElement = document.createElement('div');
+                errorElement.className = 'result-item';
+                
+                // ✅ ФІКС: Виводимо ТІЛЬКИ повідомлення про помилку
+                errorElement.innerHTML = `
+                    <span style="color: #dc3545; font-weight: bold; font-size: 1.1em; text-align: center">Тільки українські символи!</span>
+                `; 
+                resultsContainer.appendChild(errorElement);
+                return; // Зупиняємо обробку поточної лінії
+            }
+            
             const lowerCaseFullName = fullName.toLowerCase();
             const parts = fullName.split(/\s+/).filter(p => p.length > 0);
             const wordCount = parts.length; 
