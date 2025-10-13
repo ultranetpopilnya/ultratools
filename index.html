@@ -534,7 +534,7 @@
             margin-top: 5px;
             padding: 15px;
             background-color: #e9f7e9;
-            border-radius: 8px;
+            border-radius: 3px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
             border: 1px solid #c3e6cb;
             flex-grow: 0;
@@ -673,8 +673,8 @@
         #add-template-button {
             /* Змінено позиціонування */
             position: static; 
-            margin-top: 0; 
-            margin-left: 15px;
+            margin-top: -15px; 
+            margin-left: 10px;
             padding: 5px 15px; 
             background-color: #007bff;
             color: white;
@@ -815,7 +815,8 @@
             display: flex;
             align-items: center;
             justify-content: center; /* Центруємо заголовок + кнопку */
-            margin-bottom: 10px; /* Додаємо відступ */
+            margin-bottom: 0px; /* Додаємо відступ */
+			margin-top: 0;
         }
         
 
@@ -823,7 +824,7 @@
             position: relative; 
             border: 1px solid #ccc; 
             padding: 10px;
-            border-radius: 8px;
+            border-radius: 3px;
             background-color: #fff; /* Білий фон для груп полів у світлій темі */
             overflow: hidden; 
             min-height: 170px; 
@@ -988,7 +989,7 @@
         }
         
         body.dark .date-calculator-container .toggle-switch-label input[type="checkbox"]:checked ~ .slider {
-            background-color: #8c8f94; 
+            background-color: #38c172; 
         }
         
         body.dark .date-calculator-container .slider:before {
@@ -1026,14 +1027,14 @@
         <div class="tab-content-wrapper"> 
 
             <div class="container login-generator-container active" data-content="login-generator" data-default-width="700px" data-default-height="510px">
-                <h2 style="color: #444; margin-top: 0;">🔐 Генератор логінів</h2>
-                <p>Введіть повністю одне або декілька ПІБ, кожне — з нового рядка.<br>Також можливий трансліт ФОП, ТОВ, ПП, АТ, КБ.</p>
+                <h2 style="color: #444; margin-top: 0; text-align: center;">🔐 Генератор логінів</h2>
+                <p style="text-align: center;">Введіть повністю одне або декілька ПІБ, кожне — з нового рядка.<br>Також можливий трансліт ФОП, ТОВ, ПП, АТ, КБ.</p>
                 <textarea id="fullNameInput" rows="5" placeholder="Прізвище, Ім'я, та по Батькові" oninput="generateLogins()"></textarea>
                 <div id="results-container"></div>
             </div>
 
             <div class="container date-calculator-container" data-content="date-calculator" data-default-width="700px" data-default-height="490px">
-                <h2 style="color: #444; margin-top: 0;">🗓️ Калькулятор тривалості між датами</h2>
+                <h2 style="color: #444; margin-top: 0; text-align: center;">🗓️ Калькулятор тривалості між датами</h2>
 
                 <div class="date-inputs-row">
                     <div class="date-input-group">
@@ -1067,10 +1068,10 @@
                 </div>
             </div>
             
-            <div class="container gpon-commands-container" data-content="gpon-commands" data-default-width="900px" data-default-height="650px">
-                <h2 style="color: #444; margin-top: 0;">💻 Команди GPON/EPON/BDCOM</h2>
+            <div class="container gpon-commands-container" data-content="gpon-commands" data-default-width="900px" data-default-height="px">
+                <h2 style="color: #444; margin-top: 0; text-align: center;">💻 Команди GPON/EPON/BDCOM</h2>
                 
-                <label for="device-type">Виберіть Тип Обладнання:</label>
+                <label for="device-type">Виберіть тип обладнання:</label>
                 <select id="device-type" onchange="displayCommands(this.value)">
                     <option value="gpon">GPON</option>
                     <option value="epon">EPON</option>
@@ -1082,7 +1083,7 @@
             </div>
             <div class="container" data-content="text-templates" data-default-width="1700px" data-default-height="650px">
                 <div class="templates-header-wrapper">
-                    <h2 style="color: #444;">📝 Текстові шаблони</h2>
+                    <h2 style="color: #444; margin-top: 0;text-align: center;">📝 Текстові шаблони</h2>
                     <button id="add-template-button">+</button>
                 </div>
                 <div id="templates-grid-wrapper">
@@ -1093,7 +1094,7 @@
     </div> 
     
     <div class="global-version-info">
-        Версія 2.0<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
+        Версія 2.0a<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
     </div> 
     
     <div id="notification" class="notification">
