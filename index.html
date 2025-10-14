@@ -175,7 +175,7 @@
         .gpon-commands-container label {
             display: inline-block; /* ✅ щоб label і select були в одному рядку */
             margin-right: 0px;    /* ✅ невеликий відступ справа */
-            margin-bottom: 0;
+            margin-bottom: 8px;
             font-weight: bold;
             color: #555;
 			font-size: 18px;
@@ -213,8 +213,7 @@
             flex-grow: 1; 
             max-height: 500px;   /* або будь-яка висота, яка тобі підходить */
             overflow-y: auto;    /* включає вертикальну прокрутку */
-            overflow-x: hidden;  /* приховує горизонтальну, якщо з’явиться */
-			
+            overflow-x: hidden;  /* приховує горизонтальну, якщо з’явиться */	
         }
         
         body.dark .command-list {
@@ -1084,7 +1083,7 @@
                 </div>
             </div>
             
-            <div class="container gpon-commands-container" data-content="gpon-commands" data-default-width="900px" data-default-height="680px">
+            <div class="container gpon-commands-container" data-content="gpon-commands" data-default-width="1080px" data-default-height="680px">
                 <h2 style="color: #444; margin-top: 0; text-align: center;">💻 Команди GPON/EPON/BDCOM</h2>
                 
                 <label for="device-type">Виберіть тип обладнання:</label>
@@ -1110,7 +1109,7 @@
     </div> 
     
     <div class="global-version-info">
-        Версія 2.1<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
+        Версія 2.1.1<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
     </div> 
     
     <div id="notification" class="notification">
@@ -1285,7 +1284,7 @@ const mapping = {
                 
                 // ✅ ФІКС: Виводимо ТІЛЬКИ повідомлення про помилку
                 errorElement.innerHTML = `
-                    <span style="color: #dc3545; font-weight: bold; font-size: 1.1em; text-align: center">Тільки українські символи!</span>
+                    <span style="color: #dc3545; font-weight: bold; font-size: 1.1em; text-align: center">Трансліт тільки з української!</span>
                 `; 
                 resultsContainer.appendChild(errorElement);
                 return; // Зупиняємо обробку поточної лінії
@@ -1600,7 +1599,7 @@ const mapping = {
 			{ command: 'show ip dhcp snooping port gpon-onu_ВАШПОН ', description: 'Показати Mac адресу, IP та VLAN роутера' },
 			{ command: 'conf t', description: 'Зайти в налаштування на OLT' },
 			{ command: 'ip dhcp snooping clear pon МАКАДРЕСА vlan № gpon-onu_ВАШПОН vport 1', description: 'Очистка сесії (виконується після команди conf t' },
-			{ command: 'ip dhcp snooping clear  МАКАДРЕСА vlan №', description: 'Очистка сесії (виконується після команди conf t' },
+			{ command: 'ip dhcp snooping clear  МАКАДРЕСА vlan №', description: 'Очистка сесії (виконується після команди conf t)' },
 			{ command: 'show pon power onu-rx gpon-olt_', description: 'Показати сигнали всіх ОНУ на порту' },
 
         ],
