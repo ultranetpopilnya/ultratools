@@ -837,8 +837,8 @@
 
         .template-field-group {
             position: relative; 
-            border: 1px solid #ccc; 
-            padding: 10px;
+            border: 2px solid #ccc; 
+            padding: 4px;
             border-radius: 3px;
             background-color: #fff; /* Білий фон для груп полів у світлій темі */
             overflow: hidden; 
@@ -868,10 +868,10 @@
 
         .template-name-input {
             flex-grow: 1; 
-            padding: 8px 10px;
+            padding: 6px 10px;
             border: 1px solid #ddd;
             border-radius: 4px;
-            font-size: 1rem;
+            font-size: 16px;
             color: #333;
             background-color: #fff;
             min-width: 150px; 
@@ -891,11 +891,11 @@
             border-radius: 4px;
             border: 1px solid #ddd;
             box-sizing: border-box;
-            font-size: 1rem;
+            font-size: 14px;
             resize: none !important; 
             transition: border-color 0.2s;
             margin-bottom: 0px; 
-            margin-top: 0;
+            margin-top: -6px;
 			white-space: pre-wrap;      /* Зберігає пробіли та переноси рядків */
             overflow-wrap: normal; /* Забороняє браузеру переносити слова для вміщення */
             word-break: normal;    /* Забороняє розрив довгих слів */
@@ -1096,7 +1096,7 @@
                 <div id="command-output" class="command-list">
                     </div>
             </div>
-            <div class="container" data-content="text-templates" data-default-width="1700px" data-default-height="680px">
+            <div class="container" data-content="text-templates" data-default-width="1800px" data-default-height="680px">
                 <div class="templates-header-wrapper">
                     <h2 style="color: #444; margin-top: 0;text-align: center;">📝 Текстові шаблони</h2>
                     <button id="add-template-button">+</button>
@@ -1109,7 +1109,7 @@
     </div> 
     
     <div class="global-version-info">
-        Версія 2.1.4<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
+        Версія 2.1.5<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
     </div> 
     
     <div id="notification" class="notification">
@@ -1732,7 +1732,7 @@ const mapping = {
         const nameInput = document.createElement('input');
         nameInput.type = 'text';
         nameInput.className = 'template-name-input';
-        nameInput.placeholder = 'Назва шаблону (наприклад, "Привітання")';
+        nameInput.placeholder = 'Назва шаблону';
         nameInput.value = initialName;
         nameInput.oninput = saveTemplates; 
 
