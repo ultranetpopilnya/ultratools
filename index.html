@@ -14,8 +14,19 @@
             background-color: #1b1c1d; 
             color: #e0e0e0;
 			font-family: 'Inter', sans-serif; 
- 
         }
+		
+		.scrollable-commands-list {
+        /* Встановлюємо максимальну висоту. 
+           '70vh' — 70% від висоти вікна. Ви можете змінити це значення на своє. */
+        max-height: 70vh; 
+        
+        /* Включаємо вертикальну прокрутку, коли вміст перевищує max-height */
+        overflow-y: auto; 
+        
+        /* Додамо трохи відступу, щоб скрол не був впритул */
+        padding-right: 15px;
+    }
 
         /* Стилі прокрутки (залишені як є) */
         body.dark ::-webkit-scrollbar {
@@ -162,10 +173,12 @@
         /* === ОНОВЛЕНІ СТИЛІ ДЛЯ МІНІМАЛІЗМУ (command-list) === */
         /* ================================================= */
         .gpon-commands-container label {
-            display: block;
-            margin-bottom: 8px;
+            display: inline-block; /* ✅ щоб label і select були в одному рядку */
+            margin-right: 0px;    /* ✅ невеликий відступ справа */
+            margin-bottom: 0;
             font-weight: bold;
             color: #555;
+			font-size: 18px;
         }
         
         body.dark .gpon-commands-container label {
@@ -173,15 +186,16 @@
         }
 
         .gpon-commands-container select {
-            width: 17%;
-            padding: 10px;
-            margin-bottom: 20px;
+            width: 100px;
+            padding: 6px;
+            margin-bottom: 8px;
             border: 1px solid #ccc;
             border-radius: 4px;
             box-sizing: border-box;
             font-size: 16px;
             background-color: #fff;
             color: #333;
+			display: inline-block;
         }
         
         body.dark .gpon-commands-container select {
@@ -195,10 +209,11 @@
             border: none;
             border-radius: 0px;
             padding: 0; /* Зменшено внутрішній відступ */
-            min-height: 100px; 
             background-color: transparent; /* Зроблено прозорим */
             flex-grow: 1; 
-            overflow-y: auto;
+            max-height: 500px;   /* або будь-яка висота, яка тобі підходить */
+            overflow-y: auto;    /* включає вертикальну прокрутку */
+            overflow-x: hidden;  /* приховує горизонтальну, якщо з’явиться */
 			
         }
         
@@ -306,10 +321,10 @@
             min-height: 100vh;
             margin: 0;
             padding-top: 2rem; 
-            padding-bottom: 2rem; 
+            padding-bottom: 0rem; 
             background-color: #f4f4f9;
             color: #333;
-            transition: background 0.2s linear; 
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         h1 {
@@ -1027,7 +1042,7 @@
 
         <div class="tab-content-wrapper"> 
 
-            <div class="container login-generator-container active" data-content="login-generator" data-default-width="700px" data-default-height="670px">
+            <div class="container login-generator-container active" data-content="login-generator" data-default-width="700px" data-default-height="680px">
                 <h2 style="color: #444; margin-top: 0; text-align: center;">🔐 Генератор логінів</h2>
                 <p style="text-align: center;">Введіть повністю одне або декілька ПІБ, кожне — з нового рядка.<br>Також можливий трансліт ФОП, ТОВ, ПП, АТ, КБ.</p>
                 <textarea id="fullNameInput" rows="5" placeholder="Прізвище, Ім'я, та по Батькові" oninput="generateLogins()"></textarea>
@@ -1069,7 +1084,7 @@
                 </div>
             </div>
             
-            <div class="container gpon-commands-container" data-content="gpon-commands" data-default-width="900px" data-default-height="px">
+            <div class="container gpon-commands-container" data-content="gpon-commands" data-default-width="900px" data-default-height="680px">
                 <h2 style="color: #444; margin-top: 0; text-align: center;">💻 Команди GPON/EPON/BDCOM</h2>
                 
                 <label for="device-type">Виберіть тип обладнання:</label>
@@ -1095,7 +1110,7 @@
     </div> 
     
     <div class="global-version-info">
-        Версія 2.0b<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
+        Версія 2.1<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
     </div> 
     
     <div id="notification" class="notification">
@@ -1170,14 +1185,15 @@
     // --- Функціонал Генератора Логінів ---
 
     function transliterate(text) {
-        const mapping = {
-            'а': 'a', 'б': 'b', 'в': 'v', 'г': 'h', 'ґ': 'g', 'д': 'd',
-            'е': 'e', 'ж': 'zh', 'з': 'z', 'и': 'y', 'і': 'i', 'й': 'i',
-            'к': 'k', 'л': 'k', 'м': 'm', 'н': 'n', 'о': 'o', 'п': 'p',
-            'р': 'r', 'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'kh',
-            'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'shch', 'ь': '', "'": '',
-            'є': 'ie', 'ї': 'i', 'ю': 'iu', 'я': 'ia', 'l':'l' // Додано латинську 'l', щоб не зламати код
-        };
+const mapping = {
+  'а': 'a', 'б': 'b', 'в': 'v', 'г': 'h', 'ґ': 'g', 'д': 'd',
+  'е': 'e', 'ж': 'zh', 'з': 'z', 'и': 'y', 'і': 'i', 'й': 'i',
+  'к': 'k', 'л': 'l', // ✅ виправлено
+  'м': 'm', 'н': 'n', 'о': 'o', 'п': 'p',
+  'р': 'r', 'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'kh',
+  'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'shch', 'ь': '', "'": '',
+  'є': 'ie', 'ї': 'i', 'ю': 'iu', 'я': 'ia', 'l': 'l'
+};
         const positionalRules = {
             'є': { start: 'ye', other: 'ie' },
             'ї': { start: 'yi', other: 'i' },
@@ -1574,11 +1590,19 @@
     const COMMANDS = {
         gpon: [
             { command: 'show gpon onu uncfg', description: 'Показати незареєстровані ONU на PON' },
-            { command: 'interface gpon 0/1', description: 'Перейти в інтерфейс GPON-порту' },
-            { command: 'onu add 1 type ZTE s/n ZTEA80C9C001', description: 'Зареєструвати ONU за серійним номером' },
-            { command: 'show run int gpon 0/1', description: 'Показати конфігурацію GPON-порту' },
-            { command: 'int gpon 0/1/1', description: 'Перейти в інтерфейс GPON ONU (port/slot/onu)' },
-            { command: 'onu-vlan 100 tag', description: 'Додати VLAN (Tag) до ONU' }
+            { command: 'show pon power attenuation gpon-onu_', description: 'Показати сигнал ОНУ абонента' },
+            { command: 'show running-config interface gpon-onu_', description: 'Показати конфіг ОНУ' },
+            { command: 'show gpon onu detail-info gpon-onu_', description: 'Показати логи падіння та підняття ОНУ' },
+            { command: 'show clock', description: 'Показати час на олту' },
+            { command: 'show gpon remote-onu  interface eth gpon-onu_', description: 'Перевірка зєднання між ОНУ та роутером (швидкість)' },
+			{ command: 'show mac gpon  onu gpon-onu_', description: 'Показати Mac адресу роутера' },
+			{ command: 'show ip dhcp snooping dynamic port pon gpon-onu_ВАШПОН vport 1', description: 'Показати Mac адресу, IP та VLAN роутера' },
+			{ command: 'show ip dhcp snooping port gpon-onu_ВАШПОН ', description: 'Показати Mac адресу, IP та VLAN роутера' },
+			{ command: 'conf t', description: 'Зайти в налаштування на OLT' },
+			{ command: 'ip dhcp snooping clear pon МАКАДРЕСА vlan № gpon-onu_ВАШПОН vport 1', description: 'Очистка сесії (виконується після команди conf t' },
+			{ command: 'ip dhcp snooping clear  МАКАДРЕСА vlan №', description: 'Очистка сесії (виконується після команди conf t' },
+			{ command: 'show pon power onu-rx gpon-olt_', description: 'Показати сигнали всіх ОНУ на порту' },
+
         ],
         epon: [
             { command: 'show epon onu uncfg', description: 'Показати незареєстровані ONU на EPON' },
