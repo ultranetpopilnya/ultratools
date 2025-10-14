@@ -1109,7 +1109,7 @@
     </div> 
     
     <div class="global-version-info">
-        Версія 2.1.1<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
+        Версія 2.1.3<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
     </div> 
     
     <div id="notification" class="notification">
@@ -1592,7 +1592,7 @@ const mapping = {
             { command: 'show pon power attenuation gpon-onu_', description: 'Показати сигнал ОНУ абонента' },
             { command: 'show running-config interface gpon-onu_', description: 'Показати конфіг ОНУ' },
             { command: 'show gpon onu detail-info gpon-onu_', description: 'Показати логи падіння та підняття ОНУ' },
-            { command: 'show clock', description: 'Показати час на олту' },
+            { command: 'show clock', description: 'Показати час на OLT' },
             { command: 'show gpon remote-onu  interface eth gpon-onu_', description: 'Перевірка зєднання між ОНУ та роутером (швидкість)' },
 			{ command: 'show mac gpon  onu gpon-onu_', description: 'Показати Mac адресу роутера' },
 			{ command: 'show ip dhcp snooping dynamic port pon gpon-onu_ВАШПОН vport 1', description: 'Показати Mac адресу, IP та VLAN роутера' },
@@ -1604,20 +1604,12 @@ const mapping = {
 
         ],
         epon: [
-            { command: 'show epon onu uncfg', description: 'Показати незареєстровані ONU на EPON' },
-            { command: 'interface epon 0/1', description: 'Перейти в інтерфейс EPON-порту' },
-            { command: 'epon onu add 1 mac 00:1A:B6:00:C0:01', description: 'Зареєструвати ONU за MAC-адресою' },
-            { command: 'show epon interface 0/1', description: 'Показати стан EPON-порту' },
-            { command: 'int epon 0/1/1', description: 'Перейти в інтерфейс EPON ONU' },
-            { command: 'onu-vlan 100 tag', description: 'Додати VLAN (Tag) до ONU (схоже на GPON)' }
+            { command: 'Тут колись будуть команди!', description: '' },
+
         ],
         bdcom: [
-            { command: 'show onu auto-find', description: 'Показати незареєстровані ONU (BDCOM)' },
-            { command: 'interface gpon 0/1', description: 'Перейти в інтерфейс GPON-порту (BDCOM)' },
-            { command: 'onu 1 add gpon mac-address 00-1A-B6-00-C0-01', description: 'Зареєструвати ONU за MAC (GPON BDCOM)' },
-            { command: 'show gpon onu detail 0/1/1:1', description: 'Показати деталі ONU' },
-            { command: 'interface gpon-onu 0/1/1:1', description: 'Перейти в інтерфейс ONU' },
-            { command: 'switchport mode trunk vlan 100 tag', description: 'Додати VLAN (Tag) до ONU (BDCOM)' }
+            { command: 'І тут також', description: '' },
+
         ]
     };
 
@@ -1708,12 +1700,32 @@ const mapping = {
         el.style.height = Math.max(el.scrollHeight, minHeight) + 'px';
     }
 
+    // ✅ НОВА ФУНКЦІЯ: Обробник зміни розміру шаблону
+    function handleTemplateResize(fieldGroup) {
+        // Затримка, щоб DOM встиг оновити розміри після 'resize: both'
+        setTimeout(() => {
+            // Отримуємо поточні розміри в пікселях
+            const currentWidth = fieldGroup.offsetWidth + 'px';
+            const currentHeight = fieldGroup.offsetHeight + 'px';
+            
+            // Застосовуємо стилі inline для збереження
+            fieldGroup.style.width = currentWidth;
+            fieldGroup.style.height = currentHeight;
+            
+            saveTemplates(); // Зберігаємо шаблони, включаючи нові розміри
+        }, 50); 
+    }
 
-    function createTemplateField(initialName = '', initialContent = '', isNew = false) {
+
+    function createTemplateField(initialName = '', initialContent = '', initialWidth = '400px', initialHeight = '170px', isNew = false) {
         const container = document.getElementById('templates-grid-wrapper'); 
         const fieldGroup = document.createElement('div');
         fieldGroup.className = 'template-field-group'; 
         
+        // ✅ ВІДНОВЛЕННЯ РОЗМІРУ: Застосовуємо збережені розміри
+        fieldGroup.style.width = initialWidth;
+        fieldGroup.style.height = initialHeight;
+
         const headerDiv = document.createElement('div');
         headerDiv.className = 'template-header';
         
@@ -1759,6 +1771,12 @@ const mapping = {
             saveTemplates(); 
             autoResizeTextarea(textarea); 
         };
+        
+        // ✅ ВСТАНОВЛЕННЯ ОБРОБНИКА RESIZE
+        // Для відстеження зміни розміру елемента, який має resize: both
+        fieldGroup.addEventListener('mouseup', () => handleTemplateResize(fieldGroup));
+        fieldGroup.addEventListener('touchend', () => handleTemplateResize(fieldGroup)); // Для мобільних пристроїв
+
 
         headerDiv.appendChild(nameInput);
         actionsDiv.appendChild(copyButton);
@@ -1776,25 +1794,30 @@ const mapping = {
     }
 
     function addTemplate() {
-        const newField = createTemplateField('', '', true); 
+        const newField = createTemplateField('', '', '400px', '170px', true); 
         newField.querySelector('.template-name-input').focus(); 
         saveTemplates(); 
     }
 
+    // ✅ МОДИФІКОВАНО: Додано збереження розмірів
     function saveTemplates() {
         const templates = [];
         const fieldGroups = document.querySelectorAll('#templates-grid-wrapper .template-field-group'); 
         fieldGroups.forEach(group => {
             const nameInput = group.querySelector('.template-name-input');
             const textarea = group.querySelector('textarea');
+            // Зберігаємо поточні inline стилі width та height
             templates.push({
                 name: nameInput ? nameInput.value : '',
-                content: textarea ? textarea.value : ''
+                content: textarea ? textarea.value : '',
+                width: group.style.width,
+                height: group.style.height
             });
         });
         localStorage.setItem('textTemplates', JSON.stringify(templates));
     }
 
+    // ✅ МОДИФІКОВАНО: Додано відновлення розмірів
     function loadTemplates() {
         const templatesJson = localStorage.getItem('textTemplates');
         const templatesGrid = document.getElementById('templates-grid-wrapper');
@@ -1803,7 +1826,13 @@ const mapping = {
         if (templatesJson) {
             const templates = JSON.parse(templatesJson);
             templates.forEach(template => {
-                createTemplateField(template.name, template.content); 
+                // Викликаємо з додатковими параметрами розміру
+                createTemplateField(
+                    template.name, 
+                    template.content, 
+                    template.width || '400px', 
+                    template.height || '170px'
+                ); 
             });
         }
     }
@@ -1870,7 +1899,7 @@ const mapping = {
         
         // Ініціалізація Текстових Шаблонів
         document.getElementById('add-template-button').onclick = addTemplate;
-        loadTemplates();
+        loadTemplates(); // ✅ Завантажуємо шаблони
         
         // Переконатися, що генератор логінів працює на старті, якщо це активна вкладка
         const initialTab = localStorage.getItem('activeTab') || 'login-generator';
