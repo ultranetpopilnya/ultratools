@@ -9,6 +9,28 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     
     <style>
+	/* Стилі для статичного напису-підказки */
+#static-clarification-message {
+    font-style: italic; 
+    color: #38c172; /* Зелений колір */
+    margin: 0 0 10px 0; 
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    user-select: none;
+    font-weight: 600;
+    margin-top: 0px;
+text-align: right;	
+}
+
+body.dark #static-clarification-message {
+    color: #E6A22E; /* Акцентний колір для темної теми */
+}
+	    #device-type:focus {
+    /* Прибирає рамку фокусування (заокруглення) */
+    outline: none; 
+        }
+		
         /* --- АДАПТОВАНІ СТИЛІ З ВАШОГО КОДУ ДЛЯ ТЕМИ --- */
         body.dark {
             background-color: #1b1c1d; 
@@ -25,7 +47,7 @@
         overflow-y: auto; 
         
         /* Додамо трохи відступу, щоб скрол не був впритул */
-        padding-right: 15px;
+        padding-right: 150px;
     }
 
         /* Стилі прокрутки (залишені як є) */
@@ -187,15 +209,16 @@
 
         .gpon-commands-container select {
             width: 100px;
-            padding: 6px;
-            margin-bottom: 8px;
+            padding: 1px;
+            margin-bottom: 0px;
             border: 1px solid #ccc;
-            border-radius: 4px;
+            border-radius: 1px;
             box-sizing: border-box;
             font-size: 16px;
             background-color: #fff;
             color: #333;
 			display: inline-block;
+			margin-left: 0px;
         }
         
         body.dark .gpon-commands-container select {
@@ -842,8 +865,7 @@
             border-radius: 3px;
             background-color: #fff; /* Білий фон для груп полів у світлій темі */
             overflow: hidden; 
-            min-height: 170px; 
-            width: 400px; 
+            min-height: 90px; 
             min-width: 400px;
             max-width: 100%; 
             display: flex; 
@@ -1084,18 +1106,26 @@
             </div>
             
             <div class="container gpon-commands-container" data-content="gpon-commands" data-default-width="1080px" data-default-height="680px">
-                <h2 style="color: #444; margin-top: 0; text-align: center;">💻 Команди GPON/EPON/BDCOM</h2>
-                
-                <label for="device-type">Виберіть тип обладнання:</label>
-                <select id="device-type" onchange="displayCommands(this.value)">
-                    <option value="gpon">GPON</option>
-                    <option value="epon">EPON</option>
-                    <option value="bdcom">BDCOM</option>
-                </select>
+    
+    <h2 style="color: #444; margin-top: 0; text-align: center;">💻 Команди GPON/EPON/BDCOM</h2>
+	<div id="controls-and-clarification" style="display: flex; align-items: flex-start; gap: 10px; margin-bottom: 5px; flex-wrap: wrap;">
+    
+    <div id="gpon-select-row" style="display: flex; align-items: center; gap: 2px;"> 
+        <label for="device-type" style="margin-bottom: 0; white-space: nowrap;">Виберіть тип обладнання:</label>
+        <select id="device-type" onchange="handleDeviceTypeChange()">
+            <option value="gpon">GPON</option>
+            <option value="epon">EPON</option>
+            <option value="bdcom">BDCOM</option>
+        </select>
+    </div>
 
-                <div id="command-output" class="command-list">
-                    </div>
-            </div>
+    <p id="static-clarification-message" style="margin-right: 0px; padding: 0px; flex-grow: 1;">
+        ℹ️ Натисніть на будь-яку команду для автоматичного копіювання!
+    </p>
+</div>
+    
+    <div id="command-output" class="command-list"> </div>
+</div>
             <div class="container" data-content="text-templates" data-default-width="1800px" data-default-height="680px">
                 <div class="templates-header-wrapper">
                     <h2 style="color: #444; margin-top: 0;text-align: center;">📝 Текстові шаблони</h2>
@@ -1109,7 +1139,7 @@
     </div> 
     
     <div class="global-version-info">
-        Версія 2.1.5<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
+        Версія 2.2<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
     </div> 
     
     <div id="notification" class="notification">
@@ -1117,6 +1147,13 @@
     </div>
     
 <script>
+// --- НОВА ФУНКЦІЯ: Обробка зміни вибору (викликається в onchange) ---
+function handleDeviceTypeChange() {
+    const selectedValue = document.getElementById('device-type').value;
+    // Текст-підказка тепер статичний і не вимагає оновлення
+    // 2. Виводимо команди (викликаємо вашу існуючу функцію)
+    displayCommands(selectedValue);
+}
     // --- Функціонал ВКЛАДОК ---
     let endDateResetTimer;
     const RESET_DELAY_SECONDS = 20;
@@ -1631,6 +1668,19 @@ const mapping = {
     function displayCommands(deviceType) {
         commandOutput.innerHTML = ''; // Очистити попередні команди
         const commands = COMMANDS[deviceType] || [];
+		let htmlContent = '';
+		htmlContent += `
+        <p style="
+            text-align: center; 
+            font-size: 0.9em; 
+            padding: 5px; 
+            border-radius: 5px; 
+            margin-bottom: 10px;
+            background-color: rgba(0, 123, 255, 0.1); 
+            color: #007bff;
+			position: relative;
+        </p>
+    `;
 
         if (commands.length === 0) {
             commandOutput.innerHTML = '<p style="text-align: center; color: #888; padding: 20px;">Команди для цього типу обладнання ще не додано.</p>';
@@ -1802,7 +1852,7 @@ const mapping = {
     }
 
     function addTemplate() {
-        const newField = createTemplateField('', '', '400px', '170px', true); 
+        const newField = createTemplateField('', '', '400px', '90px', true); 
         newField.querySelector('.template-name-input').focus(); 
         saveTemplates(); 
     }
@@ -1920,6 +1970,7 @@ const mapping = {
              const deviceSelect = document.getElementById('device-type');
              if (deviceSelect) {
                 displayCommands(deviceSelect.value);
+				updateClarification();
              }
         }
     });
@@ -1927,5 +1978,6 @@ const mapping = {
 
 </body>
 </html>
+
 
 
