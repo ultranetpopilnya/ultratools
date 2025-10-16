@@ -9,13 +9,25 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     
     <style>
+input:focus,
+textarea:focus,
+select:focus,
+button:focus,
+.tab-button:focus {
+    
+    /* 1. Встановлюємо заокруглення для самого елемента (якщо не було раніше) */
+    border-radius: 2px !important; 
+    
+    /* 2. Прибираємо стандартну рамку фокусування браузера, щоб уникнути конфлікту */
+    outline: none;
+}
 	/* Стилі для статичного напису-підказки */
 #static-clarification-message {
     font-style: italic; 
     color: #38c172; /* Зелений колір */
     margin: 0 0 10px 0; 
     padding: 5px 10px;
-    border-radius: 4px;
+    border-radius: 2px;
     font-size: 0.9em;
     user-select: none;
     font-weight: 600;
@@ -212,7 +224,7 @@ body.dark #static-clarification-message {
             padding: 1px;
             margin-bottom: 0px;
             border: 1px solid #ccc;
-            border-radius: 1px;
+            border-radius: 2px;
             box-sizing: border-box;
             font-size: 16px;
             background-color: #fff;
@@ -313,7 +325,7 @@ body.dark #static-clarification-message {
             background-color: #38c172; /* Зелений з вашої теми */
             color: white;
             padding: 10px 20px;
-            border-radius: 5px;
+            border-radius: 2px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
             opacity: 0;
             transition: opacity 0.4s ease-out, transform 0.4s ease-out;
@@ -420,7 +432,7 @@ body.dark #static-clarification-message {
             width: 100%;
             padding: 0.75rem;
             font-size: 1rem;
-            border-radius: 4px;
+            border-radius: 2px;
             border: 1px solid #ccc;
             box-sizing: border-box;
             margin-bottom: 1rem;
@@ -443,7 +455,7 @@ body.dark #static-clarification-message {
             align-items: center;
             padding: 0.75rem;
             border: 1px solid #e0e0e0;
-            border-radius: 4px;
+            border-radius: 2px;
             margin-top: 0.5rem;
             background-color: #f9f9f9;
             min-height: 45px; 
@@ -475,7 +487,7 @@ body.dark #static-clarification-message {
             border: none;
             color: white;
             cursor: pointer;
-            border-radius: 4px;
+            border-radius: 2px;
             transition: background-color 0.2s;
             flex-shrink: 0; 
         }
@@ -521,7 +533,7 @@ body.dark #static-clarification-message {
         body.dark .date-calculator-container .date-input-group input[type="time"] { 
             padding: 10px;
             border: 2px solid #ccc;
-            border-radius: 6px;
+            border-radius: 2px;
             font-size: 1em;
             cursor: pointer;
             transition: border-color 0.3s;
@@ -571,7 +583,7 @@ body.dark #static-clarification-message {
             margin-top: 5px;
             padding: 15px;
             background-color: #e9f7e9;
-            border-radius: 3px;
+            border-radius: 2px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
             border: 1px solid #c3e6cb;
             flex-grow: 0;
@@ -861,7 +873,7 @@ body.dark #static-clarification-message {
             position: relative; 
             border: 2px solid #ccc; 
             padding: 4px;
-            border-radius: 3px;
+            border-radius: 2px;
             background-color: #fff; /* Білий фон для груп полів у світлій темі */
             overflow: hidden; 
             min-height: 90px; 
@@ -891,7 +903,7 @@ body.dark #static-clarification-message {
             flex-grow: 1; 
             padding: 6px 10px;
             border: 1px solid #ddd;
-            border-radius: 4px;
+            border-radius: 2px;
             font-size: 16px;
             color: #333;
             background-color: #fff;
@@ -909,7 +921,7 @@ body.dark #static-clarification-message {
             width: 100%;
             flex-grow: 1; 
             padding: 10px;
-            border-radius: 4px;
+            border-radius: 2px;
             border: 1px solid #ddd;
             box-sizing: border-box;
             font-size: 14px;
@@ -943,7 +955,7 @@ body.dark #static-clarification-message {
         .template-actions button {
             padding: 5px 10px;
             border: none;
-            border-radius: 4px;
+            border-radius: 2px;
             cursor: pointer;
             font-size: 0.9rem;
             transition: background-color 0.2s;
@@ -1977,3 +1989,8 @@ const mapping = {
 
 </body>
 </html>
+
+
+
+
+
