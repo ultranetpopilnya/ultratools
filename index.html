@@ -640,8 +640,8 @@ body.dark #static-clarification-message {
             top: -2px;
             left: 0;
 			right: 0; 
-            width: 100vw;
-            height: 50px; /* Висота 30 пікселів */
+            width: 100%;
+            height: 50px; /* Висота 50 пікселів */
             background-color: #E8E8E8; 
             z-index: -1; /* Позиціонуємо позаду кнопок */
         }
@@ -1074,14 +1074,14 @@ body.dark #static-clarification-message {
 
         <div class="tab-content-wrapper"> 
 
-            <div class="container login-generator-container active" data-content="login-generator" data-default-width="700px" data-default-height="680px">
+            <div class="container login-generator-container active" data-content="login-generator" data-default-width="40%" data-default-height="680px">
                 <h2 style="color: #444; margin-top: 0; text-align: center;">🔐 Генератор логінів</h2>
                 <p style="text-align: center;">Введіть повністю одне або декілька ПІБ, кожне — з нового рядка.<br>Також можливий трансліт ФОП, ТОВ, ПП, АТ, КБ.</p>
                 <textarea id="fullNameInput" rows="5" placeholder="Прізвище, Ім'я, та по Батькові" oninput="generateLogins()"></textarea>
                 <div id="results-container"></div>
             </div>
 
-            <div class="container date-calculator-container" data-content="date-calculator" data-default-width="700px" data-default-height="490px">
+            <div class="container date-calculator-container" data-content="date-calculator" data-default-width="50%" data-default-height="490px">
                 <h2 style="color: #444; margin-top: 0; text-align: center;">🗓️ Калькулятор тривалості між датами</h2>
 
                 <div class="date-inputs-row">
@@ -1116,7 +1116,7 @@ body.dark #static-clarification-message {
                 </div>
             </div>
             
-            <div class="container gpon-commands-container" data-content="gpon-commands" data-default-width="1000px" data-default-height="697px">
+            <div class="container gpon-commands-container" data-content="gpon-commands" data-default-width="60%" data-default-height="697px">
     
     <h2 style="color: #444; margin-top: 0; text-align: center;">💻 Команди GPON/EPON/BDCOM</h2>
 	<div id="controls-and-clarification" style="display: flex; align-items: flex-start; gap: 10px; margin-bottom: 5px; flex-wrap: wrap;">
@@ -1137,7 +1137,7 @@ body.dark #static-clarification-message {
     
     <div id="command-output" class="command-list"> </div>
 </div>
-            <div class="container" data-content="text-templates" data-default-width="1800px" data-default-height="680px">
+            <div class="container" data-content="text-templates" data-default-width="100%" data-default-height="680px">
                 <div class="templates-header-wrapper">
                     <h2 style="color: #444; margin-top: 0;text-align: center;">📝 Текстові шаблони</h2>
                     <button id="add-template-button">+</button>
@@ -1150,7 +1150,7 @@ body.dark #static-clarification-message {
     </div> 
     
     <div class="global-version-info">
-        Версія 2.2.1<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
+        Версія 2.3<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
     </div> 
     
     <div id="notification" class="notification">
@@ -1646,8 +1646,8 @@ const mapping = {
 			{ command: 'show ip dhcp snooping dynamic port pon gpon-onu_ vport 1', description: 'Показати Mac адресу, IP та VLAN роутера' },
 			{ command: 'show ip dhcp snooping port gpon-onu_', description: 'Показати Mac адресу, IP та VLAN роутера' },
 			{ command: 'conf t', description: 'Зайти в налаштування на OLT' },
-			{ command: 'ip dhcp snooping clear pon MAC vlan № gpon-onu_ vport 1', description: 'Очистка сесії (виконується після команди conf t' },
-			{ command: 'ip dhcp snooping clear MAC vlan №', description: 'Очистка сесії (виконується після команди conf t)' },
+			{ command: 'ip dhcp snooping clear pon MAC vlan № gpon-onu_ vport 1', description: 'Очистка сесії. Виконується після команди conf t' },
+			{ command: 'ip dhcp snooping clear MAC vlan №', description: 'Очистка сесії. Виконується після команди conf t' },
 			{ command: 'show pon power onu-rx gpon-olt_', description: 'Показати сигнали всіх ONU на порту' },
 
         ],
