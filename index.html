@@ -1144,7 +1144,7 @@ body.dark .line-marker-gutter {
     left: 50%;
     /* Прибираємо вертикальне центрування, залишаємо тільки горизонтальне */
     transform: translateX(-50%); 
-    font-size: 20px; 
+    font-size: 22px; 
     color: #007bff;
     pointer-events: none; 
     font-family: 'Fira Code', monospace !important; 
@@ -1272,7 +1272,7 @@ body.dark .template-field-group textarea {
     </div> 
     
     <div class="global-version-info">
-        Версія 2.6.1<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
+        Версія 2.6.3<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
     </div> 
     
     <div id="notification" class="notification">
@@ -1842,104 +1842,160 @@ const mapping = {
     }
 
 function initDraggableAndResizable(element) {
-        // --- ОСНОВНЕ НАЛАШТУВАННЯ ВІДСТУПУ ПРИ ПЕРЕТЯГУВАННІ ---
-        const collisionGap = 4; // <--- ОСЬ ТУТ! Встановіть потрібну відстань у пікселях.
+    const collisionGap = 4; // Відстань між шаблонами
 
-        const position = { 
-            x: parseFloat(element.getAttribute('data-x')) || 0, 
-            y: parseFloat(element.getAttribute('data-y')) || 0 
-        };
+    const position = {
+        x: parseFloat(element.getAttribute('data-x')) || 0,
+        y: parseFloat(element.getAttribute('data-y')) || 0
+    };
 
-        element.style.transform = `translate(${position.x}px, ${position.y}px)`;
-        
-        interact(element).draggable({
-            allowFrom: '.template-drag-handle',
-            inertia: false,
-            autoScroll: false,
-            listeners: {
-                move(event) {
-                    const target = event.target;
-                    const parentContainer = document.getElementById('templates-grid-wrapper');
+    element.style.transform = `translate(${position.x}px, ${position.y}px)`;
 
-                    const allTemplates = Array.from(document.querySelectorAll('.template-field-group'));
-                    let canMoveX = true;
-                    let canMoveY = true;
-                    
-                    // Потенційна нова позиція шаблону, який тягнемо
-                    const currentTargetRect = {
-                        left: position.x,
-                        top: position.y,
-                        right: position.x + target.offsetWidth,
-                        bottom: position.y + target.offsetHeight
+    interact(element).draggable({
+        // ... (код для draggable залишається без змін) ...
+        allowFrom: '.template-drag-handle',
+        inertia: false,
+        autoScroll: false,
+        listeners: {
+            move(event) {
+                const target = event.target;
+                const parentContainer = document.getElementById('templates-grid-wrapper');
+                const allTemplates = Array.from(document.querySelectorAll('.template-field-group'));
+                let canMoveX = true;
+                let canMoveY = true;
+
+                const currentTargetRect = {
+                    left: position.x,
+                    top: position.y,
+                    right: position.x + target.offsetWidth,
+                    bottom: position.y + target.offsetHeight
+                };
+
+                for (const other of allTemplates) {
+                    if (other === target) continue;
+
+                    const otherRect = {
+                        left: parseFloat(other.getAttribute('data-x')),
+                        top: parseFloat(other.getAttribute('data-y')),
+                        right: parseFloat(other.getAttribute('data-x')) + other.offsetWidth,
+                        bottom: parseFloat(other.getAttribute('data-y')) + other.offsetHeight
                     };
 
+                    const inflatedOtherRect = {
+                        left: otherRect.left - collisionGap,
+                        top: otherRect.top - collisionGap,
+                        right: otherRect.right + collisionGap,
+                        bottom: otherRect.bottom + collisionGap
+                    };
+
+                    if (isIntersecting({ ...currentTargetRect, left: currentTargetRect.left + event.dx, right: currentTargetRect.right + event.dx }, inflatedOtherRect)) {
+                        canMoveX = false;
+                    }
+                    if (isIntersecting({ ...currentTargetRect, top: currentTargetRect.top + event.dy, bottom: currentTargetRect.bottom + event.dy }, inflatedOtherRect)) {
+                        canMoveY = false;
+                    }
+                }
+
+                if (canMoveX) position.x += event.dx;
+                if (canMoveY) position.y += event.dy;
+
+                if (position.y < 0) position.y = 0;
+                if (position.x < 0) position.x = 0;
+                if (parentContainer && (position.x + target.offsetWidth > parentContainer.offsetWidth)) {
+                    position.x = parentContainer.offsetWidth - target.offsetWidth;
+                }
+
+                target.style.transform = `translate(${position.x}px, ${position.y}px)`;
+            },
+            end(event) {
+                event.target.setAttribute('data-x', position.x);
+                event.target.setAttribute('data-y', position.y);
+                saveTemplates();
+            }
+        }
+    }).resizable({
+        edges: { left: false, right: true, bottom: true, top: false },
+        margin: 16,
+        listeners: {
+            move(event) {
+                const target = event.target;
+                const parentContainer = document.getElementById('templates-grid-wrapper');
+                const allTemplates = Array.from(document.querySelectorAll('.template-field-group'));
+                
+                let canResizeX = true;
+                let canResizeY = true;
+
+                const currentX = parseFloat(target.getAttribute('data-x'));
+                const currentY = parseFloat(target.getAttribute('data-y'));
+
+                // --- Перевірка для осі X (ширина) ---
+                const potentialRectX = {
+                    left: currentX,
+                    top: currentY,
+                    right: currentX + event.rect.width,
+                    bottom: currentY + target.offsetHeight // Використовуємо поточну висоту для тесту
+                };
+
+                if (potentialRectX.right > parentContainer.offsetWidth) {
+                    canResizeX = false;
+                } else {
                     for (const other of allTemplates) {
                         if (other === target) continue;
-
                         const otherRect = {
-                           left: parseFloat(other.getAttribute('data-x')),
-                           top: parseFloat(other.getAttribute('data-y')),
-                           right: parseFloat(other.getAttribute('data-x')) + other.offsetWidth,
-                           bottom: parseFloat(other.getAttribute('data-y')) + other.offsetHeight
+                            left: parseFloat(other.getAttribute('data-x')) - collisionGap,
+                            top: parseFloat(other.getAttribute('data-y')) - collisionGap,
+                            right: parseFloat(other.getAttribute('data-x')) + other.offsetWidth + collisionGap,
+                            bottom: parseFloat(other.getAttribute('data-y')) + other.offsetHeight + collisionGap
                         };
-
-                        // "Роздуваємо" прямокутник іншого шаблону на величину відступу.
-                        const inflatedOtherRect = {
-                            left: otherRect.left - collisionGap,
-                            top: otherRect.top - collisionGap,
-                            right: otherRect.right + collisionGap,
-                            bottom: otherRect.bottom + collisionGap
-                        };
-
-                        // Перевіряємо, чи перетнеться наш шаблон з "роздутою" рамкою іншого
-                        if (isIntersecting({ ...currentTargetRect, left: currentTargetRect.left + event.dx, right: currentTargetRect.right + event.dx }, inflatedOtherRect)) {
-                            canMoveX = false;
-                        }
-                        if (isIntersecting({ ...currentTargetRect, top: currentTargetRect.top + event.dy, bottom: currentTargetRect.bottom + event.dy }, inflatedOtherRect)) {
-                            canMoveY = false;
+                        if (isIntersecting(potentialRectX, otherRect)) {
+                            canResizeX = false;
+                            break;
                         }
                     }
-                    
-                    if (canMoveX) position.x += event.dx;
-                    if (canMoveY) position.y += event.dy;
-                    
-                    // Обмеження, щоб не виходити за межі контейнера
-                    if (position.y < 0) position.y = 0;
-                    if (position.x < 0) position.x = 0;
-                    if (parentContainer && (position.x + target.offsetWidth > parentContainer.offsetWidth)) {
-                        position.x = parentContainer.offsetWidth - target.offsetWidth;
-                    }
-
-                    target.style.transform = `translate(${position.x}px, ${position.y}px)`;
-                },
-                end(event) {
-                    event.target.setAttribute('data-x', position.x);
-                    event.target.setAttribute('data-y', position.y);
-                    saveTemplates();
                 }
-            }
-        }).resizable({
-            edges: { left: false, right: true, bottom: true, top: false },
-			margin: 16, // Зона спрацьовування буде 16px!
-            listeners: {
-                move(event) {
-                    Object.assign(event.target.style, {
-                        width: `${event.rect.width}px`,
-                        height: `${event.rect.height}px`,
-                    });
-                },
-                end(event) {
-                    saveTemplates();
+
+                // --- Перевірка для осі Y (висота) ---
+                const potentialRectY = {
+                    left: currentX,
+                    top: currentY,
+                    right: currentX + target.offsetWidth, // Використовуємо поточну ширину для тесту
+                    bottom: currentY + event.rect.height
+                };
+
+                for (const other of allTemplates) {
+                    if (other === target) continue;
+                    const otherRect = {
+                        left: parseFloat(other.getAttribute('data-x')) - collisionGap,
+                        top: parseFloat(other.getAttribute('data-y')) - collisionGap,
+                        right: parseFloat(other.getAttribute('data-x')) + other.offsetWidth + collisionGap,
+                        bottom: parseFloat(other.getAttribute('data-y')) + other.offsetHeight + collisionGap
+                    };
+                    if (isIntersecting(potentialRectY, otherRect)) {
+                        canResizeY = false;
+                        break;
+                    }
+                }
+
+                // --- Застосування змін незалежно ---
+                if (canResizeX) {
+                    target.style.width = `${event.rect.width}px`;
+                }
+                if (canResizeY) {
+                    target.style.height = `${event.rect.height}px`;
                 }
             },
-            modifiers: [
-                interact.modifiers.restrictSize({
-                    min: { width: 400, height: 150 }
-                })
-            ],
-            inertia: false
-        });
-    }
+            end(event) {
+                saveTemplates();
+            }
+        },
+        modifiers: [
+            interact.modifiers.restrictSize({
+                min: { width: 400, height: 110 }
+            })
+        ],
+        inertia: false
+    });
+}
 
 // Повністю нова функція
 function createTemplateField(data = {}) {
@@ -2100,7 +2156,7 @@ function renderLineMarkers(fieldGroup) {
 
         // --- ПОЧАТОК ЗМІН ---
         // Позиціонуємо по верху рядка + невеликий зсув вниз для ідеального вирівнювання
-        const verticalOffset = -3; // ЦЕ ЗНАЧЕННЯ МОЖНА ЗМІНЮВАТИ (2, 3 або 4)
+        const verticalOffset = -4.5; // ЦЕ ЗНАЧЕННЯ МОЖНА ЗМІНЮВАТИ (2, 3 або 4)
         marker.style.top = `${paddingTop + (lineNumber - 1) * lineHeight + verticalOffset}px`;
         // --- КІНЕЦЬ ЗМІН ---
 
@@ -2122,7 +2178,7 @@ function addTemplate() {
     const existingTemplates = Array.from(container.querySelectorAll('.template-field-group'));
 
     const newTemplateWidth = 400;
-    const newTemplateHeight = 160;
+    const newTemplateHeight = 110;
     const gap = 4; // Ваш відступ
 
     // Крок 1: Створюємо список потенційних точок для розміщення
