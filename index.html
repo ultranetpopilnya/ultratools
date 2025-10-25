@@ -9,6 +9,26 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     
     <style>
+	/* === КОРЕКТНЕ ПІДСВІЧУВАННЯ ВНУТРІШНІХ ЕЛЕМЕНТІВ ШАБЛОНУ === */
+
+/* Світла тема: підсвічуємо синім ТІЛЬКИ активне поле вводу */
+.template-field-group .template-name-input:focus,
+.template-field-group .textarea-wrapper:focus-within {
+    border-color: #007bff !important;
+}
+
+/* Темна тема: підсвічуємо оранжевим ТІЛЬКИ активне поле вводу */
+body.dark .template-field-group .template-name-input:focus,
+body.dark .template-field-group .textarea-wrapper:focus-within {
+    border-color: #E6A22E !important;
+}
+
+/* Прибираємо зайву тінь з внутрішніх елементів, оскільки вона вже є на зовнішньому блоці */
+.template-field-group .template-name-input:focus,
+.template-field-group .textarea-wrapper:focus-within {
+    box-shadow: none !important;
+}
+
 	/* --- ВИРІШЕННЯ ПРОБЛЕМИ ВИДІЛЕННЯ ТЕКСТУ ПРИ РЕСАЙЗІ --- */
 
 /* 1. Забороняємо виділення для всього контейнера шаблону */
@@ -1081,6 +1101,73 @@ body.dark .template-field-group::after {
     background: linear-gradient(135deg, transparent 50%, rgba(255,255,255,0.2) 50%);
 }
 
+/* === СТИЛІ ДЛЯ ФУНКЦІЇ ПОЗНАЧОК В ШАБЛОНАХ === */
+
+/* 1. Обгортка, що містить колонку і текстове поле */
+.textarea-wrapper {
+    position: relative;
+    display: flex;
+    flex-grow: 1; /* Займає весь доступний простір по висоті */
+    margin: 0 4px 4px 4px;
+    width: calc(100% - 8px);
+    border: 1px solid #ddd; /* Загальна рамка */
+    border-radius: 2px;
+    overflow: hidden; /* Ховаємо все, що виходить за межі */
+}
+
+body.dark .textarea-wrapper {
+    border-color: #555555;
+}
+
+/* 2. Колонка для позначок (зліва) */
+.line-marker-gutter {
+    width: 16px; /* Ширина колонки */
+    flex-shrink: 0;
+    background-color: #f0f0f0;
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+    overflow: hidden; /* Важливо для синхронізації прокрутки */
+    padding-top: 10px; /* Такий же, як у textarea! */
+    padding-bottom: 10px; /* Такий же, як у textarea! */
+	border-right: 1px solid #ddd;
+}
+
+body.dark .line-marker-gutter {
+    background-color: #3e3e3e;
+	border-right: 1px solid #555555;
+}
+
+/* 3. Сама позначка (крапка) */
+.line-marker {
+    position: absolute;
+    left: 50%;
+    /* Прибираємо вертикальне центрування, залишаємо тільки горизонтальне */
+    transform: translateX(-50%); 
+    font-size: 20px; 
+    color: #007bff;
+    pointer-events: none; 
+    font-family: 'Fira Code', monospace !important; 
+    /* Видаляємо line-height, щоб він не впливав на позиціонування */
+}
+
+body.dark .line-marker {
+    color: #E6A22E;
+}
+
+/* 4. Адаптуємо оригінальне текстове поле */
+.template-field-group textarea {
+    /* Прибираємо власну рамку і відступи, бо вони тепер на обгортці */
+    margin: 0;
+    border: none;
+    border-radius: 0;
+    width: 100%; /* Займає весь залишений простір */
+    line-height: 1.5; /* ВАЖЛИВО: для розрахунку позиції */
+}
+
+body.dark .template-field-group textarea {
+}
+
     </style>
 </head>
 <body>
@@ -1185,7 +1272,7 @@ body.dark .template-field-group::after {
     </div> 
     
     <div class="global-version-info">
-        Версія 2.6<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
+        Версія 2.6.1<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
     </div> 
     
     <div id="notification" class="notification">
@@ -1854,91 +1941,172 @@ function initDraggableAndResizable(element) {
         });
     }
 
-    function createTemplateField(data = {}) {
-        const {
-            name = '',
-            content = '',
-            width = '400px',
-            height = '170px',
-            x = 10,
-            y = 10
-        } = data;
+// Повністю нова функція
+function createTemplateField(data = {}) {
+    const {
+        name = '',
+        content = '',
+        width = '400px',
+        height = '170px',
+        x = 10,
+        y = 10,
+        // Отримуємо збережені закладки
+        bookmarks = [] 
+    } = data;
 
-        const container = document.getElementById('templates-grid-wrapper'); 
-        const fieldGroup = document.createElement('div');
-        fieldGroup.className = 'template-field-group'; 
-        
-        fieldGroup.style.width = width;
-        fieldGroup.style.height = height;
-        fieldGroup.setAttribute('data-x', x);
-        fieldGroup.setAttribute('data-y', y);
-        
-        const dragHandle = document.createElement('div');
-        dragHandle.className = 'template-drag-handle';
-        dragHandle.innerHTML = '⠿';
+    const container = document.getElementById('templates-grid-wrapper'); 
+    const fieldGroup = document.createElement('div');
+    fieldGroup.className = 'template-field-group'; 
+    
+    // Зберігаємо закладки прямо на елементі для легкого доступу
+    fieldGroup.dataset.bookmarks = JSON.stringify(bookmarks);
+    
+    fieldGroup.style.width = width;
+    fieldGroup.style.height = height;
+    fieldGroup.setAttribute('data-x', x);
+    fieldGroup.setAttribute('data-y', y);
+    
+    const dragHandle = document.createElement('div');
+    dragHandle.className = 'template-drag-handle';
+    dragHandle.innerHTML = '⠿';
 
-        const headerDiv = document.createElement('div');
-        headerDiv.className = 'template-header';
-        
-        const nameInput = document.createElement('input');
-        nameInput.type = 'text';
-        nameInput.className = 'template-name-input';
-        nameInput.placeholder = 'Назва шаблону';
-        nameInput.value = name;
-        nameInput.oninput = saveTemplates; 
+    const headerDiv = document.createElement('div');
+    headerDiv.className = 'template-header';
+    
+    const nameInput = document.createElement('input');
+    nameInput.type = 'text';
+    nameInput.className = 'template-name-input';
+    nameInput.placeholder = 'Назва шаблону';
+    nameInput.value = name;
+    nameInput.oninput = saveTemplates; 
 
-        const actionsDiv = document.createElement('div');
-        actionsDiv.className = 'template-actions';
-        
-        const copyButton = document.createElement('button');
-        copyButton.textContent = 'Копіювати';
-        copyButton.className = 'copy-template-btn';
-        copyButton.onclick = () => {
-            const textarea = fieldGroup.querySelector('textarea');
-            const selectedText = textarea.value.substring(textarea.selectionStart, textarea.selectionEnd);
-            const textToCopy = selectedText || textarea.value;
+    const actionsDiv = document.createElement('div');
+    actionsDiv.className = 'template-actions';
+    
+    const copyButton = document.createElement('button');
+    copyButton.textContent = 'Копіювати';
+    copyButton.className = 'copy-template-btn';
+    copyButton.onclick = () => {
+        const textarea = fieldGroup.querySelector('textarea');
+        const selectedText = textarea.value.substring(textarea.selectionStart, textarea.selectionEnd);
+        const textToCopy = selectedText || textarea.value;
+        if (!textToCopy.trim()) return; 
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            const originalText = copyButton.textContent;
+            copyButton.textContent = 'Скопійовано!';
+            copyButton.disabled = true;
+            setTimeout(() => {
+                copyButton.textContent = 'Копіювати';
+                copyButton.disabled = false;
+            }, 1500);
+        }).catch(err => console.error('Не вдалося скопіювати текст: ', err));
+    };
+    
+    const deleteButton = document.createElement('button');
+    deleteButton.textContent = 'Видалити';
+    deleteButton.className = 'delete-template-btn';
+    deleteButton.onclick = () => {
+        fieldGroup.remove();
+        saveTemplates(); 
+    };
 
-            if (!textToCopy.trim()) return; 
+    // --- ПОЧАТОК НОВИХ ЗМІН ---
+    
+    // 1. Створюємо обгортку
+    const textareaWrapper = document.createElement('div');
+    textareaWrapper.className = 'textarea-wrapper';
 
-            navigator.clipboard.writeText(textToCopy).then(() => {
-                const originalText = copyButton.textContent;
-                copyButton.textContent = 'Скопійовано!';
-                copyButton.disabled = true;
-                setTimeout(() => {
-                    copyButton.textContent = 'Копіювати';
-                    copyButton.disabled = false;
-                }, 1500);
-            }).catch(err => console.error('Не вдалося скопіювати текст: ', err));
-        };
-        
-        const deleteButton = document.createElement('button');
-        deleteButton.textContent = 'Видалити';
-        deleteButton.className = 'delete-template-btn';
-        deleteButton.onclick = () => {
-            fieldGroup.remove();
-            saveTemplates(); 
-        };
+    // 2. Створюємо колонку для позначок
+    const gutter = document.createElement('div');
+    gutter.className = 'line-marker-gutter';
 
-        const textarea = document.createElement('textarea');
-        textarea.placeholder = 'Введіть свій шаблон тексту тут...';
-        textarea.value = content;
-        textarea.oninput = saveTemplates;
+    // 3. Створюємо текстове поле
+    const textarea = document.createElement('textarea');
+    textarea.placeholder = 'Введіть свій шаблон тексту тут...';
+    textarea.value = content;
+    textarea.oninput = () => {
+        // При введенні тексту синхронізуємо скрол (на випадок появи/зникнення скролбару)
+        gutter.scrollTop = textarea.scrollTop;
+        saveTemplates();
+    };
+    
+    // 4. Синхронізація прокрутки
+    textarea.onscroll = () => {
+        gutter.scrollTop = textarea.scrollTop;
+    };
+    
+    // 5. Обробка кліку по колонці
+    gutter.onclick = (event) => {
+        // Вираховуємо, на який рядок клікнули
+        const style = window.getComputedStyle(textarea);
+        const lineHeight = parseFloat(style.lineHeight);
+        const paddingTop = parseFloat(style.paddingTop);
+        const clickedLine = Math.floor((event.offsetY + gutter.scrollTop - paddingTop) / lineHeight) + 1;
 
-        headerDiv.appendChild(nameInput);
-        actionsDiv.appendChild(copyButton);
-        actionsDiv.appendChild(deleteButton);
-        headerDiv.appendChild(actionsDiv); 
+        // Оновлюємо масив закладок
+        let currentBookmarks = JSON.parse(fieldGroup.dataset.bookmarks || '[]');
+        const index = currentBookmarks.indexOf(clickedLine);
+
+        if (index > -1) {
+            currentBookmarks.splice(index, 1); // Видалити, якщо вже є
+        } else {
+            currentBookmarks.push(clickedLine); // Додати, якщо нема
+        }
         
-        fieldGroup.appendChild(dragHandle); 
-        fieldGroup.appendChild(headerDiv); 
-        fieldGroup.appendChild(textarea);
-        
-        container.appendChild(fieldGroup); 
-        
-        initDraggableAndResizable(fieldGroup);
-        
-        return fieldGroup;
-    }
+        fieldGroup.dataset.bookmarks = JSON.stringify(currentBookmarks);
+        renderLineMarkers(fieldGroup); // Перемалювати позначки
+        saveTemplates(); // Зберегти зміни
+    };
+
+    // Додаємо елементи в обгортку
+    textareaWrapper.appendChild(gutter);
+    textareaWrapper.appendChild(textarea);
+
+    headerDiv.appendChild(nameInput);
+    actionsDiv.appendChild(copyButton);
+    actionsDiv.appendChild(deleteButton);
+    headerDiv.appendChild(actionsDiv); 
+    
+    fieldGroup.appendChild(dragHandle); 
+    fieldGroup.appendChild(headerDiv); 
+    fieldGroup.appendChild(textareaWrapper); // Додаємо обгортку замість textarea
+    
+    container.appendChild(fieldGroup); 
+    
+    initDraggableAndResizable(fieldGroup);
+    
+    renderLineMarkers(fieldGroup); // Початкове відмалювання позначок при завантаженні
+    
+    return fieldGroup;
+}
+
+// Нова функція для відмальовування позначок
+function renderLineMarkers(fieldGroup) {
+    const gutter = fieldGroup.querySelector('.line-marker-gutter');
+    const textarea = fieldGroup.querySelector('textarea');
+    if (!gutter || !textarea) return;
+
+    gutter.innerHTML = ''; 
+    const bookmarks = JSON.parse(fieldGroup.dataset.bookmarks || '[]');
+    
+    const style = window.getComputedStyle(textarea);
+    const lineHeight = parseFloat(style.lineHeight);
+    const paddingTop = parseFloat(style.paddingTop); // Важливо враховувати верхній відступ!
+
+    bookmarks.forEach(lineNumber => {
+        const marker = document.createElement('div');
+        marker.className = 'line-marker';
+        marker.textContent = '●';
+
+        // --- ПОЧАТОК ЗМІН ---
+        // Позиціонуємо по верху рядка + невеликий зсув вниз для ідеального вирівнювання
+        const verticalOffset = -3; // ЦЕ ЗНАЧЕННЯ МОЖНА ЗМІНЮВАТИ (2, 3 або 4)
+        marker.style.top = `${paddingTop + (lineNumber - 1) * lineHeight + verticalOffset}px`;
+        // --- КІНЕЦЬ ЗМІН ---
+
+        gutter.appendChild(marker);
+    });
+}
 
     // --- ВИПРАВЛЕНА ФУНКЦІЯ ДОДАВАННЯ ШАБЛОНУ ---
 function addTemplate() {
@@ -2048,42 +2216,44 @@ function isIntersecting(r1, r2) {
              r2.bottom <= r1.top);
 }
 
-    function saveTemplates() {
-        const templates = [];
-        const fieldGroups = document.querySelectorAll('#templates-grid-wrapper .template-field-group'); 
-        fieldGroups.forEach(group => {
-            const nameInput = group.querySelector('.template-name-input');
-            const textarea = group.querySelector('textarea');
-            templates.push({
-                name: nameInput ? nameInput.value : '',
-                content: textarea ? textarea.value : '',
-                width: group.style.width,
-                height: group.style.height,
-                x: group.getAttribute('data-x'),
-                y: group.getAttribute('data-y')
-            });
+function saveTemplates() {
+    const templates = [];
+    const fieldGroups = document.querySelectorAll('#templates-grid-wrapper .template-field-group'); 
+    fieldGroups.forEach(group => {
+        const nameInput = group.querySelector('.template-name-input');
+        const textarea = group.querySelector('textarea');
+        templates.push({
+            name: nameInput ? nameInput.value : '',
+            content: textarea ? textarea.value : '',
+            width: group.style.width,
+            height: group.style.height,
+            x: group.getAttribute('data-x'),
+            y: group.getAttribute('data-y'),
+            // Додаємо збереження закладок
+            bookmarks: JSON.parse(group.dataset.bookmarks || '[]')
         });
-        localStorage.setItem('textTemplates', JSON.stringify(templates));
-    }
+    });
+    localStorage.setItem('textTemplates', JSON.stringify(templates));
+}
 
-    function loadTemplates() {
-        const templatesJson = localStorage.getItem('textTemplates');
-        const templatesGrid = document.getElementById('templates-grid-wrapper');
-        templatesGrid.innerHTML = ''; 
+function loadTemplates() {
+    const templatesJson = localStorage.getItem('textTemplates');
+    const templatesGrid = document.getElementById('templates-grid-wrapper');
+    templatesGrid.innerHTML = ''; 
 
-        if (templatesJson) {
-            try {
-                const templates = JSON.parse(templatesJson);
-                if (Array.isArray(templates)) {
-                    templates.forEach(template => createTemplateField(template));
-                }
-            } catch (e) {
-                console.error("Помилка завантаження шаблонів:", e);
-                localStorage.removeItem('textTemplates'); // Очищуємо пошкоджені дані
+    if (templatesJson) {
+        try {
+            const templates = JSON.parse(templatesJson);
+            if (Array.isArray(templates)) {
+                // Тепер createTemplateField сам обробить закладки
+                templates.forEach(template => createTemplateField(template));
             }
+        } catch (e) {
+            console.error("Помилка завантаження шаблонів:", e);
+            localStorage.removeItem('textTemplates');
         }
     }
-
+}
 
     // --- Функціонал Перемикача Тем ---
 
