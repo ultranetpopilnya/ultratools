@@ -9,6 +9,23 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     
     <style>
+	/* --- ВИРІШЕННЯ ПРОБЛЕМИ ВИДІЛЕННЯ ТЕКСТУ ПРИ РЕСАЙЗІ --- */
+
+/* 1. Забороняємо виділення для всього контейнера шаблону */
+.template-field-group {
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none;     /* IE 10+ */
+    user-select: none;         /* Стандартний синтаксис */
+}
+
+/* 2. Але ПОВЕРТАЄМО можливість виділення для полів вводу всередині нього */
+.template-field-group textarea,
+.template-field-group .template-name-input {
+    -webkit-user-select: text; /* Safari */
+    -ms-user-select: text;     /* IE 10+ */
+    user-select: text;         /* Стандартний синтаксис */
+}
+
 /* === БАЗОВИЙ ПРОЗОРИЙ БОРДЕР ДЛЯ ВСІХ ВВІДНИХ ЕЛЕМЕНТІВ === */
 input,
 textarea,
@@ -19,6 +36,8 @@ select,
     border: 1px solid transparent;
     transition: border-color 0.2s, box-shadow 0.2s;
 }
+
+
 
 /* === БАЗОВІ КОЛЬОРИ У СТАНІ "НЕ ФОКУС" === */
 input,
@@ -92,14 +111,8 @@ body.dark #static-clarification-message {
         }
 		
 		.scrollable-commands-list {
-        /* Встановлюємо максимальну висоту. 
-           '70vh' — 70% від висоти вікна. Ви можете змінити це значення на своє. */
         max-height: 70vh; 
-        
-        /* Включаємо вертикальну прокрутку, коли вміст перевищує max-height */
         overflow-y: auto; 
-        
-        /* Додамо трохи відступу, щоб скрол не був впритул */
         padding-right: 150px;
     }
 
@@ -155,12 +168,10 @@ body.dark #static-clarification-message {
             color: #e0e0e0; 
         }
         
-        /* ✅ ЗМІНА: Темний стиль контейнера - фон та тінь ПРИБРАНО */
         body.dark .container {
-            background: transparent; /* Зроблено прозорим */
-            box-shadow: none; /* Прибрано тінь */
+            background: transparent; 
+            box-shadow: none; 
         }
-        /* Кінець змін темного стилю контейнера */
         
         body.dark .login-generator-container textarea {
             background-color: #333333;
@@ -169,7 +180,7 @@ body.dark #static-clarification-message {
         }
 
         body.dark .login-generator-container .result-item {
-            background-color: #242526; /* Змінено на основний фон контейнера */
+            background-color: #242526; 
             border-color: #444444;
         }
 
@@ -225,7 +236,6 @@ body.dark #static-clarification-message {
             color: #fff;
         }
         
-        /* ✅ ЗМІНА: Повернено на прозорий фон, щоб відповідати прозорості контейнера */
         body.dark .template-field-group {
             background-color: transparent; 
             border-color: #555555;
@@ -244,12 +254,9 @@ body.dark #static-clarification-message {
             background-color: #d13f53;
         }
         
-        /* ================================================= */
-        /* === ОНОВЛЕНІ СТИЛІ ДЛЯ МІНІМАЛІЗМУ (command-list) === */
-        /* ================================================= */
         .gpon-commands-container label {
-            display: inline-block; /* ✅ щоб label і select були в одному рядку */
-            margin-right: 0px;    /* ✅ невеликий відступ справа */
+            display: inline-block; 
+            margin-right: 0px;    
             margin-bottom: 0px;
             font-weight: bold;
             color: #555;
@@ -280,15 +287,14 @@ body.dark #static-clarification-message {
             color: #fff;
         }
 
-        /* ✅ МІНІМАЛІЗМ: Прибрано рамки та фоновий колір */
         .command-list {
             border: none;
             border-radius: 0px;
-            padding: 0; /* Зменшено внутрішній відступ */
-            background-color: transparent; /* Зроблено прозорим */
+            padding: 0; 
+            background-color: transparent; 
             flex-grow: 1; 
-            overflow-y: auto;    /* включає вертикальну прокрутку */
-            overflow-x: hidden;  /* приховує горизонтальну, якщо з’явиться */	
+            overflow-y: auto;    
+            overflow-x: hidden;  	
         }
         
         body.dark .command-list {
@@ -296,17 +302,16 @@ body.dark #static-clarification-message {
             background-color: transparent;
         }
 
-        /* ✅ МІНІМАЛІЗМ: Зроблено прозорим за замовчуванням, тонка лінія-розділювач */
         .command-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 8px 12px; /* Зменшено padding */
+            padding: 8px 12px; 
             margin-bottom: 0px;
-            background-color: transparent; /* Зроблено прозорим */
+            background-color: transparent; 
             cursor: pointer;
             transition: background-color 0.2s, box-shadow 0.2s;
-            border-bottom: 1px solid #eee; /* Тонка лінія-розділювач */
+            border-bottom: 1px solid #eee; 
         }
         
         body.dark .command-item {
@@ -314,14 +319,13 @@ body.dark #static-clarification-message {
             border-bottom: 1px solid #333;
         }
 
-        /* ✅ МІНІМАЛІЗМ: Ледь помітний фон при наведенні */
         .command-item:hover {
             background-color: #dbe9ff; 
-            box-shadow: none; /* Прибрано тінь */
+            box-shadow: none; 
         }
         
         body.dark .command-item:hover {
-            background-color: #333333; /* Ненасичений фон при наведенні */
+            background-color: #333333; 
         }
         
         .command-item:active {
@@ -332,24 +336,22 @@ body.dark #static-clarification-message {
             background-color: #444444;
         }
 
-        /* ✅ МІНІМАЛІЗМ: Команди схожі на код */
         .command-text {
             font-family: 'Fira Code', monospace;
             font-weight: 600;
-            color: #333; /* Менш насичений колір */
+            color: #333; 
             user-select: none; 
             flex-shrink: 0;
             margin-right: 15px;
         }
         
         body.dark .command-text {
-            color: #E6A22E; /* Акцентний колір з теми */
+            color: #E6A22E; 
         }
 
-        /* ✅ МІНІМАЛІЗМ: Опис сірий, дрібний */
         .command-description {
             font-size: 0.9em;
-            color: #888; /* Сірий колір */
+            color: #888; 
             flex-grow: 1; 
             text-align: right;
             user-select: none;
@@ -363,7 +365,7 @@ body.dark #static-clarification-message {
             position: fixed;
             bottom: 20px;
             right: 20px;
-            background-color: #38c172; /* Зелений з вашої теми */
+            background-color: #38c172; 
             color: white;
             padding: 10px 20px;
             border-radius: 2px;
@@ -378,11 +380,7 @@ body.dark #static-clarification-message {
             opacity: 1;
             transform: translateY(0);
         }
-        /* ================================================= */
-        /* ================== КІНЕЦЬ ОНОВЛЕНИХ СТИЛІВ ================== */
-        /* ================================================= */
-
-        /* --- ВАШІ ОРИГІНАЛЬНІ СТИЛІ (без змін) --- */
+        
         * {
             box-sizing: border-box;
         }
@@ -415,23 +413,20 @@ body.dark #static-clarification-message {
             margin-top: -20px;
         }
         
-        /* --- КОНФІГУРАЦІЯ ШИРИНИ ЧЕРЕЗ CSS-ЗМІННІ --- */
         :root {
             --layout-max-width: 1100px; 
         }
 
-        /* ЗМІНЕНИЙ СТИЛЬ: Головний контейнер тепер не має бокової панелі */
         .main-content-wrapper {
             display: flex;
-            flex-direction: column; /* Змінено на вертикальне розташування */
+            flex-direction: column; 
             max-width: 100%; 
             width: 100%;
             margin: 0 auto 2rem auto; 
-            gap: 0; /* Прибрано проміжок */
-            align-items: center; /* Центрування вмісту */
+            gap: 0; 
+            align-items: center; 
         }
         
-        /* НОВИЙ СТИЛЬ: Вміст вкладки займає всю ширину */
         .tab-content-wrapper {
             width: 100%; 
             max-width: 100%; 
@@ -442,33 +437,26 @@ body.dark #static-clarification-message {
 			margin: 0 auto; 
         }
 
-        /* ✅ ЗМІНА: Оновлений стиль контейнера */
         .container {
-            background: transparent; /* Прибрано білий фон */
+            background: transparent; 
             padding: 2rem;
-            border-radius: 0 0 8px 8px; /* Залишаємо радіус лише знизу */
-            box-shadow: none; /* Прибрано тінь */
-            
-            /* Використання локальних змінних, які встановлюються JS на основі data-default-* */
+            border-radius: 0 0 8px 8px; 
+            box-shadow: none; 
             width: var(--local-width, 100%); 
             min-width: var(--local-width-min, 300px); 
             height: var(--local-height, 600px); 
             min-height: var(--local-height-min, 0px);
-            
             display: none; 
             flex-direction: column;
             resize: none; 
             overflow: auto; 
-            margin: 0 auto; /* Центрування контейнера */
+            margin: 0 auto; 
         }
         
         .container.active {
             display: flex; 
         }
-        /* Кінець оновленого стилю контейнера */
         
-        /* --- КІНЕЦЬ ОНОВЛЕНИХ СТИЛІВ ДЛЯ КОНТЕЙНЕРА ТА КАРОУСЕЛІ --- */
-
         .login-generator-container textarea {
             width: 100%;
             padding: 0.75rem;
@@ -567,7 +555,7 @@ body.dark #static-clarification-message {
             width: 100%;
 			 white-space: nowrap;
         }
-        /* Стилі полів вводу дати/часу (залишені як є) */
+        
         .date-calculator-container .date-input-group input[type="date"],
         body.dark .date-calculator-container .date-input-group input[type="date"],
         .date-calculator-container .date-input-group input[type="time"],
@@ -597,28 +585,23 @@ body.dark #static-clarification-message {
             padding: 5px;
         }
         
-        /* --- СТИЛІ ДЛЯ НОВИХ ЕЛЕМЕНТІВ --- */
         .toggle-switch-wrapper {
             display: flex; 
             align-items: center;
         }
 
-        /* Стиль для неклікабельного тексту */
         .reset-toggle-text {
             user-select: none;
             font-size: 1em;
             color: #555;
             font-weight: normal;
-            margin-left: 10px; /* Зберігаємо відступ від слайдера */
+            margin-left: 10px; 
         }
 
         body.dark .reset-toggle-text {
             color: #e0e0e0; 
         }
-        /* --- КІНЕЦЬ СТИЛІВ ДЛЯ НОВИХ ЕЛЕМЕНТІВ --- */
         
-        
-        /* Стилі для секції результату (залишені як є) */
         .date-calculator-container #result-section {
             margin-top: 5px;
             padding: 15px;
@@ -654,7 +637,6 @@ body.dark #static-clarification-message {
             font-weight: bold;
         }
 
-        /* --- СТИЛІ ДЛЯ ГОРИЗОНТАЛЬНИХ Вкладок (ОНОВЛЕНО) --- */
         .tabs {
             display: flex;
             flex-direction: row; 
@@ -666,13 +648,11 @@ body.dark #static-clarification-message {
             box-shadow: none;
             flex-shrink: 0; 
             border-bottom: 0px solid #ccc; 
-            /* ✅ ДОДАНО: Для позиціонування псевдоелемента */
             position: relative;
 			padding: 0 max(0px, calc((100% - var(--layout-max-width)) / 2));
             box-sizing: border-box;
         }
 
-        /* ✅ НОВИЙ СТИЛЬ: Псевдоелемент для сірої смуги-фону (30px заввишки) */
         .tabs::before {
             content: "";
             position: absolute;
@@ -681,9 +661,9 @@ body.dark #static-clarification-message {
             left: 0;
 			right: 0; 
             width: 100%;
-            height: 50px; /* Висота 50 пікселів */
+            height: 50px; 
             background-color: #E8E8E8; 
-            z-index: -1; /* Позиціонуємо позаду кнопок */
+            z-index: -1; 
         }
 
         body.dark .tabs::before {
@@ -696,7 +676,6 @@ body.dark #static-clarification-message {
             border-bottom: 0px solid #333639;
         }
 
-        /* Стилі кнопок вкладок (залишені як є) */
         .tab-button {
             flex-grow: 1; 
             padding: 12px 15px; 
@@ -714,7 +693,6 @@ body.dark #static-clarification-message {
             user-select: none;
             margin: 0; 
             border-bottom: 4px solid transparent; 
-            /* ✅ ДОДАНО: Для гарантії, що кнопки над фоном */
             position: relative; 
             z-index: 1; 
         }
@@ -738,7 +716,6 @@ body.dark #static-clarification-message {
             transform: none; 
         }
 
-        /* Стилі темної теми для вкладок (залишені як є) */
         body.dark .tab-button {
             background-color: transparent;
             color: #e0e0e0;
@@ -755,12 +732,8 @@ body.dark #static-clarification-message {
             box-shadow: none;
             border-bottom: 4px solid #E6A22E; 
         }
-        /* END of HORIZONTAL TABS STYLE */
-
-
-        /* Стилі для кнопки "додати шаблон" та загальної інформації (ОНОВЛЕНО) */
+        
         #add-template-button {
-            /* Змінено позиціонування */
             position: static; 
             margin-top: -15px; 
             margin-left: 10px;
@@ -814,7 +787,6 @@ body.dark #static-clarification-message {
             color: white;
         }
         
-        /* Стилі перемикача тем (залишені як є) */
         .toggle-button-wrapper {
             position: absolute; 
             top: 25px; 
@@ -887,61 +859,81 @@ body.dark #static-clarification-message {
             margin-bottom: 0px; 
         }
 
-        /* --- СТИЛІ ДЛЯ КОНТЕЙНЕРА ТЕКСТОВИХ ШАБЛОНІВ (Змінено фон для світлої теми) --- */
-
+        /* --- ОНОВЛЕНІ СТИЛІ ДЛЯ ТЕКСТОВИХ ШАБЛОНІВ --- */
         #templates-grid-wrapper {
-            display: flex;
-            flex-wrap: wrap; 
-            gap: 15px; 
+            position: relative; 
             width: 100%;
-            text-align: left;
-            justify-content: flex-start;
-            padding-top: 0px; 
+            height: 100%;
         }
-        
-        /* ✅ НОВИЙ СТИЛЬ: Контейнер для заголовка та кнопки */
+
         .templates-header-wrapper {
             display: flex;
             align-items: center;
-            justify-content: center; /* Центруємо заголовок + кнопку */
-            margin-bottom: 0px; /* Додаємо відступ */
-			margin-top: 0;
+            justify-content: center;
+            margin-bottom: 0px;
+            margin-top: 0;
         }
         
-
         .template-field-group {
-            position: relative; 
+            position: absolute; 
             border: 2px solid #ccc; 
-            padding: 4px;
-            border-radius: 2px;
-            background-color: #fff; /* Білий фон для груп полів у світлій темі */
-            overflow: hidden; 
+            padding: 0;
+            border-radius: 4px;
+            background-color: #fff;
             min-height: 90px; 
             min-width: 400px;
-            max-width: 100%; 
             display: flex; 
             flex-direction: column;
-			resize: both;
-			overflow: auto;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            touch-action: none; 
+            box-sizing: border-box;
+            overflow: hidden;
         }
         
-        /* ✅ ЗМІНА: Повернено на прозорий фон */
         body.dark .template-field-group {
-            background-color: transparent; 
+            background-color: #2b2b2b; 
+            border-color: #555;
+        }
+
+        .template-drag-handle {
+            width: 100%;
+            height: 20px; /* Збільшена висота */
+            background-color: #f0f0f0;
+            cursor: move;
+            border-bottom: 1px solid #ddd;
+            border-radius: 2px 2px 0 0;
+            /* Стилі для іконки */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 18px;
+            user-select: none;
+        }
+        body.dark .template-drag-handle {
+            background-color: #4a4a4a;
+            border-bottom: 1px solid #555;
+            color: #aaa;
         }
         
         .template-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 10px; 
+            gap: 4px;
+            margin-bottom: 0px; 
             flex-shrink: 0; 
+            background-color: #fff;
+            padding: 4px;
+            user-select: none;
+        }
+        body.dark .template-header {
+            background-color: transparent;
         }
 
         .template-name-input {
             flex-grow: 1; 
-            padding: 6px 10px;
+            padding: 5px 10px;
             border: 1px solid #ddd;
             border-radius: 2px;
             font-size: 16px;
@@ -956,7 +948,6 @@ body.dark #static-clarification-message {
             color: #fff;
         }
         
-        /* Стилі кнопок та полів вводу в шаблонах (залишені як є) */
         .template-field-group textarea {
             width: 100%;
             flex-grow: 1; 
@@ -967,26 +958,18 @@ body.dark #static-clarification-message {
             font-size: 14px;
             resize: none !important; 
             transition: border-color 0.2s;
-            margin-bottom: 0px; 
-            margin-top: -6px;
-			white-space: pre-wrap;      /* Зберігає пробіли та переноси рядків */
-            overflow-wrap: normal; /* Забороняє браузеру переносити слова для вміщення */
-            word-break: normal;    /* Забороняє розрив довгих слів */
+            margin: 0 4px 4px 4px;
+			width: calc(100% - 8px);
+			white-space: pre-wrap;
+            overflow-wrap: normal;
+            word-break: normal;
 			font-family: 'Fira Code', monospace !important; 
         }
-        
-        .template-field-group textarea:focus {
-
-        }
-        
-        /* Старі стилі для кнопки "+" - перевизначені вище, але залишені для надійності */
-        /* #add-template-button { ... } */
-
 
         .template-actions {
             display: flex;
             justify-content: flex-end;
-            gap: 10px;
+            gap: 6px;
             margin-top: 0; 
             flex-shrink: 0; 
         }
@@ -1016,19 +999,15 @@ body.dark #static-clarification-message {
             background-color: #c82333;
         }
         
-        /* --- НОВІ СТИЛІ ДЛЯ СЛАЙДЕРА КАЛЬКУЛЯТОРА ДАТ (МОДИФІКОВАНІ) --- */
-        
-        /* ОНОВЛЕННЯ: Стиль для toggle-switch-label, що тепер містить лише перемикач */
         .date-calculator-container .toggle-switch-label {
             position: relative;
             display: inline-flex;
             align-items: center;
-            cursor: pointer; /* Клікабельний лише тут */
+            cursor: pointer; 
             padding: 0;
             margin: 0; 
         }
 
-        /* Приховати стандартний чекбокс */
         .date-calculator-container .toggle-switch-label input[type="checkbox"] {
             opacity: 0;
             width: 0;
@@ -1037,12 +1016,11 @@ body.dark #static-clarification-message {
             position: absolute;
         }
 
-        /* Стиль для візуального слайдера */
         .date-calculator-container .slider {
             position: relative;
             cursor: pointer;
-            width: 44px; /* Ширина слайдера */
-            height: 22px; /* Висота слайдера */
+            width: 44px; 
+            height: 22px; 
             background-color: #ccc;
             transition: background-color 0.4s;
             border-radius: 22px; 
@@ -1061,16 +1039,14 @@ body.dark #static-clarification-message {
             border-radius: 50%;
         }
 
-        /* Коли чекбокс позначено */
         .date-calculator-container .toggle-switch-label input[type="checkbox"]:checked ~ .slider {
-            background-color: #38c172; /* Зелений колір при активації */
+            background-color: #38c172; 
         }
 
         .date-calculator-container .toggle-switch-label input[type="checkbox"]:checked ~ .slider:before {
             transform: translateX(22px); 
         }
         
-        /* Стилі темної теми для слайдера */
         body.dark .date-calculator-container .slider {
             background-color: #555555;
         }
@@ -1082,8 +1058,28 @@ body.dark #static-clarification-message {
         body.dark .date-calculator-container .slider:before {
             background-color: #e0e0e0;
         }
+		
+		/* === ВІЗУАЛЬНИЙ ІНДИКАТОР ЗМІНИ РОЗМІРУ (Grip handle) === */
+.template-field-group::after {
+    content: "";
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    width: 10px; /* Розмір індикатора */
+    height: 10px;
+    /* Створюємо трикутний градієнт */
+    background: linear-gradient(135deg, transparent 50%, rgba(0,0,0,0.2) 50%);
+    /* Обрізаємо, щоб був чіткий трикутник */
+    clip-path: polygon(100% 0, 100% 100%, 0 100%);
+    cursor: nwse-resize; /* Курсор по діагоналі при наведенні */
+    pointer-events: none; /* ВАЖЛИВО: пропускає кліки крізь себе до механізму interact.js */
+    z-index: 2;
+}
 
-        /* --- КІНЕЦЬ НОВИХ СТИЛІВ ДЛЯ СЛАЙДЕРА КАЛЬКУЛЯТОРА ДАТ --- */
+/* Адаптація індикатора для темної теми */
+body.dark .template-field-group::after {
+    background: linear-gradient(135deg, transparent 50%, rgba(255,255,255,0.2) 50%);
+}
 
     </style>
 </head>
@@ -1189,22 +1185,23 @@ body.dark #static-clarification-message {
     </div> 
     
     <div class="global-version-info">
-        Версія 2.4<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
+        Версія 2.6<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
     </div> 
     
     <div id="notification" class="notification">
         Команда скопійована!
     </div>
     
+<!-- Підключення бібліотеки interact.js -->
+<script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
+
 <script>
 // --- НОВА ФУНКЦІЯ: Обробка зміни вибору (викликається в onchange) ---
 function handleDeviceTypeChange() {
     const selectedValue = document.getElementById('device-type').value;
-    // Текст-підказка тепер статичний і не вимагає оновлення
-    // 2. Виводимо команди (викликаємо вашу існуючу функцію)
     displayCommands(selectedValue);
 }
-    // --- Функціонал ВКЛАДОК ---
+    
     let endDateResetTimer;
     const RESET_DELAY_SECONDS = 20;
     let isAutoResetEnabled = true; 
@@ -1214,7 +1211,6 @@ function handleDeviceTypeChange() {
         const tabs = document.querySelectorAll('.tab-button');
         const contents = document.querySelectorAll('.container[data-content]');
         
-        // Зберігаємо активну вкладку
         localStorage.setItem('activeTab', tabId); 
         
         contents.forEach(content => content.classList.remove('active'));
@@ -1226,16 +1222,12 @@ function handleDeviceTypeChange() {
         if (activeContent) {
             activeContent.classList.add('active');
             
-            // ✅ ФІКС: застосувати розмір, використовуючи data-default-*
             const defaultWidth = activeContent.getAttribute('data-default-width') || '100%';
             const defaultHeight = activeContent.getAttribute('data-default-height') || '600px';
             
-            // Оскільки вкладки тепер горизонтальні, контенер займає 90% головного контейнера. 
-            // Використовуємо його ширину для центрування, але також встановлюємо стилі.
             activeContent.style.setProperty('--local-width', defaultWidth);
             activeContent.style.setProperty('--local-height', defaultHeight);
             
-            // ✅ НОВА ЛОГІКА: Ініціалізація команд GPON/EPON/BDCOM при перемиканні на цю вкладку
             if (tabId === 'gpon-commands') {
                  const deviceSelect = document.getElementById('device-type');
                  if (deviceSelect) {
@@ -1246,8 +1238,6 @@ function handleDeviceTypeChange() {
         if (activeButton) {
             activeButton.classList.add('active');
         }
-        
-        // ВИДАЛЕНО: Логіка керування таймером. Тепер він працює завжди, незалежно від вкладки.
     }
 
     function setupTabs() {
@@ -1261,20 +1251,16 @@ function handleDeviceTypeChange() {
             });
         });
         
-        // Встановлення активної вкладки при завантаженні з невеликою затримкою для гарантії
         setTimeout(() => {
             switchTab(initialTab); 
         }, 50); 
-        
     }
     
-    // --- Функціонал Генератора Логінів ---
-
     function transliterate(text) {
 const mapping = {
   'а': 'a', 'б': 'b', 'в': 'v', 'г': 'h', 'ґ': 'g', 'д': 'd',
   'е': 'e', 'ж': 'zh', 'з': 'z', 'и': 'y', 'і': 'i', 'й': 'i',
-  'к': 'k', 'л': 'l', // ✅ виправлено
+  'к': 'k', 'л': 'l', 
   'м': 'm', 'н': 'n', 'о': 'o', 'п': 'p',
   'р': 'r', 'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'kh',
   'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'shch', 'ь': '', "'": '',
@@ -1293,8 +1279,7 @@ const mapping = {
 
         for (let i = 0; i < text.length; i++) {
             const char = text[i];
-            const isFirstChar = (i === 0);
-
+            
             if (char === 'з' && i + 1 < text.length && text[i + 1] === 'г') {
                 result += 'zgh';
                 i++;
@@ -1302,8 +1287,6 @@ const mapping = {
             }
 
             if (positionalRules[char]) {
-                // Правила для "є", "ї", "й", "ю", "я"
-                // Перевірка, чи це початок слова (або після пробілу)
                 const isStartOfWord = (i === 0 || text[i-1] === ' ');
                 result += isStartOfWord ? positionalRules[char].start : positionalRules[char].other;
             } else if (mapping[char]) {
@@ -1311,10 +1294,8 @@ const mapping = {
             } else if (!isNaN(parseInt(char))) { 
                 result += char;
             } else {
-                // Видаляємо пробіли, тире та інші символи в результаті
                 if (char === ' ' || char === '-') continue; 
                 
-                // Додаємо незмінені латинські символи
                 if (/[a-z0-9]/.test(char)) {
                     result += char;
                 } else {
@@ -1364,17 +1345,15 @@ const mapping = {
             const fullName = line.trim();
             if (fullName === '') return;
 
-            // ✅ ОНОВЛЕННЯ: СТРОГА ПЕРЕВІРКА на будь-яку латинську літеру ([a-z]/i)
             if (/[a-z]/i.test(fullName)) { 
                 const errorElement = document.createElement('div');
                 errorElement.className = 'result-item';
                 
-                // ✅ ФІКС: Виводимо ТІЛЬКИ повідомлення про помилку
                 errorElement.innerHTML = `
                     <span style="color: #dc3545; font-weight: bold; font-size: 1.1em; text-align: center">Трансліт тільки з української!</span>
                 `; 
                 resultsContainer.appendChild(errorElement);
-                return; // Зупиняємо обробку поточної лінії
+                return;
             }
             
             const lowerCaseFullName = fullName.toLowerCase();
@@ -1386,10 +1365,8 @@ const mapping = {
             let login = '';
 
             if (isCompany || wordCount > 3) {
-                // Повна транслітерація для компаній та довгих фраз
                 login = transliterate(fullName);
             } else {
-                // Логіка для ПІБ (3 слова або менше)
                 let transliteratedLastName = '';
                 let firstNameInitial = '';
                 let patronymicInitial = '';
@@ -1408,7 +1385,6 @@ const mapping = {
                 }
             }
 
-            // Видаляємо всі символи, крім латинських літер та цифр
             login = login.replace(/[^a-z0-9]/g, '');
 
             if (login === '') {
@@ -1430,8 +1406,6 @@ const mapping = {
         });
     }
 
-    // --- Функціонал Калькулятора Дат ---
-    
     function getCorrectDayWord(number) {
         if (number === 0) {
             return "днів";
@@ -1478,7 +1452,6 @@ const mapping = {
     function resetDatesOnTimerEnd() {
         clearTimeout(endDateResetTimer);
 
-        // ✅ ПОТРІБНО ПЕРЕВІРИТИ, ЧИ АКТИВНИЙ КАЛЬКУЛЯТОР ДАТ, ЩОБ ПЕРЕРАХУВАТИ
         const isDateCalculatorActive = document.querySelector('.container[data-content="date-calculator"]').classList.contains('active');
         
         setDatesToTodayAndTomorrowAtMidnight();
@@ -1522,7 +1495,6 @@ const mapping = {
         } else {
             startResetTimer(); 
         }
-        // Розрахунок при перемиканні, незалежно від стану
         calculateDifference(); 
     }
 
@@ -1579,7 +1551,6 @@ const mapping = {
         const startTotalMinutes = tempStartDate.getHours() * 60 + tempStartDate.getMinutes();
         const endTotalMinutes = tempEndDate.getHours() * 60 + tempEndDate.getMinutes();
         
-        // Корекція для розрахунку місяців/років: якщо кінцевий час раніше початкового, віднімаємо день
         if (endTotalMinutes < startTotalMinutes) {
             tempEndDate.setDate(tempEndDate.getDate() - 1);
         }
@@ -1623,12 +1594,10 @@ const mapping = {
             months = months % 12;
         }
         
-        // Додаємо 1 день, якщо кінцевий час пізніший або дорівнює початковому
         if (endTotalMinutes >= startTotalMinutes && diffTime > 0) {
              days++;
         }
         
-        // Коригуємо місяці, якщо днів забагато (дуже рідкісний випадок, але для точності)
         if (days > 0) {
             let tempDateForDayCorrection = new Date(tempEndDate);
             let maxDaysInMonth = new Date(tempDateForDayCorrection.getFullYear(), tempDateForDayCorrection.getMonth() + 1, 0).getDate();
@@ -1651,7 +1620,6 @@ const mapping = {
         let parts = [];
         if (years > 0) parts.push(`${years} р.`);
         if (months > 0) parts.push(`${months} міс.`);
-        // Відображаємо 0 дн. лише якщо роки і місяці відсутні
         if (days > 0 || (years === 0 && months === 0)) parts.push(`${days} дн.`);
         
         durationText = parts.filter(Boolean).join(' та ');
@@ -1668,11 +1636,7 @@ const mapping = {
         resultDisplay.innerHTML = resultText;
     }
     
-    // =======================================================
-    // === НОВІ ФУНКЦІЇ ДЛЯ КОМАНД GPON/EPON/BDCOM ===
-    // =======================================================
-    
-    // 1. Словник команд
+    // --- GPON/EPON/BDCOM COMMANDS ---
     const COMMANDS = {
         gpon: [
             { command: 'show gpon onu uncfg', description: 'Показати незареєстровані ONU на PON' },
@@ -1711,12 +1675,8 @@ const mapping = {
     const commandOutput = document.getElementById('command-output');
     const notification = document.getElementById('notification');
     
-    /**
-     * Відображає список команд для обраного типу.
-     * @param {string} deviceType - 'gpon', 'epon' або 'bdcom'.
-     */
     function displayCommands(deviceType) {
-        commandOutput.innerHTML = ''; // Очистити попередні команди
+        commandOutput.innerHTML = ''; 
         const commands = COMMANDS[deviceType] || [];
 		let htmlContent = '';
 		htmlContent += `
@@ -1740,7 +1700,7 @@ const mapping = {
         commands.forEach(item => {
             const commandDiv = document.createElement('div');
             commandDiv.classList.add('command-item');
-            commandDiv.setAttribute('data-command', item.command); // Зберігаємо команду як атрибут
+            commandDiv.setAttribute('data-command', item.command); 
 
             const commandTextSpan = document.createElement('span');
             commandTextSpan.classList.add('command-text');
@@ -1753,86 +1713,169 @@ const mapping = {
             commandDiv.appendChild(commandTextSpan);
             commandDiv.appendChild(commandDescriptionSpan);
 
-            commandDiv.addEventListener('click', handleCommandClick); // Додаємо обробник кліку
+            commandDiv.addEventListener('click', handleCommandClick); 
             
             commandOutput.appendChild(commandDiv);
         });
     }
 
-    /**
-     * Обробник кліку: копіює команду і показує сповіщення.
-     * @param {Event} event - Подія кліку.
-     */
     async function handleCommandClick(event) {
         const clickedItem = event.currentTarget; 
         const command = clickedItem.getAttribute('data-command');
-        const commandText = clickedItem.querySelector('.command-text').textContent; // Отримати чистий текст команди
+        const commandText = clickedItem.querySelector('.command-text').textContent; 
         
         if (!command) return;
 
         try {
-            // Використовуємо Clipboard API для копіювання
             await navigator.clipboard.writeText(command);
             showNotification(`Команда скопійована: ${commandText}`);
         } catch (err) {
             console.error('Не вдалося скопіювати команду: ', err);
-            // Резервний варіант для старих браузерів
             showNotification('Помилка копіювання. Спробуйте вручну.');
         }
     }
 
-    /**
-     * Показує сповіщення про копіювання.
-     * @param {string} message - Текст сповіщення.
-     */
     function showNotification(message) {
         notification.textContent = message;
         notification.classList.add('show');
         
-        // Автоматично приховуємо сповіщення через 2 секунди
         setTimeout(() => {
             notification.classList.remove('show');
         }, 2000);
     }
     
-    // =======================================================
-    // === КІНЕЦЬ НОВИХ ФУНКЦІЙ ДЛЯ КОМАНД GPON/EPON/BDCOM ===
-    // =======================================================
-
-
-    // --- ФУНКЦІОНАЛ ТЕКСТОВИХ ШАБЛОНІВ ---
+    // --- ПОВНІСТЮ ПЕРЕРОБЛЕНИЙ ФУНКЦІОНАЛ ТЕКСТОВИХ ШАБЛОНІВ ---
     
-    function autoResizeTextarea(el) {
-        const minHeight = 80; 
-        el.style.height = 'auto'; 
-        el.style.height = Math.max(el.scrollHeight, minHeight) + 'px';
+    // Допоміжна функція для перевірки перетину двох прямокутників
+    function isIntersecting(r1, r2) {
+        return !(r2.left >= r1.right ||
+                 r2.right <= r1.left ||
+                 r2.top >= r1.bottom ||
+                 r2.bottom <= r1.top);
     }
 
-    // ✅ НОВА ФУНКЦІЯ: Обробник зміни розміру шаблону
-    function handleTemplateResize(fieldGroup) {
-        // Затримка, щоб DOM встиг оновити розміри після 'resize: both'
-        setTimeout(() => {
-            // Отримуємо поточні розміри в пікселях
-            const currentWidth = fieldGroup.offsetWidth + 'px';
-            const currentHeight = fieldGroup.offsetHeight + 'px';
-            
-            // Застосовуємо стилі inline для збереження
-            fieldGroup.style.width = currentWidth;
-            fieldGroup.style.height = currentHeight;
-            
-            saveTemplates(); // Зберігаємо шаблони, включаючи нові розміри
-        }, 50); 
+function initDraggableAndResizable(element) {
+        // --- ОСНОВНЕ НАЛАШТУВАННЯ ВІДСТУПУ ПРИ ПЕРЕТЯГУВАННІ ---
+        const collisionGap = 4; // <--- ОСЬ ТУТ! Встановіть потрібну відстань у пікселях.
+
+        const position = { 
+            x: parseFloat(element.getAttribute('data-x')) || 0, 
+            y: parseFloat(element.getAttribute('data-y')) || 0 
+        };
+
+        element.style.transform = `translate(${position.x}px, ${position.y}px)`;
+        
+        interact(element).draggable({
+            allowFrom: '.template-drag-handle',
+            inertia: false,
+            autoScroll: false,
+            listeners: {
+                move(event) {
+                    const target = event.target;
+                    const parentContainer = document.getElementById('templates-grid-wrapper');
+
+                    const allTemplates = Array.from(document.querySelectorAll('.template-field-group'));
+                    let canMoveX = true;
+                    let canMoveY = true;
+                    
+                    // Потенційна нова позиція шаблону, який тягнемо
+                    const currentTargetRect = {
+                        left: position.x,
+                        top: position.y,
+                        right: position.x + target.offsetWidth,
+                        bottom: position.y + target.offsetHeight
+                    };
+
+                    for (const other of allTemplates) {
+                        if (other === target) continue;
+
+                        const otherRect = {
+                           left: parseFloat(other.getAttribute('data-x')),
+                           top: parseFloat(other.getAttribute('data-y')),
+                           right: parseFloat(other.getAttribute('data-x')) + other.offsetWidth,
+                           bottom: parseFloat(other.getAttribute('data-y')) + other.offsetHeight
+                        };
+
+                        // "Роздуваємо" прямокутник іншого шаблону на величину відступу.
+                        const inflatedOtherRect = {
+                            left: otherRect.left - collisionGap,
+                            top: otherRect.top - collisionGap,
+                            right: otherRect.right + collisionGap,
+                            bottom: otherRect.bottom + collisionGap
+                        };
+
+                        // Перевіряємо, чи перетнеться наш шаблон з "роздутою" рамкою іншого
+                        if (isIntersecting({ ...currentTargetRect, left: currentTargetRect.left + event.dx, right: currentTargetRect.right + event.dx }, inflatedOtherRect)) {
+                            canMoveX = false;
+                        }
+                        if (isIntersecting({ ...currentTargetRect, top: currentTargetRect.top + event.dy, bottom: currentTargetRect.bottom + event.dy }, inflatedOtherRect)) {
+                            canMoveY = false;
+                        }
+                    }
+                    
+                    if (canMoveX) position.x += event.dx;
+                    if (canMoveY) position.y += event.dy;
+                    
+                    // Обмеження, щоб не виходити за межі контейнера
+                    if (position.y < 0) position.y = 0;
+                    if (position.x < 0) position.x = 0;
+                    if (parentContainer && (position.x + target.offsetWidth > parentContainer.offsetWidth)) {
+                        position.x = parentContainer.offsetWidth - target.offsetWidth;
+                    }
+
+                    target.style.transform = `translate(${position.x}px, ${position.y}px)`;
+                },
+                end(event) {
+                    event.target.setAttribute('data-x', position.x);
+                    event.target.setAttribute('data-y', position.y);
+                    saveTemplates();
+                }
+            }
+        }).resizable({
+            edges: { left: false, right: true, bottom: true, top: false },
+			margin: 16, // Зона спрацьовування буде 16px!
+            listeners: {
+                move(event) {
+                    Object.assign(event.target.style, {
+                        width: `${event.rect.width}px`,
+                        height: `${event.rect.height}px`,
+                    });
+                },
+                end(event) {
+                    saveTemplates();
+                }
+            },
+            modifiers: [
+                interact.modifiers.restrictSize({
+                    min: { width: 400, height: 150 }
+                })
+            ],
+            inertia: false
+        });
     }
 
+    function createTemplateField(data = {}) {
+        const {
+            name = '',
+            content = '',
+            width = '400px',
+            height = '170px',
+            x = 10,
+            y = 10
+        } = data;
 
-    function createTemplateField(initialName = '', initialContent = '', initialWidth = '400px', initialHeight = '170px', isNew = false) {
         const container = document.getElementById('templates-grid-wrapper'); 
         const fieldGroup = document.createElement('div');
         fieldGroup.className = 'template-field-group'; 
         
-        // ✅ ВІДНОВЛЕННЯ РОЗМІРУ: Застосовуємо збережені розміри
-        fieldGroup.style.width = initialWidth;
-        fieldGroup.style.height = initialHeight;
+        fieldGroup.style.width = width;
+        fieldGroup.style.height = height;
+        fieldGroup.setAttribute('data-x', x);
+        fieldGroup.setAttribute('data-y', y);
+        
+        const dragHandle = document.createElement('div');
+        dragHandle.className = 'template-drag-handle';
+        dragHandle.innerHTML = '⠿';
 
         const headerDiv = document.createElement('div');
         headerDiv.className = 'template-header';
@@ -1841,42 +1884,32 @@ const mapping = {
         nameInput.type = 'text';
         nameInput.className = 'template-name-input';
         nameInput.placeholder = 'Назва шаблону';
-        nameInput.value = initialName;
+        nameInput.value = name;
         nameInput.oninput = saveTemplates; 
 
         const actionsDiv = document.createElement('div');
         actionsDiv.className = 'template-actions';
         
         const copyButton = document.createElement('button');
-copyButton.textContent = 'Копіювати';
-copyButton.className = 'copy-template-btn';
-copyButton.onclick = () => {
-    const textarea = fieldGroup.querySelector('textarea');
+        copyButton.textContent = 'Копіювати';
+        copyButton.className = 'copy-template-btn';
+        copyButton.onclick = () => {
+            const textarea = fieldGroup.querySelector('textarea');
+            const selectedText = textarea.value.substring(textarea.selectionStart, textarea.selectionEnd);
+            const textToCopy = selectedText || textarea.value;
 
-    // Отримуємо виділений текст
-    const selectedText = textarea.value.substring(
-        textarea.selectionStart,
-        textarea.selectionEnd
-    );
+            if (!textToCopy.trim()) return; 
 
-    // Якщо є виділення — копіюємо його, інакше весь текст
-    const textToCopy = selectedText || textarea.value;
-
-    if (!textToCopy.trim()) return; // якщо поле порожнє — нічого не робимо
-
-    navigator.clipboard.writeText(textToCopy).then(() => {
-        const originalText = copyButton.textContent;
-        copyButton.textContent = selectedText ? 'Cкопійовано!' : 'Скопійовано!';
-        copyButton.disabled = true;
-        setTimeout(() => {
-            copyButton.textContent = 'Копіювати';
-            copyButton.disabled = false;
-        }, 1500);
-    }).catch(err => {
-        console.error('Не вдалося скопіювати текст: ', err);
-    });
-};
-
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                const originalText = copyButton.textContent;
+                copyButton.textContent = 'Скопійовано!';
+                copyButton.disabled = true;
+                setTimeout(() => {
+                    copyButton.textContent = 'Копіювати';
+                    copyButton.disabled = false;
+                }, 1500);
+            }).catch(err => console.error('Не вдалося скопіювати текст: ', err));
+        };
         
         const deleteButton = document.createElement('button');
         deleteButton.textContent = 'Видалити';
@@ -1887,78 +1920,167 @@ copyButton.onclick = () => {
         };
 
         const textarea = document.createElement('textarea');
-        textarea.rows = 4;
         textarea.placeholder = 'Введіть свій шаблон тексту тут...';
-        textarea.value = initialContent;
-        textarea.style.resize = 'vertical'; // Дозволяємо зміну розміру тільки по вертикалі для внутрішнього textarea
-        
-        textarea.oninput = () => {
-            saveTemplates(); 
-            autoResizeTextarea(textarea); 
-        };
-        
-        // ✅ ВСТАНОВЛЕННЯ ОБРОБНИКА RESIZE
-        // Для відстеження зміни розміру елемента, який має resize: both
-        fieldGroup.addEventListener('mouseup', () => handleTemplateResize(fieldGroup));
-        fieldGroup.addEventListener('touchend', () => handleTemplateResize(fieldGroup)); // Для мобільних пристроїв
-
+        textarea.value = content;
+        textarea.oninput = saveTemplates;
 
         headerDiv.appendChild(nameInput);
         actionsDiv.appendChild(copyButton);
         actionsDiv.appendChild(deleteButton);
         headerDiv.appendChild(actionsDiv); 
         
+        fieldGroup.appendChild(dragHandle); 
         fieldGroup.appendChild(headerDiv); 
         fieldGroup.appendChild(textarea);
         
         container.appendChild(fieldGroup); 
         
-        setTimeout(() => autoResizeTextarea(textarea), 0);
+        initDraggableAndResizable(fieldGroup);
         
         return fieldGroup;
     }
 
-    function addTemplate() {
-        const newField = createTemplateField('', '', '400px', '90px', true); 
-        newField.querySelector('.template-name-input').focus(); 
-        saveTemplates(); 
+    // --- ВИПРАВЛЕНА ФУНКЦІЯ ДОДАВАННЯ ШАБЛОНУ ---
+function addTemplate() {
+    const container = document.getElementById('templates-grid-wrapper');
+    const layoutWrapper = container.closest('.tab-content-wrapper');
+
+    if (!layoutWrapper) {
+        console.error("Не вдалося знайти батьківський контейнер для шаблонів.");
+        return;
     }
 
-    // ✅ МОДИФІКОВАНО: Додано збереження розмірів
+    const containerWidth = layoutWrapper.offsetWidth;
+    const existingTemplates = Array.from(container.querySelectorAll('.template-field-group'));
+
+    const newTemplateWidth = 400;
+    const newTemplateHeight = 160;
+    const gap = 4; // Ваш відступ
+
+    // Крок 1: Створюємо список потенційних точок для розміщення
+    const potentialPoints = [{ x: gap, y: gap }]; // Завжди починаємо з верхнього лівого кута
+
+    existingTemplates.forEach(el => {
+        const rect = {
+            x: parseFloat(el.getAttribute('data-x')),
+            y: parseFloat(el.getAttribute('data-y')),
+            width: el.offsetWidth,
+            height: el.offsetHeight
+        };
+        // Додаємо точку праворуч від існуючого елемента
+        potentialPoints.push({ x: rect.x + rect.width + gap, y: rect.y });
+        // Додаємо точку знизу від існуючого елемента
+        potentialPoints.push({ x: rect.x, y: rect.y + rect.height + gap });
+    });
+
+    // Крок 2: Сортуємо точки, щоб перевіряти їх згори вниз, зліва направо
+    potentialPoints.sort((a, b) => {
+        if (a.y !== b.y) {
+            return a.y - b.y;
+        }
+        return a.x - b.x;
+    });
+
+    let finalPosition = null;
+
+    // Крок 3: Перебираємо точки і знаходимо перше вільне місце
+    for (const point of potentialPoints) {
+        // Перевірка, чи не виходить за межі контейнера по ширині
+        if (point.x + newTemplateWidth > containerWidth) {
+            continue;
+        }
+
+        const candidateRect = {
+            left: point.x,
+            top: point.y,
+            right: point.x + newTemplateWidth,
+            bottom: point.y + newTemplateHeight
+        };
+
+        // Перевіряємо, чи ця позиція не перекриває жоден з існуючих шаблонів
+        const isOverlapping = existingTemplates.some(el => {
+            const rect = {
+                left: parseFloat(el.getAttribute('data-x')),
+                top: parseFloat(el.getAttribute('data-y')),
+                right: parseFloat(el.getAttribute('data-x')) + el.offsetWidth,
+                bottom: parseFloat(el.getAttribute('data-y')) + el.offsetHeight
+            };
+            return isIntersecting(candidateRect, rect);
+        });
+
+        if (!isOverlapping) {
+            // Знайшли перше вільне місце!
+            finalPosition = point;
+            break;
+        }
+    }
+    
+    // Якщо з якоїсь причини місце не знайдено, додаємо внизу
+    if (!finalPosition) {
+        let lowestY = gap;
+        existingTemplates.forEach(el => {
+            const bottom = parseFloat(el.getAttribute('data-y')) + el.offsetHeight;
+            if (bottom > lowestY) {
+                lowestY = bottom;
+            }
+        });
+        finalPosition = { x: gap, y: lowestY + gap };
+    }
+
+
+    const newField = createTemplateField({
+        name: '',
+        content: '',
+        width: `${newTemplateWidth}px`,
+        height: `${newTemplateHeight}px`,
+        x: finalPosition.x,
+        y: finalPosition.y
+    });
+    newField.querySelector('.template-name-input').focus();
+    saveTemplates();
+}
+
+// Переконайтесь, що ваша функція isIntersecting існує і виглядає так:
+function isIntersecting(r1, r2) {
+    return !(r2.left >= r1.right ||
+             r2.right <= r1.left ||
+             r2.top >= r1.bottom ||
+             r2.bottom <= r1.top);
+}
+
     function saveTemplates() {
         const templates = [];
         const fieldGroups = document.querySelectorAll('#templates-grid-wrapper .template-field-group'); 
         fieldGroups.forEach(group => {
             const nameInput = group.querySelector('.template-name-input');
             const textarea = group.querySelector('textarea');
-            // Зберігаємо поточні inline стилі width та height
             templates.push({
                 name: nameInput ? nameInput.value : '',
                 content: textarea ? textarea.value : '',
                 width: group.style.width,
-                height: group.style.height
+                height: group.style.height,
+                x: group.getAttribute('data-x'),
+                y: group.getAttribute('data-y')
             });
         });
         localStorage.setItem('textTemplates', JSON.stringify(templates));
     }
 
-    // ✅ МОДИФІКОВАНО: Додано відновлення розмірів
     function loadTemplates() {
         const templatesJson = localStorage.getItem('textTemplates');
         const templatesGrid = document.getElementById('templates-grid-wrapper');
         templatesGrid.innerHTML = ''; 
 
         if (templatesJson) {
-            const templates = JSON.parse(templatesJson);
-            templates.forEach(template => {
-                // Викликаємо з додатковими параметрами розміру
-                createTemplateField(
-                    template.name, 
-                    template.content, 
-                    template.width || '400px', 
-                    template.height || '170px'
-                ); 
-            });
+            try {
+                const templates = JSON.parse(templatesJson);
+                if (Array.isArray(templates)) {
+                    templates.forEach(template => createTemplateField(template));
+                }
+            } catch (e) {
+                console.error("Помилка завантаження шаблонів:", e);
+                localStorage.removeItem('textTemplates'); // Очищуємо пошкоджені дані
+            }
         }
     }
 
@@ -1997,7 +2119,6 @@ copyButton.onclick = () => {
     document.addEventListener('DOMContentLoaded', () => {
         loadTheme();
 		
-        // Ініціалізація Калькулятора Дат
         const today = new Date().toISOString().split('T')[0];
         const startDateInput = document.getElementById('start-date');
         const startTimeInput = document.getElementById('start-time');
@@ -2012,7 +2133,6 @@ copyButton.onclick = () => {
         loadAutoResetState(); 
         calculateDifference(); 
         
-        // ✅ НОВА ЛОГІКА: Запускаємо таймер одразу, якщо він увімкнений, незалежно від активної вкладки
         if (isAutoResetEnabled) {
              startResetTimer();
         }
@@ -2022,22 +2142,18 @@ copyButton.onclick = () => {
         const fullNameInput = document.getElementById('fullNameInput');
         fullNameInput.addEventListener('input', generateLogins); 
         
-        // Ініціалізація Текстових Шаблонів
         document.getElementById('add-template-button').onclick = addTemplate;
-        loadTemplates(); // ✅ Завантажуємо шаблони
+        loadTemplates(); 
         
-        // Переконатися, що генератор логінів працює на старті, якщо це активна вкладка
         const initialTab = localStorage.getItem('activeTab') || 'login-generator';
         if (initialTab === 'login-generator') {
             generateLogins(); 
         }
         
-        // ✅ НОВА ЛОГІКА: Ініціалізація команди GPON при завантаженні, якщо це активна вкладка
         if (initialTab === 'gpon-commands') {
              const deviceSelect = document.getElementById('device-type');
              if (deviceSelect) {
                 displayCommands(deviceSelect.value);
-				updateClarification();
              }
         }
     });
