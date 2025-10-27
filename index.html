@@ -999,8 +999,13 @@ body.dark #static-clarification-message {
             border: none;
             border-radius: 2px;
             cursor: pointer;
-            font-size: 0.9rem;
             transition: background-color 0.2s;
+            width: 36px;
+            height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1rem;
         }
         
         .copy-template-btn {
@@ -1009,6 +1014,17 @@ body.dark #static-clarification-message {
         }
         .copy-template-btn:hover {
             background-color: #1e7e34;
+        }
+
+        .clear-template-btn {
+            background-color: #007bff;
+            color: white;
+        }
+        .clear-template-btn:hover {
+            background-color: #0056b3;
+        }
+        body.dark .clear-template-btn:hover {
+            background-color: #0056b3;
         }
 
         .delete-template-btn {
@@ -1272,7 +1288,7 @@ body.dark .template-field-group textarea {
     </div> 
     
     <div class="global-version-info">
-        Версія 2.6.3<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
+        Версія 2.6.4<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
     </div> 
     
     <div id="notification" class="notification">
@@ -2040,7 +2056,8 @@ function createTemplateField(data = {}) {
     actionsDiv.className = 'template-actions';
     
     const copyButton = document.createElement('button');
-    copyButton.textContent = 'Копіювати';
+    copyButton.innerHTML = '<i class="fas fa-copy"></i>';
+    copyButton.title = 'Копіювати';
     copyButton.className = 'copy-template-btn';
     copyButton.onclick = () => {
         const textarea = fieldGroup.querySelector('textarea');
@@ -2048,18 +2065,29 @@ function createTemplateField(data = {}) {
         const textToCopy = selectedText || textarea.value;
         if (!textToCopy.trim()) return; 
         navigator.clipboard.writeText(textToCopy).then(() => {
-            const originalText = copyButton.textContent;
-            copyButton.textContent = 'Скопійовано!';
+            const originalIcon = copyButton.innerHTML;
+            copyButton.innerHTML = '<i class="fas fa-check"></i>';
             copyButton.disabled = true;
             setTimeout(() => {
-                copyButton.textContent = 'Копіювати';
+                copyButton.innerHTML = originalIcon;
                 copyButton.disabled = false;
             }, 1500);
         }).catch(err => console.error('Не вдалося скопіювати текст: ', err));
     };
+
+    const clearButton = document.createElement('button');
+    clearButton.innerHTML = '<i class="fas fa-eraser"></i>';
+    clearButton.title = 'Очистити';
+    clearButton.className = 'clear-template-btn';
+    clearButton.onclick = () => {
+        const textarea = fieldGroup.querySelector('textarea');
+        textarea.value = '';
+        saveTemplates();
+    };
     
     const deleteButton = document.createElement('button');
-    deleteButton.textContent = 'Видалити';
+    deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
+    deleteButton.title = 'Видалити';
     deleteButton.className = 'delete-template-btn';
     deleteButton.onclick = () => {
         fieldGroup.remove();
@@ -2120,6 +2148,7 @@ function createTemplateField(data = {}) {
 
     headerDiv.appendChild(nameInput);
     actionsDiv.appendChild(copyButton);
+    actionsDiv.appendChild(clearButton);
     actionsDiv.appendChild(deleteButton);
     headerDiv.appendChild(actionsDiv); 
     
