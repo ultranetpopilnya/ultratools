@@ -9,6 +9,35 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     
     <style>
+	/* СТИЛІ ДЛЯ НОВОЇ, БІЛЬШ ТОЧНОЇ РУЧКИ ЗМІНИ РОЗМІРУ */
+.resize-handle {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 18px; /* Збільшена область для зручності */
+    height: 18px;
+    cursor: nwse-resize; /* Діагональний курсор */
+    z-index: 10;
+    /* Малюємо більш помітні лінії */
+    background:
+        linear-gradient(135deg, transparent 60%, rgba(0,0,0,0.3) 61%, rgba(0,0,0,0.3) 70%, transparent 71%),
+        linear-gradient(135deg, transparent 80%, rgba(0,0,0,0.3) 81%, rgba(0,0,0,0.3) 90%, transparent 91%);
+}
+
+body.dark .resize-handle {
+    background:
+        linear-gradient(135deg, transparent 60%, rgba(255,255,255,0.3) 61%, rgba(255,255,255,0.3) 70%, transparent 71%),
+        linear-gradient(135deg, transparent 80%, rgba(255,255,255,0.3) 81%, rgba(255,255,255,0.3) 90%, transparent 91%);
+}
+
+/* Прибираємо старий індикатор, оскільки тепер є новий */
+.template-field-group::after {
+    display: none;
+}
+	/* ВИРІШЕННЯ ПРОБЛЕМИ ЗСУВУ ЗАГОЛОВКА ПРИ ПРОКРУТЦІ */
+.container[data-content="text-templates"] {
+    scrollbar-gutter: stable;
+}
 	/* === КОРЕКТНЕ ПІДСВІЧУВАННЯ ВНУТРІШНІХ ЕЛЕМЕНТІВ ШАБЛОНУ === */
 
 /* Світла тема: підсвічуємо синім ТІЛЬКИ активне поле вводу */
@@ -454,12 +483,14 @@ body.dark #static-clarification-message {
             position: relative;
             min-width: 0; 
             padding-top: 0px; 
-			margin: 0 auto; 
+			margin: 0 auto;
+			margin-top: -3px;
+ 
         }
 
         .container {
             background: transparent; 
-            padding: 2rem;
+            padding: 1rem;
             border-radius: 0 0 8px 8px; 
             box-shadow: none; 
             width: var(--local-width, 100%); 
@@ -885,7 +916,7 @@ body.dark #static-clarification-message {
         #templates-grid-wrapper {
             position: relative; 
             width: 100%;
-            height: 100%;
+            min-height: 2000px; 
         }
 
         .templates-header-wrapper {
@@ -900,7 +931,7 @@ body.dark #static-clarification-message {
             position: absolute; 
             border: 2px solid #ccc; 
             padding: 0;
-            border-radius: 4px;
+            border-radius: 2px;
             background-color: #fff;
             min-height: 110px; 
             min-width: 300px;
@@ -923,7 +954,7 @@ body.dark #static-clarification-message {
             background-color: #f0f0f0;
             cursor: move;
             border-bottom: 1px solid #ddd;
-            border-radius: 2px 2px 0 0;
+            border-radius: 0px 0x 0 0;
             /* Стилі для іконки */
             display: flex;
             align-items: center;
@@ -1002,8 +1033,8 @@ body.dark #static-clarification-message {
             border-radius: 2px;
             cursor: pointer;
             transition: background-color 0.2s;
-            width: 33px;
-            height: 28px;
+            width: 25px;
+            height: 26px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -1256,7 +1287,7 @@ body.dark .template-field-group textarea {
                 </div>
             </div>
             
-            <div class="container gpon-commands-container" data-content="gpon-commands" data-default-width="60%" data-default-height="697px">
+            <div class="container gpon-commands-container" data-content="gpon-commands" data-default-width="60%" data-default-height="700px">
     
     <h2 style="color: #444; margin-top: 0; text-align: center;">💻 Команди GPON/EPON/BDCOM</h2>
 	<div id="controls-and-clarification" style="display: flex; align-items: flex-start; gap: 10px; margin-bottom: 5px; flex-wrap: wrap;">
@@ -1277,7 +1308,7 @@ body.dark .template-field-group textarea {
     
     <div id="command-output" class="command-list"> </div>
 </div>
-            <div class="container" data-content="text-templates" data-default-width="100%" data-default-height="680px">
+            <div class="container" data-content="text-templates" data-default-width="100%" data-default-height="700px">
                 <div class="templates-header-wrapper">
                     <h2 style="color: #444; margin-top: 0;text-align: center;">📝 Текстові шаблони</h2>
                     <button id="add-template-button">+</button>
@@ -1290,7 +1321,7 @@ body.dark .template-field-group textarea {
     </div> 
     
     <div class="global-version-info">
-        Версія 2.6.5<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
+        Версія 2.7<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
     </div> 
     
     <div id="notification" class="notification">
@@ -1301,6 +1332,35 @@ body.dark .template-field-group textarea {
 <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
 
 <script>
+// ВСТАВТЕ ЦЮ ФУНКЦІЮ ПОВНІСТЮ
+function updateGridWrapperHeight() {
+    const container = document.getElementById('templates-grid-wrapper');
+    const templates = container.querySelectorAll('.template-field-group');
+    const defaultHeight = 1400; // Наша стартова висота
+    const bottomPadding = 20;   // Невеликий відступ знизу
+
+    if (templates.length === 0) {
+        container.style.height = `${defaultHeight}px`;
+        return;
+    }
+
+    let maxBottom = 0;
+    templates.forEach(template => {
+        // Вираховуємо нижню межу кожного шаблону
+        const yPos = parseFloat(template.getAttribute('data-y')) || 0;
+        const height = template.offsetHeight;
+        const bottomEdge = yPos + height;
+
+        if (bottomEdge > maxBottom) {
+            maxBottom = bottomEdge;
+        }
+    });
+
+    // Висота має бути або стартовою, або більшою, якщо контент не влазить
+    const requiredHeight = Math.max(defaultHeight, maxBottom + bottomPadding);
+    container.style.height = `${requiredHeight}px`;
+}
+
 // --- НОВА ФУНКЦІЯ: Обробка зміни вибору (викликається в onchange) ---
 function handleDeviceTypeChange() {
     const selectedValue = document.getElementById('device-type').value;
@@ -1861,6 +1921,8 @@ const mapping = {
 
 function initDraggableAndResizable(element) {
     const collisionGap = 4; // Відстань між шаблонами
+    // Знаходимо правильний контейнер для прокрутки один раз при ініціалізації
+    const scrollContainer = element.closest('.container');
 
     const position = {
         x: parseFloat(element.getAttribute('data-x')) || 0,
@@ -1870,10 +1932,14 @@ function initDraggableAndResizable(element) {
     element.style.transform = `translate(${position.x}px, ${position.y}px)`;
 
     interact(element).draggable({
-        // ... (код для draggable залишається без змін) ...
         allowFrom: '.template-drag-handle',
         inertia: false,
-        autoScroll: false,
+        // ОНОВЛЕНО: Додаємо автопрокрутку і для перетягування
+        autoScroll: {
+            container: scrollContainer, // Чітко вказуємо контейнер
+            margin: 50, // Відстань від краю для початку прокрутки
+            speed: 600  // Швидкість прокрутки
+        },
         listeners: {
             move(event) {
                 const target = event.target;
@@ -1926,14 +1992,21 @@ function initDraggableAndResizable(element) {
                 target.style.transform = `translate(${position.x}px, ${position.y}px)`;
             },
             end(event) {
-                event.target.setAttribute('data-x', position.x);
-                event.target.setAttribute('data-y', position.y);
-                saveTemplates();
-            }
+    event.target.setAttribute('data-x', position.x);
+    event.target.setAttribute('data-y', position.y);
+    saveTemplates();
+    updateGridWrapperHeight(); // <-- ДОДАЙТЕ ЦЕЙ РЯДОК
+}
         }
     }).resizable({
         edges: { left: false, right: true, bottom: true, top: false },
         margin: 16,
+        // ОНОВЛЕНО: Чітко вказуємо контейнер для прокрутки при зміні розміру
+        autoScroll: {
+            container: scrollContainer, // Головне виправлення тут
+            margin: 50,
+            speed: 600
+        },
         listeners: {
             move(event) {
                 const target = event.target;
@@ -2004,6 +2077,7 @@ function initDraggableAndResizable(element) {
             },
             end(event) {
                 saveTemplates();
+				updateGridWrapperHeight();
             }
         },
         modifiers: [
@@ -2013,6 +2087,73 @@ function initDraggableAndResizable(element) {
         ],
         inertia: false
     });
+}
+
+// ВСТАВТЕ ЦЕЙ БЛОК КОДУ ПОВНІСТЮ
+function updateBookmarksOnTextChange(fieldGroup) {
+    const textarea = fieldGroup.querySelector('textarea');
+    const oldText = fieldGroup.dataset.lastContent || '';
+    const newText = textarea.value;
+
+    if (oldText === newText) return;
+
+    const oldBookmarks = JSON.parse(fieldGroup.dataset.bookmarks || '[]');
+    if (oldBookmarks.length === 0) {
+        fieldGroup.dataset.lastContent = newText;
+        return;
+    }
+
+    const oldLines = oldText.split('\n');
+    const newLines = newText.split('\n');
+
+    let bookmarksData = oldBookmarks.map(lineNumber => {
+        const index = lineNumber - 1;
+        if (oldLines[index] === undefined) return null;
+        return {
+            originalLine: lineNumber,
+            content: oldLines[index],
+            before: oldLines[index - 1], // undefined is fine here
+            after: oldLines[index + 1],  // undefined is fine here
+        };
+    }).filter(Boolean); // Видаляємо недійсні закладки
+
+    const newBookmarksMap = new Map();
+    let availableNewLines = new Set(Array.from(newLines.keys()));
+
+    // Функція для пошуку і призначення
+    const findAndAssign = (predicate) => {
+        const remainingBookmarks = [];
+        for (const bm of bookmarksData) {
+            let found = false;
+            for (const newLineIndex of availableNewLines) {
+                if (predicate(bm, newLineIndex)) {
+                    newBookmarksMap.set(bm.originalLine, newLineIndex + 1);
+                    availableNewLines.delete(newLineIndex);
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                remainingBookmarks.push(bm);
+            }
+        }
+        bookmarksData = remainingBookmarks;
+    };
+
+    // Пріоритет 1: Ідеальний збіг (текст + обидва сусіди)
+    findAndAssign((bm, i) => bm.content === newLines[i] && bm.before === newLines[i - 1] && bm.after === newLines[i + 1]);
+
+    // Пріоритет 2: Частковий збіг (текст + один сусід)
+    findAndAssign((bm, i) => bm.content === newLines[i] && (bm.before === newLines[i - 1] || bm.after === newLines[i + 1]));
+
+    // Пріоритет 3: Збіг лише за текстом
+    findAndAssign((bm, i) => bm.content === newLines[i]);
+
+    const newBookmarks = Array.from(newBookmarksMap.values()).sort((a, b) => a - b);
+
+    fieldGroup.dataset.bookmarks = JSON.stringify(newBookmarks);
+    renderLineMarkers(fieldGroup);
+    fieldGroup.dataset.lastContent = newText;
 }
 
 // Повністю нова функція
@@ -2034,6 +2175,7 @@ function createTemplateField(data = {}) {
     
     // Зберігаємо закладки прямо на елементі для легкого доступу
     fieldGroup.dataset.bookmarks = JSON.stringify(bookmarks);
+	fieldGroup.dataset.lastContent = content; // Зберігаємо початковий стан
     
     fieldGroup.style.width = width;
     fieldGroup.style.height = height;
@@ -2082,10 +2224,11 @@ function createTemplateField(data = {}) {
     clearButton.title = 'Очистити текстове поле';
     clearButton.className = 'clear-template-btn';
     clearButton.onclick = () => {
-        const textarea = fieldGroup.querySelector('textarea');
-        textarea.value = '';
-        saveTemplates();
-    };
+    const textarea = fieldGroup.querySelector('textarea');
+    textarea.value = '';
+    updateBookmarksOnTextChange(fieldGroup); // Оновлюємо закладки і тут
+    saveTemplates();
+};
     
     const deleteButton = document.createElement('button');
     deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
@@ -2093,7 +2236,8 @@ function createTemplateField(data = {}) {
     deleteButton.className = 'delete-template-btn';
     deleteButton.onclick = () => {
         fieldGroup.remove();
-        saveTemplates(); 
+        saveTemplates();
+updateGridWrapperHeight();		
     };
 
     // --- ПОЧАТОК НОВИХ ЗМІН ---
@@ -2111,10 +2255,10 @@ function createTemplateField(data = {}) {
     textarea.placeholder = 'Введіть текст тут...';
     textarea.value = content;
     textarea.oninput = () => {
-        // При введенні тексту синхронізуємо скрол (на випадок появи/зникнення скролбару)
-        gutter.scrollTop = textarea.scrollTop;
-        saveTemplates();
-    };
+    updateBookmarksOnTextChange(fieldGroup); // Викликаємо нашу "розумну" функцію
+    gutter.scrollTop = textarea.scrollTop;
+    saveTemplates();
+};
     
     // 4. Синхронізація прокрутки
     textarea.onscroll = () => {
@@ -2152,11 +2296,14 @@ function createTemplateField(data = {}) {
     actionsDiv.appendChild(copyButton);
     actionsDiv.appendChild(clearButton);
     actionsDiv.appendChild(deleteButton);
-    headerDiv.appendChild(actionsDiv); 
-    
+    headerDiv.appendChild(actionsDiv);
+	
+const resizeHandle = document.createElement('div');
+    resizeHandle.className = 'resize-handle';    
     fieldGroup.appendChild(dragHandle); 
     fieldGroup.appendChild(headerDiv); 
     fieldGroup.appendChild(textareaWrapper); // Додаємо обгортку замість textarea
+	fieldGroup.appendChild(resizeHandle);
     
     container.appendChild(fieldGroup); 
     
@@ -2199,7 +2346,13 @@ function renderLineMarkers(fieldGroup) {
 function addTemplate() {
     const container = document.getElementById('templates-grid-wrapper');
     const layoutWrapper = container.closest('.tab-content-wrapper');
-
+	function addTemplate() {
+    // ... весь ваш код для додавання шаблону
+    newField.querySelector('.template-name-input').focus();
+    saveTemplates();
+    updateGridWrapperHeight(); // <-- ДОДАЙТЕ ЦЕЙ РЯДОК
+}
+	
     if (!layoutWrapper) {
         console.error("Не вдалося знайти батьківський контейнер для шаблонів.");
         return;
@@ -2213,7 +2366,7 @@ function addTemplate() {
     const gap = 4; // Ваш відступ
 
     // Крок 1: Створюємо список потенційних точок для розміщення
-    const potentialPoints = [{ x: gap, y: gap }]; // Завжди починаємо з верхнього лівого кута
+    const potentialPoints = [{ x: 0, y: 0 }];
 
     existingTemplates.forEach(el => {
         const rect = {
@@ -2309,7 +2462,12 @@ function saveTemplates() {
     fieldGroups.forEach(group => {
         const nameInput = group.querySelector('.template-name-input');
         const textarea = group.querySelector('textarea');
-        templates.push({
+        
+		if (textarea) {
+        group.dataset.lastContent = textarea.value;
+    }
+	
+		templates.push({
             name: nameInput ? nameInput.value : '',
             content: textarea ? textarea.value : '',
             width: group.style.width,
@@ -2335,6 +2493,7 @@ function loadTemplates() {
                 // Тепер createTemplateField сам обробить закладки
                 templates.forEach(template => createTemplateField(template));
             }
+			updateGridWrapperHeight();
         } catch (e) {
             console.error("Помилка завантаження шаблонів:", e);
             localStorage.removeItem('textTemplates');
