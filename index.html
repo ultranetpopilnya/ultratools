@@ -1321,7 +1321,7 @@ body.dark .template-field-group textarea {
     </div> 
     
     <div class="global-version-info">
-        Версія 2.7<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
+        Версія 2.7.1<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
     </div> 
     
     <div id="notification" class="notification">
@@ -2089,13 +2089,23 @@ function initDraggableAndResizable(element) {
     });
 }
 
-// ВСТАВТЕ ЦЕЙ БЛОК КОДУ ПОВНІСТЮ
+// ЗАМІНІТЬ ПОПЕРЕДНЮ ВЕРСІЮ ФУНКЦІЇ НА ЦЮ ПОВНІСТЮ
+
 function updateBookmarksOnTextChange(fieldGroup) {
     const textarea = fieldGroup.querySelector('textarea');
     const oldText = fieldGroup.dataset.lastContent || '';
     const newText = textarea.value;
 
     if (oldText === newText) return;
+
+    // --- КЛЮЧОВЕ ВИПРАВЛЕННЯ: ОБРОБКА ПОВНОГО СТИРАННЯ ТЕКСТУ ---
+    // Якщо новий текст порожній, просто очищуємо всі закладки і виходимо.
+    if (newText === '') {
+        fieldGroup.dataset.bookmarks = '[]';
+        renderLineMarkers(fieldGroup);
+        fieldGroup.dataset.lastContent = newText;
+        return; 
+    }
 
     const oldBookmarks = JSON.parse(fieldGroup.dataset.bookmarks || '[]');
     if (oldBookmarks.length === 0) {
@@ -2106,52 +2116,57 @@ function updateBookmarksOnTextChange(fieldGroup) {
     const oldLines = oldText.split('\n');
     const newLines = newText.split('\n');
 
-    let bookmarksData = oldBookmarks.map(lineNumber => {
-        const index = lineNumber - 1;
-        if (oldLines[index] === undefined) return null;
-        return {
-            originalLine: lineNumber,
-            content: oldLines[index],
-            before: oldLines[index - 1], // undefined is fine here
-            after: oldLines[index + 1],  // undefined is fine here
-        };
-    }).filter(Boolean); // Видаляємо недійсні закладки
+    let firstDiffIndex = 0;
+    while (
+        firstDiffIndex < oldLines.length &&
+        firstDiffIndex < newLines.length &&
+        oldLines[firstDiffIndex] === newLines[firstDiffIndex]
+    ) {
+        firstDiffIndex++;
+    }
 
-    const newBookmarksMap = new Map();
-    let availableNewLines = new Set(Array.from(newLines.keys()));
+    let lastDiffOldIndex = oldLines.length - 1;
+    let lastDiffNewIndex = newLines.length - 1;
+    while (
+        lastDiffOldIndex >= firstDiffIndex &&
+        lastDiffNewIndex >= firstDiffIndex &&
+        oldLines[lastDiffOldIndex] === newLines[lastDiffNewIndex]
+    ) {
+        lastDiffOldIndex--;
+        lastDiffNewIndex--;
+    }
 
-    // Функція для пошуку і призначення
-    const findAndAssign = (predicate) => {
-        const remainingBookmarks = [];
-        for (const bm of bookmarksData) {
-            let found = false;
-            for (const newLineIndex of availableNewLines) {
-                if (predicate(bm, newLineIndex)) {
-                    newBookmarksMap.set(bm.originalLine, newLineIndex + 1);
-                    availableNewLines.delete(newLineIndex);
-                    found = true;
-                    break;
+    const newBookmarks = new Set();
+    const lineDelta = (lastDiffNewIndex - firstDiffIndex + 1) - (lastDiffOldIndex - firstDiffIndex + 1);
+
+    oldBookmarks.forEach(oldLineNumber => {
+        const oldLineIndex = oldLineNumber - 1;
+
+        if (oldLineIndex < firstDiffIndex) {
+            newBookmarks.add(oldLineNumber);
+        } else if (oldLineIndex > lastDiffOldIndex) {
+            const newLineNumber = oldLineNumber + lineDelta;
+            if (newLineNumber > 0 && newLineNumber <= newLines.length) {
+                newBookmarks.add(newLineNumber);
+            }
+        } else {
+            const changeAffectedOneOldLine = (lastDiffOldIndex === firstDiffIndex);
+            
+            if (changeAffectedOneOldLine) {
+                // Ця перевірка тепер працює коректно, бо випадок з `newText === ''`
+                // обробляється на самому початку.
+                const lineWasReplacedOrEdited = (lastDiffNewIndex >= firstDiffIndex);
+
+                if (lineWasReplacedOrEdited) {
+                    newBookmarks.add(firstDiffIndex + 1);
                 }
             }
-            if (!found) {
-                remainingBookmarks.push(bm);
-            }
         }
-        bookmarksData = remainingBookmarks;
-    };
+    });
 
-    // Пріоритет 1: Ідеальний збіг (текст + обидва сусіди)
-    findAndAssign((bm, i) => bm.content === newLines[i] && bm.before === newLines[i - 1] && bm.after === newLines[i + 1]);
-
-    // Пріоритет 2: Частковий збіг (текст + один сусід)
-    findAndAssign((bm, i) => bm.content === newLines[i] && (bm.before === newLines[i - 1] || bm.after === newLines[i + 1]));
-
-    // Пріоритет 3: Збіг лише за текстом
-    findAndAssign((bm, i) => bm.content === newLines[i]);
-
-    const newBookmarks = Array.from(newBookmarksMap.values()).sort((a, b) => a - b);
-
-    fieldGroup.dataset.bookmarks = JSON.stringify(newBookmarks);
+    // Оновлюємо дані
+    const sortedBookmarks = Array.from(newBookmarks).sort((a, b) => a - b);
+    fieldGroup.dataset.bookmarks = JSON.stringify(sortedBookmarks);
     renderLineMarkers(fieldGroup);
     fieldGroup.dataset.lastContent = newText;
 }
@@ -2346,12 +2361,6 @@ function renderLineMarkers(fieldGroup) {
 function addTemplate() {
     const container = document.getElementById('templates-grid-wrapper');
     const layoutWrapper = container.closest('.tab-content-wrapper');
-	function addTemplate() {
-    // ... весь ваш код для додавання шаблону
-    newField.querySelector('.template-name-input').focus();
-    saveTemplates();
-    updateGridWrapperHeight(); // <-- ДОДАЙТЕ ЦЕЙ РЯДОК
-}
 	
     if (!layoutWrapper) {
         console.error("Не вдалося знайти батьківський контейнер для шаблонів.");
