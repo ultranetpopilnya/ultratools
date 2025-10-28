@@ -1924,8 +1924,9 @@ const mapping = {
                  r2.bottom <= r1.top);
     }
 
+// ЗАМІНІТЬ ВСЮ СТАРУ ФУНКЦІЮ НА ЦЮ ОНОВЛЕНУ ВЕРСІЮ
 function initDraggableAndResizable(element) {
-    const collisionGap = 4; // Відстань між шаблонами
+    const collisionGap = 4;
     const scrollContainer = element.closest('.container');
 
     const position = {
@@ -1935,15 +1936,29 @@ function initDraggableAndResizable(element) {
 
     element.style.transform = `translate(${position.x}px, ${position.y}px)`;
 
+    const syncStateOnStart = (event) => {
+        const target = event.target;
+        const transformValue = window.getComputedStyle(target).transform;
+        
+        if (transformValue && transformValue !== 'none') {
+            const matrix = new DOMMatrix(transformValue);
+            position.x = matrix.e;
+            position.y = matrix.f;
+        } else {
+            position.x = parseFloat(target.getAttribute('data-x')) || 0;
+            position.y = parseFloat(target.getAttribute('data-y')) || 0;
+        }
+        
+        target.setAttribute('data-x', position.x);
+        target.setAttribute('data-y', position.y);
+    };
+
     interact(element).draggable({
         allowFrom: '.template-drag-handle',
         inertia: false,
-        autoScroll: {
-            container: scrollContainer,
-            margin: 50,
-            speed: 600
-        },
+        autoScroll: { container: scrollContainer, margin: 50, speed: 600 },
         listeners: {
+            start: syncStateOnStart,
             move(event) {
                 const target = event.target;
                 const parentContainer = document.getElementById('templates-grid-wrapper');
@@ -1952,35 +1967,22 @@ function initDraggableAndResizable(element) {
                 let canMoveY = true;
 
                 const currentTargetRect = {
-                    left: position.x,
-                    top: position.y,
-                    right: position.x + target.offsetWidth,
-                    bottom: position.y + target.offsetHeight
+                    left: position.x, top: position.y,
+                    right: position.x + target.offsetWidth, bottom: position.y + target.offsetHeight
                 };
 
                 for (const other of allTemplates) {
                     if (other === target) continue;
-
                     const otherRect = {
-                        left: parseFloat(other.getAttribute('data-x')),
-                        top: parseFloat(other.getAttribute('data-y')),
-                        right: parseFloat(other.getAttribute('data-x')) + other.offsetWidth,
-                        bottom: parseFloat(other.getAttribute('data-y')) + other.offsetHeight
+                        left: parseFloat(other.getAttribute('data-x')), top: parseFloat(other.getAttribute('data-y')),
+                        right: parseFloat(other.getAttribute('data-x')) + other.offsetWidth, bottom: parseFloat(other.getAttribute('data-y')) + other.offsetHeight
                     };
-
                     const inflatedOtherRect = {
-                        left: otherRect.left - collisionGap,
-                        top: otherRect.top - collisionGap,
-                        right: otherRect.right + collisionGap,
-                        bottom: otherRect.bottom + collisionGap
+                        left: otherRect.left - collisionGap, top: otherRect.top - collisionGap,
+                        right: otherRect.right + collisionGap, bottom: otherRect.bottom + collisionGap
                     };
-
-                    if (isIntersecting({ ...currentTargetRect, left: currentTargetRect.left + event.dx, right: currentTargetRect.right + event.dx }, inflatedOtherRect)) {
-                        canMoveX = false;
-                    }
-                    if (isIntersecting({ ...currentTargetRect, top: currentTargetRect.top + event.dy, bottom: currentTargetRect.bottom + event.dy }, inflatedOtherRect)) {
-                        canMoveY = false;
-                    }
+                    if (isIntersecting({ ...currentTargetRect, left: currentTargetRect.left + event.dx, right: currentTargetRect.right + event.dx }, inflatedOtherRect)) canMoveX = false;
+                    if (isIntersecting({ ...currentTargetRect, top: currentTargetRect.top + event.dy, bottom: currentTargetRect.bottom + event.dy }, inflatedOtherRect)) canMoveY = false;
                 }
 
                 if (canMoveX) position.x += event.dx;
@@ -2005,45 +2007,70 @@ function initDraggableAndResizable(element) {
         edges: { left: false, right: true, bottom: true, top: false },
         margin: 16,
         listeners: {
+            start: syncStateOnStart,
             move(event) {
                 const target = event.target;
                 const parentContainer = document.getElementById('templates-grid-wrapper');
-                
-                // <<< ПОЧАТОК ЗМІН: ОБМЕЖЕННЯ ШИРИНИ >>>
+                const allOtherTemplates = Array.from(document.querySelectorAll('.template-field-group')).filter(el => el !== target);
+
                 const x = parseFloat(target.getAttribute('data-x')) || 0;
-                let newWidth = event.rect.width;
+                const y = parseFloat(target.getAttribute('data-y')) || 0;
 
-                // Розраховуємо максимально допустиму ширину від поточної позиції X
-                const maxWidth = parentContainer.offsetWidth - x;
+                // >>>>> ПОЧАТОК НОВОЇ ЛОГІКИ ЗАПОБІГАННЯ ЗІТКНЕННЯМ ПРИ RESIZE <<<<<
                 
-                // Якщо нова ширина більша за максимальну, обрізаємо її
-                if (newWidth > maxWidth) {
-                    newWidth = maxWidth;
-                }
-                
-                // Застосовуємо правильну (можливо, обрізану) ширину
-                target.style.width = `${newWidth}px`;
-                // <<< КІНЕЦЬ ЗМІН: ОБМЕЖЕННЯ ШИРИНИ >>>
+                // 1. Обчислюємо максимально допустиму ширину і висоту
+                let maxAllowedWidth = parentContainer.offsetWidth - x;
+                let maxAllowedHeight = Infinity; // Обмеження знизу немає, крім інших блоків
 
-                // Застосовуємо нову висоту без обмежень (окрім min-height)
-                target.style.height = `${event.rect.height}px`;
+                // 2. Шукаємо найближчі перешкоди
+                for (const other of allOtherTemplates) {
+                    const otherX = parseFloat(other.getAttribute('data-x'));
+                    const otherY = parseFloat(other.getAttribute('data-y'));
+                    const otherHeight = other.offsetHeight;
+                    const otherWidth = other.offsetWidth;
 
-                // Логіка прокрутки залишається незмінною
-                if (scrollContainer) {
-                    const containerRect = scrollContainer.getBoundingClientRect();
-                    const cursorY = event.client.y; 
+                    // Перевірка перешкод справа
+                    if (otherX > x && // Якщо інший блок правіше
+                        (y < otherY + otherHeight && y + target.offsetHeight > otherY) // і вони перетинаються по вертикалі
+                    ) {
+                        const potentialMaxWidth = otherX - x - collisionGap;
+                        if (potentialMaxWidth < maxAllowedWidth) {
+                            maxAllowedWidth = potentialMaxWidth;
+                        }
+                    }
 
-                    if (cursorY > containerRect.bottom) {
-                        scrollContainer.scrollTop += event.dy;
-                    } 
-                    else if (cursorY < containerRect.top) {
-                         scrollContainer.scrollTop += event.dy;
+                    // Перевірка перешкод знизу
+                    if (otherY > y && // Якщо інший блок нижче
+                        (x < otherX + otherWidth && x + target.offsetWidth > otherX) // і вони перетинаються по горизонталі
+                    ) {
+                        const potentialMaxHeight = otherY - y - collisionGap;
+                        if (potentialMaxHeight < maxAllowedHeight) {
+                            maxAllowedHeight = potentialMaxHeight;
+                        }
                     }
                 }
+
+                // 3. Обмежуємо нові розміри
+                let newWidth = Math.min(event.rect.width, maxAllowedWidth);
+                let newHeight = Math.min(event.rect.height, maxAllowedHeight);
+
+                // Застосовуємо правильні (обмежені) розміри
+                target.style.width = `${newWidth}px`;
+                target.style.height = `${newHeight}px`;
+
+                // >>>>> КІНЕЦЬ НОВОЇ ЛОГІКИ <<<<<
+
+                // Оновлюємо позицію, бо interact.js може її змінювати
+                position.x += event.deltaRect.left;
+                position.y += event.deltaRect.top;
+                target.style.transform = `translate(${position.x}px, ${position.y}px)`;
             },
             end(event) {
+                event.target.setAttribute('data-x', position.x);
+                event.target.setAttribute('data-y', position.y);
                 saveTemplates();
                 updateGridWrapperHeight();
+                setTimeout(rearrangeTemplates, 50);
             }
         },
         modifiers: [
