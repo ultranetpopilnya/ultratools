@@ -1321,7 +1321,7 @@ body.dark .template-field-group textarea {
     </div> 
     
     <div class="global-version-info">
-        Версія 2.7.1<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
+        Версія 2.7.3<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
     </div> 
     
     <div id="notification" class="notification">
@@ -1336,8 +1336,8 @@ body.dark .template-field-group textarea {
 function updateGridWrapperHeight() {
     const container = document.getElementById('templates-grid-wrapper');
     const templates = container.querySelectorAll('.template-field-group');
-    const defaultHeight = 1400; // Наша стартова висота
-    const bottomPadding = 20;   // Невеликий відступ знизу
+    const defaultHeight = 800; // Наша стартова висота
+    const bottomPadding = 50;   // Невеликий відступ знизу
 
     if (templates.length === 0) {
         container.style.height = `${defaultHeight}px`;
@@ -1398,6 +1398,11 @@ function handleDeviceTypeChange() {
                  if (deviceSelect) {
                     displayCommands(deviceSelect.value);
                  }
+            }
+            // >>> НОВИЙ КОД: Перекомпоновка шаблонів при переключенні на їх вкладку
+            if (tabId === 'text-templates') {
+                // Невелика затримка, щоб контейнер встиг отримати правильні розміри
+                setTimeout(rearrangeTemplates, 50);
             }
         }
         if (activeButton) {
@@ -1921,7 +1926,6 @@ const mapping = {
 
 function initDraggableAndResizable(element) {
     const collisionGap = 4; // Відстань між шаблонами
-    // Знаходимо правильний контейнер для прокрутки один раз при ініціалізації
     const scrollContainer = element.closest('.container');
 
     const position = {
@@ -1934,11 +1938,10 @@ function initDraggableAndResizable(element) {
     interact(element).draggable({
         allowFrom: '.template-drag-handle',
         inertia: false,
-        // ОНОВЛЕНО: Додаємо автопрокрутку і для перетягування
         autoScroll: {
-            container: scrollContainer, // Чітко вказуємо контейнер
-            margin: 50, // Відстань від краю для початку прокрутки
-            speed: 600  // Швидкість прокрутки
+            container: scrollContainer,
+            margin: 50,
+            speed: 600
         },
         listeners: {
             move(event) {
@@ -1992,92 +1995,55 @@ function initDraggableAndResizable(element) {
                 target.style.transform = `translate(${position.x}px, ${position.y}px)`;
             },
             end(event) {
-    event.target.setAttribute('data-x', position.x);
-    event.target.setAttribute('data-y', position.y);
-    saveTemplates();
-    updateGridWrapperHeight(); // <-- ДОДАЙТЕ ЦЕЙ РЯДОК
-}
+                event.target.setAttribute('data-x', position.x);
+                event.target.setAttribute('data-y', position.y);
+                saveTemplates();
+                updateGridWrapperHeight();
+            }
         }
     }).resizable({
         edges: { left: false, right: true, bottom: true, top: false },
         margin: 16,
-        // ОНОВЛЕНО: Чітко вказуємо контейнер для прокрутки при зміні розміру
-        autoScroll: {
-            container: scrollContainer, // Головне виправлення тут
-            margin: 50,
-            speed: 600
-        },
         listeners: {
             move(event) {
                 const target = event.target;
                 const parentContainer = document.getElementById('templates-grid-wrapper');
-                const allTemplates = Array.from(document.querySelectorAll('.template-field-group'));
                 
-                let canResizeX = true;
-                let canResizeY = true;
+                // <<< ПОЧАТОК ЗМІН: ОБМЕЖЕННЯ ШИРИНИ >>>
+                const x = parseFloat(target.getAttribute('data-x')) || 0;
+                let newWidth = event.rect.width;
 
-                const currentX = parseFloat(target.getAttribute('data-x'));
-                const currentY = parseFloat(target.getAttribute('data-y'));
+                // Розраховуємо максимально допустиму ширину від поточної позиції X
+                const maxWidth = parentContainer.offsetWidth - x;
+                
+                // Якщо нова ширина більша за максимальну, обрізаємо її
+                if (newWidth > maxWidth) {
+                    newWidth = maxWidth;
+                }
+                
+                // Застосовуємо правильну (можливо, обрізану) ширину
+                target.style.width = `${newWidth}px`;
+                // <<< КІНЕЦЬ ЗМІН: ОБМЕЖЕННЯ ШИРИНИ >>>
 
-                // --- Перевірка для осі X (ширина) ---
-                const potentialRectX = {
-                    left: currentX,
-                    top: currentY,
-                    right: currentX + event.rect.width,
-                    bottom: currentY + target.offsetHeight // Використовуємо поточну висоту для тесту
-                };
+                // Застосовуємо нову висоту без обмежень (окрім min-height)
+                target.style.height = `${event.rect.height}px`;
 
-                if (potentialRectX.right > parentContainer.offsetWidth) {
-                    canResizeX = false;
-                } else {
-                    for (const other of allTemplates) {
-                        if (other === target) continue;
-                        const otherRect = {
-                            left: parseFloat(other.getAttribute('data-x')) - collisionGap,
-                            top: parseFloat(other.getAttribute('data-y')) - collisionGap,
-                            right: parseFloat(other.getAttribute('data-x')) + other.offsetWidth + collisionGap,
-                            bottom: parseFloat(other.getAttribute('data-y')) + other.offsetHeight + collisionGap
-                        };
-                        if (isIntersecting(potentialRectX, otherRect)) {
-                            canResizeX = false;
-                            break;
-                        }
+                // Логіка прокрутки залишається незмінною
+                if (scrollContainer) {
+                    const containerRect = scrollContainer.getBoundingClientRect();
+                    const cursorY = event.client.y; 
+
+                    if (cursorY > containerRect.bottom) {
+                        scrollContainer.scrollTop += event.dy;
+                    } 
+                    else if (cursorY < containerRect.top) {
+                         scrollContainer.scrollTop += event.dy;
                     }
-                }
-
-                // --- Перевірка для осі Y (висота) ---
-                const potentialRectY = {
-                    left: currentX,
-                    top: currentY,
-                    right: currentX + target.offsetWidth, // Використовуємо поточну ширину для тесту
-                    bottom: currentY + event.rect.height
-                };
-
-                for (const other of allTemplates) {
-                    if (other === target) continue;
-                    const otherRect = {
-                        left: parseFloat(other.getAttribute('data-x')) - collisionGap,
-                        top: parseFloat(other.getAttribute('data-y')) - collisionGap,
-                        right: parseFloat(other.getAttribute('data-x')) + other.offsetWidth + collisionGap,
-                        bottom: parseFloat(other.getAttribute('data-y')) + other.offsetHeight + collisionGap
-                    };
-                    if (isIntersecting(potentialRectY, otherRect)) {
-                        canResizeY = false;
-                        break;
-                    }
-                }
-
-                // --- Застосування змін незалежно ---
-                if (canResizeX) {
-                    target.style.width = `${event.rect.width}px`;
-                }
-                if (canResizeY) {
-                    target.style.height = `${event.rect.height}px`;
                 }
             },
             end(event) {
                 saveTemplates();
-				updateGridWrapperHeight();
+                updateGridWrapperHeight();
             }
         },
         modifiers: [
@@ -2089,8 +2055,6 @@ function initDraggableAndResizable(element) {
     });
 }
 
-// ЗАМІНІТЬ ПОПЕРЕДНЮ ВЕРСІЮ ФУНКЦІЇ НА ЦЮ ПОВНІСТЮ
-
 function updateBookmarksOnTextChange(fieldGroup) {
     const textarea = fieldGroup.querySelector('textarea');
     const oldText = fieldGroup.dataset.lastContent || '';
@@ -2098,8 +2062,6 @@ function updateBookmarksOnTextChange(fieldGroup) {
 
     if (oldText === newText) return;
 
-    // --- КЛЮЧОВЕ ВИПРАВЛЕННЯ: ОБРОБКА ПОВНОГО СТИРАННЯ ТЕКСТУ ---
-    // Якщо новий текст порожній, просто очищуємо всі закладки і виходимо.
     if (newText === '') {
         fieldGroup.dataset.bookmarks = '[]';
         renderLineMarkers(fieldGroup);
@@ -2153,10 +2115,7 @@ function updateBookmarksOnTextChange(fieldGroup) {
             const changeAffectedOneOldLine = (lastDiffOldIndex === firstDiffIndex);
             
             if (changeAffectedOneOldLine) {
-                // Ця перевірка тепер працює коректно, бо випадок з `newText === ''`
-                // обробляється на самому початку.
                 const lineWasReplacedOrEdited = (lastDiffNewIndex >= firstDiffIndex);
-
                 if (lineWasReplacedOrEdited) {
                     newBookmarks.add(firstDiffIndex + 1);
                 }
@@ -2164,14 +2123,12 @@ function updateBookmarksOnTextChange(fieldGroup) {
         }
     });
 
-    // Оновлюємо дані
     const sortedBookmarks = Array.from(newBookmarks).sort((a, b) => a - b);
     fieldGroup.dataset.bookmarks = JSON.stringify(sortedBookmarks);
     renderLineMarkers(fieldGroup);
     fieldGroup.dataset.lastContent = newText;
 }
 
-// Повністю нова функція
 function createTemplateField(data = {}) {
     const {
         name = '',
@@ -2180,7 +2137,6 @@ function createTemplateField(data = {}) {
         height = '170px',
         x = 10,
         y = 10,
-        // Отримуємо збережені закладки
         bookmarks = [] 
     } = data;
 
@@ -2188,9 +2144,8 @@ function createTemplateField(data = {}) {
     const fieldGroup = document.createElement('div');
     fieldGroup.className = 'template-field-group'; 
     
-    // Зберігаємо закладки прямо на елементі для легкого доступу
     fieldGroup.dataset.bookmarks = JSON.stringify(bookmarks);
-	fieldGroup.dataset.lastContent = content; // Зберігаємо початковий стан
+	fieldGroup.dataset.lastContent = content;
     
     fieldGroup.style.width = width;
     fieldGroup.style.height = height;
@@ -2239,11 +2194,11 @@ function createTemplateField(data = {}) {
     clearButton.title = 'Очистити текстове поле';
     clearButton.className = 'clear-template-btn';
     clearButton.onclick = () => {
-    const textarea = fieldGroup.querySelector('textarea');
-    textarea.value = '';
-    updateBookmarksOnTextChange(fieldGroup); // Оновлюємо закладки і тут
-    saveTemplates();
-};
+        const textarea = fieldGroup.querySelector('textarea');
+        textarea.value = '';
+        updateBookmarksOnTextChange(fieldGroup);
+        saveTemplates();
+    };
     
     const deleteButton = document.createElement('button');
     deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
@@ -2252,58 +2207,48 @@ function createTemplateField(data = {}) {
     deleteButton.onclick = () => {
         fieldGroup.remove();
         saveTemplates();
-updateGridWrapperHeight();		
+        updateGridWrapperHeight();		
     };
-
-    // --- ПОЧАТОК НОВИХ ЗМІН ---
     
-    // 1. Створюємо обгортку
     const textareaWrapper = document.createElement('div');
     textareaWrapper.className = 'textarea-wrapper';
 
-    // 2. Створюємо колонку для позначок
     const gutter = document.createElement('div');
     gutter.className = 'line-marker-gutter';
 
-    // 3. Створюємо текстове поле
     const textarea = document.createElement('textarea');
     textarea.placeholder = 'Введіть текст тут...';
     textarea.value = content;
     textarea.oninput = () => {
-    updateBookmarksOnTextChange(fieldGroup); // Викликаємо нашу "розумну" функцію
-    gutter.scrollTop = textarea.scrollTop;
-    saveTemplates();
-};
+        updateBookmarksOnTextChange(fieldGroup);
+        gutter.scrollTop = textarea.scrollTop;
+        saveTemplates();
+    };
     
-    // 4. Синхронізація прокрутки
     textarea.onscroll = () => {
         gutter.scrollTop = textarea.scrollTop;
     };
     
-    // 5. Обробка кліку по колонці
     gutter.onclick = (event) => {
-        // Вираховуємо, на який рядок клікнули
         const style = window.getComputedStyle(textarea);
         const lineHeight = parseFloat(style.lineHeight);
         const paddingTop = parseFloat(style.paddingTop);
         const clickedLine = Math.floor((event.offsetY + gutter.scrollTop - paddingTop) / lineHeight) + 1;
 
-        // Оновлюємо масив закладок
         let currentBookmarks = JSON.parse(fieldGroup.dataset.bookmarks || '[]');
         const index = currentBookmarks.indexOf(clickedLine);
 
         if (index > -1) {
-            currentBookmarks.splice(index, 1); // Видалити, якщо вже є
+            currentBookmarks.splice(index, 1);
         } else {
-            currentBookmarks.push(clickedLine); // Додати, якщо нема
+            currentBookmarks.push(clickedLine);
         }
         
         fieldGroup.dataset.bookmarks = JSON.stringify(currentBookmarks);
-        renderLineMarkers(fieldGroup); // Перемалювати позначки
-        saveTemplates(); // Зберегти зміни
+        renderLineMarkers(fieldGroup);
+        saveTemplates();
     };
 
-    // Додаємо елементи в обгортку
     textareaWrapper.appendChild(gutter);
     textareaWrapper.appendChild(textarea);
 
@@ -2313,23 +2258,21 @@ updateGridWrapperHeight();
     actionsDiv.appendChild(deleteButton);
     headerDiv.appendChild(actionsDiv);
 	
-const resizeHandle = document.createElement('div');
+    const resizeHandle = document.createElement('div');
     resizeHandle.className = 'resize-handle';    
     fieldGroup.appendChild(dragHandle); 
     fieldGroup.appendChild(headerDiv); 
-    fieldGroup.appendChild(textareaWrapper); // Додаємо обгортку замість textarea
+    fieldGroup.appendChild(textareaWrapper);
 	fieldGroup.appendChild(resizeHandle);
     
     container.appendChild(fieldGroup); 
     
     initDraggableAndResizable(fieldGroup);
-    
-    renderLineMarkers(fieldGroup); // Початкове відмалювання позначок при завантаженні
+    renderLineMarkers(fieldGroup);
     
     return fieldGroup;
 }
 
-// Нова функція для відмальовування позначок
 function renderLineMarkers(fieldGroup) {
     const gutter = fieldGroup.querySelector('.line-marker-gutter');
     const textarea = fieldGroup.querySelector('textarea');
@@ -2340,24 +2283,20 @@ function renderLineMarkers(fieldGroup) {
     
     const style = window.getComputedStyle(textarea);
     const lineHeight = parseFloat(style.lineHeight);
-    const paddingTop = parseFloat(style.paddingTop); // Важливо враховувати верхній відступ!
+    const paddingTop = parseFloat(style.paddingTop);
 
     bookmarks.forEach(lineNumber => {
         const marker = document.createElement('div');
         marker.className = 'line-marker';
         marker.textContent = '●';
 
-        // --- ПОЧАТОК ЗМІН ---
-        // Позиціонуємо по верху рядка + невеликий зсув вниз для ідеального вирівнювання
-        const verticalOffset = -4.5; // ЦЕ ЗНАЧЕННЯ МОЖНА ЗМІНЮВАТИ (2, 3 або 4)
+        const verticalOffset = -4.5;
         marker.style.top = `${paddingTop + (lineNumber - 1) * lineHeight + verticalOffset}px`;
-        // --- КІНЕЦЬ ЗМІН ---
 
         gutter.appendChild(marker);
     });
 }
 
-    // --- ВИПРАВЛЕНА ФУНКЦІЯ ДОДАВАННЯ ШАБЛОНУ ---
 function addTemplate() {
     const container = document.getElementById('templates-grid-wrapper');
     const layoutWrapper = container.closest('.tab-content-wrapper');
@@ -2372,9 +2311,8 @@ function addTemplate() {
 
     const newTemplateWidth = 300;
     const newTemplateHeight = 110;
-    const gap = 4; // Ваш відступ
+    const gap = 4;
 
-    // Крок 1: Створюємо список потенційних точок для розміщення
     const potentialPoints = [{ x: 0, y: 0 }];
 
     existingTemplates.forEach(el => {
@@ -2384,28 +2322,19 @@ function addTemplate() {
             width: el.offsetWidth,
             height: el.offsetHeight
         };
-        // Додаємо точку праворуч від існуючого елемента
         potentialPoints.push({ x: rect.x + rect.width + gap, y: rect.y });
-        // Додаємо точку знизу від існуючого елемента
         potentialPoints.push({ x: rect.x, y: rect.y + rect.height + gap });
     });
 
-    // Крок 2: Сортуємо точки, щоб перевіряти їх згори вниз, зліва направо
     potentialPoints.sort((a, b) => {
-        if (a.y !== b.y) {
-            return a.y - b.y;
-        }
+        if (a.y !== b.y) return a.y - b.y;
         return a.x - b.x;
     });
 
     let finalPosition = null;
 
-    // Крок 3: Перебираємо точки і знаходимо перше вільне місце
     for (const point of potentialPoints) {
-        // Перевірка, чи не виходить за межі контейнера по ширині
-        if (point.x + newTemplateWidth > containerWidth) {
-            continue;
-        }
+        if (point.x + newTemplateWidth > containerWidth) continue;
 
         const candidateRect = {
             left: point.x,
@@ -2414,7 +2343,6 @@ function addTemplate() {
             bottom: point.y + newTemplateHeight
         };
 
-        // Перевіряємо, чи ця позиція не перекриває жоден з існуючих шаблонів
         const isOverlapping = existingTemplates.some(el => {
             const rect = {
                 left: parseFloat(el.getAttribute('data-x')),
@@ -2426,43 +2354,27 @@ function addTemplate() {
         });
 
         if (!isOverlapping) {
-            // Знайшли перше вільне місце!
             finalPosition = point;
             break;
         }
     }
     
-    // Якщо з якоїсь причини місце не знайдено, додаємо внизу
     if (!finalPosition) {
         let lowestY = gap;
         existingTemplates.forEach(el => {
             const bottom = parseFloat(el.getAttribute('data-y')) + el.offsetHeight;
-            if (bottom > lowestY) {
-                lowestY = bottom;
-            }
+            if (bottom > lowestY) lowestY = bottom;
         });
         finalPosition = { x: gap, y: lowestY + gap };
     }
 
-
     const newField = createTemplateField({
-        name: '',
-        content: '',
-        width: `${newTemplateWidth}px`,
-        height: `${newTemplateHeight}px`,
-        x: finalPosition.x,
-        y: finalPosition.y
+        name: '', content: '',
+        width: `${newTemplateWidth}px`, height: `${newTemplateHeight}px`,
+        x: finalPosition.x, y: finalPosition.y
     });
     newField.querySelector('.template-name-input').focus();
     saveTemplates();
-}
-
-// Переконайтесь, що ваша функція isIntersecting існує і виглядає так:
-function isIntersecting(r1, r2) {
-    return !(r2.left >= r1.right ||
-             r2.right <= r1.left ||
-             r2.top >= r1.bottom ||
-             r2.bottom <= r1.top);
 }
 
 function saveTemplates() {
@@ -2473,8 +2385,8 @@ function saveTemplates() {
         const textarea = group.querySelector('textarea');
         
 		if (textarea) {
-        group.dataset.lastContent = textarea.value;
-    }
+            group.dataset.lastContent = textarea.value;
+        }
 	
 		templates.push({
             name: nameInput ? nameInput.value : '',
@@ -2483,7 +2395,6 @@ function saveTemplates() {
             height: group.style.height,
             x: group.getAttribute('data-x'),
             y: group.getAttribute('data-y'),
-            // Додаємо збереження закладок
             bookmarks: JSON.parse(group.dataset.bookmarks || '[]')
         });
     });
@@ -2499,7 +2410,6 @@ function loadTemplates() {
         try {
             const templates = JSON.parse(templatesJson);
             if (Array.isArray(templates)) {
-                // Тепер createTemplateField сам обробить закладки
                 templates.forEach(template => createTemplateField(template));
             }
 			updateGridWrapperHeight();
@@ -2509,6 +2419,112 @@ function loadTemplates() {
         }
     }
 }
+    
+// >>>>>>>> ПОЧАТОК НОВОГО КОДУ ДЛЯ АДАПТИВНОСТІ <<<<<<<<<<
+    
+/**
+ * Функція для "відкладеного" виклику іншої функції.
+ * Потрібна, щоб не запускати перерахунок позицій 100 разів на секунду при зміні розміру вікна.
+ * @param {Function} func - Функція, яку потрібно викликати.
+ * @param {number} delay - Затримка в мілісекундах.
+ * @returns {Function} - Нова функція-обгортка.
+ */
+function debounce(func, delay) {
+    let timeout;
+    return function(...args) {
+        const context = this;
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(context, args), delay);
+    };
+}
+
+/**
+ * Основна функція для перерахунку та розстановки шаблонів.
+ * Вона автоматично розміщує шаблони в межах видимої області, переносячи їх на новий рядок.
+ */
+/**
+ * Розумна функція для перерахунку та розстановки шаблонів.
+ * Розставляє по сітці ТІЛЬКИ якщо контент не вміщується.
+ * В іншому випадку - відновлює збережені користувачем позиції.
+ */
+function rearrangeTemplates() {
+    const container = document.querySelector('.container[data-content="text-templates"]');
+    if (!container || !container.classList.contains('active')) {
+        return; // Не виконувати, якщо вкладка не активна
+    }
+
+    const allTemplates = Array.from(document.querySelectorAll('#templates-grid-wrapper .template-field-group'));
+    if (allTemplates.length === 0) return;
+
+    const containerWidth = container.clientWidth;
+    const GAP = 10; // Відстань між шаблонами
+
+    // Крок 1: Визначаємо, чи потрібне втручання взагалі.
+    // Знаходимо максимальну ширину, яку займає ручне розташування.
+    let maxWidthNeeded = 0;
+    allTemplates.forEach(template => {
+        const x = parseFloat(template.getAttribute('data-x')) || 0;
+        const width = template.offsetWidth;
+        const rightEdge = x + width;
+        if (rightEdge > maxWidthNeeded) {
+            maxWidthNeeded = rightEdge;
+        }
+    });
+
+    // Крок 2: Приймаємо рішення на основі перевірки.
+    if (maxWidthNeeded > containerWidth) {
+        // ВТРУЧАННЯ ПОТРІБНЕ: Місця мало, розставляємо по сітці.
+        
+        // Сортуємо шаблони, щоб обробляти їх у логічному порядку
+        allTemplates.sort((a, b) => {
+            const yA = parseFloat(a.getAttribute('data-y')) || 0;
+            const yB = parseFloat(b.getAttribute('data-y')) || 0;
+            if (yA !== yB) return yA - yB;
+            const xA = parseFloat(a.getAttribute('data-x')) || 0;
+            const xB = parseFloat(b.getAttribute('data-x')) || 0;
+            return xA - xB;
+        });
+
+        let currentX = 0;
+        let currentY = 0;
+        let rowMaxHeight = 0;
+
+        allTemplates.forEach(template => {
+            const templateWidth = template.offsetWidth;
+            const templateHeight = template.offsetHeight;
+
+            if (currentX + templateWidth > containerWidth && currentX > 0) {
+                currentX = 0;
+                currentY += rowMaxHeight + GAP;
+                rowMaxHeight = 0;
+            }
+
+            // ВАЖЛИВО: Ми не змінюємо data-x/data-y, лише візуальне положення.
+            template.style.transform = `translate(${currentX}px, ${currentY}px)`;
+
+            currentX += templateWidth + GAP;
+            
+            if (templateHeight > rowMaxHeight) {
+                rowMaxHeight = templateHeight;
+            }
+        });
+        
+    } else {
+        // ВТРУЧАННЯ НЕ ПОТРІБНЕ: Місця достатньо, повертаємо все на збережені місця.
+        allTemplates.forEach(template => {
+            const x = template.getAttribute('data-x') || 0;
+            const y = template.getAttribute('data-y') || 0;
+            template.style.transform = `translate(${x}px, ${y}px)`;
+        });
+    }
+
+    // ВАЖЛИВО: Прибираємо збереження звідси.
+    // saveTemplates(); 
+    // Натомість оновлюємо висоту контейнера.
+    updateGridWrapperHeight();
+}
+// >>>>>>>> КІНЕЦЬ НОВОГО КОДУ ДЛЯ АДАПТИВНОСТІ <<<<<<<<<<
+
 
     // --- Функціонал Перемикача Тем ---
 
@@ -2527,20 +2543,16 @@ function loadTemplates() {
     function loadTheme() {
         const savedTheme = localStorage.getItem('theme');
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-
         let isDark = savedTheme === 'dark' || (savedTheme === null && prefersDark);
-        
         checkbox.checked = isDark;
         applyTheme(isDark);
     }
-
 
     checkbox.addEventListener("change", () => {
         applyTheme(checkbox.checked);
     });
 
     // --- Ініціалізація ---
-
     document.addEventListener('DOMContentLoaded', () => {
         loadTheme();
 		
@@ -2581,6 +2593,14 @@ function loadTemplates() {
                 displayCommands(deviceSelect.value);
              }
         }
+
+        // >>> НОВИЙ КОД: Запускаємо перекомпоновку при завантаженні та зміні розміру вікна
+        // Створюємо "відкладену" версію нашої функції
+        const debouncedRearrange = debounce(rearrangeTemplates, 250); 
+        // Додаємо слухача події на зміну розміру вікна
+        window.addEventListener('resize', debouncedRearrange);
+        // Запускаємо один раз при завантаженні (з невеликою затримкою, щоб все промалювалось)
+        setTimeout(rearrangeTemplates, 100);
     });
 </script>
 
