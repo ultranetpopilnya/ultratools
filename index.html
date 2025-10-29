@@ -1321,7 +1321,7 @@ body.dark .template-field-group textarea {
     </div> 
     
     <div class="global-version-info">
-        Версія 2.7.3<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
+        Версія 2.7.4<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
     </div> 
     
     <div id="notification" class="notification">
@@ -1810,34 +1810,36 @@ const mapping = {
     const COMMANDS = {
         gpon: [
             { command: 'show gpon onu uncfg', description: 'Показати незареєстровані ONU на PON' },
-            { command: 'show pon power attenuation gpon-onu_', description: 'Показати сигнал ONU абонента' },
-            { command: 'show running-config interface gpon-onu_', description: 'Показати конфіг ONU' },
-            { command: 'show gpon onu detail-info gpon-onu_', description: 'Показати логи падіння та підняття ONU' },
+            { command: 'show pon power attenuation gpon-onu_1/1/1:1', description: 'Показати сигнал ONU абонента' },
+            { command: 'show running-config interface gpon-onu_1/1/1:1', description: 'Показати конфіг ONU' },
+            { command: 'show gpon onu detail-info gpon-onu_1/1/1:1', description: 'Показати логи падіння та підняття ONU' },
             { command: 'show clock', description: 'Показати час на OLT' },
-            { command: 'show gpon remote-onu interface eth gpon-onu_', description: 'Перевірка зєднання між ONU та роутером (швидкість)' },
-			{ command: 'show mac gpon onu gpon-onu_', description: 'Показати Mac адресу роутера' },
-			{ command: 'show ip dhcp snooping dynamic port pon gpon-onu_ vport 1', description: 'Показати Mac адресу, IP та VLAN роутера' },
-			{ command: 'show ip dhcp snooping port gpon-onu_', description: 'Показати Mac адресу, IP та VLAN роутера' },
+            { command: 'show gpon remote-onu interface eth gpon-onu_1/1/1:1', description: 'Перевірка зєднання між ONU та роутером (швидкість)' },
+			{ command: 'show mac gpon onu gpon-onu_1/1/1:1', description: 'Показати Mac адресу роутера' },
+			{ command: 'show ip dhcp snooping dynamic port pon gpon-onu_1/1/1:1 vport 1', description: 'Показати Mac адресу, IP та VLAN роутера' },
+			{ command: 'show ip dhcp snooping port gpon-onu_1/1/1:1', description: 'Показати Mac адресу, IP та VLAN роутера' },
 			{ command: 'conf t', description: 'Зайти в налаштування на OLT' },
-			{ command: 'ip dhcp snooping clear pon MAC vlan № gpon-onu_ vport 1', description: 'Очистка сесії. Виконується після команди conf t' },
-			{ command: 'ip dhcp snooping clear MAC vlan №', description: 'Очистка сесії. Виконується після команди conf t' },
-			{ command: 'show pon power onu-rx gpon-olt_', description: 'Показати сигнали всіх ONU на порту' },
+			{ command: 'ip dhcp snooping clear pon abcd.efgh.1234 vlan 111 gpon-onu_1/1/1:1 vport 1', description: 'Очистка сесії. Виконується після команди conf t' },
+			{ command: 'ip dhcp snooping clear abcd.efgh.1234 vlan 111', description: 'Очистка сесії. Виконується після команди conf t' },
+			{ command: 'show pon power onu-rx gpon-olt_1/1/1', description: 'Показати сигнали всіх ONU на порту' },
+			{ command: '', description: '' },
 
         ],
         epon: [
             { command: 'show onu unauthentication', description: 'Пошук незареєстрованих ONU' },
-			{ command: 'show epon onu state epon-olt_', description: 'Показати всі зареєстровані ONU на OLT' },
+			{ command: 'show epon onu state epon-olt_1/1/1', description: 'Показати всі зареєстровані ONU на OLT' },
 			{ command: 'conf t', description: 'Зайти в налаштування на OLT' },
-			{ command: 'show running-config interface epon-onu_', description: 'Показати конфіг ONU' },
-			{ command: 'show onu detail-info epon-onu_', description: 'Показати логи падіння та підняття ONU' },
-			{ command: 'show pon power attenuation epon-onu_', description: 'Показати сигнал ONU абонента' },
-			{ command: 'show mac epon onu epon-onu_', description: 'Показати Mac адресу роутера' },
-			{ command: 'show ip dhcp snooping port epon-onu_', description: 'Показати Mac адресу, IP та VLAN роутера' },
+			{ command: 'show running-config interface epon-onu_1/1/1:1', description: 'Показати конфіг ONU' },
+			{ command: 'show onu detail-info epon-onu_1/1/1:1', description: 'Показати логи падіння та підняття ONU' },
+			{ command: 'show pon power attenuation epon-onu_1/1/1:1', description: 'Показати сигнал ONU абонента' },
+			{ command: 'show mac epon onu epon-onu_1/1/1:1', description: 'Показати Mac адресу роутера' },
+			{ command: 'show ip dhcp snooping port epon-onu_1/1/1:1', description: 'Показати Mac адресу, IP та VLAN роутера' },
 			{ command: '', description: '' },
 
         ],
         bdcom: [
             { command: 'Не командуй мені тут!', description: '' },
+			{ command: '', description: '' },
 
         ]
     };
