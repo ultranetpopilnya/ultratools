@@ -1396,7 +1396,7 @@ body.dark .line-marker {
     </div> 
     
     <div class="global-version-info">
-        Версія 2.8.2<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
+        Версія 2.8.3<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
     </div> 
     
     <div id="notification" class="notification">
@@ -1814,9 +1814,24 @@ body.dark .line-marker {
                 start: syncStateOnStart,
                 move(event) {
                     const target = event.target;
-                    const newX = position.x + event.dx;
-                    const newY = position.y + event.dy;
+                    const parentContainer = document.getElementById('templates-grid-wrapper');
+                    const parentWidth = parentContainer.offsetWidth;
+
+                    // Потенційна нова позиція
+                    let newX = position.x + event.dx;
+                    let newY = position.y + event.dy;
+
+                    // --- НОВІ ОБМЕЖЕННЯ КОНТЕЙНЕРА ---
+                    // Заборона виходу за ліву та верхню межу
+                    if (newX < 0) newX = 0;
+                    if (newY < 0) newY = 0;
                     
+                    // Заборона виходу за праву межу
+                    if (newX + target.offsetWidth > parentWidth) {
+                        newX = parentWidth - target.offsetWidth;
+                    }
+                    // --- КІНЕЦЬ ОБМЕЖЕНЬ ---
+
                     const fullMoveRect = { left: newX, top: newY, right: newX + target.offsetWidth, bottom: newY + target.offsetHeight };
                     const xMoveRect = { left: newX, top: position.y, right: newX + target.offsetWidth, bottom: position.y + target.offsetHeight };
                     const yMoveRect = { left: position.x, top: newY, right: position.x + target.offsetWidth, bottom: position.y + target.offsetHeight };
@@ -1841,12 +1856,6 @@ body.dark .line-marker {
                     } else if (canMoveY) {
                         position.y = newY;
                     }
-
-                    const parentContainer = document.getElementById('templates-grid-wrapper');
-                    const parentWidth = parentContainer.offsetWidth;
-
-                    if (position.x < 0) position.x = 0;
-                    if (position.y < 0) position.y = 0;
                    
                     target.style.transform = `translate(${position.x}px, ${position.y}px)`;
                 },
@@ -1867,9 +1876,12 @@ body.dark .line-marker {
                     const parentContainer = document.getElementById('templates-grid-wrapper');
                     let newWidth = event.rect.width, newHeight = event.rect.height;
                     const x = parseFloat(target.getAttribute('data-x')) || 0, y = parseFloat(target.getAttribute('data-y')) || 0;
+                    
+                    // Обмеження зміни розміру по ширині контейнера (це вже було і працює коректно)
                     if (x + newWidth > parentContainer.offsetWidth) {
                         newWidth = parentContainer.offsetWidth - x;
                     }
+                    
                     const targetRect = { left: x, top: y, right: x + newWidth, bottom: y + newHeight };
                     let collision = false;
                     for (const other of document.querySelectorAll('.template-field-group')) {
@@ -2281,28 +2293,39 @@ body.dark .line-marker {
     const containerWidth = container.clientWidth;
     const GAP = 6;
 
-    // Крок 1: Спочатку намагаємося відновити збережені користувачем позиції
-    allTemplates.forEach(template => {
-        const x = parseFloat(template.getAttribute('data-x'));
-        const y = parseFloat(template.getAttribute('data-y'));
-        template.style.transform = `translate(${x}px, ${y}px)`;
-    });
-
-    // Крок 2: Перевіряємо, чи є після відновлення проблеми (конфлікти)
+    // --- КРОК 1: ДЕТЕКТОР КОНФЛІКТІВ (з надійними даними) ---
     let hasConflicts = false;
     for (let i = 0; i < allTemplates.length; i++) {
         const t1 = allTemplates[i];
-        // Беремо координати з атрибутів, бо це "джерело правди"
-        const r1 = { x: parseFloat(t1.getAttribute('data-x')), y: parseFloat(t1.getAttribute('data-y')), width: t1.offsetWidth, height: t1.offsetHeight };
+        // ВИПРАВЛЕНО: Беремо розміри зі стилів, а не з offsetWidth/offsetHeight
+        const t1_width = parseInt(t1.style.width, 10) || t1.offsetWidth;
+        const t1_height = parseInt(t1.style.height, 10) || t1.offsetHeight;
 
-        if (r1.x + r1.width > containerWidth) {
+        const r1 = {
+            left: parseFloat(t1.getAttribute('data-x')),
+            top: parseFloat(t1.getAttribute('data-y')),
+            right: parseFloat(t1.getAttribute('data-x')) + t1_width,
+            bottom: parseFloat(t1.getAttribute('data-y')) + t1_height
+        };
+
+        if (r1.right > containerWidth) {
             hasConflicts = true;
             break;
         }
+
         for (let j = i + 1; j < allTemplates.length; j++) {
             const t2 = allTemplates[j];
-            const r2 = { x: parseFloat(t2.getAttribute('data-x')), y: parseFloat(t2.getAttribute('data-y')), width: t2.offsetWidth, height: t2.offsetHeight };
-            if (isIntersecting(r1, r2)) {
+            // ВИПРАВЛЕНО: Те ж саме для другого елемента
+            const t2_width = parseInt(t2.style.width, 10) || t2.offsetWidth;
+            const t2_height = parseInt(t2.style.height, 10) || t2.offsetHeight;
+            
+            const r2 = {
+                left: parseFloat(t2.getAttribute('data-x')),
+                top: parseFloat(t2.getAttribute('data-y')),
+                right: parseFloat(t2.getAttribute('data-x')) + t2_width,
+                bottom: parseFloat(t2.getAttribute('data-y')) + t2_height
+            };
+            if (isIntersecting({left: r1.left - GAP, top: r1.top - GAP, right: r1.right + GAP, bottom: r1.bottom + GAP}, r2)) {
                 hasConflicts = true;
                 break;
             }
@@ -2310,35 +2333,62 @@ body.dark .line-marker {
         if (hasConflicts) break;
     }
 
-    // Крок 3: Якщо є конфлікти (вікно завузьке), і тільки тоді, запускаємо тимчасове перелаштування
+    // --- КРОК 2: ВИБІР РЕЖИМУ ---
+
     if (hasConflicts) {
-        // Сортуємо, щоб розставляти логічно
+        // --- РЕЖИМ АВТОМАТИЧНОГО ПАКУВАННЯ ---
         allTemplates.sort((a, b) => (parseFloat(a.getAttribute('data-y')) - parseFloat(b.getAttribute('data-y'))) || (parseFloat(a.getAttribute('data-x')) - parseFloat(b.getAttribute('data-x'))));
 
-        let currentX = 0;
-        let currentY = 0;
-        let rowMaxHeight = 0;
+        const occupiedAreas = [];
 
         allTemplates.forEach(template => {
-            const templateWidth = template.offsetWidth;
-            const templateHeight = template.offsetHeight;
+            let placed = false;
+            let currentY = 0;
+            // ВИПРАВЛЕНО: Використовуємо надійні розміри
+            const templateWidth = parseInt(template.style.width, 10) || template.offsetWidth;
+            const templateHeight = parseInt(template.style.height, 10) || template.offsetHeight;
 
-            if (currentX > 0 && currentX + templateWidth > containerWidth) {
-                currentX = 0;
-                currentY += rowMaxHeight + GAP;
-                rowMaxHeight = 0;
+            while (!placed) {
+                let currentX = 0;
+                while (currentX + templateWidth <= containerWidth) {
+                    const candidateRect = {
+                        left: currentX,
+                        top: currentY,
+                        right: currentX + templateWidth,
+                        bottom: currentY + templateHeight
+                    };
+
+                    const isOverlapping = occupiedAreas.some(area =>
+                        isIntersecting(
+                           {left: candidateRect.left - GAP, top: candidateRect.top - GAP, right: candidateRect.right + GAP, bottom: candidateRect.bottom + GAP},
+                           area
+                        )
+                    );
+
+                    if (!isOverlapping) {
+                        template.style.transform = `translate(${currentX}px, ${currentY}px)`;
+                        occupiedAreas.push(candidateRect);
+                        placed = true;
+                        break;
+                    }
+                    currentX += 1;
+                }
+                if (!placed) {
+                    currentY += 1;
+                }
             }
-            
-            // ВАЖЛИВО: Змінюємо ТІЛЬКИ візуальне положення, НЕ чіпаючи data-x/data-y
-            template.style.transform = `translate(${currentX}px, ${currentY}px)`;
-            
-            currentX += templateWidth + GAP;
-            rowMaxHeight = Math.max(rowMaxHeight, templateHeight);
         });
         
-        // НЕ викликаємо saveTemplates(), щоб не перезаписати оригінальні координати
+    } else {
+        // --- РЕЖИМ ВІДНОВЛЕННЯ ---
+        allTemplates.forEach(template => {
+            const x = parseFloat(template.getAttribute('data-x'));
+            const y = parseFloat(template.getAttribute('data-y'));
+            template.style.transform = `translate(${x}px, ${y}px)`;
+        });
     }
 
+    // --- КРОК 3: ОНОВЛЕННЯ ВИСОТИ КОНТЕЙНЕРА ---
     updateGridWrapperHeight();
 }
 
