@@ -1935,13 +1935,32 @@ body.dark .line-marker {
 
         const newBookmarks = new Set();
         const lineDelta = (lastDiffNewIndex - firstDiffIndex + 1) - (lastDiffOldIndex - firstDiffIndex + 1);
+        
         oldBookmarks.forEach(oldLineNumber => {
             const oldLineIndex = oldLineNumber - 1;
+            
+            // Якщо закладка була ДО блоку змін, вона залишається на місці.
             if (oldLineIndex < firstDiffIndex) {
                 newBookmarks.add(oldLineNumber);
-            } else if (oldLineIndex > lastDiffOldIndex) {
+            } 
+            // Якщо закладка була ПІСЛЯ блоку змін, вона зсувається.
+            else if (oldLineIndex > lastDiffOldIndex) {
                 const newLineNumber = oldLineNumber + lineDelta;
                 if (newLineNumber > 0 && newLineNumber <= newLines.length) newBookmarks.add(newLineNumber);
+            } 
+            // *** ОСЬ ТУТ НОВА, ВИПРАВЛЕНА ЛОГІКА ***
+            // Якщо закладка була ВСЕРЕДИНІ блоку змін.
+            else {
+                const oldBlockLineCount = lastDiffOldIndex - firstDiffIndex + 1;
+                const newBlockLineCount = lastDiffNewIndex - firstDiffIndex + 1;
+
+                // ЗБЕРІГАЄМО закладку, якщо кількість рядків у блоці не змінилася.
+                // Це означає, що рядок був відредагований, а не видалений.
+                if (oldBlockLineCount === newBlockLineCount) {
+                    newBookmarks.add(oldLineNumber);
+                }
+                // В іншому випадку (рядки були додані/видалені), закладка видаляється,
+                // оскільки ми не можемо точно визначити її нове положення.
             }
         });
 
@@ -2367,7 +2386,5 @@ body.dark .line-marker {
         window.addEventListener('resize', debouncedRearrange);
     });
     </script>
-</body>
-</html>
 </body>
 </html>
