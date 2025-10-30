@@ -788,8 +788,8 @@ body.dark #static-clarification-message {
         
         #add-template-button {
             position: static; 
-            margin-top: -15px; 
-            margin-left: 10px;
+            margin-top: 0; 
+            margin-left: 0; 
             padding: 5px 15px; 
             background-color: #007bff;
             color: white;
@@ -920,11 +920,57 @@ body.dark #static-clarification-message {
         }
 
         .templates-header-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* ЗМІНЕНО: тепер все буде по центру */
+    margin-bottom: 15px;
+    margin-top: 0;
+}
+        
+        /* --- СТИЛІ ДЛЯ КНОПОК ІМПОРТУ/ЕКСПОРТУ --- */
+        .template-global-actions {
             display: flex;
             align-items: center;
+            gap: 10px; /* Відстань між кнопками */
+        }
+
+        #import-templates-button,
+        #export-templates-button {
+            position: static;
+            padding: 5px;
+            background-color: #6c757d; 
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 1rem; /* Розмір іконки */
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            min-width: 35px;
+            width: 35px;
+            height: 35px;
+            display: flex;
             justify-content: center;
-            margin-bottom: 0px;
-            margin-top: 0;
+            align-items: center;
+        }
+
+        #import-templates-button:hover,
+        #export-templates-button:hover {
+            background-color: #5a6268;
+        }
+
+        #import-templates-button:active,
+        #export-templates-button:active {
+            transform: scale(0.98);
+        }
+        
+        body.dark #import-templates-button,
+        body.dark #export-templates-button {
+            background-color: #5a6268;
+        }
+        body.dark #import-templates-button:hover,
+        body.dark #export-templates-button:hover {
+            background-color: #6c757d;
         }
         
         .template-field-group {
@@ -950,12 +996,11 @@ body.dark #static-clarification-message {
 
         .template-drag-handle {
             width: 100%;
-            height: 20px; /* Збільшена висота */
+            height: 20px; 
             background-color: #f0f0f0;
             cursor: move;
             border-bottom: 1px solid #ddd;
             border-radius: 0px 0x 0 0;
-            /* Стилі для іконки */
             display: flex;
             align-items: center;
             justify-content: center;
@@ -1134,14 +1179,12 @@ body.dark #static-clarification-message {
     position: absolute;
     bottom: 2px;
     right: 2px;
-    width: 10px; /* Розмір індикатора */
+    width: 10px;
     height: 10px;
-    /* Створюємо трикутний градієнт */
     background: linear-gradient(135deg, transparent 50%, rgba(0,0,0,0.2) 50%);
-    /* Обрізаємо, щоб був чіткий трикутник */
     clip-path: polygon(100% 0, 100% 100%, 0 100%);
-    cursor: nwse-resize; /* Курсор по діагоналі при наведенні */
-    pointer-events: none; /* ВАЖЛИВО: пропускає кліки крізь себе до механізму interact.js */
+    cursor: nwse-resize;
+    pointer-events: none; 
     z-index: 2;
 }
 
@@ -1152,33 +1195,31 @@ body.dark .template-field-group::after {
 
 /* === СТИЛІ ДЛЯ ФУНКЦІЇ ПОЗНАЧОК В ШАБЛОНАХ === */
 
-/* 1. Обгортка, що містить колонку і текстове поле */
 .textarea-wrapper {
     position: relative;
     display: flex;
-    flex-grow: 1; /* Займає весь доступний простір по висоті */
+    flex-grow: 1; 
     margin: 0 4px 4px 4px;
     width: calc(100% - 8px);
-    border: 1px solid #ddd; /* Загальна рамка */
+    border: 1px solid #ddd; 
     border-radius: 2px;
-    overflow: hidden; /* Ховаємо все, що виходить за межі */
+    overflow: hidden; 
 }
 
 body.dark .textarea-wrapper {
     border-color: #555555;
 }
 
-/* 2. Колонка для позначок (зліва) */
 .line-marker-gutter {
-    width: 16px; /* Ширина колонки */
+    width: 16px; 
     flex-shrink: 0;
     background-color: #f0f0f0;
     cursor: pointer;
     user-select: none;
     position: relative;
-    overflow: hidden; /* Важливо для синхронізації прокрутки */
-    padding-top: 10px; /* Такий же, як у textarea! */
-    padding-bottom: 10px; /* Такий же, як у textarea! */
+    overflow: hidden; 
+    padding-top: 10px; 
+    padding-bottom: 10px;
 	border-right: 1px solid #ddd;
 }
 
@@ -1187,34 +1228,26 @@ body.dark .line-marker-gutter {
 	border-right: 1px solid #555555;
 }
 
-/* 3. Сама позначка (крапка) */
 .line-marker {
     position: absolute;
     left: 50%;
-    /* Прибираємо вертикальне центрування, залишаємо тільки горизонтальне */
     transform: translateX(-50%); 
     font-size: 22px; 
     color: #007bff;
     pointer-events: none; 
     font-family: 'Fira Code', monospace !important; 
-    /* Видаляємо line-height, щоб він не впливав на позиціонування */
 }
 
 body.dark .line-marker {
     color: #E6A22E;
 }
 
-/* 4. Адаптуємо оригінальне текстове поле */
 .template-field-group textarea {
-    /* Прибираємо власну рамку і відступи, бо вони тепер на обгортці */
     margin: 0;
     border: none;
     border-radius: 0;
-    width: 100%; /* Займає весь залишений простір */
-    line-height: 1.5; /* ВАЖЛИВО: для розрахунку позиції */
-}
-
-body.dark .template-field-group textarea {
+    width: 100%; 
+    line-height: 1.5; 
 }
 
     </style>
@@ -1310,9 +1343,18 @@ body.dark .template-field-group textarea {
 </div>
             <div class="container" data-content="text-templates" data-default-width="100%" data-default-height="700px">
                 <div class="templates-header-wrapper">
-                    <h2 style="color: #444; margin-top: 0;text-align: center;">📝 Текстові шаблони</h2>
-                    <button id="add-template-button">+</button>
-                </div>
+    <div class="template-global-actions">
+        <h2 style="color: #444; margin-top: 0; text-align: center; margin-bottom: 0;">📝 Текстові шаблони</h2>
+        <button id="add-template-button">+</button>
+        <input type="file" id="import-file-input" accept=".json" style="display: none;">
+        <button id="import-templates-button" title="Імпортувати шаблони з файлу">
+            <i class="fas fa-download"></i>
+        </button>
+        <button id="export-templates-button" title="Експортувати шаблони у файл">
+            <i class="fas fa-upload"></i>
+        </button>
+    </div>
+</div>
                 <div id="templates-grid-wrapper">
                     </div>
             </div>
@@ -1321,636 +1363,622 @@ body.dark .template-field-group textarea {
     </div> 
     
     <div class="global-version-info">
-        Версія 2.7.4<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
+        Версія 2.8<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
     </div> 
     
     <div id="notification" class="notification">
         Команда скопійована!
     </div>
     
-<!-- Підключення бібліотеки interact.js -->
-<script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
-
-<script>
-// ВСТАВТЕ ЦЮ ФУНКЦІЮ ПОВНІСТЮ
-function updateGridWrapperHeight() {
-    const container = document.getElementById('templates-grid-wrapper');
-    const templates = container.querySelectorAll('.template-field-group');
-    const defaultHeight = 800; // Наша стартова висота
-    const bottomPadding = 50;   // Невеликий відступ знизу
-
-    if (templates.length === 0) {
-        container.style.height = `${defaultHeight}px`;
-        return;
-    }
-
-    let maxBottom = 0;
-    templates.forEach(template => {
-        // Вираховуємо нижню межу кожного шаблону
-        const yPos = parseFloat(template.getAttribute('data-y')) || 0;
-        const height = template.offsetHeight;
-        const bottomEdge = yPos + height;
-
-        if (bottomEdge > maxBottom) {
-            maxBottom = bottomEdge;
-        }
-    });
-
-    // Висота має бути або стартовою, або більшою, якщо контент не влазить
-    const requiredHeight = Math.max(defaultHeight, maxBottom + bottomPadding);
-    container.style.height = `${requiredHeight}px`;
-}
-
-// --- НОВА ФУНКЦІЯ: Обробка зміни вибору (викликається в onchange) ---
-function handleDeviceTypeChange() {
-    const selectedValue = document.getElementById('device-type').value;
-    displayCommands(selectedValue);
-}
+    <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
+    <script>
+    // ВСТАВТЕ ЦЮ ФУНКЦІЮ ПОВНІСТЮ
+    function updateGridWrapperHeight() {
+        const container = document.getElementById('templates-grid-wrapper');
+        const templates = container.querySelectorAll('.template-field-group');
+        const defaultHeight = 800; // Наша стартова висота
+        const bottomPadding = 50;   // Невеликий відступ знизу
     
-    let endDateResetTimer;
-    const RESET_DELAY_SECONDS = 20;
-    let isAutoResetEnabled = true; 
-    
-    
-    function switchTab(tabId) {
-        const tabs = document.querySelectorAll('.tab-button');
-        const contents = document.querySelectorAll('.container[data-content]');
-        
-        localStorage.setItem('activeTab', tabId); 
-        
-        contents.forEach(content => content.classList.remove('active'));
-        tabs.forEach(tab => tab.classList.remove('active'));
-
-        const activeContent = document.querySelector(`.container[data-content="${tabId}"]`);
-        const activeButton = document.querySelector(`.tab-button[data-tab="${tabId}"]`);
-
-        if (activeContent) {
-            activeContent.classList.add('active');
-            
-            const defaultWidth = activeContent.getAttribute('data-default-width') || '100%';
-            const defaultHeight = activeContent.getAttribute('data-default-height') || '600px';
-            
-            activeContent.style.setProperty('--local-width', defaultWidth);
-            activeContent.style.setProperty('--local-height', defaultHeight);
-            
-            if (tabId === 'gpon-commands') {
-                 const deviceSelect = document.getElementById('device-type');
-                 if (deviceSelect) {
-                    displayCommands(deviceSelect.value);
-                 }
-            }
-            // >>> НОВИЙ КОД: Перекомпоновка шаблонів при переключенні на їх вкладку
-            if (tabId === 'text-templates') {
-                // Невелика затримка, щоб контейнер встиг отримати правильні розміри
-                setTimeout(rearrangeTemplates, 50);
-            }
-        }
-        if (activeButton) {
-            activeButton.classList.add('active');
-        }
-    }
-
-    function setupTabs() {
-        const tabs = document.querySelectorAll('.tab-button');
-        let initialTab = localStorage.getItem('activeTab') || 'login-generator';
-
-        tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                const tabId = tab.getAttribute('data-tab');
-                switchTab(tabId);
-            });
-        });
-        
-        setTimeout(() => {
-            switchTab(initialTab); 
-        }, 50); 
-    }
-    
-    function transliterate(text) {
-const mapping = {
-  'а': 'a', 'б': 'b', 'в': 'v', 'г': 'h', 'ґ': 'g', 'д': 'd',
-  'е': 'e', 'ж': 'zh', 'з': 'z', 'и': 'y', 'і': 'i', 'й': 'i',
-  'к': 'k', 'л': 'l', 
-  'м': 'm', 'н': 'n', 'о': 'o', 'п': 'p',
-  'р': 'r', 'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'kh',
-  'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'shch', 'ь': '', "'": '',
-  'є': 'ie', 'ї': 'i', 'ю': 'iu', 'я': 'ia', 'l': 'l'
-};
-        const positionalRules = {
-            'є': { start: 'ye', other: 'ie' },
-            'ї': { start: 'yi', other: 'i' },
-            'й': { start: 'y', other: 'i' },
-            'ю': { start: 'yu', other: 'iu' },
-            'я': { start: 'ya', other: 'ia' }
-        };
-
-        let result = '';
-        text = text.toLowerCase();
-
-        for (let i = 0; i < text.length; i++) {
-            const char = text[i];
-            
-            if (char === 'з' && i + 1 < text.length && text[i + 1] === 'г') {
-                result += 'zgh';
-                i++;
-                continue;
-            }
-
-            if (positionalRules[char]) {
-                const isStartOfWord = (i === 0 || text[i-1] === ' ');
-                result += isStartOfWord ? positionalRules[char].start : positionalRules[char].other;
-            } else if (mapping[char]) {
-                result += mapping[char];
-            } else if (!isNaN(parseInt(char))) { 
-                result += char;
-            } else {
-                if (char === ' ' || char === '-') continue; 
-                
-                if (/[a-z0-9]/.test(char)) {
-                    result += char;
-                } else {
-                    continue;
-                }
-            }
-        }
-        return result;
-    }
-
-
-    function copyLogin(textToCopy, buttonElement) {
-        navigator.clipboard.writeText(textToCopy).then(() => {
-            const originalText = buttonElement.textContent;
-            buttonElement.textContent = 'Скопійовано!';
-            buttonElement.classList.add('copied');
-            buttonElement.disabled = true;
-
-            document.getElementById('fullNameInput').value = ''; 
-            
-            setTimeout(() => {
-                buttonElement.textContent = originalText;
-                buttonElement.classList.remove('copied');
-                buttonElement.disabled = false;
-            }, 2000);
-        }).catch(err => {
-            console.error('Не вдалося скопіювати текст: ', err);
-        });
-    }
-
-    function generateLogins() {
-        const fullNameInput = document.getElementById('fullNameInput');
-        const fullNames = fullNameInput.value.trim();
-        const resultsContainer = document.getElementById('results-container');
-        resultsContainer.innerHTML = ''; 
-
-        if (!fullNames) {
+        if (templates.length === 0) {
+            container.style.height = `${defaultHeight}px`;
             return;
         }
-
-        const lines = fullNames.split('\n');
-        
-        const companyRegex = /(^|\s)(фоп|тов|пп|ат|кб|го)(\s|$)/i; 
-
-
-        lines.forEach(line => {
-            const fullName = line.trim();
-            if (fullName === '') return;
-
-            if (/[a-z]/i.test(fullName)) { 
-                const errorElement = document.createElement('div');
-                errorElement.className = 'result-item';
-                
-                errorElement.innerHTML = `
-                    <span style="color: #dc3545; font-weight: bold; font-size: 1.1em; text-align: center">Трансліт тільки з української!</span>
-                `; 
-                resultsContainer.appendChild(errorElement);
-                return;
+    
+        let maxBottom = 0;
+        templates.forEach(template => {
+            // Вираховуємо нижню межу кожного шаблону
+            const yPos = parseFloat(template.getAttribute('data-y')) || 0;
+            const height = template.offsetHeight;
+            const bottomEdge = yPos + height;
+    
+            if (bottomEdge > maxBottom) {
+                maxBottom = bottomEdge;
             }
-            
-            const lowerCaseFullName = fullName.toLowerCase();
-            const parts = fullName.split(/\s+/).filter(p => p.length > 0);
-            const wordCount = parts.length; 
-
-            const isCompany = companyRegex.test(lowerCaseFullName);
-            
-            let login = '';
-
-            if (isCompany || wordCount > 3) {
-                login = transliterate(fullName);
-            } else {
-                let transliteratedLastName = '';
-                let firstNameInitial = '';
-                let patronymicInitial = '';
-
-                if (parts.length >= 1) {
-                    transliteratedLastName = transliterate(parts[0]);
-                    login += transliteratedLastName;
-                }
-                if (parts.length >= 2) {
-                    firstNameInitial = transliterate(parts[1].charAt(0));
-                    login += firstNameInitial;
-                }
-                if (parts.length >= 3) {
-                    patronymicInitial = transliterate(parts[2].charAt(0));
-                    login += patronymicInitial;
-                }
-            }
-
-            login = login.replace(/[^a-z0-9]/g, '');
-
-            if (login === '') {
-                const errorElement = document.createElement('div');
-                errorElement.className = 'result-item';
-                errorElement.innerHTML = `<span style="color: #dc3545;">"${fullName}" - Некоректний формат!</span>`; 
-                resultsContainer.appendChild(errorElement);
-                return;
-            }
-
-            const resultItem = document.createElement('div');
-            resultItem.className = 'result-item';
-            resultItem.innerHTML = `
-                <span>${login}</span>
-                <div class="original-name" title="${fullName}">${fullName}</div>
-                <button onclick="copyLogin('${login}', this)">Копіювати</button>
-            `;
-            resultsContainer.appendChild(resultItem);
         });
-    }
-
-    function getCorrectDayWord(number) {
-        if (number === 0) {
-            return "днів";
-        }
-
-        let lastTwoDigits = number % 100;
-        let lastDigit = number % 10;
-
-        if (lastTwoDigits >= 11 && lastTwoDigits <= 19) {
-            return "днів";
-        }
-
-        if (lastDigit === 1) {
-            return "день";
-        } else if (lastDigit >= 2 && lastDigit <= 4) {
-            return "дні";
-        } else {
-            return "днів";
-        }
-    }
-
-
-    function formatDate(date) {
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
+    
+        // Висота має бути або стартовою, або більшою, якщо контент не влазить
+        const requiredHeight = Math.max(defaultHeight, maxBottom + bottomPadding);
+        container.style.height = `${requiredHeight}px`;
     }
     
-    function setDatesToTodayAndTomorrowAtMidnight() {
-        const today = new Date();
-        const todayString = formatDate(today);
-        
-        const tomorrow = new Date(today);
-        tomorrow.setDate(today.getDate() + 1);
-        const tomorrowString = formatDate(tomorrow);
-
-        document.getElementById('start-date').value = todayString;
-        document.getElementById('start-time').value = "00:00"; 
-        document.getElementById('end-date').value = tomorrowString;
-        document.getElementById('end-time').value = "00:00"; 
+    // --- НОВА ФУНКЦІЯ: Обробка зміни вибору (викликається в onchange) ---
+    function handleDeviceTypeChange() {
+        const selectedValue = document.getElementById('device-type').value;
+        displayCommands(selectedValue);
     }
-    
-    function resetDatesOnTimerEnd() {
-        clearTimeout(endDateResetTimer);
-
-        const isDateCalculatorActive = document.querySelector('.container[data-content="date-calculator"]').classList.contains('active');
         
-        setDatesToTodayAndTomorrowAtMidnight();
-
-        if (isDateCalculatorActive) {
+        let endDateResetTimer;
+        const RESET_DELAY_SECONDS = 20;
+        let isAutoResetEnabled = true; 
+        
+        
+        function switchTab(tabId) {
+            const tabs = document.querySelectorAll('.tab-button');
+            const contents = document.querySelectorAll('.container[data-content]');
+            
+            localStorage.setItem('activeTab', tabId); 
+            
+            contents.forEach(content => content.classList.remove('active'));
+            tabs.forEach(tab => tab.classList.remove('active'));
+    
+            const activeContent = document.querySelector(`.container[data-content="${tabId}"]`);
+            const activeButton = document.querySelector(`.tab-button[data-tab="${tabId}"]`);
+    
+            if (activeContent) {
+                activeContent.classList.add('active');
+                
+                const defaultWidth = activeContent.getAttribute('data-default-width') || '100%';
+                const defaultHeight = activeContent.getAttribute('data-default-height') || '600px';
+                
+                activeContent.style.setProperty('--local-width', defaultWidth);
+                activeContent.style.setProperty('--local-height', defaultHeight);
+                
+                if (tabId === 'gpon-commands') {
+                     const deviceSelect = document.getElementById('device-type');
+                     if (deviceSelect) {
+                        displayCommands(deviceSelect.value);
+                     }
+                }
+                if (tabId === 'text-templates') {
+                    setTimeout(rearrangeTemplates, 50);
+                }
+            }
+            if (activeButton) {
+                activeButton.classList.add('active');
+            }
+        }
+    
+        function setupTabs() {
+            const tabs = document.querySelectorAll('.tab-button');
+            let initialTab = localStorage.getItem('activeTab') || 'login-generator';
+    
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabId = tab.getAttribute('data-tab');
+                    switchTab(tabId);
+                });
+            });
+            
+            setTimeout(() => {
+                switchTab(initialTab); 
+            }, 50); 
+        }
+        
+        function transliterate(text) {
+    const mapping = {
+      'а': 'a', 'б': 'b', 'в': 'v', 'г': 'h', 'ґ': 'g', 'д': 'd',
+      'е': 'e', 'ж': 'zh', 'з': 'z', 'и': 'y', 'і': 'i', 'й': 'i',
+      'к': 'k', 'л': 'l', 
+      'м': 'm', 'н': 'n', 'о': 'o', 'п': 'p',
+      'р': 'r', 'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'kh',
+      'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'shch', 'ь': '', "'": '',
+      'є': 'ie', 'ї': 'i', 'ю': 'iu', 'я': 'ia', 'l': 'l'
+    };
+            const positionalRules = {
+                'є': { start: 'ye', other: 'ie' },
+                'ї': { start: 'yi', other: 'i' },
+                'й': { start: 'y', other: 'i' },
+                'ю': { start: 'yu', other: 'iu' },
+                'я': { start: 'ya', other: 'ia' }
+            };
+    
+            let result = '';
+            text = text.toLowerCase();
+    
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+                
+                if (char === 'з' && i + 1 < text.length && text[i + 1] === 'г') {
+                    result += 'zgh';
+                    i++;
+                    continue;
+                }
+    
+                if (positionalRules[char]) {
+                    const isStartOfWord = (i === 0 || text[i-1] === ' ');
+                    result += isStartOfWord ? positionalRules[char].start : positionalRules[char].other;
+                } else if (mapping[char]) {
+                    result += mapping[char];
+                } else if (!isNaN(parseInt(char))) { 
+                    result += char;
+                } else {
+                    if (char === ' ' || char === '-') continue; 
+                    
+                    if (/[a-z0-9]/.test(char)) {
+                        result += char;
+                    } else {
+                        continue;
+                    }
+                }
+            }
+            return result;
+        }
+    
+    
+        function copyLogin(textToCopy, buttonElement) {
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                const originalText = buttonElement.textContent;
+                buttonElement.textContent = 'Скопійовано!';
+                buttonElement.classList.add('copied');
+                buttonElement.disabled = true;
+    
+                document.getElementById('fullNameInput').value = ''; 
+                
+                setTimeout(() => {
+                    buttonElement.textContent = originalText;
+                    buttonElement.classList.remove('copied');
+                    buttonElement.disabled = false;
+                }, 2000);
+            }).catch(err => {
+                console.error('Не вдалося скопіювати текст: ', err);
+            });
+        }
+    
+        function generateLogins() {
+            const fullNameInput = document.getElementById('fullNameInput');
+            const fullNames = fullNameInput.value.trim();
+            const resultsContainer = document.getElementById('results-container');
+            resultsContainer.innerHTML = ''; 
+    
+            if (!fullNames) {
+                return;
+            }
+    
+            const lines = fullNames.split('\n');
+            
+            const companyRegex = /(^|\s)(фоп|тов|пп|ат|кб|го)(\s|$)/i; 
+    
+    
+            lines.forEach(line => {
+                const fullName = line.trim();
+                if (fullName === '') return;
+    
+                if (/[a-z]/i.test(fullName)) { 
+                    const errorElement = document.createElement('div');
+                    errorElement.className = 'result-item';
+                    
+                    errorElement.innerHTML = `
+                        <span style="color: #dc3545; font-weight: bold; font-size: 1.1em; text-align: center">Трансліт тільки з української!</span>
+                    `; 
+                    resultsContainer.appendChild(errorElement);
+                    return;
+                }
+                
+                const lowerCaseFullName = fullName.toLowerCase();
+                const parts = fullName.split(/\s+/).filter(p => p.length > 0);
+                const wordCount = parts.length; 
+    
+                const isCompany = companyRegex.test(lowerCaseFullName);
+                
+                let login = '';
+    
+                if (isCompany || wordCount > 3) {
+                    login = transliterate(fullName);
+                } else {
+                    let transliteratedLastName = '';
+                    let firstNameInitial = '';
+                    let patronymicInitial = '';
+    
+                    if (parts.length >= 1) {
+                        transliteratedLastName = transliterate(parts[0]);
+                        login += transliteratedLastName;
+                    }
+                    if (parts.length >= 2) {
+                        firstNameInitial = transliterate(parts[1].charAt(0));
+                        login += firstNameInitial;
+                    }
+                    if (parts.length >= 3) {
+                        patronymicInitial = transliterate(parts[2].charAt(0));
+                        login += patronymicInitial;
+                    }
+                }
+    
+                login = login.replace(/[^a-z0-9]/g, '');
+    
+                if (login === '') {
+                    const errorElement = document.createElement('div');
+                    errorElement.className = 'result-item';
+                    errorElement.innerHTML = `<span style="color: #dc3545;">"${fullName}" - Некоректний формат!</span>`; 
+                    resultsContainer.appendChild(errorElement);
+                    return;
+                }
+    
+                const resultItem = document.createElement('div');
+                resultItem.className = 'result-item';
+                resultItem.innerHTML = `
+                    <span>${login}</span>
+                    <div class="original-name" title="${fullName}">${fullName}</div>
+                    <button onclick="copyLogin('${login}', this)">Копіювати</button>
+                `;
+                resultsContainer.appendChild(resultItem);
+            });
+        }
+    
+        function getCorrectDayWord(number) {
+            if (number === 0) {
+                return "днів";
+            }
+    
+            let lastTwoDigits = number % 100;
+            let lastDigit = number % 10;
+    
+            if (lastTwoDigits >= 11 && lastTwoDigits <= 19) {
+                return "днів";
+            }
+    
+            if (lastDigit === 1) {
+                return "день";
+            } else if (lastDigit >= 2 && lastDigit <= 4) {
+                return "дні";
+            } else {
+                return "днів";
+            }
+        }
+    
+    
+        function formatDate(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+        
+        function setDatesToTodayAndTomorrowAtMidnight() {
+            const today = new Date();
+            const todayString = formatDate(today);
+            
+            const tomorrow = new Date(today);
+            tomorrow.setDate(today.getDate() + 1);
+            const tomorrowString = formatDate(tomorrow);
+    
+            document.getElementById('start-date').value = todayString;
+            document.getElementById('start-time').value = "00:00"; 
+            document.getElementById('end-date').value = tomorrowString;
+            document.getElementById('end-time').value = "00:00"; 
+        }
+        
+        function resetDatesOnTimerEnd() {
+            clearTimeout(endDateResetTimer);
+    
+            const isDateCalculatorActive = document.querySelector('.container[data-content="date-calculator"]').classList.contains('active');
+            
+            setDatesToTodayAndTomorrowAtMidnight();
+    
+            if (isDateCalculatorActive) {
+                calculateDifference();
+            }
+            
+            if (isAutoResetEnabled) {
+                 startResetTimer();
+            }
+        }
+    
+        function startResetTimer() {
+            if (!isAutoResetEnabled) {
+                return;
+            }
+    
+            clearTimeout(endDateResetTimer);
+    
+            endDateResetTimer = setTimeout(resetDatesOnTimerEnd, RESET_DELAY_SECONDS * 1000);
+        }
+        
+        function handleInputAndTimer() {
+            if (isAutoResetEnabled) {
+                startResetTimer(); 
+            } else {
+                 clearTimeout(endDateResetTimer); 
+            }
             calculateDifference();
         }
         
-        if (isAutoResetEnabled) {
-             startResetTimer();
-        }
-    }
-
-    function startResetTimer() {
-        if (!isAutoResetEnabled) {
-            return;
-        }
-
-        clearTimeout(endDateResetTimer);
-
-        endDateResetTimer = setTimeout(resetDatesOnTimerEnd, RESET_DELAY_SECONDS * 1000);
-    }
+        function handleAutoResetToggle() {
+            const toggle = document.getElementById('auto-reset-toggle');
+            isAutoResetEnabled = toggle.checked;
     
-    function handleInputAndTimer() {
-        if (isAutoResetEnabled) {
-            startResetTimer(); 
-        } else {
-             clearTimeout(endDateResetTimer); 
-        }
-        calculateDifference();
-    }
+            localStorage.setItem('autoResetEnabled', isAutoResetEnabled);
     
-    function handleAutoResetToggle() {
-        const toggle = document.getElementById('auto-reset-toggle');
-        isAutoResetEnabled = toggle.checked;
-
-        localStorage.setItem('autoResetEnabled', isAutoResetEnabled);
-
-        if (!isAutoResetEnabled) {
-            clearTimeout(endDateResetTimer); 
-        } else {
-            startResetTimer(); 
+            if (!isAutoResetEnabled) {
+                clearTimeout(endDateResetTimer); 
+            } else {
+                startResetTimer(); 
+            }
+            calculateDifference(); 
         }
-        calculateDifference(); 
-    }
-
-    function loadAutoResetState() {
-        const savedState = localStorage.getItem('autoResetEnabled');
-        const toggle = document.getElementById('auto-reset-toggle');
-        
-        if (savedState !== null) {
-            isAutoResetEnabled = savedState === 'true'; 
-            toggle.checked = isAutoResetEnabled;
-        } else {
-            isAutoResetEnabled = true; 
-            toggle.checked = true;
-        }
-    }
-
-
-    function calculateDifference() {
-        const startDateInput = document.getElementById('start-date').value;
-        const startTimeInput = document.getElementById('start-time').value; 
-        const endDateValue = document.getElementById('end-date').value;
-        const endTimeValue = document.getElementById('end-time').value; 
-        const resultDisplay = document.getElementById('result-display');
-
-        if (!startDateInput || !endDateValue || !startTimeInput || !endTimeValue) {
-            resultDisplay.innerHTML = 'Оберіть дві дати та час для розрахунку.';
-            return;
-        }
-
-        const startDate = new Date(startDateInput + 'T' + startTimeInput + ':00');
-        const endDate = new Date(endDateValue + 'T' + endTimeValue + ':00'); 
-
-        if (startDate > endDate) {
-            resultDisplay.innerHTML = '<span style="color: red;">Початкова дата та час не можуть бути пізнішими за Кінцеву.</span>';
-            return;
-        }
-        
-        const diffTime = endDate.getTime() - startDate.getTime();
-
-        const totalHours = Math.floor(diffTime / (1000 * 60 * 60));
-        const totalMinutesRemainder = Math.floor((diffTime % (1000 * 60 * 60)) / (1000 * 60));
-
-        let totalHoursText = `${totalHours} год.`;
-        if (totalMinutesRemainder > 0) {
-            totalHoursText += ` та ${totalMinutesRemainder} хв.`;
-        }
-        
-        const totalDaysInclusive = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-        const dayWord = getCorrectDayWord(totalDaysInclusive);
-        
-        let tempStartDate = new Date(startDate);
-        let tempEndDate = new Date(endDate);
-        
-        const startTotalMinutes = tempStartDate.getHours() * 60 + tempStartDate.getMinutes();
-        const endTotalMinutes = tempEndDate.getHours() * 60 + tempEndDate.getMinutes();
-        
-        if (endTotalMinutes < startTotalMinutes) {
-            tempEndDate.setDate(tempEndDate.getDate() - 1);
-        }
-        
-        if (tempStartDate.toDateString() === tempEndDate.toDateString() && diffTime > 0) {
-            let durationText = `${totalHours} год. та ${totalMinutesRemainder} хв.`;
+    
+        function loadAutoResetState() {
+            const savedState = localStorage.getItem('autoResetEnabled');
+            const toggle = document.getElementById('auto-reset-toggle');
             
-            resultDisplay.innerHTML = `
-                <span class="total-hours-text">Кількість годин (загальна): ${totalHoursText}</span><br>
-                <span class="duration-text">Період (повний): ${durationText}</span><br>
-                <span class="total-days-text">Загальна кількість (днів): ${totalDaysInclusive} ${dayWord}.</span>
-            `;
-            return;
-        }
-
-
-        let years = 0;
-        let months = 0;
-        let days = 0;
-        
-        const endDay = tempEndDate.getDate();
-        const endMonth = tempEndDate.getMonth();
-        const endYear = tempEndDate.getFullYear();
-        
-        const startDay = tempStartDate.getDate();
-        const startMonth = tempStartDate.getMonth();
-        const startYear = tempStartDate.getFullYear();
-
-        months = (endYear - startYear) * 12 + (endMonth - startMonth);
-        
-        days = endDay - startDay;
-
-        if (days < 0) {
-            months--;
-            const prevMonthDate = new Date(endYear, endMonth, 0); 
-            days += prevMonthDate.getDate();
-        }
-
-        if (months >= 12) {
-            years = Math.floor(months / 12);
-            months = months % 12;
-        }
-        
-        if (endTotalMinutes >= startTotalMinutes && diffTime > 0) {
-             days++;
-        }
-        
-        if (days > 0) {
-            let tempDateForDayCorrection = new Date(tempEndDate);
-            let maxDaysInMonth = new Date(tempDateForDayCorrection.getFullYear(), tempDateForDayCorrection.getMonth() + 1, 0).getDate();
-            
-            if (days > maxDaysInMonth && months > 0) {
-                days -= maxDaysInMonth;
-                months++;
+            if (savedState !== null) {
+                isAutoResetEnabled = savedState === 'true'; 
+                toggle.checked = isAutoResetEnabled;
+            } else {
+                isAutoResetEnabled = true; 
+                toggle.checked = true;
             }
         }
-        
-        if (months >= 12) {
-            years++;
-            months -= 12;
-        }
-        
-        
-        let resultText = '';
-        let durationText = '';
-        
-        let parts = [];
-        if (years > 0) parts.push(`${years} р.`);
-        if (months > 0) parts.push(`${months} міс.`);
-        if (days > 0 || (years === 0 && months === 0)) parts.push(`${days} дн.`);
-        
-        durationText = parts.filter(Boolean).join(' та ');
-        
-        if (durationText === '') {
-            durationText = '0 дн.';
-        }
-        
-        resultText += `<span class="total-hours-text">Кількість годин (загальна): ${totalHoursText}</span><br>`;
-        resultText += `<span class="duration-text">Період (повний): ${durationText}</span><br>`;
-        resultText += `<span class="total-days-text">Загальна кількість (днів): ${totalDaysInclusive} ${dayWord}.</span>`;
-
-
-        resultDisplay.innerHTML = resultText;
-    }
     
-    // --- GPON/EPON/BDCOM COMMANDS ---
-    const COMMANDS = {
-        gpon: [
-            { command: 'show gpon onu uncfg', description: 'Показати незареєстровані ONU на PON' },
-            { command: 'show pon power attenuation gpon-onu_1/1/1:1', description: 'Показати сигнал ONU абонента' },
-            { command: 'show running-config interface gpon-onu_1/1/1:1', description: 'Показати конфіг ONU' },
-            { command: 'show gpon onu detail-info gpon-onu_1/1/1:1', description: 'Показати логи падіння та підняття ONU' },
-            { command: 'show clock', description: 'Показати час на OLT' },
-            { command: 'show gpon remote-onu interface eth gpon-onu_1/1/1:1', description: 'Перевірка зєднання між ONU та роутером (швидкість)' },
-			{ command: 'show mac gpon onu gpon-onu_1/1/1:1', description: 'Показати Mac адресу роутера' },
-			{ command: 'show ip dhcp snooping dynamic port pon gpon-onu_1/1/1:1 vport 1', description: 'Показати Mac адресу, IP та VLAN роутера' },
-			{ command: 'show ip dhcp snooping port gpon-onu_1/1/1:1', description: 'Показати Mac адресу, IP та VLAN роутера' },
-			{ command: 'conf t', description: 'Зайти в налаштування на OLT' },
-			{ command: 'ip dhcp snooping clear pon abcd.efgh.1234 vlan 111 gpon-onu_1/1/1:1 vport 1', description: 'Очистка сесії. Виконується після команди conf t' },
-			{ command: 'ip dhcp snooping clear abcd.efgh.1234 vlan 111', description: 'Очистка сесії. Виконується після команди conf t' },
-			{ command: 'show pon power onu-rx gpon-olt_1/1/1', description: 'Показати сигнали всіх ONU на порту' },
-			{ command: '', description: '' },
-
-        ],
-        epon: [
-            { command: 'show onu unauthentication', description: 'Пошук незареєстрованих ONU' },
-			{ command: 'show epon onu state epon-olt_1/1/1', description: 'Показати всі зареєстровані ONU на OLT' },
-			{ command: 'conf t', description: 'Зайти в налаштування на OLT' },
-			{ command: 'show running-config interface epon-onu_1/1/1:1', description: 'Показати конфіг ONU' },
-			{ command: 'show onu detail-info epon-onu_1/1/1:1', description: 'Показати логи падіння та підняття ONU' },
-			{ command: 'show pon power attenuation epon-onu_1/1/1:1', description: 'Показати сигнал ONU абонента' },
-			{ command: 'show mac epon onu epon-onu_1/1/1:1', description: 'Показати Mac адресу роутера' },
-			{ command: 'show ip dhcp snooping port epon-onu_1/1/1:1', description: 'Показати Mac адресу, IP та VLAN роутера' },
-			{ command: '', description: '' },
-
-        ],
-        bdcom: [
-            { command: 'Не командуй мені тут!', description: '' },
-			{ command: '', description: '' },
-
-        ]
-    };
-
-    const commandOutput = document.getElementById('command-output');
-    const notification = document.getElementById('notification');
     
-    function displayCommands(deviceType) {
-        commandOutput.innerHTML = ''; 
-        const commands = COMMANDS[deviceType] || [];
-		let htmlContent = '';
-		htmlContent += `
-        <p style="
-            text-align: center; 
-            font-size: 0.9em; 
-            padding: 5px; 
-            border-radius: 5px; 
-            margin-bottom: 10px;
-            background-color: rgba(0, 123, 255, 0.1); 
-            color: #007bff;
-			position: relative;
-        </p>
-    `;
-
-        if (commands.length === 0) {
-            commandOutput.innerHTML = '<p style="text-align: center; color: #888; padding: 20px;">Команди для цього типу обладнання ще не додано.</p>';
-            return;
-        }
-
-        commands.forEach(item => {
-            const commandDiv = document.createElement('div');
-            commandDiv.classList.add('command-item');
-            commandDiv.setAttribute('data-command', item.command); 
-
-            const commandTextSpan = document.createElement('span');
-            commandTextSpan.classList.add('command-text');
-            commandTextSpan.textContent = item.command;
-
-            const commandDescriptionSpan = document.createElement('span');
-            commandDescriptionSpan.classList.add('command-description');
-            commandDescriptionSpan.textContent = `(${item.description})`;
-
-            commandDiv.appendChild(commandTextSpan);
-            commandDiv.appendChild(commandDescriptionSpan);
-
-            commandDiv.addEventListener('click', handleCommandClick); 
+        function calculateDifference() {
+            const startDateInput = document.getElementById('start-date').value;
+            const startTimeInput = document.getElementById('start-time').value; 
+            const endDateValue = document.getElementById('end-date').value;
+            const endTimeValue = document.getElementById('end-time').value; 
+            const resultDisplay = document.getElementById('result-display');
+    
+            if (!startDateInput || !endDateValue || !startTimeInput || !endTimeValue) {
+                resultDisplay.innerHTML = 'Оберіть дві дати та час для розрахунку.';
+                return;
+            }
+    
+            const startDate = new Date(startDateInput + 'T' + startTimeInput + ':00');
+            const endDate = new Date(endDateValue + 'T' + endTimeValue + ':00'); 
+    
+            if (startDate > endDate) {
+                resultDisplay.innerHTML = '<span style="color: red;">Початкова дата та час не можуть бути пізнішими за Кінцеву.</span>';
+                return;
+            }
             
-            commandOutput.appendChild(commandDiv);
-        });
-    }
-
-    async function handleCommandClick(event) {
-        const clickedItem = event.currentTarget; 
-        const command = clickedItem.getAttribute('data-command');
-        const commandText = clickedItem.querySelector('.command-text').textContent; 
-        
-        if (!command) return;
-
-        try {
-            await navigator.clipboard.writeText(command);
-            showNotification(`Команда скопійована: ${commandText}`);
-        } catch (err) {
-            console.error('Не вдалося скопіювати команду: ', err);
-            showNotification('Помилка копіювання. Спробуйте вручну.');
+            const diffTime = endDate.getTime() - startDate.getTime();
+    
+            const totalHours = Math.floor(diffTime / (1000 * 60 * 60));
+            const totalMinutesRemainder = Math.floor((diffTime % (1000 * 60 * 60)) / (1000 * 60));
+    
+            let totalHoursText = `${totalHours} год.`;
+            if (totalMinutesRemainder > 0) {
+                totalHoursText += ` та ${totalMinutesRemainder} хв.`;
+            }
+            
+            const totalDaysInclusive = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+            const dayWord = getCorrectDayWord(totalDaysInclusive);
+            
+            let tempStartDate = new Date(startDate);
+            let tempEndDate = new Date(endDate);
+            
+            const startTotalMinutes = tempStartDate.getHours() * 60 + tempStartDate.getMinutes();
+            const endTotalMinutes = tempEndDate.getHours() * 60 + tempEndDate.getMinutes();
+            
+            if (endTotalMinutes < startTotalMinutes) {
+                tempEndDate.setDate(tempEndDate.getDate() - 1);
+            }
+            
+            if (tempStartDate.toDateString() === tempEndDate.toDateString() && diffTime > 0) {
+                let durationText = `${totalHours} год. та ${totalMinutesRemainder} хв.`;
+                
+                resultDisplay.innerHTML = `
+                    <span class="total-hours-text">Кількість годин (загальна): ${totalHoursText}</span><br>
+                    <span class="duration-text">Період (повний): ${durationText}</span><br>
+                    <span class="total-days-text">Загальна кількість (днів): ${totalDaysInclusive} ${dayWord}.</span>
+                `;
+                return;
+            }
+    
+    
+            let years = 0;
+            let months = 0;
+            let days = 0;
+            
+            const endDay = tempEndDate.getDate();
+            const endMonth = tempEndDate.getMonth();
+            const endYear = tempEndDate.getFullYear();
+            
+            const startDay = tempStartDate.getDate();
+            const startMonth = tempStartDate.getMonth();
+            const startYear = tempStartDate.getFullYear();
+    
+            months = (endYear - startYear) * 12 + (endMonth - startMonth);
+            
+            days = endDay - startDay;
+    
+            if (days < 0) {
+                months--;
+                const prevMonthDate = new Date(endYear, endMonth, 0); 
+                days += prevMonthDate.getDate();
+            }
+    
+            if (months >= 12) {
+                years = Math.floor(months / 12);
+                months = months % 12;
+            }
+            
+            if (endTotalMinutes >= startTotalMinutes && diffTime > 0) {
+                 days++;
+            }
+            
+            if (days > 0) {
+                let tempDateForDayCorrection = new Date(tempEndDate);
+                let maxDaysInMonth = new Date(tempDateForDayCorrection.getFullYear(), tempDateForDayCorrection.getMonth() + 1, 0).getDate();
+                
+                if (days > maxDaysInMonth && months > 0) {
+                    days -= maxDaysInMonth;
+                    months++;
+                }
+            }
+            
+            if (months >= 12) {
+                years++;
+                months -= 12;
+            }
+            
+            
+            let resultText = '';
+            let durationText = '';
+            
+            let parts = [];
+            if (years > 0) parts.push(`${years} р.`);
+            if (months > 0) parts.push(`${months} міс.`);
+            if (days > 0 || (years === 0 && months === 0)) parts.push(`${days} дн.`);
+            
+            durationText = parts.filter(Boolean).join(' та ');
+            
+            if (durationText === '') {
+                durationText = '0 дн.';
+            }
+            
+            resultText += `<span class="total-hours-text">Кількість годин (загальна): ${totalHoursText}</span><br>`;
+            resultText += `<span class="duration-text">Період (повний): ${durationText}</span><br>`;
+            resultText += `<span class="total-days-text">Загальна кількість (днів): ${totalDaysInclusive} ${dayWord}.</span>`;
+    
+    
+            resultDisplay.innerHTML = resultText;
         }
-    }
-
-    function showNotification(message) {
-        notification.textContent = message;
-        notification.classList.add('show');
         
-        setTimeout(() => {
-            notification.classList.remove('show');
-        }, 2000);
-    }
+        // --- GPON/EPON/BDCOM COMMANDS ---
+        const COMMANDS = {
+            gpon: [
+                { command: 'show gpon onu uncfg', description: 'Показати незареєстровані ONU на PON' },
+                { command: 'show pon power attenuation gpon-onu_1/1/1:1', description: 'Показати сигнал ONU абонента' },
+                { command: 'show running-config interface gpon-onu_1/1/1:1', description: 'Показати конфіг ONU' },
+                { command: 'show gpon onu detail-info gpon-onu_1/1/1:1', description: 'Показати логи падіння та підняття ONU' },
+                { command: 'show clock', description: 'Показати час на OLT' },
+                { command: 'show gpon remote-onu interface eth gpon-onu_1/1/1:1', description: 'Перевірка зєднання між ONU та роутером (швидкість)' },
+                { command: 'show mac gpon onu gpon-onu_1/1/1:1', description: 'Показати Mac адресу роутера' },
+                { command: 'show ip dhcp snooping dynamic port pon gpon-onu_1/1/1:1 vport 1', description: 'Показати Mac адресу, IP та VLAN роутера' },
+                { command: 'show ip dhcp snooping port gpon-onu_1/1/1:1', description: 'Показати Mac адресу, IP та VLAN роутера' },
+                { command: 'conf t', description: 'Зайти в налаштування на OLT' },
+                { command: 'ip dhcp snooping clear pon abcd.efgh.1234 vlan 111 gpon-onu_1/1/1:1 vport 1', description: 'Очистка сесії. Виконується після команди conf t' },
+                { command: 'ip dhcp snooping clear abcd.efgh.1234 vlan 111', description: 'Очистка сесії. Виконується після команди conf t' },
+                { command: 'show pon power onu-rx gpon-olt_1/1/1', description: 'Показати сигнали всіх ONU на порту' },
+                { command: '', description: '' },
     
-    // --- ПОВНІСТЮ ПЕРЕРОБЛЕНИЙ ФУНКЦІОНАЛ ТЕКСТОВИХ ШАБЛОНІВ ---
+            ],
+            epon: [
+                { command: 'show onu unauthentication', description: 'Пошук незареєстрованих ONU' },
+                { command: 'show epon onu state epon-olt_1/1/1', description: 'Показати всі зареєстровані ONU на OLT' },
+                { command: 'conf t', description: 'Зайти в налаштування на OLT' },
+                { command: 'show running-config interface epon-onu_1/1/1:1', description: 'Показати конфіг ONU' },
+                { command: 'show onu detail-info epon-onu_1/1/1:1', description: 'Показати логи падіння та підняття ONU' },
+                { command: 'show pon power attenuation epon-onu_1/1/1:1', description: 'Показати сигнал ONU абонента' },
+                { command: 'show mac epon onu epon-onu_1/1/1:1', description: 'Показати Mac адресу роутера' },
+                { command: 'show ip dhcp snooping port epon-onu_1/1/1:1', description: 'Показати Mac адресу, IP та VLAN роутера' },
+                { command: '', description: '' },
     
-    // Допоміжна функція для перевірки перетину двох прямокутників
-    function isIntersecting(r1, r2) {
-        return !(r2.left >= r1.right ||
-                 r2.right <= r1.left ||
-                 r2.top >= r1.bottom ||
-                 r2.bottom <= r1.top);
-    }
-
-// ЗАМІНІТЬ ВСЮ СТАРУ ФУНКЦІЮ НА ЦЮ ОНОВЛЕНУ ВЕРСІЮ
-function initDraggableAndResizable(element) {
-    const collisionGap = 4;
+            ],
+            bdcom: [
+                { command: 'Не командуй мені тут!', description: '' },
+                { command: '', description: '' },
+    
+            ]
+        };
+    
+        const commandOutput = document.getElementById('command-output');
+        const notification = document.getElementById('notification');
+        
+        function displayCommands(deviceType) {
+            commandOutput.innerHTML = ''; 
+            const commands = COMMANDS[deviceType] || [];
+            let htmlContent = '';
+            htmlContent += `
+            <p style="
+                text-align: center; 
+                font-size: 0.9em; 
+                padding: 5px; 
+                border-radius: 5px; 
+                margin-bottom: 10px;
+                background-color: rgba(0, 123, 255, 0.1); 
+                color: #007bff;
+                position: relative;
+            </p>
+        `;
+    
+            if (commands.length === 0) {
+                commandOutput.innerHTML = '<p style="text-align: center; color: #888; padding: 20px;">Команди для цього типу обладнання ще не додано.</p>';
+                return;
+            }
+    
+            commands.forEach(item => {
+                const commandDiv = document.createElement('div');
+                commandDiv.classList.add('command-item');
+                commandDiv.setAttribute('data-command', item.command); 
+    
+                const commandTextSpan = document.createElement('span');
+                commandTextSpan.classList.add('command-text');
+                commandTextSpan.textContent = item.command;
+    
+                const commandDescriptionSpan = document.createElement('span');
+                commandDescriptionSpan.classList.add('command-description');
+                commandDescriptionSpan.textContent = `(${item.description})`;
+    
+                commandDiv.appendChild(commandTextSpan);
+                commandDiv.appendChild(commandDescriptionSpan);
+    
+                commandDiv.addEventListener('click', handleCommandClick); 
+                
+                commandOutput.appendChild(commandDiv);
+            });
+        }
+    
+        async function handleCommandClick(event) {
+            const clickedItem = event.currentTarget; 
+            const command = clickedItem.getAttribute('data-command');
+            const commandText = clickedItem.querySelector('.command-text').textContent; 
+            
+            if (!command) return;
+    
+            try {
+                await navigator.clipboard.writeText(command);
+                showNotification(`Команда скопійована: ${commandText}`);
+            } catch (err) {
+                console.error('Не вдалося скопіювати команду: ', err);
+                showNotification('Помилка копіювання. Спробуйте вручну.');
+            }
+        }
+    
+        function showNotification(message) {
+            notification.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 2000);
+        }
+        
+        // --- ФУНКЦІОНАЛ ТЕКСТОВИХ ШАБЛОНІВ ---
+        
+        function isIntersecting(r1, r2) {
+            return !(r2.left >= r1.right || r2.right <= r1.left || r2.top >= r1.bottom || r2.bottom <= r1.top);
+        }
+    
+        function initDraggableAndResizable(element) {
     const scrollContainer = element.closest('.container');
-
+    const GAP = 6;
     const position = {
         x: parseFloat(element.getAttribute('data-x')) || 0,
         y: parseFloat(element.getAttribute('data-y')) || 0
     };
-
     element.style.transform = `translate(${position.x}px, ${position.y}px)`;
 
     const syncStateOnStart = (event) => {
         const target = event.target;
         const transformValue = window.getComputedStyle(target).transform;
-        
         if (transformValue && transformValue !== 'none') {
             const matrix = new DOMMatrix(transformValue);
-            position.x = matrix.e;
-            position.y = matrix.f;
+            position.x = matrix.e; position.y = matrix.f;
         } else {
             position.x = parseFloat(target.getAttribute('data-x')) || 0;
             position.y = parseFloat(target.getAttribute('data-y')) || 0;
         }
-        
         target.setAttribute('data-x', position.x);
         target.setAttribute('data-y', position.y);
     };
@@ -1963,38 +1991,49 @@ function initDraggableAndResizable(element) {
             start: syncStateOnStart,
             move(event) {
                 const target = event.target;
-                const parentContainer = document.getElementById('templates-grid-wrapper');
-                const allTemplates = Array.from(document.querySelectorAll('.template-field-group'));
-                let canMoveX = true;
-                let canMoveY = true;
+                
+                const newX = position.x + event.dx;
+                const newY = position.y + event.dy;
 
-                const currentTargetRect = {
-                    left: position.x, top: position.y,
-                    right: position.x + target.offsetWidth, bottom: position.y + target.offsetHeight
-                };
+                const fullMoveRect = { left: newX, top: newY, right: newX + target.offsetWidth, bottom: newY + target.offsetHeight };
+                const xMoveRect = { left: newX, top: position.y, right: newX + target.offsetWidth, bottom: position.y + target.offsetHeight };
+                const yMoveRect = { left: position.x, top: newY, right: position.x + target.offsetWidth, bottom: position.y + target.offsetHeight };
 
-                for (const other of allTemplates) {
+                let canMoveFull = true, canMoveX = true, canMoveY = true;
+                
+                for (const other of document.querySelectorAll('.template-field-group')) {
                     if (other === target) continue;
-                    const otherRect = {
-                        left: parseFloat(other.getAttribute('data-x')), top: parseFloat(other.getAttribute('data-y')),
-                        right: parseFloat(other.getAttribute('data-x')) + other.offsetWidth, bottom: parseFloat(other.getAttribute('data-y')) + other.offsetHeight
-                    };
-                    const inflatedOtherRect = {
-                        left: otherRect.left - collisionGap, top: otherRect.top - collisionGap,
-                        right: otherRect.right + collisionGap, bottom: otherRect.bottom + collisionGap
-                    };
-                    if (isIntersecting({ ...currentTargetRect, left: currentTargetRect.left + event.dx, right: currentTargetRect.right + event.dx }, inflatedOtherRect)) canMoveX = false;
-                    if (isIntersecting({ ...currentTargetRect, top: currentTargetRect.top + event.dy, bottom: currentTargetRect.bottom + event.dy }, inflatedOtherRect)) canMoveY = false;
+                    const otherRect = { left: parseFloat(other.getAttribute('data-x')), top: parseFloat(other.getAttribute('data-y')), right: parseFloat(other.getAttribute('data-x')) + other.offsetWidth, bottom: parseFloat(other.getAttribute('data-y')) + other.offsetHeight };
+                    const paddedRect = { left: otherRect.left - GAP, top: otherRect.top - GAP, right: otherRect.right + GAP, bottom: otherRect.bottom + GAP };
+                    
+                    if (canMoveFull && isIntersecting(fullMoveRect, paddedRect)) canMoveFull = false;
+                    if (canMoveX && isIntersecting(xMoveRect, paddedRect)) canMoveX = false;
+                    if (canMoveY && isIntersecting(yMoveRect, paddedRect)) canMoveY = false;
                 }
 
-                if (canMoveX) position.x += event.dx;
-                if (canMoveY) position.y += event.dy;
-
-                if (position.y < 0) position.y = 0;
-                if (position.x < 0) position.x = 0;
-                if (parentContainer && (position.x + target.offsetWidth > parentContainer.offsetWidth)) {
-                    position.x = parentContainer.offsetWidth - target.offsetWidth;
+                if (canMoveFull) {
+                    position.x = newX;
+                    position.y = newY;
+                } else if (canMoveX) {
+                    position.x = newX;
+                } else if (canMoveY) {
+                    position.y = newY;
                 }
+
+                // --- ВИПРАВЛЕНО: Додано надійне обмеження краями контейнера ---
+                const parentContainer = document.getElementById('templates-grid-wrapper');
+                const parentWidth = parentContainer.offsetWidth;
+
+                if (position.x < 0) {
+                    position.x = 0;
+                }
+                if (position.y < 0) {
+                    position.y = 0;
+                }
+                if (position.x + target.offsetWidth > parentWidth) {
+                    position.x = parentWidth - target.offsetWidth;
+                }
+                // ----------------------------------------------------------------
 
                 target.style.transform = `translate(${position.x}px, ${position.y}px)`;
             },
@@ -2005,7 +2044,7 @@ function initDraggableAndResizable(element) {
                 updateGridWrapperHeight();
             }
         }
-    }).resizable({
+    }).resizable({ // Блок resizable залишається без змін, він працює коректно
         edges: { left: false, right: true, bottom: true, top: false },
         margin: 16,
         listeners: {
@@ -2013,625 +2052,509 @@ function initDraggableAndResizable(element) {
             move(event) {
                 const target = event.target;
                 const parentContainer = document.getElementById('templates-grid-wrapper');
-                const allOtherTemplates = Array.from(document.querySelectorAll('.template-field-group')).filter(el => el !== target);
-
-                const x = parseFloat(target.getAttribute('data-x')) || 0;
-                const y = parseFloat(target.getAttribute('data-y')) || 0;
-
-                // >>>>> ПОЧАТОК НОВОЇ ЛОГІКИ ЗАПОБІГАННЯ ЗІТКНЕННЯМ ПРИ RESIZE <<<<<
-                
-                // 1. Обчислюємо максимально допустиму ширину і висоту
-                let maxAllowedWidth = parentContainer.offsetWidth - x;
-                let maxAllowedHeight = Infinity; // Обмеження знизу немає, крім інших блоків
-
-                // 2. Шукаємо найближчі перешкоди
-                for (const other of allOtherTemplates) {
-                    const otherX = parseFloat(other.getAttribute('data-x'));
-                    const otherY = parseFloat(other.getAttribute('data-y'));
-                    const otherHeight = other.offsetHeight;
-                    const otherWidth = other.offsetWidth;
-
-                    // Перевірка перешкод справа
-                    if (otherX > x && // Якщо інший блок правіше
-                        (y < otherY + otherHeight && y + target.offsetHeight > otherY) // і вони перетинаються по вертикалі
-                    ) {
-                        const potentialMaxWidth = otherX - x - collisionGap;
-                        if (potentialMaxWidth < maxAllowedWidth) {
-                            maxAllowedWidth = potentialMaxWidth;
-                        }
-                    }
-
-                    // Перевірка перешкод знизу
-                    if (otherY > y && // Якщо інший блок нижче
-                        (x < otherX + otherWidth && x + target.offsetWidth > otherX) // і вони перетинаються по горизонталі
-                    ) {
-                        const potentialMaxHeight = otherY - y - collisionGap;
-                        if (potentialMaxHeight < maxAllowedHeight) {
-                            maxAllowedHeight = potentialMaxHeight;
-                        }
+                let newWidth = event.rect.width, newHeight = event.rect.height;
+                const x = parseFloat(target.getAttribute('data-x')) || 0, y = parseFloat(target.getAttribute('data-y')) || 0;
+                if (x + newWidth > parentContainer.offsetWidth) {
+                    newWidth = parentContainer.offsetWidth - x;
+                }
+                const targetRect = { left: x, top: y, right: x + newWidth, bottom: y + newHeight };
+                let collision = false;
+                for (const other of document.querySelectorAll('.template-field-group')) {
+                    if (other === target) continue;
+                    const otherRect = {
+                        left: parseFloat(other.getAttribute('data-x')), top: parseFloat(other.getAttribute('data-y')),
+                        right: parseFloat(other.getAttribute('data-x')) + other.offsetWidth, bottom: parseFloat(other.getAttribute('data-y')) + other.offsetHeight
+                    };
+                    const paddedOtherRect = { left: otherRect.left - GAP, top: otherRect.top - GAP, right: otherRect.right + GAP, bottom: otherRect.bottom + GAP };
+                    if (isIntersecting(targetRect, paddedOtherRect)) {
+                        collision = true;
+                        break;
                     }
                 }
-
-                // 3. Обмежуємо нові розміри
-                let newWidth = Math.min(event.rect.width, maxAllowedWidth);
-                let newHeight = Math.min(event.rect.height, maxAllowedHeight);
-
-                // Застосовуємо правильні (обмежені) розміри
-                target.style.width = `${newWidth}px`;
-                target.style.height = `${newHeight}px`;
-
-                // >>>>> КІНЕЦЬ НОВОЇ ЛОГІКИ <<<<<
-
-                // Оновлюємо позицію, бо interact.js може її змінювати
-                position.x += event.deltaRect.left;
-                position.y += event.deltaRect.top;
-                target.style.transform = `translate(${position.x}px, ${position.y}px)`;
+                if (!collision) {
+                    target.style.width = `${newWidth}px`;
+                    target.style.height = `${newHeight}px`;
+                    position.x += event.deltaRect.left;
+                    position.y += event.deltaRect.top;
+                    target.style.transform = `translate(${position.x}px, ${position.y}px)`;
+                }
             },
             end(event) {
                 event.target.setAttribute('data-x', position.x);
                 event.target.setAttribute('data-y', position.y);
                 saveTemplates();
                 updateGridWrapperHeight();
-                setTimeout(rearrangeTemplates, 50);
             }
         },
-        modifiers: [
-            interact.modifiers.restrictSize({
-                min: { width: 200, height: 110 }
-            })
-        ],
+        modifiers: [ interact.modifiers.restrictSize({ min: { width: 300, height: 110 } }) ],
         inertia: false
     });
 }
-
-function updateBookmarksOnTextChange(fieldGroup) {
-    const textarea = fieldGroup.querySelector('textarea');
-    const oldText = fieldGroup.dataset.lastContent || '';
-    const newText = textarea.value;
-
-    if (oldText === newText) return;
-
-    if (newText === '') {
-        fieldGroup.dataset.bookmarks = '[]';
-        renderLineMarkers(fieldGroup);
-        fieldGroup.dataset.lastContent = newText;
-        return; 
-    }
-
-    const oldBookmarks = JSON.parse(fieldGroup.dataset.bookmarks || '[]');
-    if (oldBookmarks.length === 0) {
-        fieldGroup.dataset.lastContent = newText;
-        return;
-    }
-
-    const oldLines = oldText.split('\n');
-    const newLines = newText.split('\n');
-
-    let firstDiffIndex = 0;
-    while (
-        firstDiffIndex < oldLines.length &&
-        firstDiffIndex < newLines.length &&
-        oldLines[firstDiffIndex] === newLines[firstDiffIndex]
-    ) {
-        firstDiffIndex++;
-    }
-
-    let lastDiffOldIndex = oldLines.length - 1;
-    let lastDiffNewIndex = newLines.length - 1;
-    while (
-        lastDiffOldIndex >= firstDiffIndex &&
-        lastDiffNewIndex >= firstDiffIndex &&
-        oldLines[lastDiffOldIndex] === newLines[lastDiffNewIndex]
-    ) {
-        lastDiffOldIndex--;
-        lastDiffNewIndex--;
-    }
-
-    const newBookmarks = new Set();
-    const lineDelta = (lastDiffNewIndex - firstDiffIndex + 1) - (lastDiffOldIndex - firstDiffIndex + 1);
-
-    oldBookmarks.forEach(oldLineNumber => {
-        const oldLineIndex = oldLineNumber - 1;
-
-        if (oldLineIndex < firstDiffIndex) {
-            newBookmarks.add(oldLineNumber);
-        } else if (oldLineIndex > lastDiffOldIndex) {
-            const newLineNumber = oldLineNumber + lineDelta;
-            if (newLineNumber > 0 && newLineNumber <= newLines.length) {
-                newBookmarks.add(newLineNumber);
+    
+        function updateBookmarksOnTextChange(fieldGroup) {
+            const textarea = fieldGroup.querySelector('textarea');
+            const oldText = fieldGroup.dataset.lastContent || '';
+            const newText = textarea.value;
+            if (oldText === newText) return;
+            if (newText === '') {
+                fieldGroup.dataset.bookmarks = '[]';
+                renderLineMarkers(fieldGroup);
+                fieldGroup.dataset.lastContent = newText;
+                return; 
             }
-        } else {
-            const changeAffectedOneOldLine = (lastDiffOldIndex === firstDiffIndex);
-            
-            if (changeAffectedOneOldLine) {
-                const lineWasReplacedOrEdited = (lastDiffNewIndex >= firstDiffIndex);
-                if (lineWasReplacedOrEdited) {
-                    newBookmarks.add(firstDiffIndex + 1);
+            const oldBookmarks = JSON.parse(fieldGroup.dataset.bookmarks || '[]');
+            if (oldBookmarks.length === 0) {
+                fieldGroup.dataset.lastContent = newText;
+                return;
+            }
+            const oldLines = oldText.split('\n');
+            const newLines = newText.split('\n');
+            let firstDiffIndex = 0;
+            while (firstDiffIndex < oldLines.length && firstDiffIndex < newLines.length && oldLines[firstDiffIndex] === newLines[firstDiffIndex]) {
+                firstDiffIndex++;
+            }
+            let lastDiffOldIndex = oldLines.length - 1;
+            let lastDiffNewIndex = newLines.length - 1;
+            while (lastDiffOldIndex >= firstDiffIndex && lastDiffNewIndex >= firstDiffIndex && oldLines[lastDiffOldIndex] === newLines[lastDiffNewIndex]) {
+                lastDiffOldIndex--;
+                lastDiffNewIndex--;
+            }
+            const newBookmarks = new Set();
+            const lineDelta = (lastDiffNewIndex - firstDiffIndex + 1) - (lastDiffOldIndex - firstDiffIndex + 1);
+            oldBookmarks.forEach(oldLineNumber => {
+                const oldLineIndex = oldLineNumber - 1;
+                if (oldLineIndex < firstDiffIndex) {
+                    newBookmarks.add(oldLineNumber);
+                } else if (oldLineIndex > lastDiffOldIndex) {
+                    const newLineNumber = oldLineNumber + lineDelta;
+                    if (newLineNumber > 0 && newLineNumber <= newLines.length) {
+                        newBookmarks.add(newLineNumber);
+                    }
+                } else {
+                    const changeAffectedOneOldLine = (lastDiffOldIndex === firstDiffIndex);
+                    if (changeAffectedOneOldLine) {
+                        const lineWasReplacedOrEdited = (lastDiffNewIndex >= firstDiffIndex);
+                        if (lineWasReplacedOrEdited) {
+                            newBookmarks.add(firstDiffIndex + 1);
+                        }
+                    }
                 }
-            }
+            });
+            const sortedBookmarks = Array.from(newBookmarks).sort((a, b) => a - b);
+            fieldGroup.dataset.bookmarks = JSON.stringify(sortedBookmarks);
+            renderLineMarkers(fieldGroup);
+            fieldGroup.dataset.lastContent = newText;
         }
-    });
-
-    const sortedBookmarks = Array.from(newBookmarks).sort((a, b) => a - b);
-    fieldGroup.dataset.bookmarks = JSON.stringify(sortedBookmarks);
-    renderLineMarkers(fieldGroup);
-    fieldGroup.dataset.lastContent = newText;
-}
-
-function createTemplateField(data = {}) {
-    const {
-        name = '',
-        content = '',
-        width = '400px',
-        height = '170px',
-        x = 10,
-        y = 10,
-        bookmarks = [] 
-    } = data;
-
-    const container = document.getElementById('templates-grid-wrapper'); 
-    const fieldGroup = document.createElement('div');
-    fieldGroup.className = 'template-field-group'; 
     
-    fieldGroup.dataset.bookmarks = JSON.stringify(bookmarks);
-	fieldGroup.dataset.lastContent = content;
-    
-    fieldGroup.style.width = width;
-    fieldGroup.style.height = height;
-    fieldGroup.setAttribute('data-x', x);
-    fieldGroup.setAttribute('data-y', y);
-    
-    const dragHandle = document.createElement('div');
-    dragHandle.className = 'template-drag-handle';
-    dragHandle.innerHTML = '⠿';
-
-    const headerDiv = document.createElement('div');
-    headerDiv.className = 'template-header';
-    
-    const nameInput = document.createElement('input');
-    nameInput.type = 'text';
-    nameInput.className = 'template-name-input';
-    nameInput.placeholder = 'Назва шаблону';
-    nameInput.value = name;
-    nameInput.oninput = saveTemplates; 
-
-    const actionsDiv = document.createElement('div');
-    actionsDiv.className = 'template-actions';
-    
-    const copyButton = document.createElement('button');
-    copyButton.innerHTML = '<i class="fas fa-copy"></i>';
-    copyButton.title = 'Копіювати текст';
-    copyButton.className = 'copy-template-btn';
-    copyButton.onclick = () => {
-        const textarea = fieldGroup.querySelector('textarea');
-        const selectedText = textarea.value.substring(textarea.selectionStart, textarea.selectionEnd);
-        const textToCopy = selectedText || textarea.value;
-        if (!textToCopy.trim()) return; 
-        navigator.clipboard.writeText(textToCopy).then(() => {
-            const originalIcon = copyButton.innerHTML;
-            copyButton.innerHTML = '<i class="fas fa-check"></i>';
-            copyButton.disabled = true;
-            setTimeout(() => {
-                copyButton.innerHTML = originalIcon;
-                copyButton.disabled = false;
-            }, 1500);
-        }).catch(err => console.error('Не вдалося скопіювати текст: ', err));
-    };
-
-    const clearButton = document.createElement('button');
-    clearButton.innerHTML = '<i class="fas fa-eraser"></i>';
-    clearButton.title = 'Очистити текстове поле';
-    clearButton.className = 'clear-template-btn';
-    clearButton.onclick = () => {
-        const textarea = fieldGroup.querySelector('textarea');
-        textarea.value = '';
-        updateBookmarksOnTextChange(fieldGroup);
-        saveTemplates();
-    };
-    
-    const deleteButton = document.createElement('button');
-    deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
-    deleteButton.title = 'Видалити шаблон';
-    deleteButton.className = 'delete-template-btn';
-    deleteButton.onclick = () => {
-        fieldGroup.remove();
-        saveTemplates();
-        updateGridWrapperHeight();		
-    };
-    
-    const textareaWrapper = document.createElement('div');
-    textareaWrapper.className = 'textarea-wrapper';
-
-    const gutter = document.createElement('div');
-    gutter.className = 'line-marker-gutter';
-
-    const textarea = document.createElement('textarea');
-    textarea.placeholder = 'Введіть текст тут...';
-    textarea.value = content;
-    textarea.oninput = () => {
-        updateBookmarksOnTextChange(fieldGroup);
-        gutter.scrollTop = textarea.scrollTop;
-        saveTemplates();
-    };
-    
-    textarea.onscroll = () => {
-        gutter.scrollTop = textarea.scrollTop;
-    };
-    
-    gutter.onclick = (event) => {
-        const style = window.getComputedStyle(textarea);
-        const lineHeight = parseFloat(style.lineHeight);
-        const paddingTop = parseFloat(style.paddingTop);
-        const clickedLine = Math.floor((event.offsetY + gutter.scrollTop - paddingTop) / lineHeight) + 1;
-
-        let currentBookmarks = JSON.parse(fieldGroup.dataset.bookmarks || '[]');
-        const index = currentBookmarks.indexOf(clickedLine);
-
-        if (index > -1) {
-            currentBookmarks.splice(index, 1);
-        } else {
-            currentBookmarks.push(clickedLine);
+        function createTemplateField(data = {}) {
+            const { name = '', content = '', width = '400px', height = '170px', x = 10, y = 10, bookmarks = [] } = data;
+            const container = document.getElementById('templates-grid-wrapper'); 
+            const fieldGroup = document.createElement('div');
+            fieldGroup.className = 'template-field-group'; 
+            fieldGroup.dataset.bookmarks = JSON.stringify(bookmarks);
+            fieldGroup.dataset.lastContent = content;
+            fieldGroup.style.width = width;
+            fieldGroup.style.height = height;
+            fieldGroup.setAttribute('data-x', x);
+            fieldGroup.setAttribute('data-y', y);
+            const dragHandle = document.createElement('div');
+            dragHandle.className = 'template-drag-handle';
+            dragHandle.innerHTML = '⠿';
+            const headerDiv = document.createElement('div');
+            headerDiv.className = 'template-header';
+            const nameInput = document.createElement('input');
+            nameInput.type = 'text';
+            nameInput.className = 'template-name-input';
+            nameInput.placeholder = 'Назва шаблону';
+            nameInput.value = name;
+            nameInput.oninput = saveTemplates; 
+            const actionsDiv = document.createElement('div');
+            actionsDiv.className = 'template-actions';
+            const copyButton = document.createElement('button');
+            copyButton.innerHTML = '<i class="fas fa-copy"></i>';
+            copyButton.title = 'Копіювати текст';
+            copyButton.className = 'copy-template-btn';
+            copyButton.onclick = () => {
+                const textarea = fieldGroup.querySelector('textarea');
+                const selectedText = textarea.value.substring(textarea.selectionStart, textarea.selectionEnd);
+                const textToCopy = selectedText || textarea.value;
+                if (!textToCopy.trim()) return; 
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    const originalIcon = copyButton.innerHTML;
+                    copyButton.innerHTML = '<i class="fas fa-check"></i>';
+                    copyButton.disabled = true;
+                    setTimeout(() => { copyButton.innerHTML = originalIcon; copyButton.disabled = false; }, 1500);
+                }).catch(err => console.error('Не вдалося скопіювати текст: ', err));
+            };
+            const clearButton = document.createElement('button');
+            clearButton.innerHTML = '<i class="fas fa-eraser"></i>';
+            clearButton.title = 'Очистити текстове поле';
+            clearButton.className = 'clear-template-btn';
+            clearButton.onclick = () => {
+                const textarea = fieldGroup.querySelector('textarea');
+                textarea.value = '';
+                updateBookmarksOnTextChange(fieldGroup);
+                saveTemplates();
+            };
+            const deleteButton = document.createElement('button');
+            deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
+            deleteButton.title = 'Видалити шаблон';
+            deleteButton.className = 'delete-template-btn';
+            deleteButton.onclick = () => {
+                fieldGroup.remove();
+                saveTemplates();
+                updateGridWrapperHeight();		
+            };
+            const textareaWrapper = document.createElement('div');
+            textareaWrapper.className = 'textarea-wrapper';
+            const gutter = document.createElement('div');
+            gutter.className = 'line-marker-gutter';
+            const textarea = document.createElement('textarea');
+            textarea.placeholder = 'Введіть текст тут...';
+            textarea.value = content;
+            textarea.oninput = () => {
+                updateBookmarksOnTextChange(fieldGroup);
+                gutter.scrollTop = textarea.scrollTop;
+                saveTemplates();
+            };
+            textarea.onscroll = () => { gutter.scrollTop = textarea.scrollTop; };
+            gutter.onclick = (event) => {
+                const style = window.getComputedStyle(textarea);
+                const lineHeight = parseFloat(style.lineHeight);
+                const paddingTop = parseFloat(style.paddingTop);
+                const clickedLine = Math.floor((event.offsetY + gutter.scrollTop - paddingTop) / lineHeight) + 1;
+                let currentBookmarks = JSON.parse(fieldGroup.dataset.bookmarks || '[]');
+                const index = currentBookmarks.indexOf(clickedLine);
+                if (index > -1) { currentBookmarks.splice(index, 1); } else { currentBookmarks.push(clickedLine); }
+                fieldGroup.dataset.bookmarks = JSON.stringify(currentBookmarks);
+                renderLineMarkers(fieldGroup);
+                saveTemplates();
+            };
+            textareaWrapper.appendChild(gutter);
+            textareaWrapper.appendChild(textarea);
+            headerDiv.appendChild(nameInput);
+            actionsDiv.appendChild(copyButton);
+            actionsDiv.appendChild(clearButton);
+            actionsDiv.appendChild(deleteButton);
+            headerDiv.appendChild(actionsDiv);
+            const resizeHandle = document.createElement('div');
+            resizeHandle.className = 'resize-handle';    
+            fieldGroup.appendChild(dragHandle); 
+            fieldGroup.appendChild(headerDiv); 
+            fieldGroup.appendChild(textareaWrapper);
+            fieldGroup.appendChild(resizeHandle);
+            container.appendChild(fieldGroup); 
+            initDraggableAndResizable(fieldGroup);
+            renderLineMarkers(fieldGroup);
+            return fieldGroup;
         }
-        
-        fieldGroup.dataset.bookmarks = JSON.stringify(currentBookmarks);
-        renderLineMarkers(fieldGroup);
-        saveTemplates();
-    };
-
-    textareaWrapper.appendChild(gutter);
-    textareaWrapper.appendChild(textarea);
-
-    headerDiv.appendChild(nameInput);
-    actionsDiv.appendChild(copyButton);
-    actionsDiv.appendChild(clearButton);
-    actionsDiv.appendChild(deleteButton);
-    headerDiv.appendChild(actionsDiv);
-	
-    const resizeHandle = document.createElement('div');
-    resizeHandle.className = 'resize-handle';    
-    fieldGroup.appendChild(dragHandle); 
-    fieldGroup.appendChild(headerDiv); 
-    fieldGroup.appendChild(textareaWrapper);
-	fieldGroup.appendChild(resizeHandle);
     
-    container.appendChild(fieldGroup); 
+        function renderLineMarkers(fieldGroup) {
+            const gutter = fieldGroup.querySelector('.line-marker-gutter');
+            const textarea = fieldGroup.querySelector('textarea');
+            if (!gutter || !textarea) return;
+            gutter.innerHTML = ''; 
+            const bookmarks = JSON.parse(fieldGroup.dataset.bookmarks || '[]');
+            const style = window.getComputedStyle(textarea);
+            const lineHeight = parseFloat(style.lineHeight);
+            const paddingTop = parseFloat(style.paddingTop);
+            bookmarks.forEach(lineNumber => {
+                const marker = document.createElement('div');
+                marker.className = 'line-marker';
+                marker.textContent = '●';
+                const verticalOffset = -4.5;
+                marker.style.top = `${paddingTop + (lineNumber - 1) * lineHeight + verticalOffset}px`;
+                gutter.appendChild(marker);
+            });
+        }
     
-    initDraggableAndResizable(fieldGroup);
-    renderLineMarkers(fieldGroup);
-    
-    return fieldGroup;
-}
-
-function renderLineMarkers(fieldGroup) {
-    const gutter = fieldGroup.querySelector('.line-marker-gutter');
-    const textarea = fieldGroup.querySelector('textarea');
-    if (!gutter || !textarea) return;
-
-    gutter.innerHTML = ''; 
-    const bookmarks = JSON.parse(fieldGroup.dataset.bookmarks || '[]');
-    
-    const style = window.getComputedStyle(textarea);
-    const lineHeight = parseFloat(style.lineHeight);
-    const paddingTop = parseFloat(style.paddingTop);
-
-    bookmarks.forEach(lineNumber => {
-        const marker = document.createElement('div');
-        marker.className = 'line-marker';
-        marker.textContent = '●';
-
-        const verticalOffset = -4.5;
-        marker.style.top = `${paddingTop + (lineNumber - 1) * lineHeight + verticalOffset}px`;
-
-        gutter.appendChild(marker);
-    });
-}
-
-function addTemplate() {
+        function addTemplate() {
     const container = document.getElementById('templates-grid-wrapper');
     const layoutWrapper = container.closest('.tab-content-wrapper');
-	
     if (!layoutWrapper) {
-        console.error("Не вдалося знайти батьківський контейнер для шаблонів.");
+        console.error("Не вдалося знайти батьківський контейнер.");
         return;
     }
-
+    
     const containerWidth = layoutWrapper.offsetWidth;
     const existingTemplates = Array.from(container.querySelectorAll('.template-field-group'));
-
     const newTemplateWidth = 300;
     const newTemplateHeight = 110;
-    const gap = 4;
-
-    const potentialPoints = [{ x: 0, y: 0 }];
-
-    existingTemplates.forEach(el => {
-        const rect = {
-            x: parseFloat(el.getAttribute('data-x')),
-            y: parseFloat(el.getAttribute('data-y')),
-            width: el.offsetWidth,
-            height: el.offsetHeight
-        };
-        potentialPoints.push({ x: rect.x + rect.width + gap, y: rect.y });
-        potentialPoints.push({ x: rect.x, y: rect.y + rect.height + gap });
-    });
-
-    potentialPoints.sort((a, b) => {
-        if (a.y !== b.y) return a.y - b.y;
-        return a.x - b.x;
-    });
-
+    const GAP = 6;
     let finalPosition = null;
 
-    for (const point of potentialPoints) {
-        if (point.x + newTemplateWidth > containerWidth) continue;
-
-        const candidateRect = {
-            left: point.x,
-            top: point.y,
-            right: point.x + newTemplateWidth,
-            bottom: point.y + newTemplateHeight
-        };
-
-        const isOverlapping = existingTemplates.some(el => {
-            const rect = {
-                left: parseFloat(el.getAttribute('data-x')),
-                top: parseFloat(el.getAttribute('data-y')),
-                right: parseFloat(el.getAttribute('data-x')) + el.offsetWidth,
-                bottom: parseFloat(el.getAttribute('data-y')) + el.offsetHeight
-            };
-            return isIntersecting(candidateRect, rect);
+    if (existingTemplates.length === 0) {
+        finalPosition = { x: 0, y: 0 };
+    } else {
+        // 1. Створюємо список всіх логічних точок для перевірки
+        const candidatePoints = [{ x: 0, y: 0 }];
+        existingTemplates.forEach(el => {
+            const x = parseFloat(el.getAttribute('data-x'));
+            const y = parseFloat(el.getAttribute('data-y'));
+            // Додаємо точку справа від блоку
+            candidatePoints.push({ x: x + el.offsetWidth + GAP, y: y });
+            // Додаємо точку знизу від блоку
+            candidatePoints.push({ x: x, y: y + el.offsetHeight + GAP });
         });
 
-        if (!isOverlapping) {
-            finalPosition = point;
-            break;
+        // 2. Сортуємо точки: спочатку по висоті, потім по ширині
+        candidatePoints.sort((a, b) => a.y - b.y || a.x - b.x);
+
+        // 3. Знаходимо першу валідну позицію зі списку
+        for (const point of candidatePoints) {
+            // Перевіряємо, чи точка не виходить за межі контейнера
+            if (point.x < 0 || point.x + newTemplateWidth > containerWidth) continue;
+
+            const candidateRect = { left: point.x, top: point.y, right: point.x + newTemplateWidth, bottom: point.y + newTemplateHeight };
+            
+            // Перевіряємо на зіткнення з УСІМА існуючими блоками
+            const isOverlapping = existingTemplates.some(el => {
+                const rect = { 
+                    left: parseFloat(el.getAttribute('data-x')), 
+                    top: parseFloat(el.getAttribute('data-y')), 
+                    right: parseFloat(el.getAttribute('data-x')) + el.offsetWidth, 
+                    bottom: parseFloat(el.getAttribute('data-y')) + el.offsetHeight 
+                };
+                // Важливо: перевіряємо зіткнення без відступу, бо відступ вже є в candidatePoints
+                return isIntersecting(candidateRect, rect);
+            });
+
+            // Якщо зіткнень немає, це наше місце!
+            if (!isOverlapping) {
+                finalPosition = point;
+                break; 
+            }
         }
     }
     
-    if (!finalPosition) {
-        let lowestY = gap;
+    // Аварійний варіант, якщо жодна точка не підійшла (практично неможливо)
+    if (finalPosition === null) {
+        let lowestY = 0;
         existingTemplates.forEach(el => {
             const bottom = parseFloat(el.getAttribute('data-y')) + el.offsetHeight;
             if (bottom > lowestY) lowestY = bottom;
         });
-        finalPosition = { x: gap, y: lowestY + gap };
+        finalPosition = { x: 0, y: lowestY + GAP };
     }
-
-    const newField = createTemplateField({
-        name: '', content: '',
-        width: `${newTemplateWidth}px`, height: `${newTemplateHeight}px`,
-        x: finalPosition.x, y: finalPosition.y
-    });
+    
+    const newField = createTemplateField({ name: '', content: '', width: `${newTemplateWidth}px`, height: `${newTemplateHeight}px`, x: finalPosition.x, y: finalPosition.y });
     newField.querySelector('.template-name-input').focus();
     saveTemplates();
+    updateGridWrapperHeight();
 }
-
-function saveTemplates() {
-    const templates = [];
-    const fieldGroups = document.querySelectorAll('#templates-grid-wrapper .template-field-group'); 
-    fieldGroups.forEach(group => {
-        const nameInput = group.querySelector('.template-name-input');
-        const textarea = group.querySelector('textarea');
-        
-		if (textarea) {
-            group.dataset.lastContent = textarea.value;
+    
+        function saveTemplates() {
+            const templates = [];
+            document.querySelectorAll('#templates-grid-wrapper .template-field-group').forEach(group => {
+                const nameInput = group.querySelector('.template-name-input');
+                const textarea = group.querySelector('textarea');
+                if (textarea) { group.dataset.lastContent = textarea.value; }
+                templates.push({
+                    name: nameInput ? nameInput.value : '',
+                    content: textarea ? textarea.value : '',
+                    width: group.style.width,
+                    height: group.style.height,
+                    x: group.getAttribute('data-x'),
+                    y: group.getAttribute('data-y'),
+                    bookmarks: JSON.parse(group.dataset.bookmarks || '[]')
+                });
+            });
+            localStorage.setItem('textTemplates', JSON.stringify(templates));
         }
-	
-		templates.push({
-            name: nameInput ? nameInput.value : '',
-            content: textarea ? textarea.value : '',
-            width: group.style.width,
-            height: group.style.height,
-            x: group.getAttribute('data-x'),
-            y: group.getAttribute('data-y'),
-            bookmarks: JSON.parse(group.dataset.bookmarks || '[]')
-        });
-    });
-    localStorage.setItem('textTemplates', JSON.stringify(templates));
-}
-
-function loadTemplates() {
-    const templatesJson = localStorage.getItem('textTemplates');
-    const templatesGrid = document.getElementById('templates-grid-wrapper');
-    templatesGrid.innerHTML = ''; 
-
-    if (templatesJson) {
-        try {
-            const templates = JSON.parse(templatesJson);
-            if (Array.isArray(templates)) {
-                templates.forEach(template => createTemplateField(template));
+    
+        function loadTemplates() {
+            const templatesJson = localStorage.getItem('textTemplates');
+            const templatesGrid = document.getElementById('templates-grid-wrapper');
+            templatesGrid.innerHTML = ''; 
+            if (templatesJson) {
+                try {
+                    const templates = JSON.parse(templatesJson);
+                    if (Array.isArray(templates)) {
+                        templates.forEach(template => createTemplateField(template));
+                    }
+                    updateGridWrapperHeight();
+                } catch (e) {
+                    console.error("Помилка завантаження шаблонів:", e);
+                    localStorage.removeItem('textTemplates');
+                }
             }
-			updateGridWrapperHeight();
-        } catch (e) {
-            console.error("Помилка завантаження шаблонів:", e);
-            localStorage.removeItem('textTemplates');
         }
-    }
-}
+        
+        // --- ФІНАЛЬНА ВЕРСІЯ ІМПОРТУ/ЕКСПОРТУ ЧЕРЕЗ ФАЙЛ (НАЙНАДІЙНІША) ---
+        
+        function exportToFile() {
+            const templatesJson = localStorage.getItem('textTemplates');
+            if (!templatesJson || templatesJson === '[]') {
+                alert('Немає шаблонів для експорту!');
+                return;
+            }
     
-// >>>>>>>> ПОЧАТОК НОВОГО КОДУ ДЛЯ АДАПТИВНОСТІ <<<<<<<<<<
+            // Створюємо Blob з JSON-даних. Це як віртуальний файл у пам'яті.
+            const blob = new Blob([templatesJson], { type: 'application/json' });
     
-/**
- * Функція для "відкладеного" виклику іншої функції.
- * Потрібна, щоб не запускати перерахунок позицій 100 разів на секунду при зміні розміру вікна.
- * @param {Function} func - Функція, яку потрібно викликати.
- * @param {number} delay - Затримка в мілісекундах.
- * @returns {Function} - Нова функція-обгортка.
- */
-function debounce(func, delay) {
-    let timeout;
-    return function(...args) {
-        const context = this;
-        clearTimeout(timeout);
-        timeout = setTimeout(() => func.apply(context, args), delay);
-    };
-}
-
-/**
- * Основна функція для перерахунку та розстановки шаблонів.
- * Вона автоматично розміщує шаблони в межах видимої області, переносячи їх на новий рядок.
- */
-/**
- * Розумна функція для перерахунку та розстановки шаблонів.
- * Розставляє по сітці ТІЛЬКИ якщо контент не вміщується.
- * В іншому випадку - відновлює збережені користувачем позиції.
- */
-function rearrangeTemplates() {
+            // Створюємо тимчасове посилання для завантаження
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'templates-backup.json'; // Назва файлу за замовчуванням
+            
+            // "Натискаємо" на посилання, щоб почалося завантаження
+            document.body.appendChild(a);
+            a.click();
+            
+            // Прибираємо тимчасове посилання
+            document.body.removeChild(a);
+            URL.revokeObjectURL(a.href); // Звільняємо пам'ять
+        }
+    
+        function handleFileImport(event) {
+            const fileInput = event.target;
+            if (!fileInput.files.length) {
+                return;
+            }
+            const file = fileInput.files[0];
+    
+            // Перевіряємо, чи це JSON файл
+            if (file.type !== 'application/json') {
+                alert('Будь ласка, виберіть правильний файл .json!');
+                return;
+            }
+    
+            const reader = new FileReader();
+    
+            // Ця функція виконається, коли файл буде повністю прочитано
+            reader.onload = (e) => {
+                try {
+                    const templatesJson = e.target.result;
+                    const templates = JSON.parse(templatesJson);
+    
+                    if (!Array.isArray(templates)) {
+                        throw new Error("Некоректний формат даних у файлі.");
+                    }
+    
+                    const templatesGrid = document.getElementById('templates-grid-wrapper');
+                    templatesGrid.innerHTML = '';
+                    templates.forEach(template => createTemplateField(template));
+                    
+                    saveTemplates();
+                    updateGridWrapperHeight();
+                    rearrangeTemplates();
+    
+                    alert('Шаблони успішно імпортовано!');
+                } catch (error) {
+                    console.error("Помилка імпорту:", error);
+                    alert('Помилка! Не вдалося прочитати файл. Можливо, він пошкоджений або має неправильний формат.');
+                }
+            };
+    
+            // Обробка помилок читання файлу
+            reader.onerror = () => {
+                alert('Сталася помилка під час читання файлу.');
+            };
+    
+            // Починаємо читати файл як текст
+            reader.readAsText(file);
+    
+            // Очищуємо поле вводу, щоб можна було завантажити той самий файл ще раз
+            fileInput.value = '';
+        }
+        
+        function debounce(func, delay) {
+            let timeout;
+            return function(...args) {
+                const context = this;
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(context, args), delay);
+            };
+        }
+    
+        function rearrangeTemplates() {
     const container = document.querySelector('.container[data-content="text-templates"]');
-    if (!container || !container.classList.contains('active')) {
-        return; // Не виконувати, якщо вкладка не активна
-    }
-
+    if (!container || !container.classList.contains('active')) return;
+    
+    const containerWidth = container.clientWidth;
     const allTemplates = Array.from(document.querySelectorAll('#templates-grid-wrapper .template-field-group'));
     if (allTemplates.length === 0) return;
 
-    const containerWidth = container.clientWidth;
-    const GAP = 10; // Відстань між шаблонами
-
-    // Крок 1: Визначаємо, чи потрібне втручання взагалі.
-    // Знаходимо максимальну ширину, яку займає ручне розташування.
-    let maxWidthNeeded = 0;
+    let changed = false;
+    // Перевіряємо кожен шаблон
     allTemplates.forEach(template => {
         const x = parseFloat(template.getAttribute('data-x')) || 0;
         const width = template.offsetWidth;
         const rightEdge = x + width;
-        if (rightEdge > maxWidthNeeded) {
-            maxWidthNeeded = rightEdge;
+
+        // Якщо шаблон виходить за правий край
+        if (rightEdge > containerWidth) {
+            // Обчислюємо нову позицію, притискаючи до правого краю
+            const newX = Math.max(0, containerWidth - width);
+            if (newX !== x) {
+                template.setAttribute('data-x', newX);
+                template.style.transform = `translate(${newX}px, ${template.getAttribute('data-y') || 0}px)`;
+                changed = true;
+            }
         }
     });
 
-    // Крок 2: Приймаємо рішення на основі перевірки.
-    if (maxWidthNeeded > containerWidth) {
-        // ВТРУЧАННЯ ПОТРІБНЕ: Місця мало, розставляємо по сітці.
-        
-        // Сортуємо шаблони, щоб обробляти їх у логічному порядку
-        allTemplates.sort((a, b) => {
-            const yA = parseFloat(a.getAttribute('data-y')) || 0;
-            const yB = parseFloat(b.getAttribute('data-y')) || 0;
-            if (yA !== yB) return yA - yB;
-            const xA = parseFloat(a.getAttribute('data-x')) || 0;
-            const xB = parseFloat(b.getAttribute('data-x')) || 0;
-            return xA - xB;
-        });
-
-        let currentX = 0;
-        let currentY = 0;
-        let rowMaxHeight = 0;
-
-        allTemplates.forEach(template => {
-            const templateWidth = template.offsetWidth;
-            const templateHeight = template.offsetHeight;
-
-            if (currentX + templateWidth > containerWidth && currentX > 0) {
-                currentX = 0;
-                currentY += rowMaxHeight + GAP;
-                rowMaxHeight = 0;
-            }
-
-            // ВАЖЛИВО: Ми не змінюємо data-x/data-y, лише візуальне положення.
-            template.style.transform = `translate(${currentX}px, ${currentY}px)`;
-
-            currentX += templateWidth + GAP;
-            
-            if (templateHeight > rowMaxHeight) {
-                rowMaxHeight = templateHeight;
-            }
-        });
-        
-    } else {
-        // ВТРУЧАННЯ НЕ ПОТРІБНЕ: Місця достатньо, повертаємо все на збережені місця.
-        allTemplates.forEach(template => {
-            const x = template.getAttribute('data-x') || 0;
-            const y = template.getAttribute('data-y') || 0;
-            template.style.transform = `translate(${x}px, ${y}px)`;
-        });
+    // Зберігаємо зміни тільки якщо вони були
+    if (changed) {
+         saveTemplates();
     }
-
-    // ВАЖЛИВО: Прибираємо збереження звідси.
-    // saveTemplates(); 
-    // Натомість оновлюємо висоту контейнера.
     updateGridWrapperHeight();
 }
-// >>>>>>>> КІНЕЦЬ НОВОГО КОДУ ДЛЯ АДАПТИВНОСТІ <<<<<<<<<<
-
-
-    // --- Функціонал Перемикача Тем ---
-
-    const checkbox = document.getElementById("dark-mode-checkbox");
-
-    function applyTheme(isDark) {
-        if (isDark) {
-            document.body.classList.add("dark");
-            localStorage.setItem('theme', 'dark');
-        } else {
-            document.body.classList.remove("dark");
-            localStorage.setItem('theme', 'light');
+    
+        const checkbox = document.getElementById("dark-mode-checkbox");
+        function applyTheme(isDark) {
+            if (isDark) {
+                document.body.classList.add("dark");
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.remove("dark");
+                localStorage.setItem('theme', 'light');
+            }
         }
-    }
-
-    function loadTheme() {
-        const savedTheme = localStorage.getItem('theme');
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        let isDark = savedTheme === 'dark' || (savedTheme === null && prefersDark);
-        checkbox.checked = isDark;
-        applyTheme(isDark);
-    }
-
-    checkbox.addEventListener("change", () => {
-        applyTheme(checkbox.checked);
-    });
-
-    // --- Ініціалізація ---
-    document.addEventListener('DOMContentLoaded', () => {
-        loadTheme();
-		
-        const today = new Date().toISOString().split('T')[0];
-        const startDateInput = document.getElementById('start-date');
-        const startTimeInput = document.getElementById('start-time');
-        const endTimeInput = document.getElementById('end-time');
-
-        startDateInput.value = today;
-        startTimeInput.value = "00:00"; 
-        const tomorrow = new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-        document.getElementById('end-date').value = tomorrow;
-        endTimeInput.value = "00:00"; 
-
-        loadAutoResetState(); 
-        calculateDifference(); 
-        
-        if (isAutoResetEnabled) {
-             startResetTimer();
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            let isDark = savedTheme === 'dark' || (savedTheme === null && prefersDark);
+            checkbox.checked = isDark;
+            applyTheme(isDark);
         }
-
-        setupTabs();
-
-        const fullNameInput = document.getElementById('fullNameInput');
-        fullNameInput.addEventListener('input', generateLogins); 
-        
-        document.getElementById('add-template-button').onclick = addTemplate;
-        loadTemplates(); 
-        
-        const initialTab = localStorage.getItem('activeTab') || 'login-generator';
-        if (initialTab === 'login-generator') {
-            generateLogins(); 
-        }
-        
-        if (initialTab === 'gpon-commands') {
-             const deviceSelect = document.getElementById('device-type');
-             if (deviceSelect) {
-                displayCommands(deviceSelect.value);
-             }
-        }
-
-        // >>> НОВИЙ КОД: Запускаємо перекомпоновку при завантаженні та зміні розміру вікна
-        // Створюємо "відкладену" версію нашої функції
-        const debouncedRearrange = debounce(rearrangeTemplates, 250); 
-        // Додаємо слухача події на зміну розміру вікна
-        window.addEventListener('resize', debouncedRearrange);
-        // Запускаємо один раз при завантаженні (з невеликою затримкою, щоб все промалювалось)
-        setTimeout(rearrangeTemplates, 100);
-    });
-</script>
-
+        checkbox.addEventListener("change", () => { applyTheme(checkbox.checked); });
+    
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('start-date').value = today;
+            document.getElementById('start-time').value = "00:00"; 
+            const tomorrow = new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+            document.getElementById('end-date').value = tomorrow;
+            document.getElementById('end-time').value = "00:00"; 
+            loadAutoResetState(); 
+            calculateDifference(); 
+            if (isAutoResetEnabled) { startResetTimer(); }
+            setupTabs();
+            document.getElementById('fullNameInput').addEventListener('input', generateLogins); 
+            document.getElementById('add-template-button').onclick = addTemplate;
+            loadTemplates(); 
+            
+            // --- ПІДКЛЮЧЕННЯ НОВИХ ФУНКЦІЙ ---
+            const importFileInput = document.getElementById('import-file-input');
+            const importButton = document.getElementById('import-templates-button');
+            const exportButton = document.getElementById('export-templates-button');
+            
+            exportButton.onclick = exportToFile;
+            importButton.onclick = () => importFileInput.click(); // Кнопка "Імпорт" відкриває вікно вибору файлу
+            importFileInput.addEventListener('change', handleFileImport); // Обробляємо вибраний файл
+    
+            const initialTab = localStorage.getItem('activeTab') || 'login-generator';
+            if (initialTab === 'login-generator') { generateLogins(); }
+            if (initialTab === 'gpon-commands') {
+                 const deviceSelect = document.getElementById('device-type');
+                 if (deviceSelect) { displayCommands(deviceSelect.value); }
+            }
+            const debouncedRearrange = debounce(rearrangeTemplates, 250); 
+            window.addEventListener('resize', debouncedRearrange);
+            setTimeout(rearrangeTemplates, 100);
+        });
+    </script>
 </body>
 </html>
