@@ -9,6 +9,70 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     
     <style>
+	/* === ОСНОВНА ПАЛІТРА ТА ЗМІННІ ТЕМИ === */
+:root {
+    /* Світла тема */
+    --bg-color: #f4f4f9;
+    --text-color: #333;
+    --header-color: #444;
+    --primary-accent-color: #007bff;
+    --primary-accent-shadow: rgba(0, 123, 255, 0.4);
+    --secondary-accent-color: #E6A22E;
+    --success-color: #38c172;
+    --danger-color: #dc3545;
+    
+    --input-bg-color: #fff;
+    --input-border-color: #ccc;
+    --input-focus-border-color: var(--primary-accent-color);
+    
+    --template-bg-color: #fff;
+    --template-border-color: #ccc;
+    --template-handle-bg: #f0f0f0;
+    --template-handle-border: #ddd;
+    
+    --tab-strip-bg: #E8E8E8;
+    --tab-inactive-text: #555;
+    
+    --scrollbar-thumb: #a0a0a0;
+    --scrollbar-track: #f1f1f1;
+	
+	--calc-duration-color: var(--primary-accent-color);
+--calc-days-color: #ff5722;
+--calc-hours-color: #6a0dad;
+--button-paste-bg: #17a2b8;
+--button-paste-hover-bg: #117a8b;
+--resize-handle-color: rgba(0,0,0,0.3);
+}
+
+body.dark {
+    /* Темна тема (перевизначення) */
+    --bg-color: #1b1c1d;
+    --text-color: #e0e0e0;
+    --header-color: #e0e0e0;
+    
+    --input-bg-color: #333333;
+    --input-border-color: #555555;
+    --input-focus-border-color: var(--secondary-accent-color);
+    --primary-accent-shadow: rgba(230, 162, 46, 0.4);
+
+    --template-bg-color: #2b2b2b;
+    --template-border-color: #555;
+    --template-handle-bg: #4a4a4a;
+    --template-handle-border: #555;
+    
+    --tab-strip-bg: #2D223D;
+    --tab-inactive-text: #e0e0e0;
+    
+    --scrollbar-thumb: #5d6063;
+    --scrollbar-track: #242526;
+
+--calc-duration-color: #00d4ff;
+--calc-days-color: #ff9800;
+--calc-hours-color: #9370db;
+--button-paste-hover-bg: #138496;
+--resize-handle-color: rgba(255,255,255,0.3);
+}
+
 	/* СТИЛІ ДЛЯ НОВОЇ, БІЛЬШ ТОЧНОЇ РУЧКИ ЗМІНИ РОЗМІРУ */
 .resize-handle {
     position: absolute;
@@ -20,14 +84,8 @@
     z-index: 10;
     /* Малюємо більш помітні лінії */
     background:
-        linear-gradient(135deg, transparent 60%, rgba(0,0,0,0.3) 61%, rgba(0,0,0,0.3) 70%, transparent 71%),
-        linear-gradient(135deg, transparent 80%, rgba(0,0,0,0.3) 81%, rgba(0,0,0,0.3) 90%, transparent 91%);
-}
-
-body.dark .resize-handle {
-    background:
-        linear-gradient(135deg, transparent 60%, rgba(255,255,255,0.3) 61%, rgba(255,255,255,0.3) 70%, transparent 71%),
-        linear-gradient(135deg, transparent 80%, rgba(255,255,255,0.3) 81%, rgba(255,255,255,0.3) 90%, transparent 91%);
+        linear-gradient(135deg, transparent 60%, var(--resize-handle-color) 61%, var(--resize-handle-color) 70%, transparent 71%),
+        linear-gradient(135deg, transparent 80%, var(--resize-handle-color) 81%, var(--resize-handle-color) 90%, transparent 91%);
 }
 
 /* Прибираємо старий індикатор, оскільки тепер є новий */
@@ -86,58 +144,31 @@ select,
     transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-
-
-/* === БАЗОВІ КОЛЬОРИ У СТАНІ "НЕ ФОКУС" === */
 input,
 textarea,
 select,
 .date-input-group input,
 #fullNameInput {
-    border-color: #ccc;
-    background-color: #fff;
-    color: #333;
+    border-color: var(--input-border-color);
+    background-color: var(--input-bg-color);
+    color: var(--text-color);
 }
 
-/* Темна тема — базові кольори */
-body.dark input,
-body.dark textarea,
-body.dark select,
-body.dark .date-input-group input,
-body.dark #fullNameInput {
-    border-color: #555555;
-    background-color: #333333;
-    color: #fff;
-}
-
-/* === АКТИВНІ ЕЛЕМЕНТИ (крім кнопок) — світла тема === */
 input:focus:not([type="button"]):not([type="submit"]),
 textarea:focus,
 select:focus,
 .template-field-group:focus-within,
 .date-input-group input:focus,
 #fullNameInput:focus {
-    border-color: #007bff !important; /* Синій акцент */
-    box-shadow: 0 0 3px rgba(0, 123, 255, 0.4);
-    outline: none;
-}
-
-/* === ТЕМНА ТЕМА — АКТИВНІ ЕЛЕМЕНТИ === */
-body.dark input:focus:not([type="button"]):not([type="submit"]),
-body.dark textarea:focus,
-body.dark select:focus,
-body.dark .template-field-group:focus-within,
-body.dark .date-input-group input:focus,
-body.dark #fullNameInput:focus {
-    border-color: #E6A22E !important; /* Жовтий акцент */
-    box-shadow: 0 0 3px rgba(230, 162, 46, 0.4);
+    border-color: var(--input-focus-border-color) !important;
+    box-shadow: 0 0 3px var(--primary-accent-shadow);
     outline: none;
 }
 
 	/* Стилі для статичного напису-підказки */
 #static-clarification-message {
     font-style: italic; 
-    color: #38c172; /* Зелений колір */
+    color: var(--success-color);
     margin: 0 0 10px 0; 
     padding: 5px 10px;
     border-radius: 1px;
@@ -148,17 +179,6 @@ body.dark #fullNameInput:focus {
 text-align: right;	
 }
 
-body.dark #static-clarification-message {
-    color: #E6A22E; /* Акцентний колір для темної теми */
-}
-		
-        /* --- АДАПТОВАНІ СТИЛІ З ВАШОГО КОДУ ДЛЯ ТЕМИ --- */
-        body.dark {
-            background-color: #1b1c1d; 
-            color: #e0e0e0;
-			font-family: 'Inter', sans-serif; 
-        }
-		
 		.scrollable-commands-list {
         max-height: 70vh; 
         overflow-y: auto; 
@@ -191,15 +211,6 @@ body.dark #static-clarification-message {
             scrollbar-width: thin; 
         }
 
-        body.dark h1,
-        body.dark h2,
-        body.dark p,
-        body.dark label, 
-        body.dark .page-title,
-        body.dark .global-version-info {
-            color: #e0e0e0 !important; 
-        }
-
         body.dark .page-title .ultranet-color {
             color: #811e71 !important; 
         }
@@ -213,21 +224,11 @@ body.dark #static-clarification-message {
             color: #00d4ff !important; 
         }
         
-        body.dark .date-calculator-container .date-input-group label {
-            color: #e0e0e0; 
-        }
-        
         body.dark .container {
             background: transparent; 
             box-shadow: none; 
         }
-        
-        body.dark .login-generator-container textarea {
-            background-color: #333333;
-            border-color: #555555;
-            color: #fff;
-        }
-
+       
         body.dark .login-generator-container .result-item {
             background-color: #242526; 
             border-color: #444444;
@@ -235,31 +236,6 @@ body.dark #static-clarification-message {
 
         body.dark .login-generator-container .result-item span {
             color: #38c172 !important; 
-        }
-        
-        body.dark .date-calculator-container .date-input-group input[type="date"],
-        body.dark .date-calculator-container .date-input-group input[type="time"] { 
-            background-color: #333333;
-            border-color: #555555;
-            color-scheme: dark; 
-            color: #fff;
-        }
-
-        body.dark .date-calculator-container #result-section {
-            background-color: #2b2b2b; 
-            border: 1px solid #555555;
-        }
-        body.dark .date-calculator-container #result-section h2 {
-            color: #38c172; 
-        }
-        body.dark .date-calculator-container .duration-text {
-            color: #00d4ff; 
-        }
-        body.dark .date-calculator-container .total-days-text {
-            color: #ff9800; 
-        }
-        body.dark .date-calculator-container .total-hours-text {
-            color: #9370db; 
         }
 
         body.dark .login-generator-container .result-item button {
@@ -273,36 +249,6 @@ body.dark #static-clarification-message {
             background-color: #38c172; 
         }
         
-        body.dark .template-field-group textarea {
-            background-color: #333333;
-            border-color: #555555;
-            color: #fff;
-        }
-        
-        body.dark .template-name-input {
-            background-color: #333333;
-            border-color: #555555;
-            color: #fff;
-        }
-        
-        body.dark .template-field-group {
-            background-color: transparent; 
-            border-color: #555555;
-        }
-        
-        body.dark .copy-template-btn {
-            background-color: #38c172; 
-        }
-        body.dark .copy-template-btn:hover {
-            background-color: #2e9f56;
-        }
-        body.dark .delete-template-btn {
-            background-color: #fa4a61; 
-        }
-        body.dark .delete-template-btn:hover {
-            background-color: #d13f53;
-        }
-        
         .gpon-commands-container label {
             display: inline-block; 
             margin-right: 0px;    
@@ -311,11 +257,7 @@ body.dark #static-clarification-message {
             color: #555;
 			font-size: 18px;
         }
-        
-        body.dark .gpon-commands-container label {
-             color: #e0e0e0;
-        }
-
+		
         .gpon-commands-container select {
             width: 100px;
             padding: 1px;
@@ -329,13 +271,17 @@ body.dark #static-clarification-message {
 			display: inline-block;
 			margin-left: 0px;
         }
-        
-        body.dark .gpon-commands-container select {
-            background-color: #333333;
-            border-color: #555555;
-            color: #fff;
-        }
+		
+		body.dark .gpon-commands-container label {
+    color: var(--text-color);
+}
 
+body.dark .gpon-commands-container select {
+    background-color: var(--input-bg-color);
+    border-color: var(--input-border-color);
+    color: var(--text-color);
+}
+        
         .command-list {
             border: none;
             border-radius: 0px;
@@ -388,15 +334,15 @@ body.dark #static-clarification-message {
         .command-text {
             font-family: 'Fira Code', monospace;
             font-weight: 600;
-            color: #333; 
+            color: var(--text-color); 
             user-select: none; 
             flex-shrink: 0;
             margin-right: 15px;
         }
-        
-        body.dark .command-text {
-            color: #E6A22E; 
-        }
+		
+		body.dark .command-text {
+    color: var(--secondary-accent-color);
+}
 
         .command-description {
             font-size: 0.9em;
@@ -443,21 +389,22 @@ body.dark #static-clarification-message {
             margin: 0;
             padding-top: 2rem; 
             padding-bottom: 0rem; 
-            background-color: #f4f4f9;
-            color: #333;
+            background-color: var(--bg-color);
+    color: var(--text-color);
             transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         h1 {
-            color: #444;
+            color: var(--header-color);
             margin-bottom: 1.5rem;
             text-align: center;
             font-size: 2.5rem;
         }
-        body.dark h1 {
-            color: #e0e0e0 !important;
-        }
-        
+		
+		.container h2 {
+    color: var(--header-color);
+}
+
         .page-title {
             margin-top: -20px;
         }
@@ -606,7 +553,24 @@ body.dark #static-clarification-message {
             width: 100%;
 			 white-space: nowrap;
         }
-        
+		
+		body.dark .date-calculator-container .date-input-group label {
+    color: var(--text-color); 
+}
+
+		body.dark .date-calculator-container .date-input-group input[type="date"],
+body.dark .date-calculator-container .date-input-group input[type="time"] { 
+    background-color: var(--input-bg-color);
+    border-color: var(--input-border-color);
+    color: var(--text-color);
+    color-scheme: dark; /* Це найважливіший рядок, він робить іконки світлими */
+}
+
+body.dark .date-calculator-container #result-section {
+    background-color: #2b2b2b; /* Тут можна залишити колір або створити нову змінну, напр. --result-bg-dark */
+    border-color: var(--input-border-color);
+}
+
         .date-calculator-container .date-input-group input[type="date"],
         body.dark .date-calculator-container .date-input-group input[type="date"],
         .date-calculator-container .date-input-group input[type="time"],
@@ -667,7 +631,7 @@ body.dark #static-clarification-message {
         }
         .date-calculator-container #result-section h2 {
             margin-top: 0;
-            color: #28a745;
+            color: var(--success-color);
             font-size: 1.3em;
         }
         .date-calculator-container #result-display {
@@ -676,15 +640,15 @@ body.dark #static-clarification-message {
             line-height: 1.4;
         }
         .date-calculator-container .duration-text {
-            color: #007bff;
+            color: var(--calc-duration-color);
             font-weight: bold;
         }
         .date-calculator-container .total-days-text {
-            color: #ff5722;
+            color: var(--calc-days-color);
             font-weight: bold;
         }
         .date-calculator-container .total-hours-text {
-            color: #6a0dad; 
+            color: var(--calc-hours-color); 
             font-weight: bold;
         }
 
@@ -714,12 +678,8 @@ body.dark #static-clarification-message {
 			right: 0; 
             width: 100%;
             height: 44px; 
-            background-color: #E8E8E8; 
+            background-color: var(--tab-strip-bg); 
             z-index: -1; 
-        }
-
-        body.dark .tabs::before {
-            background-color: #2D223D; 
         }
         
         body.dark .tabs {
@@ -737,7 +697,7 @@ body.dark #static-clarification-message {
             justify-content: center; 
             align-items: center; 
             background-color: transparent; 
-            color: #555; 
+            color: var(--tab-inactive-text);
             border: none; 
             border-radius: 0; 
             transition: all 0.2s ease;
@@ -762,28 +722,21 @@ body.dark #static-clarification-message {
 
         .tab-button.active {
             background-color: transparent; 
-            color: #007bff; 
+            color: var(--primary-accent-color);
             box-shadow: none;
             z-index: 2; 
-            border-bottom: 4px solid #007bff; 
+            border-bottom: 4px solid var(--primary-accent-color); 
             transform: none; 
         }
-
-        body.dark .tab-button {
-            background-color: transparent;
-            color: #e0e0e0;
-        }
+		
+		body.dark .tab-button.active {
+    color: var(--secondary-accent-color);
+    border-bottom-color: var(--secondary-accent-color);
+}
 
         body.dark .tab-button:hover:not(.active) {
             background-color: ; 
             color: #e0e0e0;
-        }
-
-        body.dark .tab-button.active {
-            background-color: transparent; 
-            color: #E6A22E; 
-            box-shadow: none;
-            border-bottom: 4px solid #E6A22E; 
         }
         
         #add-template-button {
@@ -955,9 +908,9 @@ body.dark #static-clarification-message {
 
 /* Стиль для головної кнопки "Додати" */
 #add-template-button {
-    background-color: #007bff;
+    background-color: var(--primary-accent-color);
     color: white;
-    border: 1px solid #007bff;
+    border: 1px solid var(--primary-accent-color);
     font-size: 1.6rem; /* Робимо "+" трохи більшим */
 }
 #add-template-button:hover {
@@ -969,49 +922,41 @@ body.dark #static-clarification-message {
 #import-templates-button,
 #export-templates-button {
     background-color: transparent;
-    color: #007bff;
-    border: 1px solid #ccc;
+    color: var(--primary-accent-color);
+    border: 1px solid var(--input-border-color);
 }
 #import-templates-button:hover,
 #export-templates-button:hover {
-    background-color: #007bff;
-    border-color: #007bff;
+    background-color: var(--primary-accent-color);
+    border-color: var(--primary-accent-color);
     color: white;
 }
-
-/* --- Адаптація для темної теми --- */
-
-/* Темна тема: кнопка "Додати" */
 body.dark #add-template-button {
-    background-color: #E6A22E;
-    border-color: #E6A22E;
-    color: #1b1c1d; /* Темний текст для кращого контрасту */
+    background-color: var(--secondary-accent-color);
+    border-color: var(--secondary-accent-color);
+    color: var(--bg-color); /* Темний текст на світлому фоні */
 }
 body.dark #add-template-button:hover {
     background-color: #c98c1c;
     border-color: #c98c1c;
 }
-
-/* Темна тема: кнопки "Імпорт/Експорт" */
 body.dark #import-templates-button,
 body.dark #export-templates-button {
-    background-color: transparent;
-    color: #E6A22E;
-    border-color: #555;
+    color: var(--secondary-accent-color);
 }
 body.dark #import-templates-button:hover,
 body.dark #export-templates-button:hover {
-    background-color: #E6A22E;
-    border-color: #E6A22E;
-    color: #1b1c1d;
+    background-color: var(--secondary-accent-color);
+    border-color: var(--secondary-accent-color);
+    color: var(--bg-color);
 }
-        
+       
         .template-field-group {
             position: absolute; 
-            border: 2px solid #ccc; 
+            border: 2px solid var(--template-border-color); 
             padding: 0;
             border-radius: 2px;
-            background-color: #fff;
+            background-color: var(--template-bg-color);
             min-height: 110px; 
             min-width: 300px;
             display: flex; 
@@ -1022,17 +967,12 @@ body.dark #export-templates-button:hover {
             overflow: hidden;
         }
         
-        body.dark .template-field-group {
-            background-color: #2b2b2b; 
-            border-color: #555;
-        }
-
         .template-drag-handle {
             width: 100%;
             height: 20px; 
-            background-color: #f0f0f0;
+            background-color: var(--template-handle-bg);
             cursor: move;
-            border-bottom: 1px solid #ddd;
+            border-bottom: 1px solid var(--template-handle-border);
             border-radius: 0px 0x 0 0;
             display: flex;
             align-items: center;
@@ -1041,26 +981,17 @@ body.dark #export-templates-button:hover {
             font-size: 18px;
             user-select: none;
         }
-        body.dark .template-drag-handle {
-            background-color: #4a4a4a;
-            border-bottom: 1px solid #555;
-            color: #aaa;
-        }
         
         .template-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 4px;
-            margin-bottom: 0px; 
-            flex-shrink: 0; 
-            background-color: #fff;
-            padding: 4px;
-            user-select: none;
-        }
-        body.dark .template-header {
-            background-color: transparent;
-        }
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 0px; 
+    flex-shrink: 0; 
+    padding: 4px;
+    user-select: none;
+}
 
         .template-name-input {
             flex-grow: 1; 
@@ -1070,14 +1001,20 @@ body.dark #export-templates-button:hover {
             font-size: 16px;
             color: #333;
             background-color: #fff;
-            min-width: 150px; 
+            min-width: 150px;	
         }
-        
-        body.dark .template-name-input {
-            background-color: #333333;
-            border-color: #555555;
-            color: #fff;
-        }
+		
+		body.dark .template-name-input {
+    background-color: var(--input-bg-color);
+    border-color: var(--input-border-color);
+    color: var(--text-color);
+}
+
+body.dark .template-field-group textarea {
+    background-color: var(--input-bg-color);
+    border-color: var(--input-border-color);
+    color: var(--text-color);
+}
         
         .template-field-group textarea {
             width: 100%;
@@ -1120,31 +1057,36 @@ body.dark #export-templates-button:hover {
         }
         
         .copy-template-btn {
-            background-color: #28a745;
-            color: white;
-        }
-        .copy-template-btn:hover {
-            background-color: #1e7e34;
-        }
-
-        .clear-template-btn {
-            background-color: #007bff;
-            color: white;
-        }
-        .clear-template-btn:hover {
-            background-color: #0056b3;
-        }
-        body.dark .clear-template-btn:hover {
-            background-color: #0056b3;
-        }
-
-        .delete-template-btn {
-            background-color: #dc3545;
-            color: white;
-        }
-        .delete-template-btn:hover {
-            background-color: #c82333;
-        }
+    background-color: var(--success-color);
+    color: white;
+}
+.copy-template-btn:hover {
+    filter: brightness(0.85); /* Універсальний ефект затемнення для всіх тем */
+}
+.paste-login-btn {
+    background-color: var(--button-paste-bg);
+    color: white;
+}
+.paste-login-btn:hover {
+    background-color: var(--button-paste-hover-bg);
+}
+.clear-template-btn {
+    background-color: var(--primary-accent-color);
+    color: white;
+}
+.clear-template-btn:hover {
+    filter: brightness(0.85);
+}
+body.dark .clear-template-btn {
+    background-color: var(--secondary-accent-color);
+}
+.delete-template-btn {
+    background-color: var(--danger-color);
+    color: white;
+}
+.delete-template-btn:hover {
+    filter: brightness(0.85);
+}
         
         .date-calculator-container .toggle-switch-label {
             position: relative;
@@ -1206,27 +1148,7 @@ body.dark #export-templates-button:hover {
             background-color: #e0e0e0;
         }
 		
-		/* === ВІЗУАЛЬНИЙ ІНДИКАТОР ЗМІНИ РОЗМІРУ (Grip handle) === */
-.template-field-group::after {
-    content: "";
-    position: absolute;
-    bottom: 2px;
-    right: 2px;
-    width: 10px;
-    height: 10px;
-    background: linear-gradient(135deg, transparent 50%, rgba(0,0,0,0.2) 50%);
-    clip-path: polygon(100% 0, 100% 100%, 0 100%);
-    cursor: nwse-resize;
-    pointer-events: none; 
-    z-index: 2;
-}
-
-/* Адаптація індикатора для темної теми */
-body.dark .template-field-group::after {
-    background: linear-gradient(135deg, transparent 50%, rgba(255,255,255,0.2) 50%);
-}
-
-/* === СТИЛІ ДЛЯ ФУНКЦІЇ ПОЗНАЧОК В ШАБЛОНАХ === */
+/* === СТИЛІ ДЛЯ ФУНКЦІЇ ПОЗНАЧОК В ШАБЛОНАХ (ВИПРАВЛЕНО) === */
 
 .textarea-wrapper {
     position: relative;
@@ -1261,6 +1183,17 @@ body.dark .line-marker-gutter {
 	border-right: 1px solid #555555;
 }
 
+/* НОВИЙ КОНТЕЙНЕР ДЛЯ СИНХРОНІЗАЦІЇ ПРОКРУТКИ */
+.line-marker-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    /* Ця властивість дає браузеру підказку, що елемент буде анімовано,
+       що може покращити продуктивність прокрутки. */
+    will-change: transform;
+}
+
 .line-marker {
     position: absolute;
     left: 50%;
@@ -1282,6 +1215,7 @@ body.dark .line-marker {
     width: 100%; 
     line-height: 1.5; 
 }
+
 
     </style>
 </head>
@@ -1312,14 +1246,14 @@ body.dark .line-marker {
         <div class="tab-content-wrapper"> 
 
             <div class="container login-generator-container active" data-content="login-generator" data-default-width="40%" data-default-height="680px">
-                <h2 style="color: #444; margin-top: 0; text-align: center;">🔐 Генератор логінів</h2>
+                <h2 style="margin-top: 0; text-align: center;">🔐 Генератор логінів</h2>
                 <p style="text-align: center;">Введіть повністю одне або декілька ПІБ, кожне — з нового рядка.<br>Також можливий трансліт ФОП, ТОВ, ПП, АТ, КБ, ГО.</p>
                 <textarea id="fullNameInput" rows="5" placeholder="Прізвище, Ім'я, та по Батькові" oninput="generateLogins()"></textarea>
                 <div id="results-container"></div>
             </div>
 
             <div class="container date-calculator-container" data-content="date-calculator" data-default-width="50%" data-default-height="490px">
-                <h2 style="color: #444; margin-top: 0; text-align: center;">🗓️ Калькулятор тривалості між датами</h2>
+                <h2 style="margin-top: 0; text-align: center;">🗓️ Калькулятор тривалості між датами</h2>
 
                 <div class="date-inputs-row">
                     <div class="date-input-group">
@@ -1355,7 +1289,7 @@ body.dark .line-marker {
             
             <div class="container gpon-commands-container" data-content="gpon-commands" data-default-width="60%" data-default-height="700px">
     
-    <h2 style="color: #444; margin-top: 0; text-align: center;">💻 Команди GPON/EPON/BDCOM</h2>
+    <h2 style="margin-top: 0; text-align: center;">💻 Команди GPON/EPON/BDCOM</h2>
 	<div id="controls-and-clarification" style="display: flex; align-items: flex-start; gap: 10px; margin-bottom: 5px; flex-wrap: wrap;">
     
     <div id="gpon-select-row" style="display: flex; align-items: center; gap: 2px;"> 
@@ -1377,7 +1311,7 @@ body.dark .line-marker {
             <div class="container" data-content="text-templates" data-default-width="100%" data-default-height="700px">
                 <div class="templates-header-wrapper">
     <div class="template-global-actions">
-        <h2 style="color: #444; margin-top: 0; text-align: center; margin-bottom: 0;">📝 Текстові шаблони</h2>
+        <h2 style="margin-top: 0; text-align: center; margin-bottom: 0;">📝 Текстові шаблони</h2>
         <button id="add-template-button" title="Додати шаблон">+</button>
         <input type="file" id="import-file-input" accept=".json" style="display: none;">
         <button id="import-templates-button" title="Імпортувати шаблони з файлу">
@@ -1396,7 +1330,7 @@ body.dark .line-marker {
     </div> 
     
     <div class="global-version-info">
-        Версія 2.8.3<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
+        Версія 2.8.7<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
     </div> 
     
     <div id="notification" class="notification">
@@ -1405,6 +1339,7 @@ body.dark .line-marker {
     
     <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
 <script>
+let lastGeneratedLogin = ''; // Зберігатиме останній згенерований логін
     function updateGridWrapperHeight() {
         const container = document.getElementById('templates-grid-wrapper');
         const templates = container.querySelectorAll('.template-field-group');
@@ -1537,54 +1472,65 @@ body.dark .line-marker {
         }).catch(err => console.error('Не вдалося скопіювати текст: ', err));
     }
 
-    function generateLogins() {
-        const fullNameInput = document.getElementById('fullNameInput');
-        const fullNames = fullNameInput.value.trim();
-        const resultsContainer = document.getElementById('results-container');
-        resultsContainer.innerHTML = ''; 
-        if (!fullNames) return;
+    // ЗАМІНІТЬ ВСЮ СТАРУ ФУНКЦІЮ generateLogins НА ЦЮ
+function generateLogins() {
+    const fullNameInput = document.getElementById('fullNameInput');
+    const fullNames = fullNameInput.value.trim();
+    const resultsContainer = document.getElementById('results-container');
+    resultsContainer.innerHTML = '';
+    
+    lastGeneratedLogin = ''; // Очищуємо змінну перед новою генерацією
 
-        const lines = fullNames.split('\n');
-        const companyRegex = /(^|\s)(фоп|тов|пп|ат|кб|го)(\s|$)/i; 
-        lines.forEach(line => {
-            const fullName = line.trim();
-            if (fullName === '') return;
+    if (!fullNames) return;
 
-            if (/[a-z]/i.test(fullName)) { 
-                const errorElement = document.createElement('div');
-                errorElement.className = 'result-item';
-                errorElement.innerHTML = `<span style="color: #dc3545; font-weight: bold; font-size: 1.1em; text-align: center">Трансліт тільки з української!</span>`; 
-                resultsContainer.appendChild(errorElement);
-                return;
-            }
-            
-            const parts = fullName.split(/\s+/).filter(p => p.length > 0);
-            const isCompany = companyRegex.test(fullName.toLowerCase());
-            let login = '';
+    const lines = fullNames.split('\n');
+    const companyRegex = /(^|\s)(фоп|тов|пп|ат|кб|го)(\s|$)/i;
+    lines.forEach(line => {
+        const fullName = line.trim();
+        if (fullName === '') return;
 
-            if (isCompany || parts.length > 3) {
-                login = transliterate(fullName);
-            } else {
-                let transliteratedLastName = parts.length >= 1 ? transliterate(parts[0]) : '';
-                let firstNameInitial = parts.length >= 2 ? transliterate(parts[1].charAt(0)) : '';
-                let patronymicInitial = parts.length >= 3 ? transliterate(parts[2].charAt(0)) : '';
-                login = `${transliteratedLastName}${firstNameInitial}${patronymicInitial}`;
-            }
+        if (/[a-z]/i.test(fullName)) {
+            const errorElement = document.createElement('div');
+            errorElement.className = 'result-item';
+            errorElement.innerHTML = `<span style="color: #dc3545; font-weight: bold; font-size: 1.1em; text-align: center">Трансліт тільки з української!</span>`;
+            resultsContainer.appendChild(errorElement);
+            return;
+        }
 
-            login = login.replace(/[^a-z0-9]/g, '');
-            if (login === '') {
-                const errorElement = document.createElement('div');
-                errorElement.className = 'result-item';
-                errorElement.innerHTML = `<span style="color: #dc3545;">"${fullName}" - Некоректний формат!</span>`; 
-                resultsContainer.appendChild(errorElement);
-                return;
-            }
-            const resultItem = document.createElement('div');
-            resultItem.className = 'result-item';
-            resultItem.innerHTML = `<span>${login}</span><div class="original-name" title="${fullName}">${fullName}</div><button onclick="copyLogin('${login}', this)">Копіювати</button>`;
-            resultsContainer.appendChild(resultItem);
-        });
-    }
+        const parts = fullName.split(/\s+/).filter(p => p.length > 0);
+        const isCompany = companyRegex.test(fullName.toLowerCase());
+        let login = '';
+
+        if (isCompany || parts.length > 3) {
+            login = transliterate(fullName);
+        } else {
+            let transliteratedLastName = parts.length >= 1 ? transliterate(parts[0]) : '';
+            let firstNameInitial = parts.length >= 2 ? transliterate(parts[1].charAt(0)) : '';
+            let patronymicInitial = parts.length >= 3 ? transliterate(parts[2].charAt(0)) : '';
+            login = `${transliteratedLastName}${firstNameInitial}${patronymicInitial}`;
+        }
+
+        login = login.replace(/[^a-z0-9]/g, '');
+        if (login === '') {
+            const errorElement = document.createElement('div');
+            errorElement.className = 'result-item';
+            errorElement.innerHTML = `<span style="color: #dc3545;">"${fullName}" - Некоректний формат!</span>`;
+            resultsContainer.appendChild(errorElement);
+            return;
+        }
+
+        // === НОВИЙ КОД: Зберігаємо ПЕРШИЙ згенерований логін ===
+        if (!lastGeneratedLogin) {
+            lastGeneratedLogin = login;
+        }
+        // === КІНЕЦЬ НОВОГО КОДУ ===
+
+        const resultItem = document.createElement('div');
+        resultItem.className = 'result-item';
+        resultItem.innerHTML = `<span>${login}</span><div class="original-name" title="${fullName}">${fullName}</div><button onclick="copyLogin('${login}', this)">Копіювати</button>`;
+        resultsContainer.appendChild(resultItem);
+    });
+}
 
     function getCorrectDayWord(number) {
         if (number === 0) return "днів";
@@ -1817,20 +1763,15 @@ body.dark .line-marker {
                     const parentContainer = document.getElementById('templates-grid-wrapper');
                     const parentWidth = parentContainer.offsetWidth;
 
-                    // Потенційна нова позиція
                     let newX = position.x + event.dx;
                     let newY = position.y + event.dy;
 
-                    // --- НОВІ ОБМЕЖЕННЯ КОНТЕЙНЕРА ---
-                    // Заборона виходу за ліву та верхню межу
                     if (newX < 0) newX = 0;
                     if (newY < 0) newY = 0;
                     
-                    // Заборона виходу за праву межу
                     if (newX + target.offsetWidth > parentWidth) {
                         newX = parentWidth - target.offsetWidth;
                     }
-                    // --- КІНЕЦЬ ОБМЕЖЕНЬ ---
 
                     const fullMoveRect = { left: newX, top: newY, right: newX + target.offsetWidth, bottom: newY + target.offsetHeight };
                     const xMoveRect = { left: newX, top: position.y, right: newX + target.offsetWidth, bottom: position.y + target.offsetHeight };
@@ -1870,124 +1811,225 @@ body.dark .line-marker {
             edges: { left: false, right: true, bottom: true, top: false },
             margin: 16,
             listeners: {
-                start: syncStateOnStart,
-                move(event) {
-                    const target = event.target;
-                    const parentContainer = document.getElementById('templates-grid-wrapper');
-                    let newWidth = event.rect.width, newHeight = event.rect.height;
-                    const x = parseFloat(target.getAttribute('data-x')) || 0, y = parseFloat(target.getAttribute('data-y')) || 0;
+        start: syncStateOnStart,
+        move(event) {
+            const target = event.target;
+            const parentContainer = document.getElementById('templates-grid-wrapper');
+            const x = parseFloat(target.getAttribute('data-x')) || 0;
+            const y = parseFloat(target.getAttribute('data-y')) || 0;
+
+            // Потенційні нові розміри з події
+            let newWidth = event.rect.width;
+            let newHeight = event.rect.height;
+
+            // --- КРОК 1: ПЕРЕВІРКА ТА ЗАСТОСУВАННЯ ШИРИНИ ---
+
+            // Створюємо тестовий прямокутник ТІЛЬКИ для зміни ширини
+            const widthTestRect = {
+                left: x,
+                top: y,
+                right: x + newWidth,
+                bottom: y + target.offsetHeight // Висота залишається поточною
+            };
+            
+            let widthCollides = false;
+            // Перевірка на вихід за межі батьківського контейнера
+            if (widthTestRect.right > parentContainer.offsetWidth) {
+                widthCollides = true;
+                // Коригуємо ширину, щоб вона не виходила за межі
+                newWidth = parentContainer.offsetWidth - x; 
+            }
+
+            // Перевіряємо зіткнення з іншими блоками по ширині
+            if (!widthCollides) {
+                for (const other of document.querySelectorAll('.template-field-group')) {
+                    if (other === target) continue;
+                    const otherRect = { left: parseFloat(other.getAttribute('data-x')), top: parseFloat(other.getAttribute('data-y')), right: parseFloat(other.getAttribute('data-x')) + other.offsetWidth, bottom: parseFloat(other.getAttribute('data-y')) + other.offsetHeight };
+                    const paddedOtherRect = { left: otherRect.left - GAP, top: otherRect.top - GAP, right: otherRect.right + GAP, bottom: otherRect.bottom + GAP };
                     
-                    // Обмеження зміни розміру по ширині контейнера (це вже було і працює коректно)
-                    if (x + newWidth > parentContainer.offsetWidth) {
-                        newWidth = parentContainer.offsetWidth - x;
+                    if (isIntersecting(widthTestRect, paddedOtherRect)) {
+                        widthCollides = true;
+                        break;
                     }
-                    
-                    const targetRect = { left: x, top: y, right: x + newWidth, bottom: y + newHeight };
-                    let collision = false;
-                    for (const other of document.querySelectorAll('.template-field-group')) {
-                        if (other === target) continue;
-                        const otherRect = {
-                            left: parseFloat(other.getAttribute('data-x')), top: parseFloat(other.getAttribute('data-y')),
-                            right: parseFloat(other.getAttribute('data-x')) + other.offsetWidth, bottom: parseFloat(other.getAttribute('data-y')) + other.offsetHeight
-                        };
-                        const paddedOtherRect = { left: otherRect.left - GAP, top: otherRect.top - GAP, right: otherRect.right + GAP, bottom: otherRect.bottom + GAP };
-                        if (isIntersecting(targetRect, paddedOtherRect)) {
-                            collision = true;
-                            break;
-                        }
-                    }
-                    if (!collision) {
-                        target.style.width = `${newWidth}px`;
-                        target.style.height = `${newHeight}px`;
-                        position.x += event.deltaRect.left;
-                        position.y += event.deltaRect.top;
-                        target.style.transform = `translate(${position.x}px, ${position.y}px)`;
-                    }
-                },
-                end(event) {
-                    event.target.setAttribute('data-x', position.x);
-                    event.target.setAttribute('data-y', position.y);
-                    saveTemplates();
-                    updateGridWrapperHeight();
                 }
-            },
+            }
+
+            // Застосовуємо нову ширину, ТІЛЬКИ якщо не було зіткнень
+            if (!widthCollides) {
+                target.style.width = `${newWidth}px`;
+            }
+
+            // --- КРОК 2: ПЕРЕВІРКА ТА ЗАСТОСУВАННЯ ВИСОТИ ---
+
+            // Створюємо тестовий прямокутник ТІЛЬКИ для зміни висоти
+            const heightTestRect = {
+                left: x,
+                top: y,
+                right: x + target.offsetWidth, // Ширина залишається поточною (вже, можливо, оновленою)
+                bottom: y + newHeight
+            };
+
+            let heightCollides = false;
+            for (const other of document.querySelectorAll('.template-field-group')) {
+                if (other === target) continue;
+                const otherRect = { left: parseFloat(other.getAttribute('data-x')), top: parseFloat(other.getAttribute('data-y')), right: parseFloat(other.getAttribute('data-x')) + other.offsetWidth, bottom: parseFloat(other.getAttribute('data-y')) + other.offsetHeight };
+                const paddedOtherRect = { left: otherRect.left - GAP, top: otherRect.top - GAP, right: otherRect.right + GAP, bottom: otherRect.bottom + GAP };
+
+                if (isIntersecting(heightTestRect, paddedOtherRect)) {
+                    heightCollides = true;
+                    break;
+                }
+            }
+            
+            // Застосовуємо нову висоту, ТІЛЬКИ якщо не було зіткнень
+            if (!heightCollides) {
+                target.style.height = `${newHeight}px`;
+            }
+
+            // --- КРОК 3: Оновлення позиції (необхідно для interact.js) ---
+            position.x += event.deltaRect.left;
+            position.y += event.deltaRect.top;
+            target.style.transform = `translate(${position.x}px, ${position.y}px)`;
+        },
+        end(event) {
+            // ... (ця частина залишається без змін)
+            event.target.setAttribute('data-x', position.x);
+            event.target.setAttribute('data-y', position.y);
+            saveTemplates();
+            updateGridWrapperHeight();
+        }
+    },
             modifiers: [ interact.modifiers.restrictSize({ min: { width: 300, height: 110 } }) ],
             inertia: false
         });
     }
+
+    // --- ПОЧАТОК НОВОЇ, ПОКРАЩЕНОЇ СИСТЕМИ ЗАКЛАДОК ---
+
+    /**
+     * Розраховує схожість двох рядків за алгоритмом Левенштейна.
+     * Повертає значення від 0 (зовсім різні) до 1 (ідентичні).
+     */
+    function similarity(s1, s2) {
+        let longer = s1;
+        let shorter = s2;
+        if (s1.length < s2.length) {
+            longer = s2;
+            shorter = s1;
+        }
+        let longerLength = longer.length;
+        if (longerLength === 0) {
+            return 1.0;
+        }
+        return (longerLength - editDistance(longer, shorter)) / parseFloat(longerLength);
+    }
+
+    function editDistance(s1, s2) {
+        s1 = s1.toLowerCase();
+        s2 = s2.toLowerCase();
+
+        const costs = [];
+        for (let i = 0; i <= s1.length; i++) {
+            let lastValue = i;
+            for (let j = 0; j <= s2.length; j++) {
+                if (i === 0) {
+                    costs[j] = j;
+                } else {
+                    if (j > 0) {
+                        let newValue = costs[j - 1];
+                        if (s1.charAt(i - 1) !== s2.charAt(j - 1)) {
+                            newValue = Math.min(Math.min(newValue, lastValue), costs[j]) + 1;
+                        }
+                        costs[j - 1] = lastValue;
+                        lastValue = newValue;
+                    }
+                }
+            }
+            if (i > 0) {
+                costs[s2.length] = lastValue;
+            }
+        }
+        return costs[s2.length];
+    }
     
+    /**
+     * Оновлює позиції закладок після зміни тексту.
+     * Ця функція прив'язує закладки до контенту, а не до номера рядка.
+     */
     function updateBookmarksOnTextChange(fieldGroup) {
         const textarea = fieldGroup.querySelector('textarea');
-        const newText = textarea.value;
-        const oldText = fieldGroup.dataset.lastContent || '';
-        if (oldText === newText) return;
-
-        if (newText === '') {
-            fieldGroup.dataset.bookmarks = '[]';
-            renderLineMarkers(fieldGroup);
-            fieldGroup.dataset.lastContent = newText;
-            return; 
-        }
-        const oldBookmarks = JSON.parse(fieldGroup.dataset.bookmarks || '[]');
-        if (oldBookmarks.length === 0) {
-            fieldGroup.dataset.lastContent = newText;
-            return;
-        }
-
-        const oldLines = oldText.split('\n'), newLines = newText.split('\n');
-        let firstDiffIndex = 0;
-        while (firstDiffIndex < oldLines.length && firstDiffIndex < newLines.length && oldLines[firstDiffIndex] === newLines[firstDiffIndex]) {
-            firstDiffIndex++;
-        }
-        let lastDiffOldIndex = oldLines.length - 1, lastDiffNewIndex = newLines.length - 1;
-        while (lastDiffOldIndex >= firstDiffIndex && lastDiffNewIndex >= firstDiffIndex && oldLines[lastDiffOldIndex] === newLines[lastDiffNewIndex]) {
-            lastDiffOldIndex--;
-            lastDiffNewIndex--;
-        }
-
-        const newBookmarks = new Set();
-        const lineDelta = (lastDiffNewIndex - firstDiffIndex + 1) - (lastDiffOldIndex - firstDiffIndex + 1);
+        const oldBookmarksData = JSON.parse(fieldGroup.dataset.bookmarks || '[]');
         
-        oldBookmarks.forEach(oldLineNumber => {
-            const oldLineIndex = oldLineNumber - 1;
-            
-            // Якщо закладка була ДО блоку змін, вона залишається на місці.
-            if (oldLineIndex < firstDiffIndex) {
-                newBookmarks.add(oldLineNumber);
-            } 
-            // Якщо закладка була ПІСЛЯ блоку змін, вона зсувається.
-            else if (oldLineIndex > lastDiffOldIndex) {
-                const newLineNumber = oldLineNumber + lineDelta;
-                if (newLineNumber > 0 && newLineNumber <= newLines.length) newBookmarks.add(newLineNumber);
-            } 
-            // *** ОСЬ ТУТ НОВА, ВИПРАВЛЕНА ЛОГІКА ***
-            // Якщо закладка була ВСЕРЕДИНІ блоку змін.
-            else {
-                const oldBlockLineCount = lastDiffOldIndex - firstDiffIndex + 1;
-                const newBlockLineCount = lastDiffNewIndex - firstDiffIndex + 1;
+        if (oldBookmarksData.length === 0) return;
 
-                // ЗБЕРІГАЄМО закладку, якщо кількість рядків у блоці не змінилася.
-                // Це означає, що рядок був відредагований, а не видалений.
-                if (oldBlockLineCount === newBlockLineCount) {
-                    newBookmarks.add(oldLineNumber);
+        const newLines = textarea.value.split('\n');
+        const newBookmarks = [];
+
+        oldBookmarksData.forEach(oldBookmark => {
+            let newIndex = -1;
+
+            // Стратегія 1: Швидка перевірка на старому місці.
+            if (oldBookmark.lineNumber <= newLines.length && newLines[oldBookmark.lineNumber - 1] === oldBookmark.content) {
+                newIndex = oldBookmark.lineNumber - 1;
+            } 
+            // Стратегія 2: Пошук точного збігу по всьому тексту.
+            else {
+                newIndex = newLines.indexOf(oldBookmark.content);
+            }
+
+            // Стратегія 3: "Розумний" пошук схожого рядка, якщо точного збігу немає.
+            if (newIndex === -1 && oldBookmark.content.trim() !== '') {
+                let bestMatch = { index: -1, score: 0.65 }; // Поріг схожості 65%
+                
+                for (let i = 0; i < newLines.length; i++) {
+                    if (newBookmarks.some(nb => nb.lineNumber === i + 1)) continue;
+
+                    const score = similarity(oldBookmark.content, newLines[i]);
+                    if (score > bestMatch.score) {
+                        bestMatch.score = score;
+                        bestMatch.index = i;
+                    }
                 }
-                // В іншому випадку (рядки були додані/видалені), закладка видаляється,
-                // оскільки ми не можемо точно визначити її нове положення.
+                if (bestMatch.index !== -1) {
+                   newIndex = bestMatch.index;
+                }
+            }
+
+            if (newIndex !== -1) {
+                newBookmarks.push({
+                    lineNumber: newIndex + 1,
+                    content: newLines[newIndex] 
+                });
             }
         });
 
-        fieldGroup.dataset.bookmarks = JSON.stringify(Array.from(newBookmarks).sort((a, b) => a - b));
-        renderLineMarkers(fieldGroup);
-        fieldGroup.dataset.lastContent = newText;
-    }
+        const uniqueBookmarks = Array.from(new Map(newBookmarks.map(item => [item.lineNumber, item])).values());
 
+        fieldGroup.dataset.bookmarks = JSON.stringify(uniqueBookmarks);
+        renderLineMarkers(fieldGroup);
+    }
+    
     function createTemplateField(data = {}) {
         const { name = '', content = '', width = '300px', height = '110px', x = 0, y = 0, bookmarks = [] } = data;
         const container = document.getElementById('templates-grid-wrapper'); 
         const fieldGroup = document.createElement('div');
-        fieldGroup.className = 'template-field-group'; 
-        fieldGroup.dataset.bookmarks = JSON.stringify(bookmarks);
-        fieldGroup.dataset.lastContent = content;
+        fieldGroup.className = 'template-field-group';
+        
+        let modernBookmarks = [];
+        if (bookmarks.length > 0) {
+            const lines = content.split('\n');
+            if (typeof bookmarks[0] === 'number') { // Старий формат
+                bookmarks.forEach(lineNumber => {
+                    if (lineNumber > 0 && lineNumber <= lines.length) {
+                        modernBookmarks.push({ lineNumber: lineNumber, content: lines[lineNumber - 1] });
+                    }
+                });
+            } else { // Новий формат
+                modernBookmarks = bookmarks;
+            }
+        }
+        fieldGroup.dataset.bookmarks = JSON.stringify(modernBookmarks);
+        
         fieldGroup.style.width = width;
         fieldGroup.style.height = height;
         fieldGroup.setAttribute('data-x', x);
@@ -2025,6 +2067,34 @@ body.dark .line-marker {
                 setTimeout(() => { copyButton.innerHTML = '<i class="fas fa-copy"></i>'; copyButton.disabled = false; }, 1500);
             }).catch(err => console.error('Не вдалося скопіювати текст: ', err));
         };
+		
+		const pasteLoginButton = document.createElement('button');
+pasteLoginButton.innerHTML = '<i class="fas fa-paste"></i>';
+pasteLoginButton.title = 'Вставити згенерований логін';
+pasteLoginButton.className = 'paste-login-btn'; // Використовуємо новий клас
+pasteLoginButton.onclick = () => {
+    if (!lastGeneratedLogin) {
+        showNotification('Спочатку згенеруйте логін!');
+        return;
+    }
+    
+    const textarea = fieldGroup.querySelector('textarea');
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const text = textarea.value;
+    
+    // Вставляємо логін на місце курсору або замість виділеного тексту
+    textarea.value = text.substring(0, start) + lastGeneratedLogin + text.substring(end);
+    
+    // Повертаємо фокус і ставимо курсор після вставленого тексту
+    textarea.focus();
+    const newCursorPos = start + lastGeneratedLogin.length;
+    textarea.setSelectionRange(newCursorPos, newCursorPos);
+
+    // Оновлюємо дані, оскільки текст змінився
+    updateBookmarksOnTextChange(fieldGroup);
+    saveTemplates();
+};
         
         const clearButton = document.createElement('button');
         clearButton.innerHTML = '<i class="fas fa-eraser"></i>';
@@ -2033,7 +2103,8 @@ body.dark .line-marker {
         clearButton.onclick = () => {
             const textarea = fieldGroup.querySelector('textarea');
             textarea.value = '';
-            updateBookmarksOnTextChange(fieldGroup);
+            fieldGroup.dataset.bookmarks = '[]';
+            renderLineMarkers(fieldGroup);
             saveTemplates();
         };
         
@@ -2051,6 +2122,13 @@ body.dark .line-marker {
         textareaWrapper.className = 'textarea-wrapper';
         const gutter = document.createElement('div');
         gutter.className = 'line-marker-gutter';
+
+        // *** ОСНОВНЕ ВИПРАВЛЕННЯ ДЛЯ ПРОКРУТКИ ***
+        const markerContainer = document.createElement('div');
+        markerContainer.className = 'line-marker-container';
+        gutter.appendChild(markerContainer);
+        // *** КІНЕЦЬ ВИПРАВЛЕННЯ ***
+
         const textarea = document.createElement('textarea');
         textarea.placeholder = 'Введіть текст тут...';
         textarea.value = content;
@@ -2070,18 +2148,37 @@ body.dark .line-marker {
 
         textarea.oninput = () => {
             updateBookmarksOnTextChange(fieldGroup);
-            gutter.scrollTop = textarea.scrollTop;
             saveTemplates();
         };
-        textarea.onscroll = () => { gutter.scrollTop = textarea.scrollTop; };
+
+        // *** ОСНОВНЕ ВИПРАВЛЕННЯ ДЛЯ ПРОКРУТКИ ***
+        textarea.onscroll = () => {
+            markerContainer.style.transform = `translateY(-${textarea.scrollTop}px)`;
+        };
+        // *** КІНЕЦЬ ВИПРАВЛЕННЯ ***
+
         gutter.onclick = (event) => {
             const style = window.getComputedStyle(textarea);
             const lineHeight = parseFloat(style.lineHeight);
             const paddingTop = parseFloat(style.paddingTop);
-            const clickedLine = Math.floor((event.offsetY + gutter.scrollTop - paddingTop) / lineHeight) + 1;
+            
+            // *** ВИПРАВЛЕННЯ РОЗРАХУНКУ РЯДКА ПРИ КЛІКУ ***
+            const clickedLineNumber = Math.floor((event.offsetY + textarea.scrollTop - paddingTop) / lineHeight) + 1;
+            
+            const lines = textarea.value.split('\n');
+            if (clickedLineNumber > lines.length || clickedLineNumber < 1) return;
+
             let currentBookmarks = JSON.parse(fieldGroup.dataset.bookmarks || '[]');
-            const index = currentBookmarks.indexOf(clickedLine);
-            if (index > -1) { currentBookmarks.splice(index, 1); } else { currentBookmarks.push(clickedLine); }
+            const existingBookmarkIndex = currentBookmarks.findIndex(b => b.lineNumber === clickedLineNumber);
+
+            if (existingBookmarkIndex > -1) {
+                currentBookmarks.splice(existingBookmarkIndex, 1);
+            } else {
+                currentBookmarks.push({
+                    lineNumber: clickedLineNumber,
+                    content: lines[clickedLineNumber - 1]
+                });
+            }
             fieldGroup.dataset.bookmarks = JSON.stringify(currentBookmarks);
             renderLineMarkers(fieldGroup);
             saveTemplates();
@@ -2091,6 +2188,7 @@ body.dark .line-marker {
         textareaWrapper.appendChild(textarea);
         headerDiv.appendChild(nameInput);
         actionsDiv.appendChild(copyButton);
+		actionsDiv.appendChild(pasteLoginButton);
         actionsDiv.appendChild(clearButton);
         actionsDiv.appendChild(deleteButton);
         headerDiv.appendChild(actionsDiv);
@@ -2109,22 +2207,27 @@ body.dark .line-marker {
     }
 
     function renderLineMarkers(fieldGroup) {
-        const gutter = fieldGroup.querySelector('.line-marker-gutter');
+        // *** Оновлена функція для роботи з новим контейнером ***
+        const markerContainer = fieldGroup.querySelector('.line-marker-container');
         const textarea = fieldGroup.querySelector('textarea');
-        if (!gutter || !textarea) return;
-        gutter.innerHTML = ''; 
+        if (!markerContainer || !textarea) return;
+        
+        markerContainer.innerHTML = ''; 
         const bookmarks = JSON.parse(fieldGroup.dataset.bookmarks || '[]');
         const style = window.getComputedStyle(textarea);
         const lineHeight = parseFloat(style.lineHeight);
         const paddingTop = parseFloat(style.paddingTop);
-        bookmarks.forEach(lineNumber => {
+        
+        bookmarks.forEach(bookmark => {
             const marker = document.createElement('div');
             marker.className = 'line-marker';
             marker.textContent = '●';
-            marker.style.top = `${paddingTop + (lineNumber - 1) * lineHeight - 4.5}px`;
-            gutter.appendChild(marker);
+            marker.style.top = `${paddingTop + (bookmark.lineNumber - 1) * lineHeight - 4.5}px`;
+            markerContainer.appendChild(marker);
         });
     }
+
+    // --- КІНЕЦЬ НОВОЇ СИСТЕМИ ЗАКЛАДОК ---
 
     function addTemplate() {
         const container = document.getElementById('templates-grid-wrapper');
@@ -2196,7 +2299,6 @@ body.dark .line-marker {
         document.querySelectorAll('#templates-grid-wrapper .template-field-group').forEach(group => {
             const nameInput = group.querySelector('.template-name-input');
             const textarea = group.querySelector('textarea');
-            if (textarea) group.dataset.lastContent = textarea.value;
             templates.push({
                 name: nameInput ? nameInput.value : '',
                 content: textarea ? textarea.value : '',
@@ -2293,11 +2395,9 @@ body.dark .line-marker {
     const containerWidth = container.clientWidth;
     const GAP = 6;
 
-    // --- КРОК 1: ДЕТЕКТОР КОНФЛІКТІВ (з надійними даними) ---
     let hasConflicts = false;
     for (let i = 0; i < allTemplates.length; i++) {
         const t1 = allTemplates[i];
-        // ВИПРАВЛЕНО: Беремо розміри зі стилів, а не з offsetWidth/offsetHeight
         const t1_width = parseInt(t1.style.width, 10) || t1.offsetWidth;
         const t1_height = parseInt(t1.style.height, 10) || t1.offsetHeight;
 
@@ -2315,7 +2415,6 @@ body.dark .line-marker {
 
         for (let j = i + 1; j < allTemplates.length; j++) {
             const t2 = allTemplates[j];
-            // ВИПРАВЛЕНО: Те ж саме для другого елемента
             const t2_width = parseInt(t2.style.width, 10) || t2.offsetWidth;
             const t2_height = parseInt(t2.style.height, 10) || t2.offsetHeight;
             
@@ -2333,10 +2432,7 @@ body.dark .line-marker {
         if (hasConflicts) break;
     }
 
-    // --- КРОК 2: ВИБІР РЕЖИМУ ---
-
     if (hasConflicts) {
-        // --- РЕЖИМ АВТОМАТИЧНОГО ПАКУВАННЯ ---
         allTemplates.sort((a, b) => (parseFloat(a.getAttribute('data-y')) - parseFloat(b.getAttribute('data-y'))) || (parseFloat(a.getAttribute('data-x')) - parseFloat(b.getAttribute('data-x'))));
 
         const occupiedAreas = [];
@@ -2344,7 +2440,6 @@ body.dark .line-marker {
         allTemplates.forEach(template => {
             let placed = false;
             let currentY = 0;
-            // ВИПРАВЛЕНО: Використовуємо надійні розміри
             const templateWidth = parseInt(template.style.width, 10) || template.offsetWidth;
             const templateHeight = parseInt(template.style.height, 10) || template.offsetHeight;
 
@@ -2380,7 +2475,6 @@ body.dark .line-marker {
         });
         
     } else {
-        // --- РЕЖИМ ВІДНОВЛЕННЯ ---
         allTemplates.forEach(template => {
             const x = parseFloat(template.getAttribute('data-x'));
             const y = parseFloat(template.getAttribute('data-y'));
@@ -2388,7 +2482,6 @@ body.dark .line-marker {
         });
     }
 
-    // --- КРОК 3: ОНОВЛЕННЯ ВИСОТИ КОНТЕЙНЕРА ---
     updateGridWrapperHeight();
 }
 
@@ -2438,4 +2531,3 @@ body.dark .line-marker {
     </script>
 </body>
 </html>
-
