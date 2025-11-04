@@ -1674,7 +1674,7 @@ function generateLogins() {
         gpon: [
 		{ command: 'show gpon onu uncfg', description: 'Показати незареєстровані ONU на PON' }, 
 		{ command: 'show pon power attenuation gpon-onu_1/1/1:1', description: 'Показати сигнал ONU абонента' },
-        { command: 'show gpon onu state gpon-olt_1/1/1', description: 'Показати кількість активних та зареєстрованих ОНУ на порту 1/1/1' },		
+        { command: 'show gpon onu state gpon-olt_1/1/1', description: 'Показати кількість активних та зареєстрованих ONU на порту 1/1/1' },		
 		{ command: 'show running-config interface gpon-onu_1/1/1:1', description: 'Показати конфіг ONU' }, 
 		{ command: 'show gpon onu detail-info gpon-onu_1/1/1:1', description: 'Показати логи падіння та підняття ONU' }, 
 		{ command: 'show clock', description: 'Показати час на OLT' }, 
@@ -1698,14 +1698,14 @@ function generateLogins() {
 		{ command: 'show ip dhcp snooping port epon-onu_1/1/1:1', description: 'Показати Mac адресу, IP та VLAN роутера' }],
         
 		bdcom: [
-		{ command: 'show epon active-onu interface ePON 0/4', description: 'Показати активні ону на 4 порту' },
+		{ command: 'show epon active-onu interface ePON 0/4', description: 'Показати активні ONU на 4 порту' },
 		{ command: 'conf', description: 'Зайти в налаштування на OLT' },
-		{ command: 'show epon interface ePON 0/4:52 onu ctc optical-transceiver-diagnosis', description: 'Перевірка сигналу ОНУ' },
-		{ command: 'write all', description: 'Зберегти внесені зміни на ОЛТ' },
-		{ command: 'show epon onu-information mac-address 4cd7.c888.3e9e', description: 'Пошук ОНУ за Mac адресою' },
-		{ command: 'show mac address-table interface ePON 0/4:52', description: 'Показати Mac адресу обладнання після ОНУ' },
-		{ command: 'show epon interface ePON 0/4:52 onu port 1 state', description: 'Показати зєднання між ОНУ та роутером' },
-		{ command: 'show version', description: 'Показати інформацію та час коли перезавантажувався ОЛТ' },]
+		{ command: 'show epon interface ePON 0/4:52 onu ctc optical-transceiver-diagnosis', description: 'Перевірка сигналу ONU' },
+		{ command: 'write all', description: 'Зберегти внесені зміни на OLT' },
+		{ command: 'show epon onu-information mac-address 4cd7.c888.3e9e', description: 'Пошук ONU за Mac адресою' },
+		{ command: 'show mac address-table interface ePON 0/4:52', description: 'Показати Mac адресу обладнання після ONU' },
+		{ command: 'show epon interface ePON 0/4:52 onu port 1 state', description: 'Показати зєднання між ONU та роутером' },
+		{ command: 'show version', description: 'Показати інформацію та час коли перезавантажувався OLT' },]
 
 
     };
@@ -2565,3 +2565,4 @@ pasteLoginButton.onclick = () => {
     </script>
 </body>
 </html>
+
