@@ -1330,7 +1330,7 @@ body.dark .line-marker {
     </div> 
     
     <div class="global-version-info">
-        Версія 2.8.7<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
+        Версія 2.8.8<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
     </div> 
     
     <div id="notification" class="notification">
@@ -1991,57 +1991,67 @@ function generateLogins() {
      * Ця функція прив'язує закладки до контенту, а не до номера рядка.
      */
     function updateBookmarksOnTextChange(fieldGroup) {
-        const textarea = fieldGroup.querySelector('textarea');
-        const oldBookmarksData = JSON.parse(fieldGroup.dataset.bookmarks || '[]');
-        
-        if (oldBookmarksData.length === 0) return;
+    const textarea = fieldGroup.querySelector('textarea');
+    const oldBookmarksData = JSON.parse(fieldGroup.dataset.bookmarks || '[]');
+    
+    if (oldBookmarksData.length === 0) return;
 
-        const newLines = textarea.value.split('\n');
-        const newBookmarks = [];
+    const newLines = textarea.value.split('\n');
+    const newBookmarks = [];
 
-        oldBookmarksData.forEach(oldBookmark => {
-            let newIndex = -1;
+    oldBookmarksData.forEach(oldBookmark => {
+        const oldContent = oldBookmark.content || "";
+        const trimmedOld = oldContent.trim();
 
-            // Стратегія 1: Швидка перевірка на старому місці.
-            if (oldBookmark.lineNumber <= newLines.length && newLines[oldBookmark.lineNumber - 1] === oldBookmark.content) {
+        // --- Якщо старий рядок стерто повністю — не переносимо закладку ---
+        if (!trimmedOld.length) return;
+
+        let newIndex = -1;
+
+        // 1️⃣ Швидка перевірка на старому місці (залишаємо навіть якщо залишилась 1 літера)
+        if (oldBookmark.lineNumber <= newLines.length) {
+            const currentLine = newLines[oldBookmark.lineNumber - 1] || "";
+            if (currentLine.trim() === trimmedOld || currentLine.startsWith(trimmedOld.slice(0, 1))) {
                 newIndex = oldBookmark.lineNumber - 1;
-            } 
-            // Стратегія 2: Пошук точного збігу по всьому тексту.
-            else {
-                newIndex = newLines.indexOf(oldBookmark.content);
             }
+        }
 
-            // Стратегія 3: "Розумний" пошук схожого рядка, якщо точного збігу немає.
-            if (newIndex === -1 && oldBookmark.content.trim() !== '') {
-                let bestMatch = { index: -1, score: 0.65 }; // Поріг схожості 65%
-                
-                for (let i = 0; i < newLines.length; i++) {
-                    if (newBookmarks.some(nb => nb.lineNumber === i + 1)) continue;
+        // 2️⃣ Якщо не знайдено — шукаємо точний збіг
+        if (newIndex === -1) {
+            newIndex = newLines.findIndex(line => line.trim() === trimmedOld);
+        }
 
-                    const score = similarity(oldBookmark.content, newLines[i]);
-                    if (score > bestMatch.score) {
-                        bestMatch.score = score;
-                        bestMatch.index = i;
-                    }
-                }
-                if (bestMatch.index !== -1) {
-                   newIndex = bestMatch.index;
+        // 3️⃣ "Розумний" пошук схожого рядка, але уникаємо випадкових збігів на "end" або схожих коротких словах
+        if (newIndex === -1 && trimmedOld.length > 2) {
+            let bestMatch = { index: -1, score: 0.65 }; 
+            for (let i = 0; i < newLines.length; i++) {
+                const line = newLines[i];
+                if (line.trim().length < 2) continue;
+                const score = similarity(trimmedOld, line.trim());
+                if (score > bestMatch.score) {
+                    bestMatch.score = score;
+                    bestMatch.index = i;
                 }
             }
-
-            if (newIndex !== -1) {
-                newBookmarks.push({
-                    lineNumber: newIndex + 1,
-                    content: newLines[newIndex] 
-                });
+            if (bestMatch.index !== -1) {
+                newIndex = bestMatch.index;
             }
-        });
+        }
 
-        const uniqueBookmarks = Array.from(new Map(newBookmarks.map(item => [item.lineNumber, item])).values());
+        if (newIndex !== -1) {
+            newBookmarks.push({
+                lineNumber: newIndex + 1,
+                content: newLines[newIndex]
+            });
+        }
+    });
 
-        fieldGroup.dataset.bookmarks = JSON.stringify(uniqueBookmarks);
-        renderLineMarkers(fieldGroup);
-    }
+    // Унікалізація
+    const uniqueBookmarks = Array.from(new Map(newBookmarks.map(item => [item.lineNumber, item])).values());
+
+    fieldGroup.dataset.bookmarks = JSON.stringify(uniqueBookmarks);
+    renderLineMarkers(fieldGroup);
+}
     
     function createTemplateField(data = {}) {
         const { name = '', content = '', width = '300px', height = '110px', x = 0, y = 0, bookmarks = [] } = data;
@@ -2565,4 +2575,3 @@ pasteLoginButton.onclick = () => {
     </script>
 </body>
 </html>
-
