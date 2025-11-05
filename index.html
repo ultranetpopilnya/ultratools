@@ -2123,6 +2123,7 @@ pasteLoginButton.onclick = () => {
     }
     
     const textarea = fieldGroup.querySelector('textarea');
+	const savedScrollTop = textarea.scrollTop;
     const start = textarea.selectionStart;
     const end = textarea.selectionEnd;
     const text = textarea.value;
@@ -2134,6 +2135,7 @@ pasteLoginButton.onclick = () => {
     textarea.focus();
     const newCursorPos = start + lastGeneratedLogin.length;
     textarea.setSelectionRange(newCursorPos, newCursorPos);
+	textarea.scrollTop = savedScrollTop;
 
     // Оновлюємо дані, оскільки текст змінився
     updateBookmarksOnTextChange(fieldGroup);
