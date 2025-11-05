@@ -1289,7 +1289,7 @@ body.dark .line-marker {
             
             <div class="container gpon-commands-container" data-content="gpon-commands" data-default-width="60%" data-default-height="700px">
     
-    <h2 style="margin-top: 0; text-align: center;">💻 Команди GPON/EPON/BDCOM</h2>
+    <h2 style="margin-top: 0; text-align: center;">💻 Команди GPON/EPON/</h2>
 	<div id="controls-and-clarification" style="display: flex; align-items: flex-start; gap: 10px; margin-bottom: 5px; flex-wrap: wrap;">
     
     <div id="gpon-select-row" style="display: flex; align-items: center; gap: 2px;"> 
@@ -1297,7 +1297,7 @@ body.dark .line-marker {
         <select id="device-type" onchange="handleDeviceTypeChange()">
             <option value="gpon">GPON</option>
             <option value="epon">EPON</option>
-            <option value="bdcom">BDCOM</option>
+            <option value=""></option>
         </select>
     </div>
 
@@ -1705,6 +1705,7 @@ function generateLogins() {
 		{ command: 'show epon onu-information mac-address 4cd7.c888.3e9e', description: 'Пошук ONU за Mac адресою' },
 		{ command: 'show mac address-table interface ePON 0/4:52', description: 'Показати Mac адресу обладнання після ONU' },
 		{ command: 'show epon interface ePON 0/4:52 onu port 1 state', description: 'Показати зєднання між ONU та роутером' },
+		{ command: 'show epon onu-information | include 99c0', description: 'Пошук ONU по частині Mac' },	
 		{ command: 'show version', description: 'Показати інформацію та час коли перезавантажувався OLT' },]
 
 
@@ -2548,3 +2549,4 @@ pasteLoginButton.onclick = () => {
     </script>
 </body>
 </html>
+
