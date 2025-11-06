@@ -890,7 +890,8 @@ body.dark .date-calculator-container #result-section {
 /* Загальний стиль для всіх трьох кнопок */
 #add-template-button,
 #import-templates-button,
-#export-templates-button {
+#export-templates-button,
+#clear-all-templates-button {
     position: relative;
 	top: 2px;
     padding: 0;
@@ -920,13 +921,15 @@ body.dark .date-calculator-container #result-section {
 
 /* Стилі для другорядних кнопок "Імпорт/Експорт" */
 #import-templates-button,
-#export-templates-button {
+#export-templates-button,
+#clear-all-templates-button {
     background-color: transparent;
     color: var(--primary-accent-color);
     border: 1px solid var(--input-border-color);
 }
 #import-templates-button:hover,
-#export-templates-button:hover {
+#export-templates-button:hover,
+#clear-all-templates-button:hover {
     background-color: var(--primary-accent-color);
     border-color: var(--primary-accent-color);
     color: white;
@@ -945,7 +948,8 @@ body.dark #export-templates-button {
     color: var(--secondary-accent-color);
 }
 body.dark #import-templates-button:hover,
-body.dark #export-templates-button:hover {
+body.dark #export-templates-button:hover,
+body.dark #clear-all-templates-button:hover {
     background-color: var(--secondary-accent-color);
     border-color: var(--secondary-accent-color);
     color: var(--bg-color);
@@ -1289,7 +1293,7 @@ body.dark .line-marker {
             
             <div class="container gpon-commands-container" data-content="gpon-commands" data-default-width="60%" data-default-height="700px">
     
-    <h2 style="margin-top: 0; text-align: center;">💻 Команди GPON/EPON/</h2>
+    <h2 style="margin-top: 0; text-align: center;">💻 Команди GPON/EPON/BDCOM</h2>
 	<div id="controls-and-clarification" style="display: flex; align-items: flex-start; gap: 10px; margin-bottom: 5px; flex-wrap: wrap;">
     
     <div id="gpon-select-row" style="display: flex; align-items: center; gap: 2px;"> 
@@ -1311,16 +1315,20 @@ body.dark .line-marker {
             <div class="container" data-content="text-templates" data-default-width="100%" data-default-height="694px">
                 <div class="templates-header-wrapper">
     <div class="template-global-actions">
-        <h2 style="margin-top: 0; text-align: center; margin-bottom: 0;">📝 Текстові шаблони</h2>
-        <button id="add-template-button" title="Додати шаблон">+</button>
-        <input type="file" id="import-file-input" accept=".json" style="display: none;">
-        <button id="import-templates-button" title="Імпортувати шаблони з файлу">
-            <i class="fas fa-download"></i>
-        </button>
-        <button id="export-templates-button" title="Експортувати шаблони у файл">
-            <i class="fas fa-upload"></i>
-        </button>
-    </div>
+    <h2 style="margin-top: 0; text-align: center; margin-bottom: 0;">📝 Текстові шаблони</h2>
+    <button id="add-template-button" title="Додати шаблон">+</button>
+    <input type="file" id="import-file-input" accept=".json" style="display: none;">
+    <button id="import-templates-button" title="Імпортувати шаблони з файлу">
+        <i class="fas fa-download"></i>
+    </button>
+    <button id="export-templates-button" title="Експортувати шаблони у файл">
+        <i class="fas fa-upload"></i>
+    </button>
+    <!-- Ось нова кнопка -->
+    <button id="clear-all-templates-button" title="Видалити всі шаблони">
+        <i class="fas fa-trash-alt"></i>
+    </button>
+</div>
 </div>
                 <div id="templates-grid-wrapper">
                     </div>
@@ -1330,7 +1338,7 @@ body.dark .line-marker {
     </div> 
     
     <div class="global-version-info">
-        Версія 2.8.9<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
+        Версія 2.9<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
     </div> 
     
     <div id="notification" class="notification">
@@ -1339,6 +1347,26 @@ body.dark .line-marker {
     
     <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
 <script>
+// --- ФУНКЦІОНАЛ КНОПКИ "ОЧИСТИТИ ВСІ ШАБЛОНИ" ---
+function clearAllTemplates() {
+    const templatesGrid = document.getElementById('templates-grid-wrapper');
+    
+    // Перевіряємо, чи є взагалі шаблони для видалення
+    if (templatesGrid.children.length === 0) {
+        showNotification("Немає шаблонів для видалення.");
+        return; // Виходимо з функції, якщо немає чого видаляти
+    }
+    
+    // Викликаємо стандартне вікно підтвердження браузера
+    if (confirm('Ви впевнені, що хочете видалити ВСІ шаблони? Цю дію неможливо скасувати.')) {
+        // Цей код виконається, тільки якщо користувач натисне "ОК"
+        templatesGrid.innerHTML = ''; // Очищуємо контейнер з шаблонами
+        saveTemplates(); // Зберігаємо порожній стан
+        updateGridWrapperHeight(); // Оновлюємо висоту контейнера
+        showNotification("Усі шаблони було видалено.");
+    }
+}
+
 let lastGeneratedLogin = ''; // Зберігатиме останній згенерований логін
     function updateGridWrapperHeight() {
         const container = document.getElementById('templates-grid-wrapper');
@@ -2053,203 +2081,201 @@ function generateLogins() {
 }
     
     function createTemplateField(data = {}) {
-        const { name = '', content = '', width = '300px', height = '110px', x = 0, y = 0, bookmarks = [] } = data;
-        const container = document.getElementById('templates-grid-wrapper'); 
-        const fieldGroup = document.createElement('div');
-        fieldGroup.className = 'template-field-group';
-        
-        let modernBookmarks = [];
-        if (bookmarks.length > 0) {
-            const lines = content.split('\n');
-            if (typeof bookmarks[0] === 'number') { // Старий формат
-                bookmarks.forEach(lineNumber => {
-                    if (lineNumber > 0 && lineNumber <= lines.length) {
-                        modernBookmarks.push({ lineNumber: lineNumber, content: lines[lineNumber - 1] });
-                    }
-                });
-            } else { // Новий формат
-                modernBookmarks = bookmarks;
-            }
+    const { name = '', content = '', width = '300px', height = '110px', x = 0, y = 0, bookmarks = [] } = data;
+    const container = document.getElementById('templates-grid-wrapper'); 
+    const fieldGroup = document.createElement('div');
+    fieldGroup.className = 'template-field-group';
+    
+    let modernBookmarks = [];
+    if (bookmarks.length > 0) {
+        const lines = content.split('\n');
+        if (typeof bookmarks[0] === 'number') { // Старий формат
+            bookmarks.forEach(lineNumber => {
+                if (lineNumber > 0 && lineNumber <= lines.length) {
+                    modernBookmarks.push({ lineNumber: lineNumber, content: lines[lineNumber - 1] });
+                }
+            });
+        } else { // Новий формат
+            modernBookmarks = bookmarks;
         }
-        fieldGroup.dataset.bookmarks = JSON.stringify(modernBookmarks);
-        
-        fieldGroup.style.width = width;
-        fieldGroup.style.height = height;
-        fieldGroup.setAttribute('data-x', x);
-        fieldGroup.setAttribute('data-y', y);
-        
-        const dragHandle = document.createElement('div');
-        dragHandle.className = 'template-drag-handle';
-        dragHandle.innerHTML = '⠿';
-        
-        const headerDiv = document.createElement('div');
-        headerDiv.className = 'template-header';
-        
-        const nameInput = document.createElement('input');
-        nameInput.type = 'text';
-        nameInput.className = 'template-name-input';
-        nameInput.placeholder = 'Назва шаблону';
-        nameInput.value = name;
-        nameInput.oninput = saveTemplates;
-        
-        const actionsDiv = document.createElement('div');
-        actionsDiv.className = 'template-actions';
-        
-        const copyButton = document.createElement('button');
-        copyButton.innerHTML = '<i class="fas fa-copy"></i>';
-        copyButton.title = 'Копіювати текст';
-        copyButton.className = 'copy-template-btn';
-        copyButton.onclick = () => {
-            const textarea = fieldGroup.querySelector('textarea');
-            const selectedText = textarea.value.substring(textarea.selectionStart, textarea.selectionEnd);
-            const textToCopy = selectedText || textarea.value;
-            if (!textToCopy.trim()) return; 
-            navigator.clipboard.writeText(textToCopy).then(() => {
-                copyButton.innerHTML = '<i class="fas fa-check"></i>';
-                copyButton.disabled = true;
-                setTimeout(() => { copyButton.innerHTML = '<i class="fas fa-copy"></i>'; copyButton.disabled = false; }, 1500);
-            }).catch(err => console.error('Не вдалося скопіювати текст: ', err));
-        };
-		
-		const pasteLoginButton = document.createElement('button');
-pasteLoginButton.innerHTML = '<i class="fas fa-paste"></i>';
-pasteLoginButton.title = 'Вставити згенерований логін';
-pasteLoginButton.className = 'paste-login-btn'; // Використовуємо новий клас
-pasteLoginButton.onclick = () => {
-    if (!lastGeneratedLogin) {
-        showNotification('Спочатку згенеруйте логін!');
-        return;
     }
+    fieldGroup.dataset.bookmarks = JSON.stringify(modernBookmarks);
     
-    const textarea = fieldGroup.querySelector('textarea');
-	const savedScrollTop = textarea.scrollTop;
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const text = textarea.value;
+    fieldGroup.style.width = width;
+    fieldGroup.style.height = height;
+    fieldGroup.setAttribute('data-x', x);
+    fieldGroup.setAttribute('data-y', y);
     
-    // Вставляємо логін на місце курсору або замість виділеного тексту
-    textarea.value = text.substring(0, start) + lastGeneratedLogin + text.substring(end);
+    const dragHandle = document.createElement('div');
+    dragHandle.className = 'template-drag-handle';
+    dragHandle.innerHTML = '⠿';
     
-    // Повертаємо фокус і ставимо курсор після вставленого тексту
-    textarea.focus();
-    const newCursorPos = start + lastGeneratedLogin.length;
-    textarea.setSelectionRange(newCursorPos, newCursorPos);
-	textarea.scrollTop = savedScrollTop;
-
-    // Оновлюємо дані, оскільки текст змінився
-    updateBookmarksOnTextChange(fieldGroup);
-    saveTemplates();
-};
+    const headerDiv = document.createElement('div');
+    headerDiv.className = 'template-header';
+    
+    const nameInput = document.createElement('input');
+    nameInput.type = 'text';
+    nameInput.className = 'template-name-input';
+    nameInput.placeholder = 'Назва шаблону';
+    nameInput.value = name;
+    nameInput.oninput = saveTemplates;
+    
+    const actionsDiv = document.createElement('div');
+    actionsDiv.className = 'template-actions';
+    
+    const copyButton = document.createElement('button');
+    copyButton.innerHTML = '<i class="fas fa-copy"></i>';
+    copyButton.title = 'Копіювати текст';
+    copyButton.className = 'copy-template-btn';
+    copyButton.onclick = () => {
+        const textarea = fieldGroup.querySelector('textarea');
+        const selectedText = textarea.value.substring(textarea.selectionStart, textarea.selectionEnd);
+        const textToCopy = selectedText || textarea.value;
+        if (!textToCopy.trim()) return; 
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            copyButton.innerHTML = '<i class="fas fa-check"></i>';
+            copyButton.disabled = true;
+            setTimeout(() => { copyButton.innerHTML = '<i class="fas fa-copy"></i>'; copyButton.disabled = false; }, 1500);
+        }).catch(err => console.error('Не вдалося скопіювати текст: ', err));
+    };
+    
+    const pasteLoginButton = document.createElement('button');
+    pasteLoginButton.innerHTML = '<i class="fas fa-paste"></i>';
+    pasteLoginButton.title = 'Вставити згенерований логін';
+    pasteLoginButton.className = 'paste-login-btn';
+    pasteLoginButton.onclick = () => {
+        if (!lastGeneratedLogin) {
+            showNotification('Спочатку згенеруйте логін!');
+            return;
+        }
         
-        const clearButton = document.createElement('button');
-        clearButton.innerHTML = '<i class="fas fa-eraser"></i>';
-        clearButton.title = 'Очистити текстове поле';
-        clearButton.className = 'clear-template-btn';
-        clearButton.onclick = () => {
+        const textarea = fieldGroup.querySelector('textarea');
+        const savedScrollTop = textarea.scrollTop;
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const text = textarea.value;
+        
+        textarea.value = text.substring(0, start) + lastGeneratedLogin + text.substring(end);
+        
+        textarea.focus();
+        const newCursorPos = start + lastGeneratedLogin.length;
+        textarea.setSelectionRange(newCursorPos, newCursorPos);
+        textarea.scrollTop = savedScrollTop;
+
+        updateBookmarksOnTextChange(fieldGroup);
+        saveTemplates();
+    };
+    
+    const clearButton = document.createElement('button');
+    clearButton.innerHTML = '<i class="fas fa-eraser"></i>';
+    clearButton.title = 'Очистити текстове поле';
+    clearButton.className = 'clear-template-btn';
+    // --- ЗМІНА 1: Додано підтвердження для очищення ---
+    clearButton.onclick = () => {
+        if (confirm('Очистити вміст цього шаблону?')) {
             const textarea = fieldGroup.querySelector('textarea');
             textarea.value = '';
             fieldGroup.dataset.bookmarks = '[]';
             renderLineMarkers(fieldGroup);
             saveTemplates();
-        };
-        
-        const deleteButton = document.createElement('button');
-        deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
-        deleteButton.title = 'Видалити шаблон';
-        deleteButton.className = 'delete-template-btn';
-        deleteButton.onclick = () => {
+        }
+    };
+    
+    const deleteButton = document.createElement('button');
+    deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
+    deleteButton.title = 'Видалити шаблон';
+    deleteButton.className = 'delete-template-btn';
+    // --- ЗМІНА 2: Додано підтвердження для видалення ---
+    deleteButton.onclick = () => {
+        if (confirm('Ви впевнені, що хочете видалити цей шаблон?')) {
             fieldGroup.remove();
             saveTemplates();
-            updateGridWrapperHeight();		
-        };
-        
-        const textareaWrapper = document.createElement('div');
-        textareaWrapper.className = 'textarea-wrapper';
-        const gutter = document.createElement('div');
-        gutter.className = 'line-marker-gutter';
+            updateGridWrapperHeight();
+        }
+    };
+    
+    const textareaWrapper = document.createElement('div');
+    textareaWrapper.className = 'textarea-wrapper';
+    const gutter = document.createElement('div');
+    gutter.className = 'line-marker-gutter';
 
-        // *** ОСНОВНЕ ВИПРАВЛЕННЯ ДЛЯ ПРОКРУТКИ ***
-        const markerContainer = document.createElement('div');
-        markerContainer.className = 'line-marker-container';
-        gutter.appendChild(markerContainer);
-        // *** КІНЕЦЬ ВИПРАВЛЕННЯ ***
+    const markerContainer = document.createElement('div');
+    markerContainer.className = 'line-marker-container';
+    gutter.appendChild(markerContainer);
 
-        const textarea = document.createElement('textarea');
-        textarea.placeholder = 'Введіть текст тут...';
-        textarea.value = content;
-        
-        textarea.addEventListener('mouseup', (e) => {
-            if (e.detail === 2) {
-                const selection = window.getSelection();
-                if (selection.rangeCount > 0) {
-                    const range = selection.getRangeAt(0);
-                    const selectedText = range.toString();
-                    if (selectedText.endsWith(' ')) {
-                        range.setEnd(range.endContainer, range.endOffset - 1);
-                    }
+    const textarea = document.createElement('textarea');
+    textarea.placeholder = 'Введіть текст тут...';
+    textarea.value = content;
+    
+    textarea.addEventListener('mouseup', (e) => {
+        if (e.detail === 2) {
+            const selection = window.getSelection();
+            if (selection.rangeCount > 0) {
+                const range = selection.getRangeAt(0);
+                const selectedText = range.toString();
+                if (selectedText.endsWith(' ')) {
+                    range.setEnd(range.endContainer, range.endOffset - 1);
                 }
             }
-        });
+        }
+    });
 
-        textarea.oninput = () => {
-            updateBookmarksOnTextChange(fieldGroup);
-            saveTemplates();
-        };
+    textarea.oninput = () => {
+        updateBookmarksOnTextChange(fieldGroup);
+        saveTemplates();
+    };
 
-        // *** ОСНОВНЕ ВИПРАВЛЕННЯ ДЛЯ ПРОКРУТКИ ***
-        textarea.onscroll = () => {
-            markerContainer.style.transform = `translateY(-${textarea.scrollTop}px)`;
-        };
-        // *** КІНЕЦЬ ВИПРАВЛЕННЯ ***
+    textarea.onscroll = () => {
+        markerContainer.style.transform = `translateY(-${textarea.scrollTop}px)`;
+    };
 
-        gutter.onclick = (event) => {
-            const style = window.getComputedStyle(textarea);
-            const lineHeight = parseFloat(style.lineHeight);
-            const paddingTop = parseFloat(style.paddingTop);
-            
-            // *** ВИПРАВЛЕННЯ РОЗРАХУНКУ РЯДКА ПРИ КЛІКУ ***
-            const clickedLineNumber = Math.floor((event.offsetY + textarea.scrollTop - paddingTop) / lineHeight) + 1;
-            
-            const lines = textarea.value.split('\n');
-            if (clickedLineNumber > lines.length || clickedLineNumber < 1) return;
-
-            let currentBookmarks = JSON.parse(fieldGroup.dataset.bookmarks || '[]');
-            const existingBookmarkIndex = currentBookmarks.findIndex(b => b.lineNumber === clickedLineNumber);
-
-            if (existingBookmarkIndex > -1) {
-                currentBookmarks.splice(existingBookmarkIndex, 1);
-            } else {
-                currentBookmarks.push({
-                    lineNumber: clickedLineNumber,
-                    content: lines[clickedLineNumber - 1]
-                });
-            }
-            fieldGroup.dataset.bookmarks = JSON.stringify(currentBookmarks);
-            renderLineMarkers(fieldGroup);
-            saveTemplates();
-        };
+    gutter.onclick = (event) => {
+        const style = window.getComputedStyle(textarea);
+        const lineHeight = parseFloat(style.lineHeight);
+        const paddingTop = parseFloat(style.paddingTop);
         
-        textareaWrapper.appendChild(gutter);
-        textareaWrapper.appendChild(textarea);
-        headerDiv.appendChild(nameInput);
-        actionsDiv.appendChild(copyButton);
-		actionsDiv.appendChild(pasteLoginButton);
-        actionsDiv.appendChild(clearButton);
-        actionsDiv.appendChild(deleteButton);
-        headerDiv.appendChild(actionsDiv);
-        const resizeHandle = document.createElement('div');
-        resizeHandle.className = 'resize-handle';    
+        const clickedLineNumber = Math.floor((event.offsetY + textarea.scrollTop - paddingTop) / lineHeight) + 1;
         
-        fieldGroup.appendChild(dragHandle); 
-        fieldGroup.appendChild(headerDiv); 
-        fieldGroup.appendChild(textareaWrapper);
-        fieldGroup.appendChild(resizeHandle);
-        container.appendChild(fieldGroup); 
-        
-        initDraggableAndResizable(fieldGroup);
+        const lines = textarea.value.split('\n');
+        if (clickedLineNumber > lines.length || clickedLineNumber < 1) return;
+
+        let currentBookmarks = JSON.parse(fieldGroup.dataset.bookmarks || '[]');
+        const existingBookmarkIndex = currentBookmarks.findIndex(b => b.lineNumber === clickedLineNumber);
+
+        if (existingBookmarkIndex > -1) {
+            currentBookmarks.splice(existingBookmarkIndex, 1);
+        } else {
+            currentBookmarks.push({
+                lineNumber: clickedLineNumber,
+                content: lines[clickedLineNumber - 1]
+            });
+        }
+        fieldGroup.dataset.bookmarks = JSON.stringify(currentBookmarks);
         renderLineMarkers(fieldGroup);
-        return fieldGroup;
-    }
+        saveTemplates();
+    };
+    
+    textareaWrapper.appendChild(gutter);
+    textareaWrapper.appendChild(textarea);
+    headerDiv.appendChild(nameInput);
+    actionsDiv.appendChild(copyButton);
+    actionsDiv.appendChild(pasteLoginButton);
+    actionsDiv.appendChild(clearButton);
+    actionsDiv.appendChild(deleteButton);
+    headerDiv.appendChild(actionsDiv);
+    const resizeHandle = document.createElement('div');
+    resizeHandle.className = 'resize-handle';    
+    
+    fieldGroup.appendChild(dragHandle); 
+    fieldGroup.appendChild(headerDiv); 
+    fieldGroup.appendChild(textareaWrapper);
+    fieldGroup.appendChild(resizeHandle);
+    container.appendChild(fieldGroup); 
+    
+    initDraggableAndResizable(fieldGroup);
+    renderLineMarkers(fieldGroup);
+    return fieldGroup;
+}
 
     function renderLineMarkers(fieldGroup) {
         // *** Оновлена функція для роботи з новим контейнером ***
@@ -2530,10 +2556,12 @@ pasteLoginButton.onclick = () => {
     const importFileInput = document.getElementById('import-file-input');
     const importButton = document.getElementById('import-templates-button');
     const exportButton = document.getElementById('export-templates-button');
+	const clearAllButton = document.getElementById('clear-all-templates-button');
     
     exportButton.onclick = exportToFile;
     importButton.onclick = () => importFileInput.click();
     importFileInput.addEventListener('change', handleFileImport);
+	clearAllButton.onclick = clearAllTemplates;
 
     const initialTab = localStorage.getItem('activeTab') || 'login-generator';
     if (initialTab === 'login-generator') generateLogins(); 
