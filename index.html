@@ -1581,25 +1581,7 @@ let lastGeneratedLogin = ''; // Зберігатиме останній зген
         }
         return result;
     }
-
-    function copyLogin(textToCopy, buttonElement) {
-        navigator.clipboard.writeText(textToCopy).then(() => {
-            const originalText = buttonElement.textContent;
-            buttonElement.textContent = 'Скопійовано!';
-            buttonElement.classList.add('copied');
-            buttonElement.disabled = true;
-            document.getElementById('fullNameInput').value = ''; 
-            setTimeout(() => {
-                buttonElement.textContent = originalText;
-                buttonElement.classList.remove('copied');
-                buttonElement.disabled = false;
-            }, 2000);
-        }).catch(err => console.error('Не вдалося скопіювати текст: ', err));
-    }
-
-    // ЗАМІНІТЬ ВСЮ СТАРУ ФУНКЦІЮ generateLogins НА ЦЮ
-// --- ОНОВЛЕНА ФУНКЦІЯ АЛЬТЕРНАТИВНОГО ЛОГІНА (змінює і логін, і текст кнопки) ---
-// --- ОНОВЛЕНА ФУНКЦІЯ (оновлює логін і зберігає його для шаблонів) ---
+	
 function generateAlternativeLogin(buttonElement) {
     const resultItem = buttonElement.closest('.result-item');
     const loginSpan = resultItem.querySelector('span');
