@@ -75,6 +75,53 @@ body.dark {
 --highlight-bg-color: rgba(230, 162, 46, 0.5);
 }
 
+/* === НОВІ СТИЛІ КНОПОК ГЕНЕРАТОРА (ідентичні стилю шаблонів) === */
+
+.login-generator-container .result-item .actions-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
+.login-generator-container .result-item .regenerate-login-btn,
+.login-generator-container .result-item .copy-login-btn {
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: filter 0.2s;
+    width: 40px; 
+    height: 28px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1rem;
+    color: white;
+    padding: 0;
+}
+
+.login-generator-container .result-item .regenerate-login-btn:hover,
+.login-generator-container .result-item .copy-login-btn:hover {
+    filter: brightness(0.85);
+}
+
+.login-generator-container .result-item .regenerate-login-btn {
+    background-color: var(--primary-accent-color);
+}
+body.dark .login-generator-container .result-item .regenerate-login-btn {
+    background-color: var(--secondary-accent-color);
+}
+
+.login-generator-container .result-item .copy-login-btn {
+    background-color: var(--success-color);
+}
+
+.login-generator-container .result-item .copy-login-btn.copied {
+    background-color: var(--success-color);
+    filter: brightness(1.2);
+}
+
 /* === СТИЛІ ДЛЯ НОВОЇ ФУНКЦІЇ ПІДСВІТКИ СЛІВ === */
 .highlighting-container {
     position: relative;
@@ -288,18 +335,7 @@ text-align: right;
         body.dark .login-generator-container .result-item span {
             color: #38c172 !important; 
         }
-
-        body.dark .login-generator-container .result-item button {
-            background-color: #5a6268;
-            color: #e0e0e0;
-        }
-        body.dark .login-generator-container .result-item button:hover {
-            background-color: #6c757d;
-        }
-        body.dark .login-generator-container .result-item button.copied {
-            background-color: #38c172; 
-        }
-        
+     
         .gpon-commands-container label {
             display: inline-block; 
             margin-right: 0px;    
@@ -536,7 +572,6 @@ body.dark .gpon-commands-container select {
             border-radius: 2px;
             margin-top: 0.5rem;
             background-color: #f9f9f9;
-            min-height: 45px; 
         }
         
         .login-generator-container .result-item span {
@@ -555,25 +590,6 @@ body.dark .gpon-commands-container select {
 
         .login-generator-container .result-item .original-name {
             display: none; 
-        }
-        .login-generator-container .result-item button {
-            padding: 0.4rem 0.8rem;
-            font-size: 0.9rem;
-            background-color: #6c757d;
-            width: 110px; 
-            min-width: 110px;
-            border: none;
-            color: white;
-            cursor: pointer;
-            border-radius: 2px;
-            transition: background-color 0.2s;
-            flex-shrink: 0; 
-        }
-        .login-generator-container .result-item button:hover {
-            background-color: #5a6268;
-        }
-        .login-generator-container .result-item button.copied {
-            background-color: #38c172; 
         }
         
         .date-calculator-container {
@@ -982,7 +998,7 @@ body.dark .date-calculator-container #result-section h2 {
     transition: all 0.2s ease;
     box-shadow: none; /* Прибираємо тінь */
     width: 40px;
-    height: 26px; /* Робимо їх трохи нижчими */
+    height: 28px; /* Робимо їх трохи нижчими */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -1419,7 +1435,7 @@ body.dark .line-marker {
     </div> 
     
     <div class="global-version-info">
-        Версія 2.9.5<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
+        Версія 2.9.6<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
     </div> 
     
     <div id="notification" class="notification">
@@ -1582,13 +1598,61 @@ let lastGeneratedLogin = ''; // Зберігатиме останній зген
     }
 
     // ЗАМІНІТЬ ВСЮ СТАРУ ФУНКЦІЮ generateLogins НА ЦЮ
+// --- ОНОВЛЕНА ФУНКЦІЯ АЛЬТЕРНАТИВНОГО ЛОГІНА (змінює і логін, і текст кнопки) ---
+// --- ОНОВЛЕНА ФУНКЦІЯ (оновлює логін і зберігає його для шаблонів) ---
+function generateAlternativeLogin(buttonElement) {
+    const resultItem = buttonElement.closest('.result-item');
+    const loginSpan = resultItem.querySelector('span');
+    
+    const baseLogin = resultItem.dataset.baseLogin;
+    let counter = parseInt(resultItem.dataset.suffixCounter, 10);
+    
+    counter++;
+    
+    const newLogin = baseLogin + counter;
+    loginSpan.textContent = newLogin;
+    
+    resultItem.dataset.suffixCounter = counter;
+    
+    // Оновлюємо глобальну змінну, щоб саме цей варіант вставлявся в шаблони.
+    lastGeneratedLogin = newLogin;
+
+    // === НОВИЙ КОД: Очищуємо поле вводу після генерації альтернативи ===
+    document.getElementById('fullNameInput').value = '';
+}
+
+// --- ОНОВЛЕНА ФУНКЦІЯ КОПІЮВАННЯ (працює з новим стилем іконок) ---
+function copyLogin(buttonElement) {
+    const resultItem = buttonElement.closest('.result-item');
+    const textToCopy = resultItem.querySelector('span').textContent;
+    const icon = buttonElement.querySelector('i');
+    const originalIconClasses = icon.className;
+
+    navigator.clipboard.writeText(textToCopy).then(() => {
+        buttonElement.classList.add('copied');
+        icon.className = 'fas fa-check';
+        buttonElement.disabled = true;
+        document.getElementById('fullNameInput').value = ''; 
+        
+        setTimeout(() => {
+            buttonElement.classList.remove('copied');
+            icon.className = originalIconClasses;
+            buttonElement.disabled = false;
+        }, 2000);
+    }).catch(err => console.error('Не вдалося скопіювати текст: ', err));
+
+    // Також оновлюємо `lastGeneratedLogin` при копіюванні
+    lastGeneratedLogin = textToCopy;
+}
+
+// --- ОНОВЛЕНА ГОЛОВНА ФУНКЦІЯ (генерує нові, стильні іконки-кнопки) ---
 function generateLogins() {
     const fullNameInput = document.getElementById('fullNameInput');
     const fullNames = fullNameInput.value.trim();
     const resultsContainer = document.getElementById('results-container');
     resultsContainer.innerHTML = '';
     
-    lastGeneratedLogin = ''; // Очищуємо змінну перед новою генерацією
+    lastGeneratedLogin = '';
 
     if (!fullNames) return;
 
@@ -1598,6 +1662,7 @@ function generateLogins() {
         const fullName = line.trim();
         if (fullName === '') return;
 
+        // ... (вся логіка валідації та транслітерації залишається без змін)
         if (/[a-z]/i.test(fullName)) {
             const errorElement = document.createElement('div');
             errorElement.className = 'result-item';
@@ -1605,11 +1670,9 @@ function generateLogins() {
             resultsContainer.appendChild(errorElement);
             return;
         }
-
         const parts = fullName.split(/\s+/).filter(p => p.length > 0);
         const isCompany = companyRegex.test(fullName.toLowerCase());
         let login = '';
-
         if (isCompany || parts.length > 3) {
             login = transliterate(fullName);
         } else {
@@ -1618,7 +1681,6 @@ function generateLogins() {
             let patronymicInitial = parts.length >= 3 ? transliterate(parts[2].charAt(0)) : '';
             login = `${transliteratedLastName}${firstNameInitial}${patronymicInitial}`;
         }
-
         login = login.replace(/[^a-z0-9]/g, '');
         if (login === '') {
             const errorElement = document.createElement('div');
@@ -1628,15 +1690,28 @@ function generateLogins() {
             return;
         }
 
-        // === НОВИЙ КОД: Зберігаємо ПЕРШИЙ згенерований логін ===
         if (!lastGeneratedLogin) {
             lastGeneratedLogin = login;
         }
-        // === КІНЕЦЬ НОВОГО КОДУ ===
 
         const resultItem = document.createElement('div');
         resultItem.className = 'result-item';
-        resultItem.innerHTML = `<span>${login}</span><div class="original-name" title="${fullName}">${fullName}</div><button onclick="copyLogin('${login}', this)">Копіювати</button>`;
+        resultItem.dataset.baseLogin = login;
+        resultItem.dataset.suffixCounter = '1';
+
+        // Формуємо HTML з новими кнопками, іконками та підказками
+        resultItem.innerHTML = `
+            <span>${login}</span>
+            <div class="original-name" title="${fullName}">${fullName}</div>
+            <div class="actions-wrapper">
+                <button class="regenerate-login-btn" onclick="generateAlternativeLogin(this)" title="Згенерувати наступний варіант">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+                <button class="copy-login-btn" onclick="copyLogin(this)" title="Копіювати логін">
+                    <i class="fas fa-copy"></i>
+                </button>
+            </div>
+        `;
         resultsContainer.appendChild(resultItem);
     });
 }
