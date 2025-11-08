@@ -1389,7 +1389,7 @@ body.dark .line-marker {
     </div> 
     
     <div class="global-version-info">
-        Версія 2.9.3<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
+        Версія 2.9.4<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
     </div> 
     
     <div id="notification" class="notification">
@@ -2147,16 +2147,17 @@ function generateLogins() {
         const selectionStart = textarea.selectionStart;
         const selectionEnd = textarea.selectionEnd;
 
-        // Покращення №3: Автоматично очищуємо підсвітку, якщо нічого не виділено
         if (selectionStart === selectionEnd) {
             highlighter.innerHTML = escapeHtml(text) + '\n';
             return;
         }
 
-        // Покращення: Не використовуємо .trim(), щоб можна було виділяти текст з пробілами
-        const selectedText = text.substring(selectionStart, selectionEnd);
+        // ОСЬ ГОЛОВНА ЗМІНА: додаємо .trim()
+        // Тепер ми обрізаємо пробіли з обох боків виділеного тексту
+        const selectedText = text.substring(selectionStart, selectionEnd).trim();
 
-        // Ігноруємо порожні або занадто довгі виділення
+        // Якщо після обрізки нічого не залишилось (тобто були виділені лише пробіли),
+        // або текст занадто короткий/довгий, то виходимо.
         if (selectedText.length < 1 || selectedText.length > 50) { 
             highlighter.innerHTML = escapeHtml(text) + '\n';
             return;
@@ -2165,7 +2166,7 @@ function generateLogins() {
         // Екрануємо спецсимволи для регулярного виразу
         const escapedSelectedText = selectedText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-        // Покращення №1: "Розумний" вибір режиму пошуку
+        // "Розумний" вибір режиму пошуку
         const isPureWord = /^[a-zA-Z0-9_]+$/.test(selectedText);
         let regex;
 
@@ -2336,16 +2337,33 @@ function generateLogins() {
 
         textarea.addEventListener('scroll', syncScroll);
         
-        // Викликаємо debounced-версію замість прямого виклику
-        textarea.addEventListener('mouseup', debouncedUpdateHighlight);
+        // "Розумний" обробник для mouseup, який вирішує проблему миготіння
+        textarea.addEventListener('mouseup', () => {
+            // Використовуємо setTimeout з нульовою затримкою. 
+            // Це трюк, щоб дати браузеру час оновити стан виділення тексту,
+            // перш ніж ми його перевіримо.
+            setTimeout(() => {
+                // Якщо після кліку виділення зникло (початок і кінець збігаються)...
+                if (textarea.selectionStart === textarea.selectionEnd) {
+                    // ... то ми оновлюємо підсвітку МИТТЄВО, щоб вона зникла без затримки.
+                    updateHighlight(textarea, highlighter);
+                } else {
+                    // ... інакше, користувач щойно завершив виділення тексту,
+                    // тому ми використовуємо debounced-версію для плавності.
+                    debouncedUpdateHighlight();
+                }
+            }, 0);
+        });
+
         textarea.addEventListener('keyup', (e) => {
+            // Для клавіатури debounce завжди доречний
             if (e.key.includes('Arrow') || e.key === 'Home' || e.key === 'End' || e.ctrlKey || e.metaKey) {
                  debouncedUpdateHighlight();
             }
         });
         
-        // Додаємо подію, щоб прибрати підсвітку, коли поле втрачає фокус
-        textarea.addEventListener('blur', debouncedUpdateHighlight);
+        // Прибираємо підсвітку, коли поле втрачає фокус
+        textarea.addEventListener('blur', () => updateHighlight(textarea, highlighter));
 
         gutter.onclick = (event) => {
             const style = window.getComputedStyle(textarea);
