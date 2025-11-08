@@ -42,6 +42,7 @@
 --button-paste-bg: #17a2b8;
 --button-paste-hover-bg: #117a8b;
 --resize-handle-color: rgba(0,0,0,0.3);
+--highlight-bg-color: rgba(255, 229, 100, 0.7);
 }
 
 body.dark {
@@ -71,6 +72,56 @@ body.dark {
 --calc-hours-color: #9370db;
 --button-paste-hover-bg: #138496;
 --resize-handle-color: rgba(255,255,255,0.3);
+--highlight-bg-color: rgba(230, 162, 46, 0.5);
+}
+
+/* === СТИЛІ ДЛЯ НОВОЇ ФУНКЦІЇ ПІДСВІТКИ СЛІВ === */
+.highlighting-container {
+    position: relative;
+    flex-grow: 1;
+    min-height: 0;
+    width: 100%;
+}
+.highlighter-backdrop, .template-field-group textarea {
+    /* Синхронізація геометрії */
+    margin: 0;
+    padding: 10px;
+    border: none; /* Внутрішній бордер тепер не потрібен */
+    border-radius: 0;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    
+    /* Синхронізація шрифтів */
+    font-family: 'Fira Code', monospace !important; 
+    font-size: 14px;
+    line-height: 1.5;
+    letter-spacing: normal;
+    white-space: pre-wrap;
+    overflow-wrap: normal;
+    word-break: normal;
+}
+.highlighter-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    overflow: auto; /* Важливо для синхронізації прокрутки */
+    pointer-events: none; /* Кліки проходять наскрізь до textarea */
+    color: transparent; /* Текст у підкладці невидимий, видно лише фон <mark> */
+}
+.template-field-group textarea {
+    position: relative;
+    z-index: 2;
+    background: transparent !important; /* Робимо textarea прозорим */
+    color: var(--text-color); /* Але колір тексту залишаємо видимим */
+    -webkit-text-fill-color: var(--text-color); /* Для деяких браузерів */
+    resize: none !important;
+}
+.highlighter-backdrop mark {
+    background-color: var(--highlight-bg-color);
+    color: transparent; /* Не змінюємо колір тексту, лише фон */
+    border-radius: 2px;
 }
 
 	/* СТИЛІ ДЛЯ НОВОЇ, БІЛЬШ ТОЧНОЇ РУЧКИ ЗМІНИ РОЗМІРУ */
@@ -1338,7 +1389,7 @@ body.dark .line-marker {
     </div> 
     
     <div class="global-version-info">
-        Версія 2.9.1<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
+        Версія 2.9.3<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
     </div> 
     
     <div id="notification" class="notification">
@@ -2079,203 +2130,276 @@ function generateLogins() {
     fieldGroup.dataset.bookmarks = JSON.stringify(uniqueBookmarks);
     renderLineMarkers(fieldGroup);
 }
-    
-    function createTemplateField(data = {}) {
-    const { name = '', content = '', width = '300px', height = '110px', x = 0, y = 0, bookmarks = [] } = data;
-    const container = document.getElementById('templates-grid-wrapper'); 
-    const fieldGroup = document.createElement('div');
-    fieldGroup.className = 'template-field-group';
-    
-    let modernBookmarks = [];
-    if (bookmarks.length > 0) {
-        const lines = content.split('\n');
-        if (typeof bookmarks[0] === 'number') { // Старий формат
-            bookmarks.forEach(lineNumber => {
-                if (lineNumber > 0 && lineNumber <= lines.length) {
-                    modernBookmarks.push({ lineNumber: lineNumber, content: lines[lineNumber - 1] });
-                }
-            });
-        } else { // Новий формат
-            modernBookmarks = bookmarks;
-        }
+   
+// --- НОВІ ФУНКЦІЇ ДЛЯ ПІДСВІТКИ СЛІВ ---
+
+    function escapeHtml(text) {
+        return text
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
     }
-    fieldGroup.dataset.bookmarks = JSON.stringify(modernBookmarks);
-    
-    fieldGroup.style.width = width;
-    fieldGroup.style.height = height;
-    fieldGroup.setAttribute('data-x', x);
-    fieldGroup.setAttribute('data-y', y);
-    
-    const dragHandle = document.createElement('div');
-    dragHandle.className = 'template-drag-handle';
-    dragHandle.innerHTML = '⠿';
-    
-    const headerDiv = document.createElement('div');
-    headerDiv.className = 'template-header';
-    
-    const nameInput = document.createElement('input');
-    nameInput.type = 'text';
-    nameInput.className = 'template-name-input';
-    nameInput.placeholder = 'Назва шаблону';
-    nameInput.value = name;
-    nameInput.oninput = saveTemplates;
-    
-    const actionsDiv = document.createElement('div');
-    actionsDiv.className = 'template-actions';
-    
-    const copyButton = document.createElement('button');
-    copyButton.innerHTML = '<i class="fas fa-copy"></i>';
-    copyButton.title = 'Копіювати текст';
-    copyButton.className = 'copy-template-btn';
-    copyButton.onclick = () => {
-        const textarea = fieldGroup.querySelector('textarea');
-        const selectedText = textarea.value.substring(textarea.selectionStart, textarea.selectionEnd);
-        const textToCopy = selectedText || textarea.value;
-        if (!textToCopy.trim()) return; 
-        navigator.clipboard.writeText(textToCopy).then(() => {
-            copyButton.innerHTML = '<i class="fas fa-check"></i>';
-            copyButton.disabled = true;
-            setTimeout(() => { copyButton.innerHTML = '<i class="fas fa-copy"></i>'; copyButton.disabled = false; }, 1500);
-        }).catch(err => console.error('Не вдалося скопіювати текст: ', err));
-    };
-    
-    const pasteLoginButton = document.createElement('button');
-    pasteLoginButton.innerHTML = '<i class="fas fa-paste"></i>';
-    pasteLoginButton.title = 'Вставити згенерований логін';
-    pasteLoginButton.className = 'paste-login-btn';
-    pasteLoginButton.onclick = () => {
-        if (!lastGeneratedLogin) {
-            showNotification('Спочатку згенеруйте логін!');
+
+    function updateHighlight(textarea, highlighter) {
+        const text = textarea.value;
+        const selectionStart = textarea.selectionStart;
+        const selectionEnd = textarea.selectionEnd;
+
+        // Покращення №3: Автоматично очищуємо підсвітку, якщо нічого не виділено
+        if (selectionStart === selectionEnd) {
+            highlighter.innerHTML = escapeHtml(text) + '\n';
             return;
         }
-        
-        const textarea = fieldGroup.querySelector('textarea');
-        const savedScrollTop = textarea.scrollTop;
-        const start = textarea.selectionStart;
-        const end = textarea.selectionEnd;
-        const text = textarea.value;
-        
-        textarea.value = text.substring(0, start) + lastGeneratedLogin + text.substring(end);
-        
-        textarea.focus();
-        const newCursorPos = start + lastGeneratedLogin.length;
-        textarea.setSelectionRange(newCursorPos, newCursorPos);
-        textarea.scrollTop = savedScrollTop;
 
-        updateBookmarksOnTextChange(fieldGroup);
-        saveTemplates();
-    };
-    
-    const clearButton = document.createElement('button');
-    clearButton.innerHTML = '<i class="fas fa-eraser"></i>';
-    clearButton.title = 'Очистити текстове поле';
-    clearButton.className = 'clear-template-btn';
-    // --- ЗМІНА 1: Додано підтвердження для очищення ---
-    clearButton.onclick = () => {
-        if (confirm('Очистити вміст цього шаблону?')) {
-            const textarea = fieldGroup.querySelector('textarea');
-            textarea.value = '';
-            fieldGroup.dataset.bookmarks = '[]';
-            renderLineMarkers(fieldGroup);
-            saveTemplates();
+        // Покращення: Не використовуємо .trim(), щоб можна було виділяти текст з пробілами
+        const selectedText = text.substring(selectionStart, selectionEnd);
+
+        // Ігноруємо порожні або занадто довгі виділення
+        if (selectedText.length < 1 || selectedText.length > 50) { 
+            highlighter.innerHTML = escapeHtml(text) + '\n';
+            return;
         }
-    };
-    
-    const deleteButton = document.createElement('button');
-    deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
-    deleteButton.title = 'Видалити шаблон';
-    deleteButton.className = 'delete-template-btn';
-    // --- ЗМІНА 2: Додано підтвердження для видалення ---
-    deleteButton.onclick = () => {
-        if (confirm('Ви впевнені, що хочете видалити цей шаблон?')) {
-            fieldGroup.remove();
-            saveTemplates();
-            updateGridWrapperHeight();
+
+        // Екрануємо спецсимволи для регулярного виразу
+        const escapedSelectedText = selectedText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+        // Покращення №1: "Розумний" вибір режиму пошуку
+        const isPureWord = /^[a-zA-Z0-9_]+$/.test(selectedText);
+        let regex;
+
+        if (isPureWord) {
+            // Якщо це просте слово (літери, цифри, _), шукаємо як ціле слово
+            regex = new RegExp(`\\b(${escapedSelectedText})\\b`, 'gi');
+        } else {
+            // Якщо містить інші символи, шукаємо точний збіг
+            regex = new RegExp(`(${escapedSelectedText})`, 'gi');
         }
-    };
-    
-    const textareaWrapper = document.createElement('div');
-    textareaWrapper.className = 'textarea-wrapper';
-    const gutter = document.createElement('div');
-    gutter.className = 'line-marker-gutter';
+        
+        const highlightedText = escapeHtml(text).replace(regex, (match) => `<mark>${match}</mark>`);
 
-    const markerContainer = document.createElement('div');
-    markerContainer.className = 'line-marker-container';
-    gutter.appendChild(markerContainer);
-
-    const textarea = document.createElement('textarea');
-    textarea.placeholder = 'Введіть текст тут...';
-    textarea.value = content;
-    
-    textarea.addEventListener('mouseup', (e) => {
-        if (e.detail === 2) {
-            const selection = window.getSelection();
-            if (selection.rangeCount > 0) {
-                const range = selection.getRangeAt(0);
-                const selectedText = range.toString();
-                if (selectedText.endsWith(' ')) {
-                    range.setEnd(range.endContainer, range.endOffset - 1);
-                }
+        highlighter.innerHTML = highlightedText + '\n';
+    }
+	
+    function createTemplateField(data = {}) {
+        const { name = '', content = '', width = '300px', height = '110px', x = 0, y = 0, bookmarks = [] } = data;
+        const container = document.getElementById('templates-grid-wrapper'); 
+        const fieldGroup = document.createElement('div');
+        fieldGroup.className = 'template-field-group';
+        
+        let modernBookmarks = [];
+        if (bookmarks.length > 0) {
+            const lines = content.split('\n');
+            if (typeof bookmarks[0] === 'number') { // Старий формат
+                bookmarks.forEach(lineNumber => {
+                    if (lineNumber > 0 && lineNumber <= lines.length) {
+                        modernBookmarks.push({ lineNumber: lineNumber, content: lines[lineNumber - 1] });
+                    }
+                });
+            } else { // Новий формат
+                modernBookmarks = bookmarks;
             }
         }
-    });
-
-    textarea.oninput = () => {
-        updateBookmarksOnTextChange(fieldGroup);
-        saveTemplates();
-    };
-
-    textarea.onscroll = () => {
-        markerContainer.style.transform = `translateY(-${textarea.scrollTop}px)`;
-    };
-
-    gutter.onclick = (event) => {
-        const style = window.getComputedStyle(textarea);
-        const lineHeight = parseFloat(style.lineHeight);
-        const paddingTop = parseFloat(style.paddingTop);
+        fieldGroup.dataset.bookmarks = JSON.stringify(modernBookmarks);
         
-        const clickedLineNumber = Math.floor((event.offsetY + textarea.scrollTop - paddingTop) / lineHeight) + 1;
+        fieldGroup.style.width = width;
+        fieldGroup.style.height = height;
+        fieldGroup.setAttribute('data-x', x);
+        fieldGroup.setAttribute('data-y', y);
         
-        const lines = textarea.value.split('\n');
-        if (clickedLineNumber > lines.length || clickedLineNumber < 1) return;
+        const dragHandle = document.createElement('div');
+        dragHandle.className = 'template-drag-handle';
+        dragHandle.innerHTML = '⠿';
+        
+        const headerDiv = document.createElement('div');
+        headerDiv.className = 'template-header';
+        
+        const nameInput = document.createElement('input');
+        nameInput.type = 'text';
+        nameInput.className = 'template-name-input';
+        nameInput.placeholder = 'Назва шаблону';
+        nameInput.value = name;
+        nameInput.oninput = saveTemplates;
+        
+        const actionsDiv = document.createElement('div');
+        actionsDiv.className = 'template-actions';
+        
+        const copyButton = document.createElement('button');
+        copyButton.innerHTML = '<i class="fas fa-copy"></i>';
+        copyButton.title = 'Копіювати текст';
+        copyButton.className = 'copy-template-btn';
+        copyButton.onclick = () => {
+            const textarea = fieldGroup.querySelector('textarea');
+            const selectedText = textarea.value.substring(textarea.selectionStart, textarea.selectionEnd);
+            const textToCopy = selectedText || textarea.value;
+            if (!textToCopy.trim()) return; 
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                copyButton.innerHTML = '<i class="fas fa-check"></i>';
+                copyButton.disabled = true;
+                setTimeout(() => { copyButton.innerHTML = '<i class="fas fa-copy"></i>'; copyButton.disabled = false; }, 1500);
+            }).catch(err => console.error('Не вдалося скопіювати текст: ', err));
+        };
+        
+        const pasteLoginButton = document.createElement('button');
+        pasteLoginButton.innerHTML = '<i class="fas fa-paste"></i>';
+        pasteLoginButton.title = 'Вставити згенерований логін';
+        pasteLoginButton.className = 'paste-login-btn';
+        pasteLoginButton.onclick = () => {
+            if (!lastGeneratedLogin) {
+                showNotification('Спочатку згенеруйте логін!');
+                return;
+            }
+            
+            const textarea = fieldGroup.querySelector('textarea');
+            const highlighter = fieldGroup.querySelector('.highlighter-backdrop');
+            const savedScrollTop = textarea.scrollTop;
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const text = textarea.value;
+            
+            textarea.value = text.substring(0, start) + lastGeneratedLogin + text.substring(end);
+            
+            textarea.focus();
+            const newCursorPos = start + lastGeneratedLogin.length;
+            textarea.setSelectionRange(newCursorPos, newCursorPos);
+            textarea.scrollTop = savedScrollTop;
 
-        let currentBookmarks = JSON.parse(fieldGroup.dataset.bookmarks || '[]');
-        const existingBookmarkIndex = currentBookmarks.findIndex(b => b.lineNumber === clickedLineNumber);
+            updateHighlight(textarea, highlighter); // Оновити підсвітку після вставки
+            updateBookmarksOnTextChange(fieldGroup);
+            saveTemplates();
+        };
+        
+        const clearButton = document.createElement('button');
+        clearButton.innerHTML = '<i class="fas fa-eraser"></i>';
+        clearButton.title = 'Очистити текстове поле';
+        clearButton.className = 'clear-template-btn';
+        clearButton.onclick = () => {
+            if (confirm('Очистити вміст цього шаблону?')) {
+                const textarea = fieldGroup.querySelector('textarea');
+                const highlighter = fieldGroup.querySelector('.highlighter-backdrop');
+                textarea.value = '';
+                highlighter.innerHTML = '';
+                fieldGroup.dataset.bookmarks = '[]';
+                renderLineMarkers(fieldGroup);
+                saveTemplates();
+            }
+        };
+        
+        const deleteButton = document.createElement('button');
+        deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
+        deleteButton.title = 'Видалити шаблон';
+        deleteButton.className = 'delete-template-btn';
+        deleteButton.onclick = () => {
+            if (confirm('Ви впевнені, що хочете видалити цей шаблон?')) {
+                fieldGroup.remove();
+                saveTemplates();
+                updateGridWrapperHeight();
+            }
+        };
 
-        if (existingBookmarkIndex > -1) {
-            currentBookmarks.splice(existingBookmarkIndex, 1);
-        } else {
-            currentBookmarks.push({
-                lineNumber: clickedLineNumber,
-                content: lines[clickedLineNumber - 1]
-            });
-        }
-        fieldGroup.dataset.bookmarks = JSON.stringify(currentBookmarks);
+        const textareaWrapper = document.createElement('div');
+        textareaWrapper.className = 'textarea-wrapper';
+        
+        const gutter = document.createElement('div');
+        gutter.className = 'line-marker-gutter';
+
+        const markerContainer = document.createElement('div');
+        markerContainer.className = 'line-marker-container';
+        gutter.appendChild(markerContainer);
+
+        const highlightingContainer = document.createElement('div');
+        highlightingContainer.className = 'highlighting-container';
+
+        const highlighter = document.createElement('div');
+        highlighter.className = 'highlighter-backdrop';
+
+        const textarea = document.createElement('textarea');
+        textarea.placeholder = 'Введіть текст тут...';
+        textarea.value = content;
+        highlighter.innerHTML = escapeHtml(content) + '\n';
+        
+        // Покращення №2: Створюємо debounced-версію функції для цього конкретного textarea
+        const debouncedUpdateHighlight = debounce(() => updateHighlight(textarea, highlighter), 150);
+
+        const syncScroll = () => {
+            markerContainer.style.transform = `translateY(-${textarea.scrollTop}px)`;
+            highlighter.scrollTop = textarea.scrollTop;
+            highlighter.scrollLeft = textarea.scrollLeft;
+        };
+        
+        textarea.addEventListener('input', () => {
+            debouncedUpdateHighlight();
+            updateBookmarksOnTextChange(fieldGroup);
+            saveTemplates();
+        });
+
+        textarea.addEventListener('scroll', syncScroll);
+        
+        // Викликаємо debounced-версію замість прямого виклику
+        textarea.addEventListener('mouseup', debouncedUpdateHighlight);
+        textarea.addEventListener('keyup', (e) => {
+            if (e.key.includes('Arrow') || e.key === 'Home' || e.key === 'End' || e.ctrlKey || e.metaKey) {
+                 debouncedUpdateHighlight();
+            }
+        });
+        
+        // Додаємо подію, щоб прибрати підсвітку, коли поле втрачає фокус
+        textarea.addEventListener('blur', debouncedUpdateHighlight);
+
+        gutter.onclick = (event) => {
+            const style = window.getComputedStyle(textarea);
+            const lineHeight = parseFloat(style.lineHeight);
+            const paddingTop = parseFloat(style.paddingTop);
+            
+            const clickedLineNumber = Math.floor((event.offsetY + textarea.scrollTop - paddingTop) / lineHeight) + 1;
+            
+            const lines = textarea.value.split('\n');
+            if (clickedLineNumber > lines.length || clickedLineNumber < 1) return;
+
+            let currentBookmarks = JSON.parse(fieldGroup.dataset.bookmarks || '[]');
+            const existingBookmarkIndex = currentBookmarks.findIndex(b => b.lineNumber === clickedLineNumber);
+
+            if (existingBookmarkIndex > -1) {
+                currentBookmarks.splice(existingBookmarkIndex, 1);
+            } else {
+                currentBookmarks.push({
+                    lineNumber: clickedLineNumber,
+                    content: lines[clickedLineNumber - 1]
+                });
+            }
+            fieldGroup.dataset.bookmarks = JSON.stringify(currentBookmarks);
+            renderLineMarkers(fieldGroup);
+            saveTemplates();
+        };
+        
+        highlightingContainer.appendChild(highlighter);
+        highlightingContainer.appendChild(textarea);
+        textareaWrapper.appendChild(gutter);
+        textareaWrapper.appendChild(highlightingContainer);
+
+        headerDiv.appendChild(nameInput);
+        actionsDiv.appendChild(copyButton);
+        actionsDiv.appendChild(pasteLoginButton);
+        actionsDiv.appendChild(clearButton);
+        actionsDiv.appendChild(deleteButton);
+        headerDiv.appendChild(actionsDiv);
+        
+        const resizeHandle = document.createElement('div');
+        resizeHandle.className = 'resize-handle';    
+        
+        fieldGroup.appendChild(dragHandle); 
+        fieldGroup.appendChild(headerDiv); 
+        fieldGroup.appendChild(textareaWrapper);
+        fieldGroup.appendChild(resizeHandle);
+        container.appendChild(fieldGroup); 
+        
+        initDraggableAndResizable(fieldGroup);
         renderLineMarkers(fieldGroup);
-        saveTemplates();
-    };
-    
-    textareaWrapper.appendChild(gutter);
-    textareaWrapper.appendChild(textarea);
-    headerDiv.appendChild(nameInput);
-    actionsDiv.appendChild(copyButton);
-    actionsDiv.appendChild(pasteLoginButton);
-    actionsDiv.appendChild(clearButton);
-    actionsDiv.appendChild(deleteButton);
-    headerDiv.appendChild(actionsDiv);
-    const resizeHandle = document.createElement('div');
-    resizeHandle.className = 'resize-handle';    
-    
-    fieldGroup.appendChild(dragHandle); 
-    fieldGroup.appendChild(headerDiv); 
-    fieldGroup.appendChild(textareaWrapper);
-    fieldGroup.appendChild(resizeHandle);
-    container.appendChild(fieldGroup); 
-    
-    initDraggableAndResizable(fieldGroup);
-    renderLineMarkers(fieldGroup);
-    return fieldGroup;
-}
+        interact(fieldGroup).on('resizemove', syncScroll);
+        
+        return fieldGroup;
+    }
 
     function renderLineMarkers(fieldGroup) {
         // *** Оновлена функція для роботи з новим контейнером ***
@@ -2524,6 +2648,7 @@ function generateLogins() {
         document.body.classList.toggle("dark", isDark);
         localStorage.setItem('theme', isDark ? 'dark' : 'light');
     }
+	
     function loadTheme() {
         const savedTheme = localStorage.getItem('theme'); // Може бути 'dark', 'light' або null
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
