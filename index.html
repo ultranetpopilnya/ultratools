@@ -667,24 +667,54 @@ body.dark .date-calculator-container #result-section {
         body.dark .reset-toggle-text {
             color: #e0e0e0; 
         }
-        
-        .date-calculator-container #result-section {
-            margin-top: 5px;
-            padding: 15px;
-            background-color: #e9f7e9;
-            border-radius: 2px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            border: 1px solid #c3e6cb;
-            flex-grow: 0;
-            min-width: 450px;
-            margin-right: auto;
-            margin-left: auto;			
-        }
-        .date-calculator-container #result-section h2 {
-            margin-top: 0;
-            color: var(--success-color);
-            font-size: 1.3em;
-        }
+
+.date-calculator-container #result-section {
+    margin-top: 5px;
+    padding: 0;
+    
+    /* НОВІ СТИЛІ: */
+    background-color: transparent; /* Основний контейнер тепер прозорий */
+    border: none; /* Рамку повністю прибрано */
+    border-radius: 2px;
+    
+    /* Старі властивості */
+    flex-grow: 0;
+    min-width: 450px;
+    margin-right: auto;
+    margin-left: auto;
+    overflow: hidden; /* Важливо для заокруглення */
+}
+
+/* Стилізуємо заголовок-шапку з високим контрастом */
+.date-calculator-container #result-section h2 {
+    margin: 0;
+    padding: 10px 15px;
+    font-size: 1.2em;
+    font-weight: 600;
+    
+    /* Світла тема: світло-синій фон, темно-синій текст */
+    background-color: rgba(0, 123, 255, 0.1); /* 10% прозорості від основного синього */
+    color: var(--primary-accent-color);
+    border-bottom: 1px solid rgba(0, 123, 255, 0.15); /* Ледь помітний роздільник */
+}
+
+/* Область з контентом має свій фон для відділення */
+.date-calculator-container #result-section #result-display {
+    padding: 15px;
+    background-color: var(--template-bg-color); /* Білий або темно-сірий фон */
+}
+
+/* Оновлення для темної теми */
+body.dark .date-calculator-container #result-section {
+    box-shadow: none; /* У темній темі тінь не потрібна */
+}
+
+body.dark .date-calculator-container #result-section h2 {
+    /* Темна тема: світло-помаранчевий фон, яскраво-помаранчевий текст */
+    background-color: rgba(230, 162, 46, 0.15); /* 15% прозорості від помаранчевого */
+    color: var(--secondary-accent-color);
+    border-bottom: 1px solid rgba(230, 162, 46, 0.2);
+}
         .date-calculator-container #result-display {
             font-size: 1.2em;
             min-height: 1.5em;
@@ -1389,7 +1419,7 @@ body.dark .line-marker {
     </div> 
     
     <div class="global-version-info">
-        Версія 2.9.4<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
+        Версія 2.9.5<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
     </div> 
     
     <div id="notification" class="notification">
