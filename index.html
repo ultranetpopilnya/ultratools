@@ -1338,7 +1338,7 @@ body.dark .line-marker {
     </div> 
     
     <div class="global-version-info">
-        Версія 2.9<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
+        Версія 2.9.1<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
     </div> 
     
     <div id="notification" class="notification">
@@ -2525,12 +2525,24 @@ function generateLogins() {
         localStorage.setItem('theme', isDark ? 'dark' : 'light');
     }
     function loadTheme() {
-        const savedTheme = localStorage.getItem('theme');
+        const savedTheme = localStorage.getItem('theme'); // Може бути 'dark', 'light' або null
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const isDark = savedTheme === 'dark' || (savedTheme === null && prefersDark);
+        let isDark;
+
+        if (savedTheme !== null) {
+            // Якщо користувач ВЖЕ робив вибір, ми його поважаємо.
+            // savedTheme буде або 'dark', або 'light'.
+            isDark = savedTheme === 'dark';
+        } else {
+            // Якщо вибору ще не було (перший візит або сховище очищено),
+            // тоді ми орієнтуємося на налаштування системи.
+            isDark = prefersDark;
+        }
+
         checkbox.checked = isDark;
         applyTheme(isDark);
     }
+	
     checkbox.addEventListener("change", () => applyTheme(checkbox.checked));
 
     document.addEventListener('DOMContentLoaded', () => {
