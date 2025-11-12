@@ -1439,7 +1439,7 @@ body.dark .line-marker {
     </div> 
     
     <div class="global-version-info">
-        Версія 2.9.6<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
+        Версія 2.9.7<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
     </div> 
     
     <div id="notification" class="notification">
@@ -2411,49 +2411,40 @@ function generateLogins() {
         textarea.value = content;
         highlighter.innerHTML = escapeHtml(content) + '\n';
         
-        // Покращення №2: Створюємо debounced-версію функції для цього конкретного textarea
-        const debouncedUpdateHighlight = debounce(() => updateHighlight(textarea, highlighter), 150);
-
         const syncScroll = () => {
             markerContainer.style.transform = `translateY(-${textarea.scrollTop}px)`;
             highlighter.scrollTop = textarea.scrollTop;
             highlighter.scrollLeft = textarea.scrollLeft;
         };
-        
+
+        // Обробник input: реагує на будь-яку зміну тексту (ввід, видалення, вставка).
+        // Має бути миттєвим, щоб уникнути розсинхронізації та мерехтіння.
         textarea.addEventListener('input', () => {
-            debouncedUpdateHighlight();
+            updateHighlight(textarea, highlighter); // Прямий виклик, без затримки
             updateBookmarksOnTextChange(fieldGroup);
             saveTemplates();
         });
 
         textarea.addEventListener('scroll', syncScroll);
-        
-        // "Розумний" обробник для mouseup, який вирішує проблему миготіння
-        textarea.addEventListener('mouseup', () => {
-            // Використовуємо setTimeout з нульовою затримкою. 
-            // Це трюк, щоб дати браузеру час оновити стан виділення тексту,
-            // перш ніж ми його перевіримо.
-            setTimeout(() => {
-                // Якщо після кліку виділення зникло (початок і кінець збігаються)...
-                if (textarea.selectionStart === textarea.selectionEnd) {
-                    // ... то ми оновлюємо підсвітку МИТТЄВО, щоб вона зникла без затримки.
-                    updateHighlight(textarea, highlighter);
-                } else {
-                    // ... інакше, користувач щойно завершив виділення тексту,
-                    // тому ми використовуємо debounced-версію для плавності.
-                    debouncedUpdateHighlight();
-                }
-            }, 0);
-        });
 
-        textarea.addEventListener('keyup', (e) => {
-            // Для клавіатури debounce завжди доречний
-            if (e.key.includes('Arrow') || e.key === 'Home' || e.key === 'End' || e.ctrlKey || e.metaKey) {
-                 debouncedUpdateHighlight();
-            }
-        });
+        // Обробник для виділення мишею та клавіатурою.
+        // Цей об'єднаний підхід робить код простішим.
+        const selectionHandler = () => {
+            // Використовуємо requestAnimationFrame для оновлення після того, як
+            // браузер завершив обробку виділення. Це більш сучасний та
+            // ефективний підхід, ніж setTimeout(..., 0).
+            requestAnimationFrame(() => {
+                updateHighlight(textarea, highlighter);
+            });
+        };
+
+        // Спрацьовує, коли відпускаємо кнопку миші (завершення виділення).
+        textarea.addEventListener('mouseup', selectionHandler);
         
-        // Прибираємо підсвітку, коли поле втрачає фокус
+        // Спрацьовує, коли відпускаємо клавішу (для виділення з Shift).
+        textarea.addEventListener('keyup', selectionHandler);
+        
+        // Прибираємо підсвітку, коли поле втрачає фокус.
         textarea.addEventListener('blur', () => updateHighlight(textarea, highlighter));
 
         gutter.onclick = (event) => {
