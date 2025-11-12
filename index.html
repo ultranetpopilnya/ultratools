@@ -1321,7 +1321,49 @@ body.dark .line-marker {
     line-height: 1.5; 
 }
 
+/* === ФІНАЛЬНИЙ КОД: ЧИСТА АНІМАЦІЯ МАСШТАБУВАННЯ === */
 
+/* 1. Налаштовуємо батьківський контейнер */
+.tab-content-wrapper {
+    position: relative;
+    /* min-height буде встановлюватися динамічно через JS */
+}
+
+/* 2. Стиль для ВСІХ вкладок. Вони ЗАВЖДИ position: absolute */
+.container {
+    display: flex;
+    position: absolute; /* Це ключ до вирішення проблеми "напливу" */
+    top: 0;
+    left: 50%; /* Центруємо блок по горизонталі */
+    
+    /* Використовуємо ваші індивідуальні розміри */
+    width: var(--local-width);
+    height: var(--local-height);
+
+    /* Початковий стан: невидимі, зменшені та відцентровані */
+    opacity: 0;
+    transform: translateX(-50%) scale(0.97);
+    
+    /* Ховаємо неактивні вкладки від взаємодії */
+    pointer-events: none; 
+    
+    /* Анімуємо ТІЛЬКИ ті властивості, що не викликають "ривків" */
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    transform-origin: center center;
+}
+
+/* 3. Стиль для АКТИВНОЇ вкладки */
+.container.active {
+    /* Кінцевий стан анімації: повністю видима, нормального розміру */
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+    
+    /* Робимо вкладку інтерактивною */
+    pointer-events: auto; 
+    
+    /* Активна вкладка завжди має бути зверху */
+    z-index: 10; 
+}
     </style>
 </head>
 <body>
@@ -1439,7 +1481,7 @@ body.dark .line-marker {
     </div> 
     
     <div class="global-version-info">
-        Версія 2.9.7<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
+        Версія 2.9.9<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
     </div> 
     
     <div id="notification" class="notification">
@@ -1524,6 +1566,7 @@ let lastGeneratedLogin = ''; // Зберігатиме останній зген
             
             activeContent.style.setProperty('--local-width', defaultWidth);
             activeContent.style.setProperty('--local-height', defaultHeight);
+			document.querySelector('.tab-content-wrapper').style.minHeight = defaultHeight;
             
             if (tabId === 'gpon-commands') {
                  const deviceSelect = document.getElementById('device-type');
@@ -2782,7 +2825,15 @@ function generateLogins() {
     document.getElementById('add-template-button').onclick = addTemplate;
     
     // Спочатку завантажуємо шаблони
-    loadTemplates(); 
+    loadTemplates();
+
+// Цей код один раз при завантаженні встановлює розміри для ВСІХ вкладок
+document.querySelectorAll('.container[data-content]').forEach(container => {
+    const defaultWidth = container.getAttribute('data-default-width') || '100%';
+    const defaultHeight = container.getAttribute('data-default-height') || '600px';
+    container.style.setProperty('--local-width', defaultWidth);
+    container.style.setProperty('--local-height', defaultHeight);
+});	
     
     // --- ПОЧАТОК ВИПРАВЛЕННЯ ---
     // А тепер, після невеликої паузи, запускаємо логіку перебудови.
