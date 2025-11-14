@@ -166,7 +166,7 @@ body.dark {
 .login-generator-container .result-item .regenerate-login-btn,
 .login-generator-container .result-item .copy-login-btn {
     border: none;
-    border-radius: 2px;
+    border-radius: 6px;
     cursor: pointer;
     transition: filter 0.2s;
     width: 40px; 
@@ -246,7 +246,7 @@ body.dark .login-generator-container .result-item .regenerate-login-btn {
 .highlighter-backdrop mark {
     background-color: var(--highlight-bg-color);
     color: transparent; /* Не змінюємо колір тексту, лише фон */
-    border-radius: 2px;
+    border-radius: 6px;
 }
 
 	/* СТИЛІ ДЛЯ НОВОЇ, БІЛЬШ ТОЧНОЇ РУЧКИ ЗМІНИ РОЗМІРУ */
@@ -422,7 +422,7 @@ text-align: right;
             padding: 1px;
             margin-bottom: 0px;
             border: 1px solid #ccc;
-            border-radius: 2px;
+            border-radius: 6px;
             box-sizing: border-box;
             font-size: 16px;
             background-color: #fff;
@@ -443,7 +443,7 @@ body.dark .gpon-commands-container select {
         
         .command-list {
             border: none;
-            border-radius: 0px;
+            border-radius: 6px;
             padding: 0; 
             background-color: transparent; 
             flex-grow: 1; 
@@ -461,16 +461,16 @@ body.dark .gpon-commands-container select {
             justify-content: space-between;
             align-items: center;
             padding: 8px 12px; 
-            margin-bottom: 0px;
             background-color: transparent; 
             cursor: pointer;
             transition: background-color 0.2s, box-shadow 0.2s;
-            border-bottom: 1px solid #eee; 
+ border-radius: 6px;
+border-bottom: none;
+margin: 1px; 
         }
         
         body.dark .command-item {
             background-color: transparent; 
-            border-bottom: 1px solid #333;
         }
 
         .command-item:hover {
@@ -522,7 +522,7 @@ body.dark .gpon-commands-container select {
             background-color: #38c172; 
             color: white;
             padding: 10px 20px;
-            border-radius: 2px;
+            border-radius: 6px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
             opacity: 0;
             transition: opacity 0.4s ease-out, transform 0.4s ease-out;
@@ -618,7 +618,7 @@ body.dark .gpon-commands-container select {
             width: 85%;
             padding: 0.75rem;
             font-size: 1rem;
-            border-radius: 2px;
+            border-radius: 6px;
             border: 1px solid #ccc;
             box-sizing: border-box;
             margin-bottom: 1rem;
@@ -645,7 +645,7 @@ align-items: center;
             align-items: center;
             padding: 0.75rem;
             border: 1px solid #e0e0e0;
-            border-radius: 2px;
+            border-radius: 6px;
             margin-top: 0.5rem;
             background-color: #f9f9f9;
         }
@@ -675,20 +675,22 @@ align-items: center;
         .date-inputs-row {
             display: flex;
             justify-content: center;
-            gap: 15px;
+            gap: 25px;
             margin-bottom: 20px;
             width: 100%;
         }
 
         .date-calculator-container .date-input-group {
-            display: flex;
-            flex-direction: column;
-            margin-bottom: 0px;
-            max-width: 170px;
-			position: relative;
-        }
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 0px;
+    max-width: 180px;
+    position: relative;
+    flex-grow: 1; /* <-- ДОДАЙТЕ ЦЕЙ РЯДОК */
+	gap: 0px;
+}
 		
-		.date-calculator-container .date-input-group .quick-add-buttons {
+	.date-calculator-container .date-input-group .quick-add-buttons {
     width: 220px;    /* можеш змінити – 200–240 пікселів нормально */
     margin: 0 auto;  /* центрування горизонтально */
 }
@@ -726,7 +728,7 @@ body.dark .date-calculator-container #result-section {
         body.dark .date-calculator-container .date-input-group input[type="time"] { 
             padding: 10px;
             border: 2px solid #ccc;
-            border-radius: 2px;
+            border-radius: 6px;
             font-size: 1em;
             cursor: pointer;
             transition: border-color 0.3s;
@@ -740,47 +742,20 @@ body.dark .date-calculator-container #result-section {
             outline: none;
         }
         
-        .reset-toggle-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-top: -5px;
-            margin-bottom: 15px;
-            padding: 5px;
-        }
-        
-        .toggle-switch-wrapper {
-            display: flex; 
-            align-items: center;
-        }
-
-        .reset-toggle-text {
-            user-select: none;
-            font-size: 1em;
-            color: #555;
-            font-weight: normal;
-            margin-left: 10px; 
-        }
-
-        body.dark .reset-toggle-text {
-            color: #e0e0e0; 
-        }
-
 .date-calculator-container #result-section {
-    margin-top: 5px;
+    margin-top: 0px;
     padding: 0;
     
-    /* НОВІ СТИЛІ: */
-    background-color: transparent; /* Основний контейнер тепер прозорий */
-    border: none; /* Рамку повністю прибрано */
-    border-radius: 2px;
+    /* === ОНОВЛЕНІ СТИЛІ === */
+    background-color: var(--template-bg-color); /* Повертаємо фон для всього блоку */
+    border: 1px solid var(--input-border-color); /* ДОДАЄМО РАМКУ, як у панелі кнопок */
+    border-radius: 6px; /* Встановлюємо ваше заокруглення */
     
-    /* Старі властивості */
-    flex-grow: 0;
+    /* Старі властивості, які залишаються */
     width: 450px;
     margin-right: auto;
     margin-left: auto;
-    overflow: hidden; /* Важливо для заокруглення */
+    overflow: hidden; /* Це важливо, щоб внутрішні елементи не "вилазили" за заокруглені кути */
 }
 
 /* Стилізуємо заголовок-шапку з високим контрастом */
@@ -804,7 +779,8 @@ body.dark .date-calculator-container #result-section {
 
 /* Оновлення для темної теми */
 body.dark .date-calculator-container #result-section {
-    box-shadow: none; /* У темній темі тінь не потрібна */
+    background-color: #2c2c2e; /* Такий самий фон, як у панелі кнопок, для гармонії */
+    border-color: var(--input-border-color); /* Рамка буде темною, як треба */
 }
 
 body.dark .date-calculator-container #result-section h2 {
@@ -1074,7 +1050,7 @@ body.dark .date-calculator-container #result-section h2 {
     position: relative;
 	top: 2px;
     padding: 0;
-    border-radius: 2px; /* Прямокутні з легким заокругленням */
+    border-radius: 6px; /* Прямокутні з легким заокругленням */
     font-size: 1.1rem; 
     cursor: pointer;
     transition: all 0.2s ease;
@@ -1138,7 +1114,7 @@ body.dark #clear-all-templates-button:hover {
             position: absolute; 
             border: 2px solid var(--template-border-color); 
             padding: 0;
-            border-radius: 2px;
+            border-radius: 6px;
             background-color: var(--template-bg-color);
             min-height: 110px; 
             min-width: 300px;
@@ -1180,7 +1156,7 @@ body.dark #clear-all-templates-button:hover {
             flex-grow: 1; 
             padding: 5px 10px;
             border: 1px solid #ddd;
-            border-radius: 2px;
+            border-radius: 6px;
             font-size: 16px;
             color: #333;
             background-color: #fff;
@@ -1203,7 +1179,7 @@ body.dark .template-field-group textarea {
             width: 100%;
             flex-grow: 1; 
             padding: 10px;
-            border-radius: 2px;
+            border-radius: 6px;
             border: 1px solid #ddd;
             box-sizing: border-box;
             font-size: 14px;
@@ -1228,7 +1204,7 @@ body.dark .template-field-group textarea {
         .template-actions button {
             padding: 5px 10px;
             border: none;
-            border-radius: 2px;
+            border-radius: 6px;
             cursor: pointer;
             transition: background-color 0.2s;
             width: 25px;
@@ -1280,7 +1256,7 @@ body.dark .clear-template-btn {
     margin: 0 4px 4px 4px;
     width: calc(100% - 8px);
     border: 1px solid #ddd; 
-    border-radius: 2px;
+    border-radius: 6px;
     overflow: hidden; 
 }
 
@@ -1383,53 +1359,108 @@ body.dark .line-marker {
     z-index: 10; 
 }
 
+/* === НОВИЙ, СУЧАСНИЙ ДИЗАЙН ІНТЕРФЕЙСУ КАЛЬКУЛЯТОРА === */
+
+/* Збільшуємо відступи для "повітря" */
+.date-inputs-row {
+    margin-bottom: 20px;
+}
+
+/* Робимо групи полів вводу гнучкими та рівними */
+.date-calculator-container .date-input-group {
+    flex: 1;
+}
+
+/* Стиль для головної об'єднаної панелі */
+.calculator-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    width: fit-content;
+    margin: 0 auto 25px auto;
+    padding: 15px;
+    background-color: var(--template-handle-bg);
+    border: 1px solid var(--input-border-color);
+    border-radius: 6px;
+}
+body.dark .calculator-panel {
+    background-color: #2c2c2e;
+}
+
+/* Головний контейнер для кнопок (вже всередині панелі) */
 .calculator-actions-row {
     display: flex;
     justify-content: center;
-    gap: 6px; /* Відстань між кнопками */
-    margin: 0px auto 20px auto; /* Відступи: зверху, авто, знизу, авто */
-    width: 100%;
-    max-width: 500px; /* Обмежуємо максимальну ширину ряду */
-    flex-wrap: wrap; /* Дозволяємо перенесення на маленьких екранах */
+    align-items: center;
+    gap: 10px;
+    padding: 6px;
+    border-radius: 6px;
+    background-color: var(--input-bg-color); /* Фон для контрасту всередині панелі */
+    border: 1px solid var(--input-border-color);
+    width: fit-content;
+}
+body.dark .calculator-actions-row {
+     background-color: var(--template-handle-bg);
 }
 
-/* ЗМІНЕНО: тепер стиль застосовується до кнопок у новому контейнері */
-.calculator-actions-row .calc-action-button {
-    /* Прибираємо width: 100%, щоб кнопки не розтягувались */
-    width: auto; 
-    flex-grow: 0; /* Дозволяємо кнопкам рівномірно займати доступне місце */
-    
-    margin-top: 0; /* Старий відступ більше не потрібен */
-    padding: 8px 10px;
-    border: 1px solid var(--input-border-color);
-    border-radius: 2px;
+/* Стиль для елегантного вертикального роздільника */
+.action-divider {
+    width: 1px;
+    height: 24px;
+    background-color: var(--input-border-color);
+    margin: 0 4px;
+}
+
+/* Стиль для кнопок */
+.calc-action-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 15px;
+    border: none;
+    border-radius: 6px;
     background-color: transparent;
-    color: var(--primary-accent-color);
+    color: var(--text-color);
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.2s ease-in-out;
     font-size: 0.95em;
-	align-self: center;
 }
 
 .calc-action-button:hover {
     background-color: var(--primary-accent-color);
-    border-color: var(--primary-accent-color);
-    color: #fff;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);
 }
 
-/* Адаптація для темної теми */
-body.dark .calc-action-button {
-    color: var(--secondary-accent-color);
+.calc-action-button i {
+    font-size: 1.1em;
 }
 
 body.dark .calc-action-button:hover {
     background-color: var(--secondary-accent-color);
-    border-color: var(--secondary-accent-color);
     color: var(--bg-color);
+    box-shadow: 0 4px 10px rgba(230, 162, 46, 0.2);
 }
 
+/* Контейнер для перемикача автоскидання */
+.reset-toggle-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 2px;
+    padding: 0px;
+}
 
+.reset-toggle-text {
+    font-size: 1em;
+    font-weight: 600;
+    color: var(--text-color);
+    user-select: none; /* Щоб текст не виділявся випадково */
+}
     </style>
 </head>
 <body>
@@ -1469,40 +1500,48 @@ body.dark .calc-action-button:hover {
                 <h2 style="margin-top: 0; text-align: center;">🗓️ Калькулятор тривалості між датами</h2>
 
                <div class="date-inputs-row">
-    <!-- Поля вводу дати залишаються тут, АЛЕ ВЖЕ БЕЗ КНОПОК -->
-    <div class="date-input-group">
-        <label for="start-date">🗓️ Початкова дата:</label>
-        <input type="date" id="start-date" name="start-date" onchange="handleInputAndTimer()" required>
-        <input type="time" id="start-time" name="start-time" onchange="handleInputAndTimer()" value="00:00" required>
-    </div>
+                    <!-- Поля вводу дати стали чистішими -->
+                    <div class="date-input-group">
+                        <label for="start-date">🗓️ Початкова дата:</label>
+                        <input type="date" id="start-date" name="start-date" onchange="handleInputAndTimer()" required>
+                        <input type="time" id="start-time" name="start-time" onchange="handleInputAndTimer()" value="00:00" required>
+                    </div>
 
-    <div class="date-input-group">
-        <label for="end-date">➡️ Кінцева дата:</label>
-        <input type="date" id="end-date" name="end-date" onchange="handleInputAndTimer()" required>
-        <input type="time" id="end-time" name="end-time" onchange="handleInputAndTimer()" value="00:00" required>
-    </div>
-</div>
+                    <div class="date-input-group">
+                        <label for="end-date">➡️ Кінцева дата:</label>
+                        <input type="date" id="end-date" name="end-date" onchange="handleInputAndTimer()" required>
+                        <input type="time" id="end-time" name="end-time" onchange="handleInputAndTimer()" value="00:00" required>
+                    </div>
+                </div>
 
-<!-- ОСЬ НОВИЙ, ОКРЕМИЙ РЯДОК ДЛЯ ВСІХ КНОПОК ДІЙ -->
-<div class="calculator-actions-row">
-    <button id="set-start-now-btn" class="calc-action-button">Сьогоднішня дата</button>
-    <button id="add-6-months-btn" class="calc-action-button quick-add-btn">+6 міс.</button>
-    <button id="add-7-months-btn" class="calc-action-button quick-add-btn">+7 міс.</button>
-    <button id="add-1-year-btn" class="calc-action-button quick-add-btn">+1 рік</button>
-</div>
+                <!-- НОВА, ОБ'ЄДНАНА ПАНЕЛЬ КЕРУВАННЯ -->
+                <div class="calculator-panel">
+                    <!-- Рядок 1: Кнопки дій -->
+                    <div class="calculator-actions-row">
+                        <button id="set-start-now-btn" class="calc-action-button" title="Встановити початкову дату на сьогодні">
+                            <i class="fas fa-calendar-check"></i>
+                            <span>Сьогодні</span>
+                        </button>
+                        <div class="action-divider"></div>
+                        <button id="add-6-months-btn" class="calc-action-button quick-add-btn" title="Додати 6 місяців до початкової дати">+6 міс. </button>
+                        <button id="add-7-months-btn" class="calc-action-button quick-add-btn" title="Додати 7 місяців до початкової дати">+7 міс.</button>
+                        <button id="add-1-year-btn" class="calc-action-button quick-add-btn" title="Додати 1 рік до початкової дати">+1 рік</button>
+                    </div>
 
-                <div class="reset-toggle-container">
-    <!-- НОВИЙ ІНТЕРАКТИВНИЙ ПЕРЕМИКАЧ -->
-    <button id="auto-reset-button" title="Увімкнути/вимкнути автоскидання">
-        <svg class="progress-ring" width="40" height="40">
-            <circle class="progress-ring-bg" cx="20" cy="20" r="18"></circle>
-<circle class="progress-ring-fg" cx="20" cy="20" r="18"></circle>
-        </svg>
-        <i class="fas fa-sync-alt timer-icon"></i>
-    </button>
-    <span class="reset-toggle-text">Автоматичне скидання дати та часу</span>
-</div>
-                
+                    <!-- Рядок 2: Перемикач автоскидання -->
+                    <div class="reset-toggle-container">
+                        <button id="auto-reset-button" title="Увімкнути/вимкнути автоскидання">
+                            <svg class="progress-ring" width="40" height="40">
+                                <circle class="progress-ring-bg" cx="20" cy="20" r="18"></circle>
+                                <circle class="progress-ring-fg" cx="20" cy="20" r="18"></circle>
+                            </svg>
+                            <i class="fas fa-sync-alt timer-icon"></i>
+                        </button>
+                        <span class="reset-toggle-text">Автоматичне скидання дати та часу</span>
+                    </div>
+                </div>
+
+                <!-- Єдиний, правильний блок результату -->
                 <div id="result-section">
                     <h2>⏱️ Результат розрахунку</h2>
                     <div id="result-display">
@@ -1558,7 +1597,7 @@ body.dark .calc-action-button:hover {
     </div> 
     
     <div class="global-version-info">
-        Версія 3.0<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
+        Версія 3.1<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
     </div> 
     
     <div id="notification" class="notification">
@@ -1684,36 +1723,36 @@ let lastGeneratedLogin = ''; // Зберігатиме останній зген
 }
 
     function transliterate(text) {
-        const mapping = {
-          'а': 'a', 'б': 'b', 'в': 'v', 'г': 'h', 'ґ': 'g', 'д': 'd', 'е': 'e', 'ж': 'zh', 'з': 'z', 'и': 'y', 'і': 'i', 'й': 'i',
-          'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'kh',
-          'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'shch', 'ь': '', "'": '', 'є': 'ie', 'ї': 'i', 'ю': 'iu', 'я': 'ia', 'l': 'l'
-        };
-        const positionalRules = {
-            'є': { start: 'ye', other: 'ie' }, 'ї': { start: 'yi', other: 'i' }, 'й': { start: 'y', other: 'i' },
-            'ю': { start: 'yu', other: 'iu' }, 'я': { start: 'ya', other: 'ia' }
-        };
+    const mapping = {
+      'а': 'a', 'б': 'b', 'в': 'v', 'г': 'h', 'ґ': 'g', 'д': 'd', 'е': 'e', 'ж': 'zh', 'з': 'z', 'и': 'y', 'і': 'i', 'й': 'i',
+      'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'kh',
+      'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'shch', 'ь': '', "'": '', 'є': 'ie', 'ї': 'i', 'ю': 'iu', 'я': 'ia', 'l': 'l'
+    };
+    const positionalRules = {
+        'є': { start: 'ye', other: 'ie' }, 'ї': { start: 'yi', other: 'i' }, 'й': { start: 'y', other: 'i' },
+        'ю': { start: 'yu', other: 'iu' }, 'я': { start: 'ya', other: 'ia' }
+    };
 
-        let result = '';
-        text = text.toLowerCase();
-        for (let i = 0; i < text.length; i++) {
-            const char = text[i];
-            if (char === 'з' && i + 1 < text.length && text[i + 1] === 'г') {
-                result += 'zgh'; i++; continue;
-            }
-            if (positionalRules[char]) {
-                const isStartOfWord = (i === 0 || text[i-1] === ' ');
-                result += isStartOfWord ? positionalRules[char].start : positionalRules[char].other;
-            } else if (mapping[char]) {
-                result += mapping[char];
-            } else if (!isNaN(parseInt(char))) { 
-                result += char;
-            } else if (/[a-z0-9]/.test(char)) {
-                result += char;
-            }
+    let result = '';
+    text = text.toLowerCase();
+    for (let i = 0; i < text.length; i++) {
+        const char = text[i];
+        if (char === 'з' && i + 1 < text.length && text[i + 1] === 'г') {
+            result += 'zgh'; i++; continue;
         }
-        return result;
+        if (positionalRules[char]) {
+            const isStartOfWord = (i === 0 || text[i-1] === ' ');
+            result += isStartOfWord ? positionalRules[char].start : positionalRules[char].other;
+        } else if (mapping[char]) {
+            result += mapping[char];
+        } else if (!isNaN(parseInt(char))) { // <-- ЦЕЙ РЯДОК ВАЖЛИВИЙ
+            result += char;
+        } else if (/[a-z0-9]/.test(char)) { // <-- І ЦЕЙ ТАКОЖ
+            result += char;
+        }
     }
+    return result;
+}
 	
 function generateAlternativeLogin(buttonElement) {
     const resultItem = buttonElement.closest('.result-item');
@@ -1786,9 +1825,10 @@ function generateLogins() {
             return;
         }
         const parts = fullName.split(/\s+/).filter(p => p.length > 0);
-        const isCompany = companyRegex.test(fullName.toLowerCase());
+         const isCompany = companyRegex.test(fullName.toLowerCase());
         let login = '';
-        if (isCompany || parts.length > 3) {
+        //                  👇 ДОДАНО НОВУ УМОВУ 👇
+        if (isCompany || parts.length > 3 || /\d/.test(fullName)) {
             login = transliterate(fullName);
         } else {
             let transliteratedLastName = parts.length >= 1 ? transliterate(parts[0]) : '';
