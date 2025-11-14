@@ -9,6 +9,84 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     
     <style>
+	/* === СТИЛІ ДЛЯ НОВОГО ІНТЕРАКТИВНОГО ПЕРЕМИКАЧА АВТОСКИДАННЯ === */
+#auto-reset-button {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid var(--input-border-color);
+    background-color: var(--template-handle-bg);
+    color: var(--text-color);
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.2s ease-in-out;
+    padding: 0;
+}
+
+#auto-reset-button:hover {
+    border-color: var(--input-focus-border-color);
+}
+
+#auto-reset-button .timer-icon {
+    font-size: 1.2em;
+    transition: transform 0.4s ease;
+}
+
+/* Стан кнопки, коли функція активна */
+#auto-reset-button.active {
+    background-color: var(--primary-accent-color);
+    border-color: var(--primary-accent-color);
+    color: white;
+}
+body.dark #auto-reset-button.active {
+    background-color: var(--secondary-accent-color);
+    border-color: var(--secondary-accent-color);
+    color: var(--bg-color);
+}
+
+/* SVG для анімації прогресу */
+.progress-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-90deg); /* Поворот, щоб анімація починалася зверху */
+    pointer-events: none;
+}
+
+.progress-ring circle {
+    fill: transparent;
+    stroke-width: 3;
+    transition: stroke-dashoffset 0.5s;
+}
+
+.progress-ring-bg {
+    stroke: rgba(128, 128, 128, 0.2); /* Фон кільця */
+}
+
+.progress-ring-fg {
+    stroke: var(--success-color); /* Колір прогресу */
+    /* Математика для анімації: 2 * PI * R (2 * 3.14159 * 16 = 100.53) */
+    stroke-dasharray: 113.1 113.1; 
+    stroke-dashoffset: 113.1;
+}
+
+body.dark .progress-ring-fg {
+    stroke: var(--text-color);
+}
+
+/* Клас, що запускає анімацію */
+#auto-reset-button.timer-running .progress-ring-fg {
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 20s linear; /* Плавна анімація за 20 секунд */
+}
+
+#auto-reset-button.timer-running .timer-icon {
+    transform: rotate(360deg);
+}
+
 	/* === ОСНОВНА ПАЛІТРА ТА ЗМІННІ ТЕМИ === */
 :root {
     /* Світла тема */
@@ -276,12 +354,6 @@ select:focus,
     margin-top: 0px;
 text-align: right;	
 }
-
-		.scrollable-commands-list {
-        max-height: 70vh; 
-        overflow-y: auto; 
-        padding-right: 150px;
-    }
 
         /* Стилі прокрутки (залишені як є) */
         body.dark ::-webkit-scrollbar {
@@ -613,8 +685,14 @@ align-items: center;
             flex-direction: column;
             margin-bottom: 0px;
             max-width: 170px;
-            width: 100%;
+			position: relative;
         }
+		
+		.date-calculator-container .date-input-group .quick-add-buttons {
+    width: 220px;    /* можеш змінити – 200–240 пікселів нормально */
+    margin: 0 auto;  /* центрування горизонтально */
+}
+
         .date-calculator-container .date-input-group label {
             margin-bottom: 10px;
             font-size: 1.1em;
@@ -699,7 +777,7 @@ body.dark .date-calculator-container #result-section {
     
     /* Старі властивості */
     flex-grow: 0;
-    min-width: 450px;
+    width: 450px;
     margin-right: auto;
     margin-left: auto;
     overflow: hidden; /* Важливо для заокруглення */
@@ -1192,67 +1270,7 @@ body.dark .clear-template-btn {
 .delete-template-btn:hover {
     filter: brightness(0.85);
 }
-        
-        .date-calculator-container .toggle-switch-label {
-            position: relative;
-            display: inline-flex;
-            align-items: center;
-            cursor: pointer; 
-            padding: 0;
-            margin: 0; 
-        }
-
-        .date-calculator-container .toggle-switch-label input[type="checkbox"] {
-            opacity: 0;
-            width: 0;
-            height: 0;
-            margin: 0;
-            position: absolute;
-        }
-
-        .date-calculator-container .slider {
-            position: relative;
-            cursor: pointer;
-            width: 44px; 
-            height: 22px; 
-            background-color: #ccc;
-            transition: background-color 0.4s;
-            border-radius: 22px; 
-            flex-shrink: 0;
-        }
-
-        .date-calculator-container .slider:before {
-            position: absolute;
-            content: "";
-            height: 16px;
-            width: 16px;
-            left: 3px;
-            bottom: 3px;
-            background-color: white;
-            transition: transform 0.4s, background-color 0.2s;
-            border-radius: 50%;
-        }
-
-        .date-calculator-container .toggle-switch-label input[type="checkbox"]:checked ~ .slider {
-            background-color: #38c172; 
-        }
-
-        .date-calculator-container .toggle-switch-label input[type="checkbox"]:checked ~ .slider:before {
-            transform: translateX(22px); 
-        }
-        
-        body.dark .date-calculator-container .slider {
-            background-color: #555555;
-        }
-        
-        body.dark .date-calculator-container .toggle-switch-label input[type="checkbox"]:checked ~ .slider {
-            background-color: #38c172; 
-        }
-        
-        body.dark .date-calculator-container .slider:before {
-            background-color: #e0e0e0;
-        }
-		
+	
 /* === СТИЛІ ДЛЯ ФУНКЦІЇ ПОЗНАЧОК В ШАБЛОНАХ (ВИПРАВЛЕНО) === */
 
 .textarea-wrapper {
@@ -1364,6 +1382,54 @@ body.dark .line-marker {
     /* Активна вкладка завжди має бути зверху */
     z-index: 10; 
 }
+
+.calculator-actions-row {
+    display: flex;
+    justify-content: center;
+    gap: 6px; /* Відстань між кнопками */
+    margin: 0px auto 20px auto; /* Відступи: зверху, авто, знизу, авто */
+    width: 100%;
+    max-width: 500px; /* Обмежуємо максимальну ширину ряду */
+    flex-wrap: wrap; /* Дозволяємо перенесення на маленьких екранах */
+}
+
+/* ЗМІНЕНО: тепер стиль застосовується до кнопок у новому контейнері */
+.calculator-actions-row .calc-action-button {
+    /* Прибираємо width: 100%, щоб кнопки не розтягувались */
+    width: auto; 
+    flex-grow: 0; /* Дозволяємо кнопкам рівномірно займати доступне місце */
+    
+    margin-top: 0; /* Старий відступ більше не потрібен */
+    padding: 8px 10px;
+    border: 1px solid var(--input-border-color);
+    border-radius: 2px;
+    background-color: transparent;
+    color: var(--primary-accent-color);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.95em;
+	align-self: center;
+}
+
+.calc-action-button:hover {
+    background-color: var(--primary-accent-color);
+    border-color: var(--primary-accent-color);
+    color: #fff;
+}
+
+/* Адаптація для темної теми */
+body.dark .calc-action-button {
+    color: var(--secondary-accent-color);
+}
+
+body.dark .calc-action-button:hover {
+    background-color: var(--secondary-accent-color);
+    border-color: var(--secondary-accent-color);
+    color: var(--bg-color);
+}
+
+
     </style>
 </head>
 <body>
@@ -1399,32 +1465,43 @@ body.dark .line-marker {
                 <div id="results-container"></div>
             </div>
 
-            <div class="container date-calculator-container" data-content="date-calculator" data-default-width="50%" data-default-height="490px">
+            <div class="container date-calculator-container" data-content="date-calculator" data-default-width="50%" data-default-height="680px">
                 <h2 style="margin-top: 0; text-align: center;">🗓️ Калькулятор тривалості між датами</h2>
 
-                <div class="date-inputs-row">
-                    <div class="date-input-group">
-                        <label for="start-date">🗓️ Початкова дата:</label>
-                        <input type="date" id="start-date" name="start-date" onchange="handleInputAndTimer()" required>
-                        <input type="time" id="start-time" name="start-time" onchange="handleInputAndTimer()" value="00:00" required>
-                    </div>
+               <div class="date-inputs-row">
+    <!-- Поля вводу дати залишаються тут, АЛЕ ВЖЕ БЕЗ КНОПОК -->
+    <div class="date-input-group">
+        <label for="start-date">🗓️ Початкова дата:</label>
+        <input type="date" id="start-date" name="start-date" onchange="handleInputAndTimer()" required>
+        <input type="time" id="start-time" name="start-time" onchange="handleInputAndTimer()" value="00:00" required>
+    </div>
 
-                    <div class="date-input-group">
-                        <label for="end-date">➡️ Кінцева дата:</label>
-                        <input type="date" id="end-date" name="end-date" onchange="handleInputAndTimer()" required>
-                        <input type="time" id="end-time" name="end-time" onchange="handleInputAndTimer()" value="00:00" required>
-                        </div>
-                </div>
+    <div class="date-input-group">
+        <label for="end-date">➡️ Кінцева дата:</label>
+        <input type="date" id="end-date" name="end-date" onchange="handleInputAndTimer()" required>
+        <input type="time" id="end-time" name="end-time" onchange="handleInputAndTimer()" value="00:00" required>
+    </div>
+</div>
+
+<!-- ОСЬ НОВИЙ, ОКРЕМИЙ РЯДОК ДЛЯ ВСІХ КНОПОК ДІЙ -->
+<div class="calculator-actions-row">
+    <button id="set-start-now-btn" class="calc-action-button">Сьогоднішня дата</button>
+    <button id="add-6-months-btn" class="calc-action-button quick-add-btn">+6 міс.</button>
+    <button id="add-7-months-btn" class="calc-action-button quick-add-btn">+7 міс.</button>
+    <button id="add-1-year-btn" class="calc-action-button quick-add-btn">+1 рік</button>
+</div>
 
                 <div class="reset-toggle-container">
-                    <div class="toggle-switch-wrapper"> 
-                        <label class="toggle-switch-label" for="auto-reset-toggle">
-                            <input type="checkbox" id="auto-reset-toggle" onchange="handleAutoResetToggle()">
-                            <span class="slider"></span> 
-                        </label>
-                    </div>
-                    <span class="reset-toggle-text">Автоматичне скидання дати та часу (20 сек.)</span>
-                </div>
+    <!-- НОВИЙ ІНТЕРАКТИВНИЙ ПЕРЕМИКАЧ -->
+    <button id="auto-reset-button" title="Увімкнути/вимкнути автоскидання">
+        <svg class="progress-ring" width="40" height="40">
+            <circle class="progress-ring-bg" cx="20" cy="20" r="18"></circle>
+<circle class="progress-ring-fg" cx="20" cy="20" r="18"></circle>
+        </svg>
+        <i class="fas fa-sync-alt timer-icon"></i>
+    </button>
+    <span class="reset-toggle-text">Автоматичне скидання дати та часу</span>
+</div>
                 
                 <div id="result-section">
                     <h2>⏱️ Результат розрахунку</h2>
@@ -1481,7 +1558,7 @@ body.dark .line-marker {
     </div> 
     
     <div class="global-version-info">
-        Версія 2.9.9<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
+        Версія 3.0<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
     </div> 
     
     <div id="notification" class="notification">
@@ -1543,7 +1620,6 @@ let lastGeneratedLogin = ''; // Зберігатиме останній зген
     }
     
     let endDateResetTimer;
-    const RESET_DELAY_SECONDS = 20;
     let isAutoResetEnabled = true; 
     
     function switchTab(tabId) {
@@ -1592,11 +1668,21 @@ let lastGeneratedLogin = ''; // Зберігатиме останній зген
             });
         });
         
-        setTimeout(() => {
-            switchTab(initialTab); 
-        }, 50); 
-    }
-    
+         setTimeout(() => {
+        // --- ПОЧАТОК ДОДАНОГО КОДУ ---
+        // Спочатку встановлюємо дати
+        setDatesToTodayAndTomorrowAtMidnight();
+        // Тепер завантажуємо налаштування та робимо перший розрахунок
+        loadAutoResetState(); 
+        calculateDifference(); 
+        if (isAutoResetEnabled) startResetTimer();
+        // --- КІНЕЦЬ ДОДАНОГО КОДУ ---
+
+        // І лише тепер показуємо потрібну вкладку
+        switchTab(initialTab); 
+    }, 50); 
+}
+
     function transliterate(text) {
         const mapping = {
           'а': 'a', 'б': 'b', 'в': 'v', 'г': 'h', 'ґ': 'g', 'д': 'd', 'е': 'e', 'ж': 'zh', 'з': 'z', 'и': 'y', 'і': 'i', 'й': 'i',
@@ -1761,6 +1847,36 @@ function generateLogins() {
         const day = String(date.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
     }
+	
+	function formatTime(date) {
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${hours}:${minutes}`;
+}
+
+function areDatesInDefaultState() {
+        const startDateInput = document.getElementById('start-date').value;
+        const startTimeInput = document.getElementById('start-time').value;
+        const endDateInput = document.getElementById('end-date').value;
+        const endTimeInput = document.getElementById('end-time').value;
+
+        // Обчислюємо, якими мають бути стандартні дати "прямо зараз"
+        const today = new Date();
+        const tomorrow = new Date(today);
+        tomorrow.setDate(today.getDate() + 1);
+
+        const defaultStartDate = formatDate(today); // Використовуємо вашу функцію
+        const defaultEndDate = formatDate(tomorrow); // Використовуємо вашу функцію
+        const defaultTime = "00:00";
+
+        // Повертаємо true, якщо ВСІ поточні значення збігаються зі стандартними
+        return (
+            startDateInput === defaultStartDate &&
+            startTimeInput === defaultTime &&
+            endDateInput === defaultEndDate &&
+            endTimeInput === defaultTime
+        );
+    }
     
     function setDatesToTodayAndTomorrowAtMidnight() {
         const today = new Date();
@@ -1773,17 +1889,59 @@ function generateLogins() {
     }
     
     function resetDatesOnTimerEnd() {
-        clearTimeout(endDateResetTimer);
-        const isDateCalculatorActive = document.querySelector('.container[data-content="date-calculator"]').classList.contains('active');
-        setDatesToTodayAndTomorrowAtMidnight();
-        if (isDateCalculatorActive) calculateDifference();
-        if (isAutoResetEnabled) startResetTimer();
-    }
+    // 1. Скидаємо візуальну анімацію
+    document.getElementById('auto-reset-button').classList.remove('timer-running'); 
+    
+    // 2. Очищуємо змінну таймера
+    clearTimeout(endDateResetTimer);
+    
+    // 3. Скидаємо дати на стандартні значення
+    setDatesToTodayAndTomorrowAtMidnight();
+    
+    // 4. Оновлюємо текстовий результат
+    calculateDifference();
+    
+    // Рядок if (isAutoResetEnabled) startResetTimer(); ВИДАЛЕНО.
+    // Таймер більше не перезапускає сам себе.
+}
 
     function startResetTimer() {
         if (!isAutoResetEnabled) return;
+
+        const button = document.getElementById('auto-reset-button');
+
+        // Перевірка, чи потрібно взагалі запускати таймер (залишається без змін)
+        if (areDatesInDefaultState()) {
+            clearTimeout(endDateResetTimer); // На всяк випадок очищуємо старий таймер, якщо він був
+            button.classList.remove('timer-running');
+            return;
+        }
+
+        // --- ПОЧАТОК КАРДИНАЛЬНИХ ЗМІН ---
+
+        // 1. Знаходимо сам елемент, що анімується - кільце прогресу
+        const progressRing = button.querySelector('.progress-ring-fg');
+
+        // 2. Повністю зупиняємо будь-який попередній таймер.
+        // Це важливо, щоб уникнути "подвійних" спрацювань.
         clearTimeout(endDateResetTimer);
-        endDateResetTimer = setTimeout(resetDatesOnTimerEnd, RESET_DELAY_SECONDS * 1000);
+        
+        // 3. Скидаємо анімацію, видаливши клас
+        button.classList.remove('timer-running');
+        
+        // 4. Примушуємо браузер перерахувати стилі (це залишається)
+        void button.offsetWidth;
+
+        // 5. ОСНОВНА ЗМІНА:
+        // Ми більше НЕ використовуємо setTimeout.
+        // Замість нього ми вішаємо одноразовий слухач події 'transitionend'.
+        // Він спрацює РІВНО в той момент, коли анімація кільця завершиться.
+        progressRing.addEventListener('transitionend', resetDatesOnTimerEnd, { once: true });
+
+        // 6. І тільки тепер запускаємо анімацію
+        button.classList.add('timer-running');
+        
+        // Рядок з setTimeout(resetDatesOnTimerEnd, ...) ПОВНІСТЮ ВИДАЛЕНО.
     }
     
     function handleInputAndTimer() {
@@ -1793,21 +1951,40 @@ function generateLogins() {
     }
     
     function handleAutoResetToggle() {
-        const toggle = document.getElementById('auto-reset-toggle');
-        isAutoResetEnabled = toggle.checked;
+        const button = document.getElementById('auto-reset-button');
+        isAutoResetEnabled = !isAutoResetEnabled; // Інвертуємо стан
+        
+        button.classList.toggle('active', isAutoResetEnabled);
         localStorage.setItem('autoResetEnabled', isAutoResetEnabled);
-        if (!isAutoResetEnabled) clearTimeout(endDateResetTimer); 
-        else startResetTimer(); 
-        calculateDifference(); 
+
+        if (isAutoResetEnabled) {
+            // Якщо увімкнули - запускаємо таймер
+            startResetTimer();
+        } else {
+            // Якщо вимкнули - гарантовано зупиняємо таймер, анімацію І СКАСОВУЄМО ПОДІЮ
+            const progressRing = button.querySelector('.progress-ring-fg');
+            
+            // 1. Скасовуємо "прослуховувач", який чекає на завершення анімації
+            progressRing.removeEventListener('transitionend', resetDatesOnTimerEnd);
+            
+            // 2. Зупиняємо саму анімацію
+            button.classList.remove('timer-running');
+            
+            // 3. clearTimeout(endDateResetTimer); можна видалити, бо він від старої логіки
+        }
     }
 
     function loadAutoResetState() {
-        const savedState = localStorage.getItem('autoResetEnabled');
-        const toggle = document.getElementById('auto-reset-toggle');
-        if (savedState !== null) isAutoResetEnabled = savedState === 'true'; 
-        else isAutoResetEnabled = true;
-        toggle.checked = isAutoResetEnabled;
-    }
+    const savedState = localStorage.getItem('autoResetEnabled');
+    const button = document.getElementById('auto-reset-button');
+    
+    isAutoResetEnabled = savedState !== 'false'; // За замовчуванням увімкнено
+    
+    button.classList.toggle('active', isAutoResetEnabled);
+
+    // Додаємо обробник події тут, після того як кнопка гарантовано є в DOM
+    button.addEventListener('click', handleAutoResetToggle);
+}
 
     function calculateDifference() {
         const startDateInput = document.getElementById('start-date').value;
@@ -2815,11 +2992,45 @@ function generateLogins() {
 
     document.addEventListener('DOMContentLoaded', () => {
     loadTheme();
-    setDatesToTodayAndTomorrowAtMidnight();
-    loadAutoResetState(); 
-    calculateDifference(); 
-    if (isAutoResetEnabled) startResetTimer();
     setupTabs();
+	
+	// Обробник для кнопки "Сьогоднішня дата'"
+document.getElementById('set-start-now-btn').addEventListener('click', () => {
+    const now = new Date();
+    document.getElementById('start-date').value = formatDate(now);
+    document.getElementById('start-time').value = '00:00'; // Встановлюємо час на початок дня
+    handleInputAndTimer(); // Оновлюємо розрахунок
+});
+
+// Універсальна функція для додавання періоду до кінцевої дати
+const addDurationToEndDate = (monthsToAdd, yearsToAdd) => {
+    const startDateValue = document.getElementById('start-date').value;
+    const startTimeValue = document.getElementById('start-time').value;
+    if (!startDateValue) {
+        showNotification("Спочатку встановіть початкову дату!");
+        return;
+    }
+
+    const newEndDate = new Date(`${startDateValue}T${startTimeValue}`);
+    
+    // Розраховуємо нову дату
+    if (monthsToAdd > 0) {
+        newEndDate.setMonth(newEndDate.getMonth() + monthsToAdd);
+    }
+    if (yearsToAdd > 0) {
+        newEndDate.setFullYear(newEndDate.getFullYear() + yearsToAdd);
+    }
+
+    // Встановлюємо нові значення
+    document.getElementById('end-date').value = formatDate(newEndDate);
+    document.getElementById('end-time').value = startTimeValue; // Зберігаємо той самий час
+    handleInputAndTimer(); // Оновлюємо розрахунок
+};
+
+// Прив'язка до кнопок
+document.getElementById('add-6-months-btn').addEventListener('click', () => addDurationToEndDate(6, 0));
+document.getElementById('add-7-months-btn').addEventListener('click', () => addDurationToEndDate(7, 0));
+document.getElementById('add-1-year-btn').addEventListener('click', () => addDurationToEndDate(0, 1));
     
     document.getElementById('fullNameInput').addEventListener('input', generateLogins); 
     document.getElementById('add-template-button').onclick = addTemplate;
