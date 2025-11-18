@@ -9,6 +9,36 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     
     <style>
+	/* === НОВИЙ, НАДІЙНИЙ СТИЛЬ ДЛЯ ВМІСТУ ВКЛАДОК === */
+
+.content-card {
+    /* Розміри та позиціонування */
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+
+    /* Візуальний дизайн */
+    background-color: var(--tab-strip-bg); 
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05), inset 0 2px 6px rgba(0, 0, 0, 0.04);
+
+    /* Відступи всередині картки, щоб контент не прилипав до країв */
+    padding: 1rem;
+    
+    /* Дозволяємо скролінг всередині картки */
+    overflow: auto;
+    
+    /* Плавний перехід для тіні */
+    transition: box-shadow 0.3s ease-in-out;
+}
+
+/* Покращуємо тінь для темної теми */
+body.dark .content-card {
+background-color: var(--template-bg-color); 
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.05), inset 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
 	/* === СТИЛІ ДЛЯ НОВОГО ІНТЕРАКТИВНОГО ПЕРЕМИКАЧА АВТОСКИДАННЯ === */
 #auto-reset-button {
     position: relative;
@@ -90,7 +120,7 @@ body.dark .progress-ring-fg {
 	/* === ОСНОВНА ПАЛІТРА ТА ЗМІННІ ТЕМИ === */
 :root {
     /* Світла тема */
-    --bg-color: #f4f4f9;
+    --bg-color: #f9f8f6;
     --text-color: #333;
     --header-color: #444;
     --primary-accent-color: #007bff;
@@ -103,7 +133,7 @@ body.dark .progress-ring-fg {
     --input-border-color: #ccc;
     --input-focus-border-color: var(--primary-accent-color);
     
-    --template-bg-color: #fff;
+    --template-bg-color: #fdfdfd;
     --template-border-color: #ccc;
     --template-handle-bg: #f0f0f0;
     --template-handle-border: #ddd;
@@ -111,8 +141,8 @@ body.dark .progress-ring-fg {
     --tab-strip-bg: #E8E8E8;
     --tab-inactive-text: #555;
     
-    --scrollbar-thumb: #a0a0a0;
-    --scrollbar-track: #f1f1f1;
+--scrollbar-thumb: #c1c1c1;
+    --scrollbar-track: transparent;
 	
 	--calc-duration-color: var(--primary-accent-color);
 --calc-days-color: #ff5722;
@@ -142,8 +172,8 @@ body.dark {
     --tab-strip-bg: #2D223D;
     --tab-inactive-text: #e0e0e0;
     
-    --scrollbar-thumb: #5d6063;
-    --scrollbar-track: #242526;
+--scrollbar-thumb: #4a4a4a;
+    --scrollbar-track: transparent;
 
 --calc-duration-color: #00d4ff;
 --calc-days-color: #ff9800;
@@ -355,30 +385,35 @@ select:focus,
 text-align: right;	
 }
 
-        /* Стилі прокрутки (залишені як є) */
-        body.dark ::-webkit-scrollbar {
-            width: 10px; 
-            height: 10px; 
-        }
+/* Вимикаємо стандартні обмеження браузера */
+* {
+scrollbar-width: thin !important; /* <--- БУЛО auto, СТАВ thin */
+    scrollbar-color: var(--scrollbar-thumb) transparent;
+}
 
-        body.dark ::-webkit-scrollbar-track {
-            background: #242526; 
-            border-radius: 5px;
-        }
+::-webkit-scrollbar-track {
+    background: transparent;
+}
 
-        body.dark ::-webkit-scrollbar-thumb {
-            background-color: #5d6063; 
-            border-radius: 5px;
-            border: 2px solid #242526; 
-        }
+::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar-thumb);
+    border-radius: 10px;
+    border: 2px solid transparent; /* Рамка, щоб скрол "дихав" */
+    background-clip: content-box;  /* Малює колір тільки всередині рамки */
+}
 
-        body.dark ::-webkit-scrollbar-thumb:hover {
-            background-color: #8c8f94; 
-        }
+/* Світла тема */
+::-webkit-scrollbar-thumb:hover {
+    background-color: var(--primary-accent-color);
+}
+
+/* Темна тема */
+body.dark ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--secondary-accent-color);
+}
 
         body.dark {
             scrollbar-color: #5d6063 #242526; 
-            scrollbar-width: thin; 
         }
 
         body.dark .page-title .ultranet-color {
@@ -614,30 +649,34 @@ margin: 1px;
             display: flex; 
         }
         
-        .login-generator-container textarea {
-            width: 85%;
-            padding: 0.75rem;
-            font-size: 1rem;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-            box-sizing: border-box;
-            margin-bottom: 1rem;
-            resize: none;
-        }
+.login-generator-container textarea {
+    width: 85%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    margin-bottom: 1rem;
+    resize: none;
+    margin-left: auto;   /* <-- ДОДАНО */
+    margin-right: auto;  /* <-- ДОДАНО */
+}
 		
 		.login-generator-container {
     align-items: center;
 }
 
         .login-generator-container #results-container {
-            margin-top: -10px;
-            text-align: left;
-            width: 85%;
-            overflow-y: auto; 
-            padding-right: 0px;
-            height: auto;
-align-items: center;			
-        }
+    margin-top: -10px;
+    text-align: left;
+    width: 85%;
+    overflow-y: auto; 
+    padding-right: 0px;
+    height: auto;
+    align-items: center;
+    margin-left: auto;   /* <-- ДОДАНО */
+    margin-right: auto;  /* <-- ДОДАНО */
+}
         
         .login-generator-container .result-item {
 			display: flex;
@@ -814,26 +853,23 @@ body.dark .date-calculator-container #result-section h2 {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: var(--tab-strip-bg); 
-    padding: 5px; /* Невеликий відступ всередині */
-    border-radius: 10px; /* Сильно заокруглені кути */
+    background-color: #e4e6eb; /* Трохи темніший/насиченіший за фон */
+    padding: 4px; /* Трохи менший відступ для компактності */
+    border-radius: 12px; /* Більше заокруглення */
     margin: -8px auto 0 auto;
-    width: 44%; /* Ширина по вмісту */
-    box-shadow: inset 0 1px 2px rgba(0,0,0,0.07); /* Внутрішня тінь для глибини */
+    width: 44%; /* Ширина по контенту, щоб не розтягувалось */
+    min-width: 44%;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.06), inset 0 1px 2px rgba(0,0,0,0.04); /* Глибша тінь */
     position: relative;
-    z-index: 5; /* Щоб були вище за контент */
+    z-index: 5;
+    border: 1px solid rgba(0,0,0,0.03); /* Ледь помітний контур */
 }
 
-/* Прибираємо старий фон-підкладку, він більше не потрібен */
-.tabs::before {
-    display: none;
-}
-
-/* Темна тема для контейнера */
+/* Для темної теми */
 body.dark .tabs {
-    background-color: var(--input-bg-color); /* Темніший фон */
-    box-shadow: inset 0 1px 2px rgba(0,0,0,0.2);
-    /* Всі інші стилі з .tabs успадковуються */
+    background-color: var(--template-bg-color); 
+    box-shadow: inset 0 1px 4px rgba(0,0,0,0.6); /* Глибока тінь */
+    border: 1px solid rgba(255,255,255,0.05);
 }
 
 /* Стиль для кожної кнопки-вкладки */
@@ -863,30 +899,32 @@ body.dark .tabs {
     font-size: 1.1em;
 }
 
-/* Ефект при наведенні на НЕАКТИВНУ вкладку */
 .tab-button:hover:not(.active) {
     color: var(--text-color);
-    background-color: rgba(0,0,0,0.04); /* Ледь помітний фон */
+    background-color: rgba(0,0,0,0.05); /* Легка реакція */
+    border-radius: 10px;
 }
 body.dark .tab-button:hover:not(.active) {
     color: var(--text-color);
-    background-color: rgba(255,255,255,0.06);
+    background-color: rgba(255,255,255,0.05);
 }
 
 /* Стиль для АКТИВНОЇ вкладки */
 .tab-button.active {
-    background-color: var(--template-bg-color); /* Білий фон */
+    background-color: var(--template-bg-color); /* Колір фону як у картки */
     color: var(--primary-accent-color);
-    font-weight: 700; /* Більш жирний шрифт для акценту */
-    box-shadow: 0 3px 8px -1px rgba(50, 50, 93, 0.15), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
-    transform: translateY(-1px); /* Легкий ефект "підняття" */
+    font-weight: 700;
+    /* Ось тут магія "смачної" кнопки: */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(0, 0, 0, 0.05);
+    transform: translateY(0); /* Прибираємо зсув, тінь робить всю роботу */
+    border-radius: 10px; /* Радіус трохи менший за контейнер */
 }
 
-/* Стиль для АКТИВНОЇ вкладки в темній темі */
+/* Для темної теми */
 body.dark .tab-button.active {
-    background-color: var(--template-handle-bg); /* Фон трохи світліший за основний */
+    background-color: #3a3b3c; /* Світліше за канавку, щоб виділялось */
     color: var(--secondary-accent-color);
-    box-shadow: 0 3px 8px -1px rgba(0,0,0,0.25), 0 2px 4px -2px rgba(0,0,0,0.3);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.4); /* Тінь для відриву від дна */
 }
         
         #add-template-button {
@@ -1026,7 +1064,7 @@ body.dark .tab-button.active {
     display: flex;
     align-items: center;
     justify-content: center; /* ЗМІНЕНО: тепер все буде по центру */
-    margin-bottom: 17px;
+    margin-bottom: 14px;
     margin-top: 0;
 }
         
@@ -1456,6 +1494,11 @@ body.dark .calc-action-button:hover {
     color: var(--text-color);
     user-select: none; /* Щоб текст не виділявся випадково */
 }
+
+/* Об'єднаний та чистий стиль */
+.container[data-content="text-templates"] .content-card {
+    padding: 16px 4px 4px 4px; /* Верх 16, інші по 4 */
+}
     </style>
 </head>
 <body>
@@ -1484,14 +1527,17 @@ body.dark .calc-action-button:hover {
 
         <div class="tab-content-wrapper"> 
 
-            <div class="container login-generator-container active" data-content="login-generator" data-default-width="40%" data-default-height="680px">
+            <div class="container login-generator-container active" data-content="login-generator" data-default-width="45.5%" data-default-height="680px">
+			<div class="content-card">
                 <h2 style="margin-top: 0; text-align: center;">🔐 Генератор логінів</h2>
                 <p style="text-align: center;">Введіть повністю одне або декілька ПІБ, кожне — з нового рядка.<br>Також можливий трансліт ФОП, ТОВ, ПП, АТ, КБ, ГО.</p>
                 <textarea id="fullNameInput" rows="5" placeholder="Прізвище, Ім'я, та по Батькові" oninput="generateLogins()"></textarea>
                 <div id="results-container"></div>
+				</div>
             </div>
 
-            <div class="container date-calculator-container" data-content="date-calculator" data-default-width="50%" data-default-height="680px">
+            <div class="container date-calculator-container" data-content="date-calculator" data-default-width="45.5%" data-default-height="680px">
+			<div class="content-card">
                 <h2 style="margin-top: 0; text-align: center;">🗓️ Калькулятор тривалості між датами</h2>
 
                <div class="date-inputs-row">
@@ -1542,11 +1588,12 @@ body.dark .calc-action-button:hover {
                     <div id="result-display">
                         Оберіть дві дати для розрахунку.
                     </div>
+					</div>
                 </div>
             </div>
             
-            <div class="container gpon-commands-container" data-content="gpon-commands" data-default-width="60%" data-default-height="694px">
-    
+            <div class="container gpon-commands-container" data-content="gpon-commands" data-default-width="64%" data-default-height="710px">
+    <div class="content-card">
     <h2 style="margin-top: 0; text-align: center;">💻 Команди GPON/EPON/BDCOM</h2>
 	<div id="controls-and-clarification" style="display: flex; align-items: flex-start; gap: 10px; margin-bottom: 5px; flex-wrap: wrap;">
     
@@ -1566,7 +1613,9 @@ body.dark .calc-action-button:hover {
     
     <div id="command-output" class="command-list"> </div>
 </div>
-            <div class="container" data-content="text-templates" data-default-width="100%" data-default-height="694px">
+</div>
+            <div class="container" data-content="text-templates" data-default-width="100%" data-default-height="710px">
+			<div class="content-card">
                 <div class="templates-header-wrapper">
     <div class="template-global-actions">
     <h2 style="margin-top: 0; text-align: center; margin-bottom: 0;">📝 Текстові шаблони</h2>
@@ -1589,10 +1638,11 @@ body.dark .calc-action-button:hover {
             </div>
             
         </div> 
-    </div> 
+    </div>
+</div>	
     
     <div class="global-version-info">
-        Версія 3.2<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
+        Версія 3.2.3<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
     </div> 
     
     <div id="notification" class="notification">
@@ -1935,9 +1985,6 @@ function areDatesInDefaultState() {
     
     // 4. Оновлюємо текстовий результат
     calculateDifference();
-    
-    // Рядок if (isAutoResetEnabled) startResetTimer(); ВИДАЛЕНО.
-    // Таймер більше не перезапускає сам себе.
 }
 
     function startResetTimer() {
@@ -2004,8 +2051,6 @@ function areDatesInDefaultState() {
             
             // 2. Зупиняємо саму анімацію
             button.classList.remove('timer-running');
-            
-            // 3. clearTimeout(endDateResetTimer); можна видалити, бо він від старої логіки
         }
     }
 
@@ -2017,7 +2062,6 @@ function areDatesInDefaultState() {
     
     button.classList.toggle('active', isAutoResetEnabled);
 
-    // Додаємо обробник події тут, після того як кнопка гарантовано є в DOM
     button.addEventListener('click', handleAutoResetToggle);
 }
 
