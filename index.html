@@ -785,16 +785,14 @@ body.dark .date-calculator-container #result-section {
     margin-top: 0px;
     padding: 0;
     
-    /* === ОНОВЛЕНІ СТИЛІ === */
-    background-color: var(--template-bg-color); /* Повертаємо фон для всього блоку */
-    border: 1px solid var(--input-border-color); /* ДОДАЄМО РАМКУ, як у панелі кнопок */
-    border-radius: 6px; /* Встановлюємо ваше заокруглення */
+    background-color: #FCFCFC; 
+    border: 1px solid var(--input-border-color);
+    border-radius: 6px; 
     
-    /* Старі властивості, які залишаються */
     width: 450px;
     margin-right: auto;
     margin-left: auto;
-    overflow: hidden; /* Це важливо, щоб внутрішні елементи не "вилазили" за заокруглені кути */
+    overflow: hidden; 
 }
 
 /* Стилізуємо заголовок-шапку з високим контрастом */
@@ -813,13 +811,20 @@ body.dark .date-calculator-container #result-section {
 /* Область з контентом має свій фон для відділення */
 .date-calculator-container #result-section #result-display {
     padding: 15px;
-    background-color: var(--template-bg-color); /* Білий або темно-сірий фон */
+    background-color: #591BB5
+	border: 1px solid var(--input-border-color);
+	border-radius: 6px;
+; 
 }
 
 /* Оновлення для темної теми */
 body.dark .date-calculator-container #result-section {
-    background-color: #2c2c2e; /* Такий самий фон, як у панелі кнопок, для гармонії */
-    border-color: var(--input-border-color); /* Рамка буде темною, як треба */
+    background-color: #2c2c2e; /* Темний фон контейнера */
+    border-color: var(--input-border-color);
+}
+
+body.dark .date-calculator-container #result-section #result-display {
+    background-color: #2c2c2e; /* Темний фон для тексту, замість білого */
 }
 
 body.dark .date-calculator-container #result-section h2 {
@@ -1413,7 +1418,7 @@ body.dark .line-marker {
     width: fit-content;
     margin: 0 auto 25px auto;
     padding: 15px;
-    background-color: var(--template-handle-bg);
+    background-color: #FCFCFC; 
     border: 1px solid var(--input-border-color);
     border-radius: 6px;
 }
@@ -1429,8 +1434,8 @@ body.dark .calculator-panel {
     gap: 10px;
     padding: 6px;
     border-radius: 6px;
-    background-color: var(--input-bg-color); /* Фон для контрасту всередині панелі */
-    border: 1px solid var(--input-border-color);
+    background-color: #ffffff; 
+    border: 1px solid var(--input-border-color); 
     width: fit-content;
 }
 body.dark .calculator-actions-row {
