@@ -329,6 +329,17 @@ body.dark .template-field-group .textarea-wrapper:focus-within {
     -webkit-user-select: none; /* Safari */
     -ms-user-select: none;     /* IE 10+ */
     user-select: none;         /* Стандартний синтаксис */
+	/* ОПТИМІЗАЦІЯ: Ізолюємо шаблон від решти сторінки */
+    contain: layout paint style;
+    /* ОПТИМІЗАЦІЯ: Виносимо в окремий шар для плавного перетягування */
+    will-change: transform, width, height; 
+}
+
+/* Додамо клас для активного перетягування, щоб підняти z-index та вимкнути зайве */
+.template-field-group.is-dragging {
+    z-index: 1000;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    cursor: grabbing;
 }
 
 /* 2. Але ПОВЕРТАЄМО можливість виділення для полів вводу всередині нього */
@@ -811,10 +822,8 @@ body.dark .date-calculator-container #result-section {
 /* Область з контентом має свій фон для відділення */
 .date-calculator-container #result-section #result-display {
     padding: 15px;
-    background-color: #591BB5
-	border: 1px solid var(--input-border-color);
-	border-radius: 6px;
-; 
+    background-color: #fcfcfc;
+	border-radius: 6px; 
 }
 
 /* Оновлення для темної теми */
@@ -1657,6 +1666,9 @@ body.dark .calc-action-button:hover {
     
     <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
 <script>
+// Додайте це на початку скрипту, якщо змінна ще не оголошена
+const debouncedSaveTemplates = debounce(saveTemplates, 1000);
+
 // --- ФУНКЦІОНАЛ КНОПКИ "ОЧИСТИТИ ВСІ ШАБЛОНИ" ---
 function clearAllTemplates() {
     const templatesGrid = document.getElementById('templates-grid-wrapper');
@@ -2722,13 +2734,11 @@ function areDatesInDefaultState() {
             highlighter.scrollLeft = textarea.scrollLeft;
         };
 
-        // Обробник input: реагує на будь-яку зміну тексту (ввід, видалення, вставка).
-        // Має бути миттєвим, щоб уникнути розсинхронізації та мерехтіння.
         textarea.addEventListener('input', () => {
-            updateHighlight(textarea, highlighter); // Прямий виклик, без затримки
-            updateBookmarksOnTextChange(fieldGroup);
-            saveTemplates();
-        });
+    updateHighlight(textarea, highlighter); // Підсвітка має бути миттєвою
+    updateBookmarksOnTextChange(fieldGroup);
+    debouncedSaveTemplates(); // А збереження - відкладеним
+});
 
         textarea.addEventListener('scroll', syncScroll);
 
@@ -2973,14 +2983,6 @@ function areDatesInDefaultState() {
         reader.readAsText(file);
         fileInput.value = '';
     }
-    
-    function debounce(func, delay) {
-        let timeout;
-        return function(...args) {
-            clearTimeout(timeout);
-            timeout = setTimeout(() => func.apply(this, args), delay);
-        };
-    }
 
     function rearrangeTemplates() {
     const container = document.querySelector('.container[data-content="text-templates"]');
@@ -3073,6 +3075,14 @@ function areDatesInDefaultState() {
         applyTheme(isDark);
     }
 	
+	function debounce(func, delay) {
+    let timeout;
+    return function(...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), delay);
+    };
+}
+
     checkbox.addEventListener("change", () => applyTheme(checkbox.checked));
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -3159,6 +3169,3 @@ document.querySelectorAll('.container[data-content]').forEach(container => {
     </script>
 </body>
 </html>
-
-
-
