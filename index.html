@@ -21,7 +21,7 @@
     /* Візуальний дизайн */
     background-color: var(--tab-strip-bg); 
     border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05), inset 0 2px 6px rgba(0, 0, 0, 0.04);
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.04); 
 
     /* Відступи всередині картки, щоб контент не прилипав до країв */
     padding: 1rem;
@@ -36,7 +36,7 @@
 /* Покращуємо тінь для темної теми */
 body.dark .content-card {
 background-color: var(--template-bg-color); 
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.05), inset 0 2px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05), inset 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 	/* === СТИЛІ ДЛЯ НОВОГО ІНТЕРАКТИВНОГО ПЕРЕМИКАЧА АВТОСКИДАННЯ === */
@@ -301,6 +301,10 @@ body.dark .login-generator-container .result-item .regenerate-login-btn {
 	/* ВИРІШЕННЯ ПРОБЛЕМИ ЗСУВУ ЗАГОЛОВКА ПРИ ПРОКРУТЦІ */
 .container[data-content="text-templates"] {
     scrollbar-gutter: stable;
+    /* --- ЗМІНА 1: Забороняємо скрол батьківського елемента --- */
+    overflow: hidden !important; 
+    /* Важливо залишити padding, щоб картка не прилипала до країв */
+    padding: 1rem; 
 }
 	/* === КОРЕКТНЕ ПІДСВІЧУВАННЯ ВНУТРІШНІХ ЕЛЕМЕНТІВ ШАБЛОНУ === */
 
@@ -871,8 +875,7 @@ body.dark .date-calculator-container #result-section h2 {
     padding: 4px; /* Трохи менший відступ для компактності */
     border-radius: 12px; /* Більше заокруглення */
     margin: -8px auto 0 auto;
-    width: 44%; /* Ширина по контенту, щоб не розтягувалось */
-    min-width: 44%;
+    width: 840px; /* Ширина по контенту, щоб не розтягувалось */
     box-shadow: inset 0 2px 4px rgba(0,0,0,0.06), inset 0 1px 2px rgba(0,0,0,0.04); /* Глибша тінь */
     position: relative;
     z-index: 5;
@@ -1512,8 +1515,26 @@ body.dark .calc-action-button:hover {
 
 /* Об'єднаний та чистий стиль */
 .container[data-content="text-templates"] .content-card {
-    padding: 16px 7px 7px 7px; /* Верх 16, інші по 4 */
+    padding: 16px 7px 7px 7px; 
+    
+    /* --- ЗМІНА 2: Вмикаємо скрол саме тут --- */
+    overflow-y: auto; 
+    height: 100%; 
+    
+    /* --- ЗМІНА 3: Фікс графічного багу (курсора/артефактів) --- */
+    /* Цей рядок змушує браузер краще обробляти краї при скролі */
+    transform: translate3d(0,0,0); 
+    will-change: scroll-position;
 }
+
+/* Для ноутбуків та планшетів (ширина екрану менше 1400px) */
+    @media (max-width: 1400px) {
+        .container.gpon-commands-container {
+            /* !important потрібен, щоб перебити значення, яке виставляє JavaScript */
+            --local-width: 95% !important; 
+            width: 95% !important;
+        }
+    }
     </style>
 </head>
 <body>
@@ -1542,7 +1563,7 @@ body.dark .calc-action-button:hover {
 
         <div class="tab-content-wrapper"> 
 
-            <div class="container login-generator-container active" data-content="login-generator" data-default-width="45.5%" data-default-height="588px">
+            <div class="container login-generator-container active" data-content="login-generator" data-default-width="871px" data-default-height="588px">
 			<div class="content-card">
                 <h2 style="margin-top: 0; text-align: center;">🔐 Генератор логінів</h2>
                 <p style="text-align: center;">Введіть повністю одне або декілька ПІБ, кожне — з нового рядка.<br>Також можливий трансліт ФОП, ТОВ, ПП, АТ, КБ, ГО.</p>
@@ -1551,7 +1572,7 @@ body.dark .calc-action-button:hover {
 				</div>
             </div>
 
-            <div class="container date-calculator-container" data-content="date-calculator" data-default-width="45.5%" data-default-height="588px">
+            <div class="container date-calculator-container" data-content="date-calculator" data-default-width="871px" data-default-height="588px">
 			<div class="content-card">
                 <h2 style="margin-top: 0; text-align: center;">🗓️ Калькулятор тривалості між датами</h2>
 
@@ -1607,7 +1628,7 @@ body.dark .calc-action-button:hover {
                 </div>
             </div>
             
-            <div class="container gpon-commands-container" data-content="gpon-commands" data-default-width="64%" data-default-height="705px">
+            <div class="container gpon-commands-container" data-content="gpon-commands" data-default-width="63%" data-default-height="705px">
     <div class="content-card">
     <h2 style="margin-top: 0; text-align: center;">💻 Команди GPON/EPON/BDCOM</h2>
 	<div id="controls-and-clarification" style="display: flex; align-items: flex-start; gap: 10px; margin-bottom: 5px; flex-wrap: wrap;">
@@ -1657,7 +1678,7 @@ body.dark .calc-action-button:hover {
 </div>	
     
     <div class="global-version-info">
-        Версія 3.2.5<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
+        Версія 3.2.7<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
     </div> 
     
     <div id="notification" class="notification">
@@ -3169,4 +3190,3 @@ document.querySelectorAll('.container[data-content]').forEach(container => {
     </script>
 </body>
 </html>
-
