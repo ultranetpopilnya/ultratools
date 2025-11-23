@@ -928,12 +928,18 @@ body.dark .tab-button:hover:not(.active) {
 
 /* Стиль для АКТИВНОЇ вкладки */
 .tab-button.active {
-    background-color: var(--template-bg-color); /* Колір фону як у картки */
+    background-color: var(--template-bg-color);
     color: var(--primary-accent-color);
-    font-weight: 700;
-    /* Ось тут магія "смачної" кнопки: */
+    /* 1. Ставимо таку ж жирність, як у неактивних кнопок, щоб ширина не мінялась */
+    font-weight: 600; 
+    /* 2. Імітуємо жирність (Bold) за допомогою тіні. 
+       0.65px - це ідеальне значення, щоб виглядало як bold, але без "мило" */
+    text-shadow: 0 0 0.65px currentColor; 
+    /* Прибираємо те, що я давав минулого разу (якщо залишилось) */
+    -webkit-text-stroke: 0;
+    /* Решта стилів залишається як була */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(0, 0, 0, 0.05);
-    transform: translateY(0); /* Прибираємо зсув, тінь робить всю роботу */
+    transform: translateY(0);
     border-radius: 9999px;
 }
 
