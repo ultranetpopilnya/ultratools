@@ -498,7 +498,8 @@ body.dark .gpon-commands-container select {
             background-color: transparent; 
             flex-grow: 1; 
             overflow-y: auto;    
-            overflow-x: hidden;  	
+            overflow-x: hidden;
+scrollbar-gutter: stable;			
         }
         
         body.dark .command-list {
@@ -1608,6 +1609,95 @@ body.dark .calc-action-button:hover {
 body.dark ::placeholder {
     color: #666; /* Темніший, щоб не різав очі на темному фоні */
 }
+
+/* === СТИЛІ ДЛЯ ПІДКОМАНД (SUB-COMMANDS) === */
+
+/* Контейнер для списку підкоманд (прихований за замовчуванням) */
+.sub-command-list {
+    display: none;
+    flex-direction: column;
+    margin-left: 20px; /* Відступ зліва */
+    padding-left: 10px;
+    border-left: 2px solid var(--input-border-color); /* Лінія зліва для візуального зв'язку */
+    margin-bottom: 5px;
+}
+
+/* Коли батьківський елемент має клас open, показуємо список */
+.sub-command-list.open {
+    display: flex;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Стиль елемента підкоманди */
+.sub-command-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    border-radius: 8px;
+    margin-top: 2px;
+    font-size: 0.95em; /* Трохи менший шрифт */
+}
+
+.sub-command-item:hover {
+    background-color: #dbe9ff;
+}
+
+body.dark .sub-command-item:hover {
+    background-color: #333333;
+}
+
+.sub-command-item .command-text {
+    color: var(--primary-accent-color); /* Інший колір для підкоманд */
+}
+
+body.dark .sub-command-item .command-text {
+    color: #4db8ff;
+}
+
+/* Іконка стрілочки (Chevron) */
+.chevron-icon {
+    margin-left: 10px;
+    font-size: 0.8em;
+    transition: transform 0.3s ease;
+    color: #888;
+}
+
+/* Поворот стрілочки при відкритті */
+.command-item.expanded .chevron-icon {
+    transform: rotate(180deg);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Додайте це до стилів підкоманд, які ви вставляли раніше */
+
+/* Якщо команда має підпункти, текст команди має показувати курсор копіювання */
+.command-item.has-subcommands .command-text {
+    cursor: copy;
+    border-bottom: 1px dashed rgba(0,0,0,0.2); /* Підказка, що це окремий елемент */
+    transition: color 0.2s;
+}
+
+.command-item.has-subcommands .command-text:hover {
+    color: var(--primary-accent-color);
+    border-bottom-color: var(--primary-accent-color);
+}
+
+body.dark .command-item.has-subcommands .command-text:hover {
+    color: var(--secondary-accent-color);
+    border-bottom-color: var(--secondary-accent-color);
+}
+
+/* Сама плашка тепер має курсор "pointer" (рука), що натякає на відкриття */
+.command-item.has-subcommands {
+    cursor: pointer;
+}
     </style>
 </head>
 <body>
@@ -1751,7 +1841,7 @@ body.dark ::placeholder {
 </div>	
     
     <div class="global-version-info">
-        Версія 3.2.9<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
+        Версія 3.3<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
     </div> 
     
     <div id="notification" class="notification">
@@ -2253,41 +2343,80 @@ function areDatesInDefaultState() {
     
     const COMMANDS = {
         gpon: [
-		{ command: 'show gpon onu uncfg', description: 'Показати незареєстровані ONU на PON' }, 
-		{ command: 'show pon power attenuation gpon-onu_1/1/1:1', description: 'Показати сигнал ONU абонента' },
-        { command: 'show gpon onu state gpon-olt_1/1/1', description: 'Показати кількість активних та зареєстрованих ONU на порту 1/1/1' },		
-		{ command: 'show running-config interface gpon-onu_1/1/1:1', description: 'Показати конфіг ONU' }, 
-		{ command: 'show gpon onu detail-info gpon-onu_1/1/1:1', description: 'Показати логи падіння та підняття ONU' }, 
-		{ command: 'show clock', description: 'Показати час на OLT' }, 
-		{ command: 'show gpon remote-onu interface eth gpon-onu_1/1/1:1', description: 'Перевірка зєднання між ONU та роутером (швидкість)' }, 
-		{ command: 'show mac gpon onu gpon-onu_1/1/1:1', description: 'Показати Mac адресу роутера' }, 
-		{ command: 'show ip dhcp snooping dynamic port pon gpon-onu_1/1/1:1 vport 1', description: 'Показати Mac адресу, IP та VLAN роутера' }, 
-		{ command: 'show ip dhcp snooping port gpon-onu_1/1/1:1', description: 'Показати Mac адресу, IP та VLAN роутера' }, 
-		{ command: 'conf t', description: 'Зайти в налаштування на OLT' }, 
-		{ command: 'ip dhcp snooping clear pon abcd.efgh.1234 vlan 111 gpon-onu_1/1/1:1 vport 1', description: 'Очистка сесії. Виконується після команди conf t' }, 
-		{ command: 'ip dhcp snooping clear abcd.efgh.1234 vlan 111', description: 'Очистка сесії. Виконується після команди conf t' }, 
-		{ command: 'show pon power onu-rx gpon-olt_1/1/1', description: 'Показати сигнали всіх ONU на порту' }],
+            { command: 'show gpon onu uncfg', description: 'Показати незареєстровані ONU на PON' }, 
+            { command: 'show pon power attenuation gpon-onu_1/1/1:1', description: 'Показати сигнал ONU абонента' },
+			{ command: 'show pon power onu-rx gpon-olt_1/1/1', description: 'Показати сигнали всіх ONU на PON' },	
+            { command: 'show gpon onu state gpon-olt_1/1/1', description: 'Показати кількість активних та зареєстрованих ONU на порту 1/1/1' },		
+            { command: 'show running-config interface gpon-onu_1/1/1:1', description: 'Показати конфіг ONU' }, 
+            { command: 'show gpon onu detail-info gpon-onu_1/1/1:1', description: 'Показати логи падіння та підняття ONU' }, 
+            { command: 'show clock', description: 'Показати час на OLT' }, 
+            { command: 'show gpon remote-onu interface eth gpon-onu_1/1/1:1', description: 'Перевірка зєднання між ONU та роутером (швидкість)' }, 
+            { command: 'show mac gpon onu gpon-onu_1/1/1:1', description: 'Показати Mac адресу роутера' }, 
+            { command: 'show ip dhcp snooping dynamic port pon gpon-onu_1/1/1:1 vport 1', description: 'Показати Mac адресу, IP та VLAN роутера' }, 
+            { command: 'show ip dhcp snooping port gpon-onu_1/1/1:1', description: 'Показати Mac адресу, IP та VLAN роутера' }, 
+            { command: 'show pon power onu-rx gpon-olt_1/1/1', description: 'Показати сигнали всіх ONU на порту' },
+            
+            // --- ОСЬ ТУТ ЗМІНИ ДЛЯ GPON ---
+            { 
+                command: 'conf t', 
+                description: 'Зайти в налаштування OLT (Натисніть для списку)', 
+                subCommands: [
+                    { command: 'ip dhcp snooping clear pon abcd.efgh.1234 vlan 111 gpon-onu_1/1/1:1 vport 1', description: 'Очистка сесії' },
+                    { command: 'ip dhcp snooping clear abcd.efgh.1234 vlan 111', description: 'Очистка сесії' },
+                    { command: 'interface gpon-onu_1/1/1:1', description: 'Зайти в інтерфейс ONU' },
+					{ command: 'no onu 111', description: 'Видалення ONU з PON' },
+					{ command: 'onu 111 type GPON-1GE sn PTNHUYLO', description: 'Реєстрація ONU за серійним номером на PON' },
+					{ command: 'pon-onu-mng gpon-onu_1/1/1:1', description: 'Конфігурація ONU після реєстрації' },
+					
+                ]
+            }
+        ],
         
-		epon: [
-		{ command: 'show onu unauthentication', description: 'Пошук незареєстрованих ONU' }, 
-		{ command: 'show epon onu state epon-olt_1/1/1', description: 'Показати всі зареєстровані ONU на OLT' }, 
-		{ command: 'conf t', description: 'Зайти в налаштування на OLT' }, 
-		{ command: 'show running-config interface epon-onu_1/1/1:1', description: 'Показати конфіг ONU' }, 
-		{ command: 'show onu detail-info epon-onu_1/1/1:1', description: 'Показати логи падіння та підняття ONU' }, 
-		{ command: 'show pon power attenuation epon-onu_1/1/1:1', description: 'Показати сигнал ONU абонента' }, 
-		{ command: 'show mac epon onu epon-onu_1/1/1:1', description: 'Показати Mac адресу роутера' }, 
-		{ command: 'show ip dhcp snooping port epon-onu_1/1/1:1', description: 'Показати Mac адресу, IP та VLAN роутера' }],
+        epon: [
+            { command: 'show onu unauthentication', description: 'Пошук незареєстрованих ONU' }, 
+            { command: 'show epon onu state epon-olt_1/1/1', description: 'Показати всі зареєстровані ONU на OLT' }, 
+            { command: 'show running-config interface epon-onu_1/1/1:1', description: 'Показати конфіг ONU' }, 
+            { command: 'show onu detail-info epon-onu_1/1/1:1', description: 'Показати логи падіння та підняття ONU' }, 
+            { command: 'show pon power attenuation epon-onu_1/1/1:1', description: 'Показати сигнал ONU абонента' },
+			{ command: 'show pon power onu-rx epon-olt_1/1/1', description: 'Показати сигнали всіх ONU на PON' },		
+            { command: 'show mac epon onu epon-onu_1/1/1:1', description: 'Показати Mac адресу роутера' }, 
+            { command: 'show ip dhcp snooping port epon-onu_1/1/1:1', description: 'Показати Mac адресу, IP та VLAN роутера' },
+            
+            // --- ОСЬ ТУТ ЗМІНИ ДЛЯ EPON ---
+            { 
+                command: 'conf t', 
+                description: 'Зайти в налаштування OLT (Натисніть для списку)',
+                subCommands: [
+                     { command: 'interface epon-onu_1/1/1:1', description: 'Зайти в інтерфейс ONU' },
+					 { command: 'no onu 111', description: 'Видалення ONU з PON' },
+					 { command: 'onu 111 type  NTS-101 mac abcd.efgh.1234', description: 'Реєстрація ONU за MAC на PON' },
+					 { command: 'interface epon-onu_1/1/1:1', description: 'Зайти в інтерфейс ONU' },
+					 { command: 'pon-onu-mng epon-onu_1/1/1:1', description: 'Конфігурація ONU після реєстрації' },
+                ]
+            }
+        ],
         
-		bdcom: [
-		{ command: 'show epon active-onu interface ePON 0/4', description: 'Показати активні ONU на 4 порту' },
-		{ command: 'conf', description: 'Зайти в налаштування на OLT' },
-		{ command: 'show epon interface ePON 0/4:52 onu ctc optical-transceiver-diagnosis', description: 'Перевірка сигналу ONU' },
-		{ command: 'write all', description: 'Зберегти внесені зміни на OLT' },
-		{ command: 'show epon onu-information mac-address 4cd7.c888.3e9e', description: 'Пошук ONU за Mac адресою' },
-		{ command: 'show mac address-table interface ePON 0/4:52', description: 'Показати Mac адресу обладнання після ONU' },
-		{ command: 'show epon interface ePON 0/4:52 onu port 1 state', description: 'Показати зєднання між ONU та роутером' },
-		{ command: 'show epon onu-information | include 99c0', description: 'Пошук ONU по частині Mac' },	
-		{ command: 'show version', description: 'Показати інформацію та час коли перезавантажувався OLT' }],
+        bdcom: [
+            { command: 'show epon active-onu interface ePON 0/1', description: 'Показати активні ONU на 4 порту' },
+            { command: 'show epon interface ePON 0/1:11 onu ctc optical-transceiver-diagnosis', description: 'Перевірка сигналу ONU' },
+            { command: 'show epon onu-information mac-address abcd.efgh.1234', description: 'Пошук ONU за Mac адресою' },
+            { command: 'show mac address-table interface ePON 0/1:11', description: 'Показати Mac адресу обладнання після ONU' },
+            { command: 'show epon interface ePON 0/1:11 onu port 1 state', description: 'Показати зєднання між ONU та роутером' },
+            { command: 'show epon onu-information | include abcd', description: 'Пошук ONU по частині Mac' },	
+            { command: 'show epon onu-information mac-address abcd.efgh.1234', description: 'Пошук ONU по Mac' },
+			{ command: 'show epon interface ePON 0/1:11 onu ctc optical-transceiver-diagnosis', description: 'Виміряти сигнал ONU' },
+			{ command: 'show epon onu-ctc-optical-transceiver-diagnosis interface ePON 0/1', description: 'Показати сигнал PON' },
+			{ command: 'write all', description: 'Зберегти внесені зміни на OLT' },
+             // --- ОСЬ ТУТ ЗМІНИ ДЛЯ BDCOM ---
+            { 
+                command: 'conf', 
+                description: 'Зайти в налаштування OLT',
+                subCommands: [
+                    { command: 'interface ePON 0/1:11', description: 'Зайти в інтерфейс ONU' },
+					{ command: 'no epon bind-onu mac abcd.efgh.1234', description: 'Видалення ONU з PON' },
+                ]
+            }
+        ],
     };
 
     const commandOutput = document.getElementById('command-output');
@@ -2296,40 +2425,128 @@ function areDatesInDefaultState() {
     function displayCommands(deviceType) {
         commandOutput.innerHTML = ''; 
         const commands = COMMANDS[deviceType] || [];
+        
         if (commands.length === 0) {
             commandOutput.innerHTML = '<p style="text-align: center; color: #888; padding: 20px;">Команди для цього типу обладнання ще не додано.</p>';
             return;
         }
+
         commands.forEach(item => {
             if (!item.command && !item.description) return;
+
+            const hasSubCommands = item.subCommands && item.subCommands.length > 0;
+
+            // 1. Створюємо головний рядок
             const commandDiv = document.createElement('div');
             commandDiv.classList.add('command-item');
             commandDiv.setAttribute('data-command', item.command); 
+            
+            // Якщо є підкоманди, додаємо спец-клас для CSS
+            if (hasSubCommands) {
+                commandDiv.classList.add('has-subcommands');
+                commandDiv.title = "Натисніть на рядок, щоб розгорнути список. Натисніть на текст команди, щоб скопіювати.";
+            }
+
+            // 2. Текст команди (Ліва частина)
             const commandTextSpan = document.createElement('span');
             commandTextSpan.classList.add('command-text');
             commandTextSpan.textContent = item.command;
+            
+            // 3. Опис (Права частина)
             const commandDescriptionSpan = document.createElement('span');
             commandDescriptionSpan.classList.add('command-description');
             commandDescriptionSpan.textContent = `(${item.description})`;
+
             commandDiv.appendChild(commandTextSpan);
             commandDiv.appendChild(commandDescriptionSpan);
-            commandDiv.addEventListener('click', handleCommandClick); 
+
+            let subListDiv = null;
+
+            // 4. Логіка для команд з підменю (наприклад, conf t)
+            if (hasSubCommands) {
+                // Додаємо стрілочку
+                const chevron = document.createElement('i');
+                chevron.className = 'fas fa-chevron-down chevron-icon';
+                commandDiv.appendChild(chevron);
+
+                // Створюємо контейнер списку
+                subListDiv = document.createElement('div');
+                subListDiv.className = 'sub-command-list';
+
+                // Наповнюємо список
+                item.subCommands.forEach(subItem => {
+                    const subDiv = document.createElement('div');
+                    subDiv.className = 'sub-command-item';
+                    
+                    subDiv.innerHTML = `
+                        <span class="command-text" style="font-family: 'Fira Code', monospace; font-weight: 600;">${subItem.command}</span>
+                        <span class="command-description" style="font-size: 0.9em; color: #888;">(${subItem.description})</span>
+                    `;
+                    
+                    // Клік по підпункту -> копіювання
+                    subDiv.addEventListener('click', (e) => {
+                        e.stopPropagation(); 
+                        copyCommandToClipboard(subItem.command);
+                    });
+                    
+                    subListDiv.appendChild(subDiv);
+                });
+
+                // --- ГОЛОВНА ЗМІНА ЛОГІКИ ---
+                
+                // А) Клік по ТЕКСТУ команди -> ТІЛЬКИ копіювання
+                commandTextSpan.addEventListener('click', (e) => {
+                    e.stopPropagation(); // Зупиняємо подію, щоб список не відкрився/закрився
+                    copyCommandToClipboard(item.command);
+                });
+
+                // Б) Клік по РЯДКУ (все інше) -> ТІЛЬКИ відкриття/закриття
+                commandDiv.addEventListener('click', (e) => {
+                    // Копіювання НЕ відбувається
+                    const isExpanded = commandDiv.classList.toggle('expanded');
+                    subListDiv.classList.toggle('open', isExpanded);
+                });
+
+            } else {
+                // 5. Логіка для звичайних команд (без підменю) -> Стара поведінка
+                commandDiv.addEventListener('click', () => {
+                    copyCommandToClipboard(item.command);
+                });
+            }
+
             commandOutput.appendChild(commandDiv);
+            if (subListDiv) {
+                commandOutput.appendChild(subListDiv);
+            }
         });
     }
 
-    async function handleCommandClick(event) {
-        const command = event.currentTarget.getAttribute('data-command');
-        const commandText = event.currentTarget.querySelector('.command-text').textContent; 
-        if (!command) return;
+    // Функція копіювання залишається без змін (з попереднього кроку)
+    async function copyCommandToClipboard(text) {
+        if (!text) return;
         try {
-            await navigator.clipboard.writeText(command);
-            showNotification(`Команда скопійована: ${commandText}`);
+            await navigator.clipboard.writeText(text);
+            showNotification(`Команда скопійована: ${text}`);
         } catch (err) {
             console.error('Не вдалося скопіювати команду: ', err);
             showNotification('Помилка копіювання. Спробуйте вручну.');
         }
     }
+
+    // Окрема функція для копіювання (щоб не дублювати код)
+    async function copyCommandToClipboard(text) {
+        if (!text) return;
+        try {
+            await navigator.clipboard.writeText(text);
+            showNotification(`Команда скопійована: ${text}`);
+        } catch (err) {
+            console.error('Не вдалося скопіювати команду: ', err);
+            showNotification('Помилка копіювання. Спробуйте вручну.');
+        }
+    }
+
+    // Стару функцію handleCommandClick можна видалити, 
+    // оскільки логіка тепер вбудована прямо в displayCommands через copyCommandToClipboard
 
     function showNotification(message) {
         notification.textContent = message;
