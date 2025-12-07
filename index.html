@@ -695,7 +695,7 @@ margin: 1px;
             flex-direction: column; 
             max-width: 100%; 
             width: 100%;
-            margin: 0 auto 2rem auto; 
+            margin: 0 auto 0rem auto; 
             gap: 0; 
             align-items: center; 
         }
@@ -955,10 +955,10 @@ body.dark .date-calculator-container #result-section h2 {
 body.holiday-mode .tabs::after {
     content: '';
     position: absolute;
-    top: -30px;
-    right: -23px;
-    width: 55px;
-    height: 55px;
+    top: -32px;
+    right: -25px;
+    width: 58px;
+    height: 58px;
     background-image: url('https://cdn-icons-png.flaticon.com/512/744/744546.png');
     background-size: contain;
     background-repeat: no-repeat;
@@ -968,18 +968,17 @@ body.holiday-mode .tabs::after {
     filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.2));
 }
 
-/* 2. РІЗДВЯНА ШКАРПЕТКА (Лівий нижній кут) - Тільки в режимі свята */
 body.holiday-mode .tabs::before {
     content: '';
     position: absolute;
     bottom: -8px;
-    left: -16px;
-    width: 56px;
-    height: 56px;
+    left: -18px;
+    width: 60px;
+    height: 60px;
     background-image: url('https://pics.clipartpng.com/midle/Christmas_Tree_with_Gifts_PNG_Clipart-16.png');
     background-size: contain;
     background-repeat: no-repeat;
-    transform: rotate(-10deg);
+    transform: rotate(-15deg);
     pointer-events: none;
     z-index: 100 !important;
     filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.2));
@@ -1088,10 +1087,9 @@ body.dark .tab-button.active {
         }
 
         .global-version-info {
-            bottom: 4px;
+            bottom: 6px;
             font-size: 14px;
             color: #888;
-            display: flex;
             align-items: center; 
             justify-content: center;
             position: fixed;			
@@ -1100,7 +1098,10 @@ body.dark .tab-button.active {
         .global-version-info .version-emoji {
             width: 25px;
             height: 25px;
-            margin-left: 5px; 
+            margin-left: 3px;
+			vertical-align: middle;
+			position: relative;
+top: -3px;		
         }
         
         body.dark .global-version-info {
@@ -2000,7 +2001,7 @@ body.holiday-mode.dark .page-title .isp-e-color-p {
                 </div>
             </div>
             
-            <div class="container gpon-commands-container" data-content="gpon-commands" data-default-width="63%" data-default-height="705px">
+            <div class="container gpon-commands-container" data-content="gpon-commands" data-default-width="63%" data-default-height="720px">
     <div class="content-card">
     <h2 style="margin-top: 0; text-align: center;">💻 Команди GPON/EPON/BDCOM</h2>
 	<div id="controls-and-clarification" style="display: flex; align-items: flex-start; gap: 10px; margin-bottom: 5px; flex-wrap: wrap;">
@@ -2022,7 +2023,7 @@ body.holiday-mode.dark .page-title .isp-e-color-p {
     <div id="command-output" class="command-list"> </div>
 </div>
 </div>
-            <div class="container" data-content="text-templates" data-default-width="100%" data-default-height="705px">
+            <div class="container" data-content="text-templates" data-default-width="100%" data-default-height="720px">
 			<div class="content-card">
                 <div class="templates-header-wrapper">
     <div class="template-global-actions">
