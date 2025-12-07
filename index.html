@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     
     <style>
+
 	/* === НОВИЙ, НАДІЙНИЙ СТИЛЬ ДЛЯ ВМІСТУ ВКЛАДОК === */
 
 .content-card {
@@ -181,6 +182,71 @@ body.dark {
 --button-paste-hover-bg: #138496;
 --resize-handle-color: rgba(255,255,255,0.3);
 --highlight-bg-color: rgba(230, 162, 46, 0.5);
+
+    /* ДОДАЙТЕ ЦЕЙ РЯДОК ДЛЯ СВІТЛОЇ ТЕМИ: */
+    --snow-color: #d1d5db; /* Сіро-блакитний, щоб було видно на світлому фоні */
+}
+
+body.dark {
+    /* ... ваші існуючі змінні темної теми ... */
+    
+    /* ДОДАЙТЕ ЦЕЙ РЯДОК ДЛЯ ТЕМНОЇ ТЕМИ: */
+    --snow-color: rgba(255, 255, 255, 0.8); /* Білий напівпрозорий */
+}
+
+/* === СТИЛІ ДЛЯ СНІГУ (КЕРОВАНІ) === */
+#snow-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+    display: none; /* ЗА ЗАМОВЧУВАННЯМ ВИМКНЕНО */
+}
+
+/* Вмикаємо тільки якщо є клас holiday-mode */
+body.holiday-mode #snow-container {
+    display: block;
+}
+
+.snowflake {
+    position: absolute;
+    top: -50px; /* Початкова позиція за межами екрану */
+    color: var(--snow-color);
+    font-size: 1em;
+    font-family: Arial, sans-serif; /* Для коректного відображення символів */
+    text-shadow: 0 0 5px rgba(0,0,0,0.1); /* Легка тінь для об'єму */
+    user-select: none;
+    will-change: transform; /* Оптимізація для GPU */
+    animation-name: fall, sway;
+    animation-timing-function: linear, ease-in-out;
+    animation-iteration-count: infinite, infinite;
+    animation-play-state: running, running;
+}
+
+/* Анімація падіння */
+@keyframes fall {
+    0% { transform: translateY(-50px); }
+    100% { transform: translateY(110vh); } /* Падає трохи нижче екрану */
+}
+
+/* Анімація хитання з боку в бік */
+@keyframes sway {
+    0%, 100% { margin-left: 0; }
+    50% { margin-left: 50px; }
+}
+
+/* ВАЖЛИВО: Піднімаємо контент над снігом */
+.main-content-wrapper, 
+.page-title, 
+.toggle-button-wrapper, 
+.notification,
+.global-version-info {
+    position: relative;
+    z-index: 2; /* Контент вище снігу */
 }
 
 /* === НОВІ СТИЛІ КНОПОК ГЕНЕРАТОРА (ідентичні стилю шаблонів) === */
@@ -609,6 +675,7 @@ margin: 1px;
             margin-bottom: 1.5rem;
             text-align: center;
             font-size: 2.5rem;
+			line-height: 1.2; 
         }
 		
 		.container h2 {
@@ -879,8 +946,43 @@ body.dark .date-calculator-container #result-section h2 {
     width: 840px; /* Ширина по контенту, щоб не розтягувалось */
     box-shadow: inset 0 2px 4px rgba(0,0,0,0.06), inset 0 1px 2px rgba(0,0,0,0.04); /* Глибша тінь */
     position: relative;
-    z-index: 5;
+    z-index: 50;
     border: 1px solid rgba(0,0,0,0.03); /* Ледь помітний контур */
+	overflow: visible !important; /* Дозволяє декору виходити за межі панелі */
+}
+
+/* 1. ШАПКА САНТИ (Правий верхній кут) - Тільки в режимі свята */
+body.holiday-mode .tabs::after {
+    content: '';
+    position: absolute;
+    top: -30px;
+    right: -23px;
+    width: 55px;
+    height: 55px;
+    background-image: url('https://cdn-icons-png.flaticon.com/512/744/744546.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    transform: rotate(20deg);
+    pointer-events: none;
+    z-index: 20;
+    filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.2));
+}
+
+/* 2. РІЗДВЯНА ШКАРПЕТКА (Лівий нижній кут) - Тільки в режимі свята */
+body.holiday-mode .tabs::before {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: -16px;
+    width: 56px;
+    height: 56px;
+    background-image: url('https://pics.clipartpng.com/midle/Christmas_Tree_with_Gifts_PNG_Clipart-16.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    transform: rotate(-10deg);
+    pointer-events: none;
+    z-index: 100 !important;
+    filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.2));
 }
 
 /* Для темної теми */
@@ -1247,7 +1349,7 @@ body.dark #clear-all-templates-button:hover {
             background-color: var(--template-handle-bg);
             cursor: move;
             border-bottom: 1px solid var(--template-handle-border);
-            border-radius: 0px 0x 0 0;
+            border-radius: 0;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -1698,10 +1800,116 @@ body.dark .command-item.has-subcommands .command-text:hover {
 .command-item.has-subcommands {
     cursor: pointer;
 }
-    </style>
+
+/* ========================================= */
+/* === НОВОРІЧНИЙ РЕЖИМ (HOLIDAY MODE)   === */
+/* ========================================= */
+
+/* 1. БАЗА ЗАГОЛОВКА (ІНТЕГРОВАНИЙ СТИЛЬ) */
+body.holiday-mode .page-title {
+    position: relative;
+    z-index: 5;
+
+    /* Геометрія */
+    display: block;
+    width: -moz-fit-content;
+    width: fit-content;
+    margin: -10px auto 1.5rem auto;
+    
+    padding: 15px 40px; 
+    
+    /* === КЛЮЧОВЕ: ВИКОРИСТОВУЄМО КОЛЬОРИ ТЕМИ === */
+    /* Фон беремо такий самий, як у ваших вкладок (сірий/темний) */
+    background-color: var(--tab-strip-bg); 
+    
+    /* Рамка така сама, як у полів вводу */
+    border: 1px solid var(--input-border-color);
+    border-radius: 12px; 
+    
+    /* Тінь як у кнопок, не агресивна */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); 
+    
+    /* Текст */
+    text-align: center;
+    line-height: 1.2;
+    
+    /* Забороняємо виділення фону, щоб не псувати вигляд */
+    overflow: hidden; 
+}
+
+/* 2. ТЕКСТУРА ГІРЛЯНДИ (НАПІВПРОЗОРА) */
+body.holiday-mode .page-title::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1; /* Під текстом */
+    
+    /* Вставляємо вашу гірлянду */
+    background-image: url('winter.jpg'); 
+    background-size: cover;
+    background-position: center;
+    
+    /* === ГОЛОВНИЙ ФІКС === */
+    /* Робимо картинку ледь помітною (як водяний знак) */
+    /* У світлій темі це дасть легкий візерунок, але блок залишиться світлим */
+    opacity: 0.2; 
+    
+    /* Режим накладання (покращує вигляд на кольоровому фоні) */
+    mix-blend-mode: multiply; 
+}
+
+/* 3. НАЛАШТУВАННЯ ДЛЯ ТЕМНОЇ ТЕМИ */
+body.dark.holiday-mode .page-title {
+    background-color: var(--template-bg-color); /* Темний фон блоку */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5); /* Світіння тіні */
+}
+
+body.dark.holiday-mode .page-title::before {
+    /* У темній темі робимо картинку яскравішою */
+    opacity: 0.6; 
+    mix-blend-mode: normal; /* Повертаємо нормальні кольори */
+}
+
+/* 4. КОЛЬОРИ ТЕКСТУ (ПОВЕРТАЄМО ОРИГІНАЛЬНІ ЗІ СВЯТКОВИМ АКЦЕНТОМ) */
+
+/* === Світла тема (Текст темний/насичений, щоб читався на світлому) === */
+body.holiday-mode .page-title {
+    color: var(--header-color); /* Рідний колір заголовка */
+    text-shadow: 0 1px 1px rgba(255,255,255,0.8); /* Легка біла підсвітка */
+}
+
+body.holiday-mode .page-title .ultranet-color { color: #811e71; }
+body.holiday-mode .page-title .isp-e-color-i { color: #e6b800; } /* Трохи темніший жовтий */
+body.holiday-mode .page-title .isp-e-color-s { color: #28a745; }
+body.holiday-mode .page-title .isp-e-color-p { color: #007bff; }
+
+/* === Темна тема (Неон, як і було) === */
+body.dark.holiday-mode .page-title {
+    color: #fff; /* Білий основний текст */
+    text-shadow: 0 0 10px rgba(255,255,255,0.3);
+}
+
+body.holiday-mode.dark .page-title .ultranet-color { 
+    color: #e040fb !important; text-shadow: 0 0 15px rgba(224, 64, 251, 0.8); 
+}
+body.holiday-mode.dark .page-title .isp-e-color-i { 
+    color: #ffeb3b !important; text-shadow: 0 0 15px rgba(255, 235, 59, 0.8); 
+}
+body.holiday-mode.dark .page-title .isp-e-color-s { 
+    color: #00e676 !important; text-shadow: 0 0 15px rgba(0, 230, 118, 0.8); 
+}
+body.holiday-mode.dark .page-title .isp-e-color-p { 
+    color: #00b0ff !important; text-shadow: 0 0 15px rgba(0, 176, 255, 0.8); 
+}
+</style>
 </head>
 <body>
-    
+
+<body class="holiday-mode">    
+<div id="snow-container"></div>	
     <div class="toggle-button-wrapper">
         <input type="checkbox" class="checkbox" id="dark-mode-checkbox">
         <label for="dark-mode-checkbox" class="checkbox-label">
@@ -1710,6 +1918,7 @@ body.dark .command-item.has-subcommands .command-text:hover {
             <span class="ball"></span>
         </label>
     </div>
+	
     <h1 class="page-title">Ультимативний набір інструментів
         <br>
         <span class="ultranet-color" style="color: #811e71;">Ультранет</span> та
@@ -1841,7 +2050,7 @@ body.dark .command-item.has-subcommands .command-text:hover {
 </div>	
     
     <div class="global-version-info">
-        Версія 3.3<img src="emoji.webp" alt="Animated Emoji" class="version-emoji">
+        Версія 3.3.1<img src="snowman.webp" alt="Animated Emoji" class="version-emoji">
     </div> 
     
     <div id="notification" class="notification">
@@ -2522,18 +2731,6 @@ function areDatesInDefaultState() {
     }
 
     // Функція копіювання залишається без змін (з попереднього кроку)
-    async function copyCommandToClipboard(text) {
-        if (!text) return;
-        try {
-            await navigator.clipboard.writeText(text);
-            showNotification(`Команда скопійована: ${text}`);
-        } catch (err) {
-            console.error('Не вдалося скопіювати команду: ', err);
-            showNotification('Помилка копіювання. Спробуйте вручну.');
-        }
-    }
-
-    // Окрема функція для копіювання (щоб не дублювати код)
     async function copyCommandToClipboard(text) {
         if (!text) return;
         try {
@@ -3476,6 +3673,82 @@ document.querySelectorAll('.container[data-content]').forEach(container => {
     }
     const debouncedRearrange = debounce(rearrangeTemplates, 250); 
     window.addEventListener('resize', debouncedRearrange);
+	
+// === ВИПРАВЛЕНИЙ РОЗУМНИЙ СНІГОПАД ===
+    function createSnowflakes() {
+        const container = document.getElementById('snow-container');
+        
+        // Перевірка, чи існує контейнер в HTML
+        if (!container) {
+            console.error("Помилка: Не знайдено <div id='snow-container'>");
+            return;
+        }
+
+        const snowflakeCount = 45; 
+        // Я змінив назву ключа на 'snow-v5', щоб скинути старі помилкові дані
+        const STORAGE_KEY = 'snow-v5'; 
+
+        let snowData = null;
+        
+        try {
+            // Пробуємо дістати дані
+            snowData = JSON.parse(localStorage.getItem(STORAGE_KEY));
+        } catch (e) {
+            console.log("Помилка читання даних, створюємо нові");
+        }
+
+        // Якщо даних немає або їх кількість не співпадає — генеруємо заново
+        if (!snowData || !Array.isArray(snowData) || snowData.length !== snowflakeCount) {
+            snowData = [];
+            const characters = ['❄', '❅', '❆'];
+
+            for (let i = 0; i < snowflakeCount; i++) {
+                const char = characters[Math.floor(Math.random() * characters.length)];
+                const size = Math.floor(Math.random() * 15 + 10) + 'px';
+                const leftPos = Math.floor(Math.random() * 100) + 'vw';
+                const opacity = (Math.random() * 0.5 + 0.3).toFixed(2);
+                
+                // Тривалість анімації
+                const durationFall = (Math.random() * 10 + 10).toFixed(2) + 's'; // Повільніше (10-20с)
+                const durationSway = (Math.random() * 4 + 3).toFixed(2) + 's';
+                
+                // Затримка (від'ємна, щоб сніг був відразу на екрані)
+                // Генеруємо від -20s до 0s
+                const delayFall = (Math.random() * -20).toFixed(2) + 's';
+                const delaySway = (Math.random() * -5).toFixed(2) + 's';
+
+                snowData.push({
+                    char, size, leftPos, opacity, 
+                    durationFall, durationSway, 
+                    delayFall, delaySway
+                });
+            }
+
+            // Зберігаємо нові чисті дані
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(snowData));
+        }
+
+        // Очищаємо і малюємо
+        container.innerHTML = ''; 
+        snowData.forEach(data => {
+            const flake = document.createElement('div');
+            flake.classList.add('snowflake');
+            flake.textContent = data.char; // Використовуємо textContent замість innerHTML (швидше)
+            
+            flake.style.fontSize = data.size;
+            flake.style.left = data.leftPos;
+            flake.style.opacity = data.opacity;
+            
+            // Встановлюємо анімацію
+            flake.style.animationDuration = `${data.durationFall}, ${data.durationSway}`;
+            flake.style.animationDelay = `${data.delayFall}, ${data.delaySway}`;
+            
+            container.appendChild(flake);
+        });
+    }
+
+    // ВАЖЛИВО: Цей рядок запускає сніг!
+    createSnowflakes();
 });
     </script>
 </body>
