@@ -9,6 +9,71 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     
     <style>
+	
+	/* === НОВИЙ СТИЛЬ ДЛЯ ВЕРСІЇ (ПІГУЛКА ЗЛІВА) === */
+.version-pill {
+    position: fixed;
+    top: 18px; /* На тому ж рівні, що й перемикач теми */
+    left: 30px; /* Симетричний відступ зліва */
+    z-index: 100;
+    
+    /* Розміри та форма */
+    height: 38px;
+    width: 38px; /* Початкова ширина (тільки іконка) */
+    border-radius: 50px;
+    
+    /* Кольори (беремо з ваших змінних) */
+    background-color: var(--input-bg-color);
+    border: 1px solid var(--input-border-color);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    
+    /* Вирівнювання вмісту */
+    display: flex;
+    align-items: center;
+    overflow: hidden; /* Ховає текст, поки блок згорнутий */
+    
+    /* Анімація "виїжджання" */
+    transition: width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s;
+    cursor: default;
+}
+
+/* При наведенні пігулка розширюється */
+.version-pill:hover {
+    width: 145px; /* Ширина, достатня для тексту */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Стиль для іконки сніговика */
+.version-pill .version-emoji {
+    width: 26px;
+    height: 26px;
+    min-width: 26px; /* Щоб не стискалася */
+    margin-left: 5px; /* Відступ від лівого краю */
+    object-fit: contain;
+}
+
+/* Стиль для тексту версії */
+.version-pill .version-text {
+    white-space: nowrap; /* Текст в один рядок */
+    margin-left: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-color);
+    opacity: 0; /* Прихований спочатку */
+    transform: translateX(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Показуємо текст при наведенні на батьківський блок */
+.version-pill:hover .version-text {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* Адаптація для темної теми (тінь та кольори автоматично підтягнуться зі змінних, але можна уточнити тінь) */
+body.dark .version-pill {
+    box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+}
 
 	/* === НОВИЙ, НАДІЙНИЙ СТИЛЬ ДЛЯ ВМІСТУ ВКЛАДОК === */
 
@@ -243,10 +308,9 @@ body.holiday-mode #snow-container {
 .main-content-wrapper, 
 .page-title, 
 .toggle-button-wrapper, 
-.notification,
-.global-version-info {
+.notification { 
     position: relative;
-    z-index: 2; /* Контент вище снігу */
+    z-index: 2; 
 }
 
 /* === НОВІ СТИЛІ КНОПОК ГЕНЕРАТОРА (ідентичні стилю шаблонів) === */
@@ -1085,28 +1149,6 @@ body.dark .tab-button.active {
         #add-template-button:active {
             transform: scale(0.98);
         }
-
-        .global-version-info {
-            bottom: 6px;
-            font-size: 14px;
-            color: #888;
-            align-items: center; 
-            justify-content: center;
-            position: fixed;			
-        }
-
-        .global-version-info .version-emoji {
-            width: 25px;
-            height: 25px;
-            margin-left: 3px;
-			vertical-align: middle;
-			position: relative;
-top: -3px;		
-        }
-        
-        body.dark .global-version-info {
-            color: white;
-        }
         
         .toggle-button-wrapper {
             position: absolute; 
@@ -1803,113 +1845,188 @@ body.dark .command-item.has-subcommands .command-text:hover {
 }
 
 /* ========================================= */
-/* === НОВОРІЧНИЙ РЕЖИМ (HOLIDAY MODE)   === */
+/* === ОНОВЛЕНИЙ НОВОРІЧНИЙ ЗАГОЛОВОК === */
 /* ========================================= */
 
-/* 1. БАЗА ЗАГОЛОВКА (ІНТЕГРОВАНИЙ СТИЛЬ) */
+/* 1. Скидаємо "коробку" (фон, рамки, тіні блоку) */
 body.holiday-mode .page-title {
-    position: relative;
-    z-index: 5;
-
-    /* Геометрія */
-    display: block;
-    width: -moz-fit-content;
-    width: fit-content;
-    margin: -22px auto 1.5rem auto;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important; /* Прибираємо внутрішні відступи, бо рамки немає */
+    margin-top: -20px !important; 
     
-    padding: 6px 40px; 
-    
-    /* === КЛЮЧОВЕ: ВИКОРИСТОВУЄМО КОЛЬОРИ ТЕМИ === */
-    /* Фон беремо такий самий, як у ваших вкладок (сірий/темний) */
-    background-color: var(--tab-strip-bg); 
-    
-    /* Рамка така сама, як у полів вводу */
-    border: 1px solid var(--input-border-color);
-    border-radius: 12px; 
-    
-    /* Тінь як у кнопок, не агресивна */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); 
-    
-    /* Текст */
-    text-align: center;
-    line-height: 1.2;
-    
-    /* Забороняємо виділення фону, щоб не псувати вигляд */
-    overflow: hidden; 
+    /* Додаємо плавну анімацію для появи */
+    transition: all 0.3s ease;
 }
 
-/* 2. ТЕКСТУРА ГІРЛЯНДИ (НАПІВПРОЗОРА) */
+/* 2. Прибираємо текстуру гірлянди/зими */
 body.holiday-mode .page-title::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1; /* Під текстом */
-    
-    /* Вставляємо вашу гірлянду */
-    background-image: url('winter.jpg'); 
-    background-size: cover;
-    background-position: center;
-    
-    /* === ГОЛОВНИЙ ФІКС === */
-    /* Робимо картинку ледь помітною (як водяний знак) */
-    /* У світлій темі це дасть легкий візерунок, але блок залишиться світлим */
-    opacity: 0.2; 
-    
-    /* Режим накладання (покращує вигляд на кольоровому фоні) */
-    mix-blend-mode: multiply; 
+    display: none !important;
 }
 
-/* 3. НАЛАШТУВАННЯ ДЛЯ ТЕМНОЇ ТЕМИ */
-body.dark.holiday-mode .page-title {
-    background-color: var(--template-bg-color); /* Темний фон блоку */
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5); /* Світіння тіні */
+/* 3. Анімація пульсації (Аура) */
+@keyframes soft-aura {
+    0%, 100% {
+        filter: drop-shadow(0 0 2px currentColor);
+    }
+    50% {
+        /* Трохи збільшуємо радіус розмиття */
+        filter: drop-shadow(0 0 8px currentColor); 
+    }
 }
 
-body.dark.holiday-mode .page-title::before {
-    /* У темній темі робимо картинку яскравішою */
-    opacity: 0.8; 
-    mix-blend-mode: normal; /* Повертаємо нормальні кольори */
-}
+/* 4. Налаштування для СВІТЛОЇ ТЕМИ (Елегантна кольорова тінь) */
 
-/* 4. КОЛЬОРИ ТЕКСТУ (ПОВЕРТАЄМО ОРИГІНАЛЬНІ ЗІ СВЯТКОВИМ АКЦЕНТОМ) */
-
-/* === Світла тема (Текст темний/насичений, щоб читався на світлому) === */
+/* Загальний колір заголовка */
 body.holiday-mode .page-title {
-    color: var(--header-color); /* Рідний колір заголовка */
-    text-shadow: 0 1px 1px rgba(255,255,255,0.8); /* Легка біла підсвітка */
+    color: var(--header-color);
+    text-shadow: none !important; /* Прибираємо старі тіні */
 }
 
-body.holiday-mode .page-title .ultranet-color { color: #811e71; }
-body.holiday-mode .page-title .isp-e-color-i { color: #e6b800; } /* Трохи темніший жовтий */
-body.holiday-mode .page-title .isp-e-color-s { color: #28a745; }
-body.holiday-mode .page-title .isp-e-color-p { color: #007bff; }
+/* Ультранет (Фіолетовий) */
+body.holiday-mode .page-title .ultranet-color {
+    color: #811e71 !important;
+    /* Використовуємо filter: drop-shadow для ефекту аури навколо букв */
+    filter: drop-shadow(0 0 5px rgba(129, 30, 113, 0.4));
+    animation: soft-aura 3s infinite ease-in-out;
+}
 
-/* === Темна тема (Неон, як і було) === */
+/* ISP (Жовтий, Зелений, Синій) - робимо трохи темнішими для читабельності на білому */
+body.holiday-mode .page-title .isp-e-color-i { 
+    color: #f5c518 !important; /* Більш насичений жовтий */
+    filter: drop-shadow(0 0 5px rgba(245, 197, 24, 0.4));
+    animation: soft-aura 3s infinite ease-in-out 0.5s; /* Затримка для переливання */
+}
+body.holiday-mode .page-title .isp-e-color-s { 
+    color: #28a745 !important; 
+    filter: drop-shadow(0 0 5px rgba(40, 167, 69, 0.4));
+    animation: soft-aura 3s infinite ease-in-out 1.0s;
+}
+body.holiday-mode .page-title .isp-e-color-p { 
+    color: #007bff !important; 
+    filter: drop-shadow(0 0 5px rgba(0, 123, 255, 0.4));
+    animation: soft-aura 3s infinite ease-in-out 1.5s;
+}
+
+/* 5. Налаштування для ТЕМНОЇ ТЕМИ (Яскравий неон) */
+
 body.dark.holiday-mode .page-title {
-    color: #fff; /* Білий основний текст */
-    text-shadow: 0 0 10px rgba(255,255,255,0.3);
+    color: #fff;
 }
 
-body.holiday-mode.dark .page-title .ultranet-color { 
-    color: #e040fb !important; text-shadow: 0 0 15px rgba(224, 64, 251, 0.8); 
+/* Тут ми робимо ауру яскравішою */
+@keyframes neon-aura {
+    0%, 100% { text-shadow: 0 0 10px currentColor, 0 0 20px currentColor; }
+    50% { text-shadow: 0 0 15px currentColor, 0 0 30px currentColor; }
 }
-body.holiday-mode.dark .page-title .isp-e-color-i { 
-    color: #ffeb3b !important; text-shadow: 0 0 15px rgba(255, 235, 59, 0.8); 
+
+body.dark.holiday-mode .page-title .ultranet-color {
+    color: #e040fb !important;
+    filter: none; /* Скидаємо filter з світлої теми */
+    animation: none; /* Скидаємо стару анімацію */
+    /* Використовуємо text-shadow для неону, бо на чорному це виглядає краще */
+    animation: neon-aura 3s infinite ease-in-out; 
 }
-body.holiday-mode.dark .page-title .isp-e-color-s { 
-    color: #00e676 !important; text-shadow: 0 0 15px rgba(0, 230, 118, 0.8); 
+
+body.dark.holiday-mode .page-title .isp-e-color-i { 
+    color: #ffeb3b !important; 
+    filter: none; animation: neon-aura 3s infinite ease-in-out 0.5s;
 }
-body.holiday-mode.dark .page-title .isp-e-color-p { 
-    color: #00b0ff !important; text-shadow: 0 0 15px rgba(0, 176, 255, 0.8); 
+body.dark.holiday-mode .page-title .isp-e-color-s { 
+    color: #00e676 !important; 
+    filter: none; animation: neon-aura 3s infinite ease-in-out 1.0s;
 }
+body.dark.holiday-mode .page-title .isp-e-color-p { 
+    color: #00b0ff !important; 
+    filter: none; animation: neon-aura 3s infinite ease-in-out 1.5s;
+}
+
+/* === АВТОМАТИЧНЕ ЗАПОВНЕННЯ ЕКРАНА (FLEXBOX) === */
+
+/* 1. Сторінка стає гнучкою колонкою на весь екран */
+body {
+    height: 100vh;          /* Рівно висота екрана */
+    display: flex;          /* Вмикаємо режим Flexbox */
+    flex-direction: column; /* Елементи йдуть зверху вниз */
+    overflow: hidden;       /* Прибираємо скрол самої сторінки */
+    padding-bottom: 0;      /* Прибираємо зайві відступи знизу */
+}
+
+/* 2. Обгортки розтягуються на все вільне місце */
+.main-content-wrapper {
+    flex-grow: 1;           /* Цей блок забирає ВЕСЬ вільний простір під шапкою */
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 0;
+    min-height: 0;          /* Критично важливо для роботи скролу всередині flex */
+}
+
+.tab-content-wrapper {
+    flex-grow: 1;           /* Розтягується всередині main-content-wrapper */
+    position: relative;     /* Якір для position: absolute */
+    height: 100%;           /* Займає всю висоту */
+    min-height: 0;          /* Дозволяє стискатися, якщо треба */
+}
+
+/* 3. Змушуємо конкретні контейнери слухатися батьків */
+.container[data-content="gpon-commands"],
+.container[data-content="text-templates"] {
+
+    height: 100% !important; /* Завжди 100% від tab-content-wrapper */
+    
+    /* Перевизначаємо змінні, щоб скрипт не заважав */
+    --local-height: 100% !important; 
+    
+    /* Прибираємо min-height, щоб не вилазило за екран на мобільних */
+    min-height: 0 !important; 
+    bottom: 0;
+}
+
+/* 4. Вмикаємо скрол ТІЛЬКИ всередині карток */
+.container[data-content="gpon-commands"] .content-card,
+.container[data-content="text-templates"] .content-card {
+    height: 100%;
+    overflow-y: auto;       /* Скрол з'являється тут */
+    padding-bottom: 20px;   /* Трохи місця знизу контенту */
+}
+
+/* 5. Фікс для шаблонів (щоб сітка не ламала висоту) */
+#templates-grid-wrapper {
+    height: auto !important; 
+    min-height: 100%;
+}
+
+/* === ЄДИНІ НАЛАШТУВАННЯ ВІДСТУПУ ДЛЯ ШАБЛОНІВ ТА КОМАНД === */
+
+/* 1. Налаштування "Вікна" (Зовнішні контейнери) */
+.container[data-content="text-templates"],
+.container[data-content="gpon-commands"] {  /* <--- ДОДАНО ЦЕЙ РЯДОК */
+    /* Займає все доступне місце, але залишає 20px знизу */
+    height: calc(100% - 33px) !important;
+    
+    /* Відступ від низу екрана */
+    margin-bottom: 33px !important;
+    
+    /* Оновлюємо змінну для JS */
+    --local-height: calc(100% - 33px) !important;
+}
+
+/* 2. Налаштування скролу (Біла картка всередині) */
+.container[data-content="text-templates"] .content-card,
+.container[data-content="gpon-commands"] .content-card { /* <--- І ТУТ ДОДАНО */
+    height: 100%;       
+    overflow-y: auto;   /* Скрол з'являється, якщо контент не влазить */
+}
+
 </style>
 </head>
-<body>
-
-<body class="holiday-mode">    
+<body class="holiday-mode"> 
+<!-- === НОВИЙ БЛОК ВЕРСІЇ (Вставте сюди) === -->
+<div class="version-pill" title="Поточна версія">
+    <img src="snowman.webp" alt="Snowman" class="version-emoji">
+    <span class="version-text">Версія 3.3.4</span>
+</div>   
 <div id="snow-container"></div>	
     <div class="toggle-button-wrapper">
         <input type="checkbox" class="checkbox" id="dark-mode-checkbox">
@@ -2001,7 +2118,7 @@ body.holiday-mode.dark .page-title .isp-e-color-p {
                 </div>
             </div>
             
-            <div class="container gpon-commands-container" data-content="gpon-commands" data-default-width="63%" data-default-height="720px">
+            <div class="container gpon-commands-container" data-content="gpon-commands" data-default-width="63%" data-default-height="100%">
     <div class="content-card">
     <h2 style="margin-top: 0; text-align: center;">💻 Команди GPON/EPON/BDCOM</h2>
 	<div id="controls-and-clarification" style="display: flex; align-items: flex-start; gap: 10px; margin-bottom: 5px; flex-wrap: wrap;">
@@ -2023,7 +2140,7 @@ body.holiday-mode.dark .page-title .isp-e-color-p {
     <div id="command-output" class="command-list"> </div>
 </div>
 </div>
-            <div class="container" data-content="text-templates" data-default-width="100%" data-default-height="720px">
+            <div class="container" data-content="text-templates" data-default-width="100%" data-default-height="100%">
 			<div class="content-card">
                 <div class="templates-header-wrapper">
     <div class="template-global-actions">
@@ -2049,10 +2166,6 @@ body.holiday-mode.dark .page-title .isp-e-color-p {
         </div> 
     </div>
 </div>	
-    
-    <div class="global-version-info">
-        Версія 3.3.2<img src="snowman.webp" alt="Animated Emoji" class="version-emoji">
-    </div> 
     
     <div id="notification" class="notification">
         Команда скопійована!
@@ -2085,30 +2198,33 @@ function clearAllTemplates() {
 
 let lastGeneratedLogin = ''; // Зберігатиме останній згенерований логін
     function updateGridWrapperHeight() {
-        const container = document.getElementById('templates-grid-wrapper');
-        const templates = container.querySelectorAll('.template-field-group');
-        const defaultHeight = 800;
-        const bottomPadding = 50;
+    const container = document.getElementById('templates-grid-wrapper');
+    const templates = container.querySelectorAll('.template-field-group');
     
-        if (templates.length === 0) {
-            container.style.height = `${defaultHeight}px`;
-            return;
-        }
-    
-        let maxBottom = 0;
+    // МІНІМАЛЬНА ВИСОТА ПОЛОТНА (як ви просили)
+    const minCanvasHeight = 1700; 
+    const paddingBottom = 200; // Запас місця знизу
+
+    let maxBottom = 0;
+
+    // Шукаємо найнижчий шаблон
+    if (templates.length > 0) {
         templates.forEach(template => {
             const yPos = parseFloat(template.getAttribute('data-y')) || 0;
             const height = template.offsetHeight;
             const bottomEdge = yPos + height;
-    
+
             if (bottomEdge > maxBottom) {
                 maxBottom = bottomEdge;
             }
         });
-    
-        const requiredHeight = Math.max(defaultHeight, maxBottom + bottomPadding);
-        container.style.height = `${requiredHeight}px`;
     }
+
+    // Висота = або 1700px, або (найнижчий шаблон + відступ), залежно що більше
+    const requiredHeight = Math.max(minCanvasHeight, maxBottom + paddingBottom);
+
+    container.style.minHeight = `${requiredHeight}px`;
+}
 
     function handleDeviceTypeChange() {
         const selectedValue = document.getElementById('device-type').value;
@@ -2759,7 +2875,7 @@ function areDatesInDefaultState() {
     }
 
     function initDraggableAndResizable(element) {
-        const scrollContainer = element.closest('.container');
+         const scrollContainer = element.closest('.content-card');
         const GAP = 6;
         const position = {
             x: parseFloat(element.getAttribute('data-x')) || 0,
