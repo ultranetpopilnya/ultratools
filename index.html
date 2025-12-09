@@ -55,13 +55,18 @@
 /* Стиль для тексту версії */
 .version-pill .version-text {
     white-space: nowrap; /* Текст в один рядок */
-    margin-left: 10px;
+    margin-left: 6px;
     font-size: 14px;
     font-weight: 600;
     color: var(--text-color);
     opacity: 0; /* Прихований спочатку */
-    transform: translateX(-10px);
+    transform: translateX(-6px);
     transition: opacity 0.3s ease, transform 0.3s ease;
+	display: inline-flex;       /* inline-flex зручно всередині іншого flex */
+    align-items: center;        /* центр всередині самого блока */
+    height: 100%;               /* повинно дорівнювати висоті .version-pill */
+    line-height: 1;             /* запобігає подвійним відступам */
+    box-sizing: border-box;
 }
 
 /* Показуємо текст при наведенні на батьківський блок */
@@ -3870,3 +3875,4 @@ document.querySelectorAll('.container[data-content]').forEach(container => {
     </script>
 </body>
 </html>
+
