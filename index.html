@@ -2030,7 +2030,7 @@ body {
 <!-- === НОВИЙ БЛОК ВЕРСІЇ (Вставте сюди) === -->
 <div class="version-pill" title="Поточна версія">
     <img src="snowman.webp" alt="Snowman" class="version-emoji">
-    <span class="version-text">Версія 3.3.4</span>
+    <span class="version-text">Версія 3.3.5</span>
 </div>   
 <div id="snow-container"></div>	
     <div class="toggle-button-wrapper">
@@ -3292,19 +3292,27 @@ function areDatesInDefaultState() {
             
             const textarea = fieldGroup.querySelector('textarea');
             const highlighter = fieldGroup.querySelector('.highlighter-backdrop');
+            
+            // 1. Запам'ятовуємо позицію скролу самого тексту
             const savedScrollTop = textarea.scrollTop;
             const start = textarea.selectionStart;
             const end = textarea.selectionEnd;
             const text = textarea.value;
             
+            // 2. Вставляємо текст
             textarea.value = text.substring(0, start) + lastGeneratedLogin + text.substring(end);
             
-            textarea.focus();
+            // 3. ГОЛОВНА ЗМІНА: Фокусуємося БЕЗ прокрутки сторінки
+            textarea.focus({ preventScroll: true });
+            
+            // 4. Ставимо курсор в кінець вставки
             const newCursorPos = start + lastGeneratedLogin.length;
             textarea.setSelectionRange(newCursorPos, newCursorPos);
+            
+            // 5. Відновлюємо скрол тексту (якщо він був прокручений)
             textarea.scrollTop = savedScrollTop;
 
-            updateHighlight(textarea, highlighter); // Оновити підсвітку після вставки
+            updateHighlight(textarea, highlighter); 
             updateBookmarksOnTextChange(fieldGroup);
             saveTemplates();
         };
@@ -3615,70 +3623,96 @@ function areDatesInDefaultState() {
     }
 
     function rearrangeTemplates() {
-    const container = document.querySelector('.container[data-content="text-templates"]');
-    if (!container || !container.classList.contains('active')) return;
+        const container = document.querySelector('.container[data-content="text-templates"]');
+        // Перевіряємо, чи активна вкладка і чи існує контейнер
+        if (!container || !container.classList.contains('active')) return;
 
-    const allTemplates = Array.from(document.querySelectorAll('#templates-grid-wrapper .template-field-group'));
-    if (allTemplates.length === 0) {
-        updateGridWrapperHeight();
-        return;
-    }
-
-    const containerWidth = container.clientWidth;
-    const GAP = 6;
-
-    let hasConflicts = false;
-    // Перевіряємо, чи "майстер-версія" розташування (з data-атрибутів) створює конфлікти на поточному екрані
-    for (let i = 0; i < allTemplates.length; i++) {
-        const t1 = allTemplates[i];
-        const t1_width = parseInt(t1.style.width, 10) || t1.offsetWidth;
-
-        // Беремо координати ЗБЕРЕЖЕНОГО, а не візуального положення
-        const r1 = {
-            left: parseFloat(t1.getAttribute('data-x')) || 0,
-            right: (parseFloat(t1.getAttribute('data-x')) || 0) + t1_width
-        };
-
-        if (r1.right > containerWidth) {
-            hasConflicts = true;
-            break;
+        const allTemplates = Array.from(document.querySelectorAll('#templates-grid-wrapper .template-field-group'));
+        if (allTemplates.length === 0) {
+            updateGridWrapperHeight();
+            return;
         }
-        // Тут можна додати перевірку на перетин, якщо потрібно, але виходу за межі достатньо
+
+        const containerWidth = container.clientWidth; // Ширина видимого екрана
+        const GAP = 10; // Відступ між шаблонами
+
+        let hasConflicts = false;
+
+        // 1. Перевірка: чи вилазить хоча б один шаблон за межі по ширині?
+        for (let i = 0; i < allTemplates.length; i++) {
+            const t = allTemplates[i];
+            const t_width = t.offsetWidth;
+            // Беремо збережену координату X
+            const storedX = parseFloat(t.getAttribute('data-x')) || 0;
+
+            // Якщо правий край шаблону далі, ніж ширина екрана
+            if (storedX + t_width > containerWidth) {
+                hasConflicts = true;
+                break;
+            }
+        }
+
+        // --- ОСНОВНА ЛОГІКА ---
+
+        if (hasConflicts) {
+            // === РЕЖИМ МАЛОГО ЕКРАНУ (SMART FLOW) ===
+            
+            // Крок А: Сортуємо шаблони, щоб вони йшли логічно (зліва-направо, зверху-вниз)
+            // Використовуємо "толерантність" 50px, щоб елементи, які стоять "майже" в один ряд, вважалися одним рядом
+            allTemplates.sort((a, b) => {
+                const ay = parseFloat(a.getAttribute('data-y')) || 0;
+                const by = parseFloat(b.getAttribute('data-y')) || 0;
+                const ax = parseFloat(a.getAttribute('data-x')) || 0;
+                const bx = parseFloat(b.getAttribute('data-x')) || 0;
+
+                if (Math.abs(ay - by) > 50) {
+                    return ay - by; // Якщо різниця висоти велика - сортуємо по Y
+                } else {
+                    return ax - bx; // Інакше сортуємо по X (хто лівіше)
+                }
+            });
+
+            // Крок Б: Викладаємо їх рядками
+            let currentX = 0;
+            let currentY = 0;
+            let rowHeight = 0; // Висота найвищого елемента в поточному рядку
+
+            allTemplates.forEach(template => {
+                const w = template.offsetWidth;
+                const h = template.offsetHeight;
+
+                // Перевіряємо, чи влізе шаблон у цей рядок
+                if (currentX + w > containerWidth) {
+                    // НЕ ВЛАЗИТЬ -> Перенос на новий рядок
+                    currentX = 0; 
+                    currentY += rowHeight + GAP;
+                    rowHeight = 0; // Скидаємо висоту для нового рядка
+                }
+
+                // Застосовуємо ВІЗУАЛЬНУ позицію (не змінюючи data-x/y, щоб не псувати збереження)
+                template.style.transform = `translate(${currentX}px, ${currentY}px)`;
+
+                // Оновлюємо висоту поточного рядка (якщо цей шаблон вищий за сусідів)
+                if (h > rowHeight) rowHeight = h;
+
+                // Зсуваємо курсор вправо для наступного елемента
+                currentX += w + GAP;
+            });
+
+        } else {
+            // === РЕЖИМ ВЕЛИКОГО ЕКРАНУ (ВІДНОВЛЕННЯ) ===
+            // Якщо все влазить, повертаємо шаблони на їхні збережені місця
+            
+            allTemplates.forEach(template => {
+                const x = parseFloat(template.getAttribute('data-x')) || 0;
+                const y = parseFloat(template.getAttribute('data-y')) || 0;
+                template.style.transform = `translate(${x}px, ${y}px)`;
+            });
+        }
+
+        // Оновлюємо загальну висоту контейнера (скрол)
+        updateGridWrapperHeight();
     }
-
-    // --- ОСНОВНА ЛОГІКА ---
-
-    if (hasConflicts) {
-        // ВИПАДОК 1: Ми на маленькому екрані, є конфлікти.
-        // ТИМЧАСОВО перебудовуємо все в колонку, НЕ ЗБЕРІГАЮЧИ нові координати.
-        
-        // Сортуємо шаблони, щоб вони розташовувалися логічно
-        allTemplates.sort((a, b) => (parseFloat(a.getAttribute('data-y')) - parseFloat(b.getAttribute('data-y'))) || (parseFloat(a.getAttribute('data-x')) - parseFloat(b.getAttribute('data-x'))));
-        
-        let currentY = 0;
-        allTemplates.forEach(template => {
-            const templateHeight = parseInt(template.style.height, 10) || template.offsetHeight;
-            // Застосовуємо ТІЛЬКИ візуальну зміну
-            template.style.transform = `translate(0px, ${currentY}px)`;
-            currentY += templateHeight + GAP;
-        });
-
-    } else {
-        // ВИПАДОК 2: Ми на великому екрані, конфліктів немає.
-        // ВІДНОВЛЮЄМО "майстер-версію" розташування з data-атрибутів.
-        // Це спрацює при поверненні з маленького екрана на великий.
-        
-        allTemplates.forEach(template => {
-            const x = parseFloat(template.getAttribute('data-x')) || 0;
-            const y = parseFloat(template.getAttribute('data-y')) || 0;
-            // Відновлюємо візуал згідно зі збереженими даними
-            template.style.transform = `translate(${x}px, ${y}px)`;
-        });
-    }
-
-    // В будь-якому випадку оновлюємо висоту контейнера
-    updateGridWrapperHeight();
-}
 
     const checkbox = document.getElementById("dark-mode-checkbox");
     function applyTheme(isDark) {
@@ -3875,6 +3909,3 @@ document.querySelectorAll('.container[data-content]').forEach(container => {
     </script>
 </body>
 </html>
-
-
-
