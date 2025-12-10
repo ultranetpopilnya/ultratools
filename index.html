@@ -435,11 +435,9 @@ body.dark .login-generator-container .result-item .regenerate-login-btn {
 }
 	/* ВИРІШЕННЯ ПРОБЛЕМИ ЗСУВУ ЗАГОЛОВКА ПРИ ПРОКРУТЦІ */
 .container[data-content="text-templates"] {
-    scrollbar-gutter: stable;
+    scrollbar-gutter: auto;
     /* --- ЗМІНА 1: Забороняємо скрол батьківського елемента --- */
     overflow: hidden !important; 
-    /* Важливо залишити padding, щоб картка не прилипала до країв */
-    padding: 1rem; 
 }
 	/* === КОРЕКТНЕ ПІДСВІЧУВАННЯ ВНУТРІШНІХ ЕЛЕМЕНТІВ ШАБЛОНУ === */
 
@@ -3909,4 +3907,5 @@ document.querySelectorAll('.container[data-content]').forEach(container => {
     </script>
 </body>
 </html>
+
 
