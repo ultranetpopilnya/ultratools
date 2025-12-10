@@ -429,15 +429,11 @@ body.dark .login-generator-container .result-item .regenerate-login-btn {
         linear-gradient(135deg, transparent 80%, var(--resize-handle-color) 81%, var(--resize-handle-color) 90%, transparent 91%);
 }
 
-/* Прибираємо старий індикатор, оскільки тепер є новий */
-.template-field-group::after {
-    display: none;
-}
 	/* ВИРІШЕННЯ ПРОБЛЕМИ ЗСУВУ ЗАГОЛОВКА ПРИ ПРОКРУТЦІ */
 .container[data-content="text-templates"] {
-    scrollbar-gutter: auto;
+    scrollbar-gutter: auto; 
     /* --- ЗМІНА 1: Забороняємо скрол батьківського елемента --- */
-    overflow: hidden !important; 
+    overflow: hidden !important;   
 }
 	/* === КОРЕКТНЕ ПІДСВІЧУВАННЯ ВНУТРІШНІХ ЕЛЕМЕНТІВ ШАБЛОНУ === */
 
@@ -2028,7 +2024,7 @@ body {
 <!-- === НОВИЙ БЛОК ВЕРСІЇ (Вставте сюди) === -->
 <div class="version-pill" title="Поточна версія">
     <img src="snowman.webp" alt="Snowman" class="version-emoji">
-    <span class="version-text">Версія 3.3.5</span>
+    <span class="version-text">Версія 3.3.6</span>
 </div>   
 <div id="snow-container"></div>	
     <div class="toggle-button-wrapper">
@@ -2176,6 +2172,14 @@ body {
     
     <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
 <script>
+// 1. Спочатку оголошуємо допоміжну функцію
+function debounce(func, delay) {
+    let timeout;
+    return function(...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), delay);
+    };
+}
 // Додайте це на початку скрипту, якщо змінна ще не оголошена
 const debouncedSaveTemplates = debounce(saveTemplates, 1000);
 
@@ -2331,121 +2335,164 @@ let lastGeneratedLogin = ''; // Зберігатиме останній зген
 }
 	
 function generateAlternativeLogin(buttonElement) {
-    const resultItem = buttonElement.closest('.result-item');
-    const loginSpan = resultItem.querySelector('span');
-    
-    const baseLogin = resultItem.dataset.baseLogin;
-    let counter = parseInt(resultItem.dataset.suffixCounter, 10);
-    
-    counter++;
-    
-    const newLogin = baseLogin + counter;
-    loginSpan.textContent = newLogin;
-    
-    resultItem.dataset.suffixCounter = counter;
-    
-    // Оновлюємо глобальну змінну, щоб саме цей варіант вставлявся в шаблони.
-    lastGeneratedLogin = newLogin;
-
-    // === НОВИЙ КОД: Очищуємо поле вводу після генерації альтернативи ===
-    document.getElementById('fullNameInput').value = '';
-}
-
-// --- ОНОВЛЕНА ФУНКЦІЯ КОПІЮВАННЯ (працює з новим стилем іконок) ---
-function copyLogin(buttonElement) {
-    const resultItem = buttonElement.closest('.result-item');
-    const textToCopy = resultItem.querySelector('span').textContent;
-    const icon = buttonElement.querySelector('i');
-    const originalIconClasses = icon.className;
-
-    navigator.clipboard.writeText(textToCopy).then(() => {
-        buttonElement.classList.add('copied');
-        icon.className = 'fas fa-check';
-        buttonElement.disabled = true;
-        document.getElementById('fullNameInput').value = ''; 
+        const resultItem = buttonElement.closest('.result-item');
+        const loginSpan = resultItem.querySelector('span');
         
-        setTimeout(() => {
-            buttonElement.classList.remove('copied');
-            icon.className = originalIconClasses;
-            buttonElement.disabled = false;
-        }, 2000);
-    }).catch(err => console.error('Не вдалося скопіювати текст: ', err));
+        // Визначаємо тип: компанія чи людина
+        const isCompany = resultItem.dataset.isCompany === 'true';
 
-    // Також оновлюємо `lastGeneratedLogin` при копіюванні
-    lastGeneratedLogin = textToCopy;
-}
+        let newLogin = '';
 
-// --- ОНОВЛЕНА ГОЛОВНА ФУНКЦІЯ (генерує нові, стильні іконки-кнопки) ---
-function generateLogins() {
-    const fullNameInput = document.getElementById('fullNameInput');
-    const fullNames = fullNameInput.value.trim();
-    const resultsContainer = document.getElementById('results-container');
-    resultsContainer.innerHTML = '';
-    
-    lastGeneratedLogin = '';
+        if (isCompany) {
+            // === СТРАТЕГІЯ ДЛЯ КОМПАНІЙ (ФОП, ТОВ...) ===
+            // Просто додаємо цифру: fopshevchenko -> fopshevchenko2
+            const baseLogin = resultItem.dataset.baseLogin;
+            let counter = parseInt(resultItem.dataset.suffixCounter || '1', 10);
+            counter++;
+            newLogin = baseLogin + counter;
+            resultItem.dataset.suffixCounter = counter;
 
-    if (!fullNames) return;
-
-    const lines = fullNames.split('\n');
-    const companyRegex = /(^|\s)(фоп|тов|пп|ат|кб|го)(\s|$)/i;
-    lines.forEach(line => {
-        const fullName = line.trim();
-        if (fullName === '') return;
-
-        // ... (вся логіка валідації та транслітерації залишається без змін)
-        if (/[a-z]/i.test(fullName)) {
-            const errorElement = document.createElement('div');
-            errorElement.className = 'result-item';
-            errorElement.innerHTML = `<span style="color: #dc3545; font-weight: bold; font-size: 1.1em; text-align: center">Трансліт тільки з української!</span>`;
-            resultsContainer.appendChild(errorElement);
-            return;
-        }
-        const parts = fullName.split(/\s+/).filter(p => p.length > 0);
-         const isCompany = companyRegex.test(fullName.toLowerCase());
-        let login = '';
-        //                  👇 ДОДАНО НОВУ УМОВУ 👇
-        if (isCompany || parts.length > 3 || /\d/.test(fullName)) {
-            login = transliterate(fullName);
         } else {
-            let transliteratedLastName = parts.length >= 1 ? transliterate(parts[0]) : '';
-            let firstNameInitial = parts.length >= 2 ? transliterate(parts[1].charAt(0)) : '';
-            let patronymicInitial = parts.length >= 3 ? transliterate(parts[2].charAt(0)) : '';
-            login = `${transliteratedLastName}${firstNameInitial}${patronymicInitial}`;
-        }
-        login = login.replace(/[^a-z0-9]/g, '');
-        if (login === '') {
-            const errorElement = document.createElement('div');
-            errorElement.className = 'result-item';
-            errorElement.innerHTML = `<span style="color: #dc3545;">"${fullName}" - Некоректний формат!</span>`;
-            resultsContainer.appendChild(errorElement);
-            return;
-        }
+            // === СТРАТЕГІЯ ДЛЯ ЛЮДЕЙ ===
+            // Прогресивне розкриття по-батькові
+            
+            const surname = resultItem.dataset.surname;
+            const nameInitial = resultItem.dataset.nameInitial;
+            const patronymicFull = resultItem.dataset.patronymicFull;
+            
+            // Скільки літер по-батькові ми вже використали?
+            let currentPatrIndex = parseInt(resultItem.dataset.patrIndex || '1', 10);
 
-        if (!lastGeneratedLogin) {
-            lastGeneratedLogin = login;
+            // Якщо ще є куди додавати літери
+            if (currentPatrIndex < patronymicFull.length) {
+                currentPatrIndex++; // Беремо на одну літеру більше
+                const patronymicPart = patronymicFull.substring(0, currentPatrIndex);
+                newLogin = surname + nameInitial + patronymicPart;
+                
+                // Зберігаємо новий стан
+                resultItem.dataset.patrIndex = currentPatrIndex;
+            } else {
+                // ЕКСТРЕНИЙ ВИПАДОК: По-батькові закінчилося (наприклад, shevchenkotarasgryhorovych зайнятий)
+                // Тільки тоді додаємо цифри, щоб не зламати логіку
+                let counter = parseInt(resultItem.dataset.overflowCounter || '1', 10);
+                counter++;
+                newLogin = surname + nameInitial + patronymicFull + counter;
+                resultItem.dataset.overflowCounter = counter;
+            }
         }
+        
+        // Оновлюємо текст і глобальну змінну
+        loginSpan.textContent = newLogin;
+        lastGeneratedLogin = newLogin;
 
-        const resultItem = document.createElement('div');
-        resultItem.className = 'result-item';
-        resultItem.dataset.baseLogin = login;
-        resultItem.dataset.suffixCounter = '1';
+        // Очищуємо поле вводу
+        document.getElementById('fullNameInput').value = '';
+    }
 
-        // Формуємо HTML з новими кнопками, іконками та підказками
-        resultItem.innerHTML = `
-            <span>${login}</span>
-            <div class="original-name" title="${fullName}">${fullName}</div>
-            <div class="actions-wrapper">
-                <button class="regenerate-login-btn" onclick="generateAlternativeLogin(this)" title="Згенерувати наступний варіант">
-                    <i class="fas fa-sync-alt"></i>
-                </button>
-                <button class="copy-login-btn" onclick="copyLogin(this)" title="Копіювати логін">
-                    <i class="fas fa-copy"></i>
-                </button>
-            </div>
-        `;
-        resultsContainer.appendChild(resultItem);
-    });
-}
+    function generateLogins() {
+        const fullNameInput = document.getElementById('fullNameInput');
+        const fullNames = fullNameInput.value.trim();
+        const resultsContainer = document.getElementById('results-container');
+        resultsContainer.innerHTML = '';
+        
+        lastGeneratedLogin = '';
+
+        if (!fullNames) return;
+
+        const lines = fullNames.split('\n');
+        // Розширений список типів компаній
+        const companyRegex = /(^|\s)(фоп|тов|пп|ат|кб|го)(\s|$)/i;
+
+        lines.forEach(line => {
+            const fullName = line.trim();
+            if (fullName === '') return;
+
+            // Валідація на латиницю
+            if (/[a-z]/i.test(fullName)) {
+                const errorElement = document.createElement('div');
+                errorElement.className = 'result-item';
+                errorElement.innerHTML = `<span style="color: #dc3545; font-weight: bold; font-size: 1.1em; text-align: center">Трансліт тільки з української!</span>`;
+                resultsContainer.appendChild(errorElement);
+                return;
+            }
+
+            const parts = fullName.split(/\s+/).filter(p => p.length > 0);
+            const isCompany = companyRegex.test(fullName.toLowerCase()) || parts.length > 3 || /\d/.test(fullName);
+            
+            let login = '';
+            
+            // Створюємо елемент результату
+            const resultItem = document.createElement('div');
+            resultItem.className = 'result-item';
+
+            if (isCompany) {
+                // === ЛОГІКА ДЛЯ КОМПАНІЙ ===
+                login = transliterate(fullName).replace(/[^a-z0-9]/g, '');
+                
+                // Зберігаємо дані для генератора
+                resultItem.dataset.isCompany = 'true';
+                resultItem.dataset.baseLogin = login;
+                resultItem.dataset.suffixCounter = '1';
+
+            } else {
+                // === ЛОГІКА ДЛЯ ЛЮДЕЙ ===
+                // Нам потрібно мінімум 3 частини: Прізвище, Ім'я, По-батькові
+                // Якщо частин менше (наприклад, немає по-батькові), то працюємо по-старому
+                if (parts.length < 3) {
+                     let transliteratedLastName = parts.length >= 1 ? transliterate(parts[0]) : '';
+                     let firstNameInitial = parts.length >= 2 ? transliterate(parts[1].charAt(0)) : '';
+                     login = (transliteratedLastName + firstNameInitial).replace(/[^a-z0-9]/g, '');
+                     
+                     // Позначаємо як "компанію", щоб просто додавати цифри, бо розширювати нічого
+                     resultItem.dataset.isCompany = 'true'; 
+                     resultItem.dataset.baseLogin = login;
+                     resultItem.dataset.suffixCounter = '1';
+                } else {
+                    // Стандартна людина з ПІБ
+                    let surname = transliterate(parts[0]);
+                    let nameInitial = transliterate(parts[1].charAt(0));
+                    let patronymicFull = transliterate(parts[2]); // Повне по-батькові транслітом
+
+                    // Початковий логін: Прізвище + 1 літера імені + 1 літера по-батькові
+                    login = (surname + nameInitial + patronymicFull.charAt(0)).replace(/[^a-z0-9]/g, '');
+
+                    // Зберігаємо складові частини
+                    resultItem.dataset.isCompany = 'false';
+                    resultItem.dataset.surname = surname.replace(/[^a-z0-9]/g, '');
+                    resultItem.dataset.nameInitial = nameInitial.replace(/[^a-z0-9]/g, '');
+                    resultItem.dataset.patronymicFull = patronymicFull.replace(/[^a-z0-9]/g, '');
+                    resultItem.dataset.patrIndex = '1'; // Починаємо з 1 літери по-батькові
+                }
+            }
+
+            if (login === '') {
+                const errorElement = document.createElement('div');
+                errorElement.className = 'result-item';
+                errorElement.innerHTML = `<span style="color: #dc3545;">"${fullName}" - Некоректний формат!</span>`;
+                resultsContainer.appendChild(errorElement);
+                return;
+            }
+
+            if (!lastGeneratedLogin) {
+                lastGeneratedLogin = login;
+            }
+
+            // Формуємо HTML
+            resultItem.innerHTML = `
+                <span>${login}</span>
+                <div class="original-name" title="${fullName}">${fullName}</div>
+                <div class="actions-wrapper">
+                    <button class="regenerate-login-btn" onclick="generateAlternativeLogin(this)" title="Згенерувати наступний варіант">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                    <button class="copy-login-btn" onclick="copyLogin(this)" title="Копіювати логін">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+            `;
+            resultsContainer.appendChild(resultItem);
+        });
+    }
 
     function getCorrectDayWord(number) {
         if (number === 0) return "днів";
@@ -3737,14 +3784,6 @@ function areDatesInDefaultState() {
         applyTheme(isDark);
     }
 	
-	function debounce(func, delay) {
-    let timeout;
-    return function(...args) {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => func.apply(this, args), delay);
-    };
-}
-
     checkbox.addEventListener("change", () => applyTheme(checkbox.checked));
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -3907,5 +3946,3 @@ document.querySelectorAll('.container[data-content]').forEach(container => {
     </script>
 </body>
 </html>
-
-
