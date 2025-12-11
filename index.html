@@ -2398,31 +2398,32 @@ function generateAlternativeLogin(buttonElement) {
 }
 	
 	function copyLogin(button) {
-        // Знаходимо батьківський елемент рядка
-        const resultItem = button.closest('.result-item');
-        // Знаходимо текст логіна (він у тегу span)
-        const loginText = resultItem.querySelector('span').textContent;
+    // 1. Знаходимо текст логіна
+    const resultItem = button.closest('.result-item');
+    const loginText = resultItem.querySelector('span').textContent;
 
-        // Копіюємо в буфер обміну
-        navigator.clipboard.writeText(loginText).then(() => {
-            // Візуальний ефект на самій кнопці (змінюємо іконку на галочку)
-            const originalContent = button.innerHTML;
-            button.innerHTML = '<i class="fas fa-check"></i>';
-            button.classList.add('copied'); // Додає зелений колір (якщо є в CSS)
-            
-            // Викликаємо ваше глобальне спливаюче повідомлення
-            showNotification(`Логін скопійовано: ${loginText}`);
+    // 2. Копіюємо в буфер обміну
+    navigator.clipboard.writeText(loginText).then(() => {
+        // --- Візуальна реакція кнопки ---
+        button.innerHTML = '<i class="fas fa-check"></i>';
+        button.classList.add('copied');
+        
+        // --- Повідомлення ---
+        showNotification(`Логін скопійовано: ${loginText}`);
 
-            // Через 1.5 секунди повертаємо іконку назад
-            setTimeout(() => {
-                button.innerHTML = '<i class="fas fa-copy"></i>';
-                button.classList.remove('copied');
-            }, 1500);
-        }).catch(err => {
-            console.error('Не вдалося скопіювати: ', err);
-            showNotification('Помилка копіювання!');
-        });
-    }
+        // --- ОЧИЩЕННЯ ПОЛЯ ВВОДУ (те, що ви просили) ---
+        document.getElementById('fullNameInput').value = '';
+
+        // --- Повернення кнопки до початкового стану через 1.5 сек ---
+        setTimeout(() => {
+            button.innerHTML = '<i class="fas fa-copy"></i>';
+            button.classList.remove('copied');
+        }, 1500);
+    }).catch(err => {
+        console.error('Не вдалося скопіювати: ', err);
+        showNotification('Помилка копіювання!');
+    });
+}
 
     function generateLogins() {
         const fullNameInput = document.getElementById('fullNameInput');
@@ -3981,3 +3982,4 @@ document.querySelectorAll('.container[data-content]').forEach(container => {
     </script>
 </body>
 </html>
+
