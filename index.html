@@ -2388,6 +2388,33 @@ function generateAlternativeLogin(buttonElement) {
         // Очищуємо поле вводу
         document.getElementById('fullNameInput').value = '';
     }
+	
+	function copyLogin(button) {
+        // Знаходимо батьківський елемент рядка
+        const resultItem = button.closest('.result-item');
+        // Знаходимо текст логіна (він у тегу span)
+        const loginText = resultItem.querySelector('span').textContent;
+
+        // Копіюємо в буфер обміну
+        navigator.clipboard.writeText(loginText).then(() => {
+            // Візуальний ефект на самій кнопці (змінюємо іконку на галочку)
+            const originalContent = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-check"></i>';
+            button.classList.add('copied'); // Додає зелений колір (якщо є в CSS)
+            
+            // Викликаємо ваше глобальне спливаюче повідомлення
+            showNotification(`Логін скопійовано: ${loginText}`);
+
+            // Через 1.5 секунди повертаємо іконку назад
+            setTimeout(() => {
+                button.innerHTML = '<i class="fas fa-copy"></i>';
+                button.classList.remove('copied');
+            }, 1500);
+        }).catch(err => {
+            console.error('Не вдалося скопіювати: ', err);
+            showNotification('Помилка копіювання!');
+        });
+    }
 
     function generateLogins() {
         const fullNameInput = document.getElementById('fullNameInput');
