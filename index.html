@@ -2024,7 +2024,7 @@ body {
 <!-- === НОВИЙ БЛОК ВЕРСІЇ (Вставте сюди) === -->
 <div class="version-pill" title="Поточна версія">
     <img src="snowman.webp" alt="Snowman" class="version-emoji">
-    <span class="version-text">Версія 3.3.6</span>
+    <span class="version-text">Версія 3.3.7</span>
 </div>   
 <div id="snow-container"></div>	
     <div class="toggle-button-wrapper">
@@ -2335,59 +2335,67 @@ let lastGeneratedLogin = ''; // Зберігатиме останній зген
 }
 	
 function generateAlternativeLogin(buttonElement) {
-        const resultItem = buttonElement.closest('.result-item');
-        const loginSpan = resultItem.querySelector('span');
+    const resultItem = buttonElement.closest('.result-item');
+    const loginSpan = resultItem.querySelector('span');
+    
+    // Визначаємо тип: компанія чи людина
+    const isCompany = resultItem.dataset.isCompany === 'true';
+
+    let newLogin = '';
+
+    if (isCompany) {
+        // === СТРАТЕГІЯ ДЛЯ КОМПАНІЙ (ФОП, ТОВ...) ===
+        const baseLogin = resultItem.dataset.baseLogin;
+        let counter = parseInt(resultItem.dataset.suffixCounter || '1', 10);
+        counter++;
+        newLogin = baseLogin + counter;
+        resultItem.dataset.suffixCounter = counter;
+
+    } else {
+        // === СТРАТЕГІЯ ДЛЯ ЛЮДЕЙ ===
+        const surname = resultItem.dataset.surname;
+        const nameInitial = resultItem.dataset.nameInitial;
+        const patronymicFull = resultItem.dataset.patronymicFull;
         
-        // Визначаємо тип: компанія чи людина
-        const isCompany = resultItem.dataset.isCompany === 'true';
+        let currentPatrIndex = parseInt(resultItem.dataset.patrIndex || '1', 10);
 
-        let newLogin = '';
-
-        if (isCompany) {
-            // === СТРАТЕГІЯ ДЛЯ КОМПАНІЙ (ФОП, ТОВ...) ===
-            // Просто додаємо цифру: fopshevchenko -> fopshevchenko2
-            const baseLogin = resultItem.dataset.baseLogin;
-            let counter = parseInt(resultItem.dataset.suffixCounter || '1', 10);
-            counter++;
-            newLogin = baseLogin + counter;
-            resultItem.dataset.suffixCounter = counter;
-
+        if (currentPatrIndex < patronymicFull.length) {
+            currentPatrIndex++; 
+            const patronymicPart = patronymicFull.substring(0, currentPatrIndex);
+            newLogin = surname + nameInitial + patronymicPart;
+            
+            resultItem.dataset.patrIndex = currentPatrIndex;
         } else {
-            // === СТРАТЕГІЯ ДЛЯ ЛЮДЕЙ ===
-            // Прогресивне розкриття по-батькові
-            
-            const surname = resultItem.dataset.surname;
-            const nameInitial = resultItem.dataset.nameInitial;
-            const patronymicFull = resultItem.dataset.patronymicFull;
-            
-            // Скільки літер по-батькові ми вже використали?
-            let currentPatrIndex = parseInt(resultItem.dataset.patrIndex || '1', 10);
-
-            // Якщо ще є куди додавати літери
-            if (currentPatrIndex < patronymicFull.length) {
-                currentPatrIndex++; // Беремо на одну літеру більше
-                const patronymicPart = patronymicFull.substring(0, currentPatrIndex);
-                newLogin = surname + nameInitial + patronymicPart;
-                
-                // Зберігаємо новий стан
-                resultItem.dataset.patrIndex = currentPatrIndex;
-            } else {
-                // ЕКСТРЕНИЙ ВИПАДОК: По-батькові закінчилося (наприклад, shevchenkotarasgryhorovych зайнятий)
-                // Тільки тоді додаємо цифри, щоб не зламати логіку
-                let counter = parseInt(resultItem.dataset.overflowCounter || '1', 10);
-                counter++;
-                newLogin = surname + nameInitial + patronymicFull + counter;
-                resultItem.dataset.overflowCounter = counter;
-            }
+            let counter = parseInt(resultItem.dataset.overflowCounter || '1', 10);
+            counter++;
+            newLogin = surname + nameInitial + patronymicFull + counter;
+            resultItem.dataset.overflowCounter = counter;
         }
-        
-        // Оновлюємо текст і глобальну змінну
-        loginSpan.textContent = newLogin;
-        lastGeneratedLogin = newLogin;
-
-        // Очищуємо поле вводу
-        document.getElementById('fullNameInput').value = '';
     }
+    
+    // Оновлюємо текст і глобальну змінну
+    loginSpan.textContent = newLogin;
+    lastGeneratedLogin = newLogin;
+
+    // Очищуємо поле вводу
+    document.getElementById('fullNameInput').value = '';
+
+    // === НОВЕ: ПОВІДОМЛЕННЯ ТА АНІМАЦІЯ ===
+    
+    // 1. Показуємо спливаюче повідомлення
+    showNotification(`Новий варіант: ${newLogin}`);
+
+    // 2. Анімуємо іконку (крутимо її)
+    const icon = buttonElement.querySelector('i');
+    icon.style.transition = 'transform 0.4s ease';
+    icon.style.transform = 'rotate(360deg)';
+    
+    // Скидаємо анімацію через 0.4 секунди, щоб можна було крутити знову
+    setTimeout(() => {
+        icon.style.transition = 'none';
+        icon.style.transform = 'rotate(0deg)';
+    }, 400);
+}
 	
 	function copyLogin(button) {
         // Знаходимо батьківський елемент рядка
