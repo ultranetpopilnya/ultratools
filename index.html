@@ -1844,101 +1844,148 @@ body.dark .command-item.has-subcommands .command-text:hover {
 }
 
 /* ========================================= */
-/* === ОНОВЛЕНИЙ НОВОРІЧНИЙ ЗАГОЛОВОК === */
+/* === НОВОРІЧНИЙ ЗАГОЛОВОК: АДАПТИВНИЙ КОНТРАСТ === */
 /* ========================================= */
 
-/* 1. Скидаємо "коробку" (фон, рамки, тіні блоку) */
+/* 1. БАЗОВІ НАЛАШТУВАННЯ ТА СКИНУТТЯ */
 body.holiday-mode .page-title {
     background: transparent !important;
     border: none !important;
     box-shadow: none !important;
-    padding: 0 !important; /* Прибираємо внутрішні відступи, бо рамки немає */
+    padding: 0 !important;
     margin-top: -20px !important; 
+    transition: all 0.5s ease;
     
-    /* Додаємо плавну анімацію для появи */
-    transition: all 0.3s ease;
+    /* --- НАЛАШТУВАННЯ ДЛЯ СВІТЛОЇ ТЕМИ (НОВИЙ ПІДХІД) --- */
+    /* 
+       Замість розмитого світіння ми робимо акцент на НАСИЧЕНОСТІ (Saturate).
+       "Вимкнена" буква стає сірою і блідою.
+       "Увімкнена" - соковитою і яскравою.
+    */
+    
+    /* Стан "Вимкнено" (Холодне скло) */
+    --bulb-off-opacity: 0.4; 
+    --bulb-off-filter: saturate(0.2) brightness(0.9); /* Майже сірий */
+    --bulb-off-shadow: none;
+    
+    /* Стан "Увімкнено" (Соковитий колір) */
+    --bulb-on-opacity: 1;
+    --bulb-on-filter: saturate(2.0) brightness(1.05); /* Подвійна насиченість кольору! */
+    --bulb-on-shadow: none; /* Жодних тіней, тільки чистий колір */
+    --bulb-on-color: currentColor; /* Колір не змінюється на білий, залишається рідним */
 }
 
-/* 2. Прибираємо текстуру гірлянди/зими */
-body.holiday-mode .page-title::before {
-    display: none !important;
+/* 2. НАЛАШТУВАННЯ ДЛЯ ТЕМНОЇ ТЕМИ (ЗАЛИШАЄМО ЯК БУЛО) */
+body.dark.holiday-mode .page-title {
+    /* Стан "Вимкнено" (Тьмяний неон) */
+    --bulb-off-opacity: 0.3; 
+    --bulb-off-filter: none;
+    --bulb-off-shadow: 0 0 3px currentColor; 
+    
+    /* Стан "Увімкнено" (Яскрава плазма) */
+    --bulb-on-opacity: 1;
+    --bulb-on-filter: none;
+    --bulb-on-shadow: 0 0 15px currentColor, 0 0 30px currentColor, 0 0 45px currentColor;
+    --bulb-on-color: #fff; /* Біле ядро */
 }
 
-/* 3. Анімація пульсації (Аура) */
-@keyframes soft-aura {
+/* ПРИБИРАЄМО ЗАЙВЕ */
+body.holiday-mode .page-title::before { display: none !important; }
+body.holiday-mode .page-title span { display: inline-block; transform: none !important; }
+
+/* === АНІМАЦІЇ (ПЛАВНІ 4 СЕКУНДИ) === */
+
+/* Для I та P (1 пік) */
+@keyframes soft-side {
     0%, 100% {
-        filter: drop-shadow(0 0 2px currentColor);
+        opacity: var(--bulb-on-opacity);
+        filter: var(--bulb-on-filter);
+        text-shadow: var(--bulb-on-shadow);
+        color: var(--bulb-on-color);
     }
     50% {
-        /* Трохи збільшуємо радіус розмиття */
-        filter: drop-shadow(0 0 8px currentColor); 
+        opacity: var(--bulb-off-opacity);
+        filter: var(--bulb-off-filter);
+        text-shadow: var(--bulb-off-shadow);
+        color: currentColor;
     }
 }
 
-/* 4. Налаштування для СВІТЛОЇ ТЕМИ (Елегантна кольорова тінь) */
-
-/* Загальний колір заголовка */
-body.holiday-mode .page-title {
-    color: var(--header-color);
-    text-shadow: none !important; /* Прибираємо старі тіні */
+/* Для S (2 піки) */
+@keyframes soft-center {
+    0%, 100% {
+        opacity: var(--bulb-off-opacity);
+        filter: var(--bulb-off-filter);
+        text-shadow: var(--bulb-off-shadow);
+        color: currentColor;
+    }
+    25% { 
+        opacity: var(--bulb-on-opacity);
+        filter: var(--bulb-on-filter);
+        text-shadow: var(--bulb-on-shadow);
+        color: var(--bulb-on-color);
+    }
+    50% {
+        opacity: var(--bulb-off-opacity);
+        filter: var(--bulb-off-filter);
+        text-shadow: var(--bulb-off-shadow);
+        color: currentColor;
+    }
+    75% { 
+        opacity: var(--bulb-on-opacity);
+        filter: var(--bulb-on-filter);
+        text-shadow: var(--bulb-on-shadow);
+        color: var(--bulb-on-color);
+    }
 }
 
-/* Ультранет (Фіолетовий) */
+/* Для Ультранет */
+@keyframes soft-breathe {
+    0%, 100% { opacity: 0.6; filter: var(--bulb-off-filter); text-shadow: var(--bulb-off-shadow); }
+    50% { opacity: 1; filter: var(--bulb-on-filter); text-shadow: var(--bulb-on-shadow); }
+}
+
+/* === КОЛЬОРИ === */
+body.holiday-mode .page-title { color: var(--header-color); text-shadow: none !important; }
+body.dark.holiday-mode .page-title { color: #fff; }
+
+body.holiday-mode .page-title .ultranet-color { color: #811e71 !important; }
+body.dark.holiday-mode .page-title .ultranet-color { color: #e040fb !important; }
+
+/* Жовтий зробив трохи темнішим для світлої теми, щоб краще читався */
+body.holiday-mode .page-title .isp-e-color-i { color: #dcb000 !important; } 
+body.dark.holiday-mode .page-title .isp-e-color-i { color: #ffeb3b !important; }
+
+body.holiday-mode .page-title .isp-e-color-s { color: #28a745 !important; }
+body.dark.holiday-mode .page-title .isp-e-color-s { color: #00e676 !important; }
+
+body.holiday-mode .page-title .isp-e-color-p { color: #007bff !important; }
+body.dark.holiday-mode .page-title .isp-e-color-p { color: #00b0ff !important; }
+
+
+/* === ТАЙМІНГ (ПОВІЛЬНИЙ, 4 СЕКУНДИ) === */
+
+/* Ультранет */
 body.holiday-mode .page-title .ultranet-color {
-    color: #811e71 !important;
-    /* Використовуємо filter: drop-shadow для ефекту аури навколо букв */
-    filter: drop-shadow(0 0 5px rgba(129, 30, 113, 0.4));
-    animation: soft-aura 3s infinite ease-in-out;
+    animation: soft-breathe 5s infinite ease-in-out;
 }
 
-/* ISP (Жовтий, Зелений, Синій) - робимо трохи темнішими для читабельності на білому */
+/* I (Жовтий) */
 body.holiday-mode .page-title .isp-e-color-i { 
-    color: #f5c518 !important; /* Більш насичений жовтий */
-    filter: drop-shadow(0 0 5px rgba(245, 197, 24, 0.4));
-    animation: soft-aura 3s infinite ease-in-out 0.5s; /* Затримка для переливання */
+    animation: soft-side 4s infinite ease-in-out;
+    animation-delay: 0s;
 }
-body.holiday-mode .page-title .isp-e-color-s { 
-    color: #28a745 !important; 
-    filter: drop-shadow(0 0 5px rgba(40, 167, 69, 0.4));
-    animation: soft-aura 3s infinite ease-in-out 1.0s;
-}
+
+/* P (Синій) */
 body.holiday-mode .page-title .isp-e-color-p { 
-    color: #007bff !important; 
-    filter: drop-shadow(0 0 5px rgba(0, 123, 255, 0.4));
-    animation: soft-aura 3s infinite ease-in-out 1.5s;
+    animation: soft-side 4s infinite ease-in-out;
+    animation-delay: -2s; 
 }
 
-/* 5. Налаштування для ТЕМНОЇ ТЕМИ (Яскравий неон) */
-
-body.dark.holiday-mode .page-title {
-    color: #fff;
-}
-
-/* Тут ми робимо ауру яскравішою */
-@keyframes neon-aura {
-    0%, 100% { text-shadow: 0 0 10px currentColor, 0 0 20px currentColor; }
-    50% { text-shadow: 0 0 15px currentColor, 0 0 30px currentColor; }
-}
-
-body.dark.holiday-mode .page-title .ultranet-color {
-    color: #e040fb !important;
-    filter: none; /* Скидаємо filter з світлої теми */
-    animation: none; /* Скидаємо стару анімацію */
-    /* Використовуємо text-shadow для неону, бо на чорному це виглядає краще */
-    animation: neon-aura 3s infinite ease-in-out; 
-}
-
-body.dark.holiday-mode .page-title .isp-e-color-i { 
-    color: #ffeb3b !important; 
-    filter: none; animation: neon-aura 3s infinite ease-in-out 0.5s;
-}
-body.dark.holiday-mode .page-title .isp-e-color-s { 
-    color: #00e676 !important; 
-    filter: none; animation: neon-aura 3s infinite ease-in-out 1.0s;
-}
-body.dark.holiday-mode .page-title .isp-e-color-p { 
-    color: #00b0ff !important; 
-    filter: none; animation: neon-aura 3s infinite ease-in-out 1.5s;
+/* S (Зелений) */
+body.holiday-mode .page-title .isp-e-color-s { 
+    animation: soft-center 4s infinite ease-in-out;
+    animation-delay: 0s;
 }
 
 /* === АВТОМАТИЧНЕ ЗАПОВНЕННЯ ЕКРАНА (FLEXBOX) === */
@@ -2024,7 +2071,7 @@ body {
 <!-- === НОВИЙ БЛОК ВЕРСІЇ (Вставте сюди) === -->
 <div class="version-pill" title="Поточна версія">
     <img src="snowman.webp" alt="Snowman" class="version-emoji">
-    <span class="version-text">Версія 3.3.7</span>
+    <span class="version-text">Версія 3.3.8</span>
 </div>   
 <div id="snow-container"></div>	
     <div class="toggle-button-wrapper">
@@ -3982,4 +4029,3 @@ document.querySelectorAll('.container[data-content]').forEach(container => {
     </script>
 </body>
 </html>
-
