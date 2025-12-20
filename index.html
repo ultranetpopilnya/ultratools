@@ -1221,27 +1221,60 @@ body.dark .tab-button.active {
             margin-bottom: 0px; 
         }
 
-        /* --- ОНОВЛЕНІ СТИЛІ ДЛЯ ТЕКСТОВИХ ШАБЛОНІВ --- */
-        #templates-grid-wrapper {
-            position: relative; 
-            width: 100%;
-            min-height: 2000px; 
-        }
+/* === СТИЛЬ КОНТЕЙНЕРА (TETRIS ENGINE) === */
+#templates-grid-wrapper {
+    position: relative; 
+    width: 100%;
+	padding-bottom: 150px;
+    /* Висота буде задаватися скриптом */
+    height: auto; 
+    min-height: 500px;
+    display: block; /* Важливо: блок, а не flex */
+	overflow: visible; 
+	transition: min-height 0.3s ease; /* Плавна зміна висоти самого контейнера */
+}
 
-        .templates-header-wrapper {
+        /* Контейнер шапки */
+.templates-header-wrapper {
     display: flex;
     align-items: center;
-    justify-content: center; /* ЗМІНЕНО: тепер все буде по центру */
-    margin-bottom: 14px;
-    margin-top: 0;
+    justify-content: flex-end; /* Притискає вміст (кнопки) вправо */
+    position: relative;        /* Створює "якір" для позиціонування заголовка */
+    margin-top: 0 !important;   /* Прибираємо відступ зверху */
+    padding-top: 0 !important;  /* Гарантуємо відсутність внутрішнього відступу */
+    min-height: 32px;           /* Висота рівно під розмір кнопок/тексту */
+    margin-bottom: 14px;        /* Відступ знизу (як було раніше) */
+    
+    padding-left: 10px;
+    padding-right: 5px;
+}
+
+/* Заголовок (Абсолютне центрування) */
+.template-main-title {
+    position: absolute;
+    left: 50%;
+    
+    /* --- ТОЧНЕ ЦЕНТРУВАННЯ --- */
+    top: 50%;
+    transform: translate(-50%, -50%);
+    
+    margin: 0 !important;
+    white-space: nowrap;
+    z-index: 0;
+    text-align: center;
+    
+    /* Гарантуємо, що розмір шрифту такий самий, як усюди */
+    font-size: 1.5rem; 
+    line-height: 1.2;
 }
         
-    /* --- СТИЛІ ДЛЯ КНОПОК ІМПОРТУ/ЕКСПОРТУ (ОНОВЛЕНО) --- */
-/* --- СТИЛІ ДЛЯ КНОПОК ІМПОРТУ/ЕКСПОРТУ (НОВИЙ ДИЗАЙН) --- */
+/* Блок кнопок */
 .template-global-actions {
     display: flex;
     align-items: center;
     gap: 10px;
+    position: relative;
+    z-index: 1;
 }
 
 /* Базові налаштування для всіх кнопок */
@@ -1368,37 +1401,43 @@ body.dark #clear-all-templates-button:hover {
     border-color: var(--danger-color);
     color: white;
 }
-       
-        .template-field-group {
-            position: absolute; 
-            border: 2px solid var(--template-border-color); 
-            padding: 0;
-            border-radius: 12px;
-            background-color: var(--template-bg-color);
-            min-height: 110px; 
-            min-width: 300px;
-            display: flex; 
-            flex-direction: column;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            touch-action: none; 
-            box-sizing: border-box;
-            overflow: hidden;
-        }
+    
+/* === СТИЛЬ ШАБЛОНУ === */
+.template-field-group {
+    /* Повертаємо absolute, бо скрипт буде керувати координатами */
+    position: absolute; 
+    
+    border: 2px solid var(--template-border-color); 
+    padding: 0;
+    border-radius: 12px;
+    background-color: var(--template-bg-color);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    
+    display: flex; 
+    flex-direction: column;
+    box-sizing: border-box;
+    overflow: hidden;
         
-        .template-drag-handle {
-            width: 100%;
-            height: 20px; 
-            background-color: var(--template-handle-bg);
-            cursor: move;
-            border-bottom: 1px solid var(--template-handle-border);
-            border-radius: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #999;
-            font-size: 18px;
-            user-select: none;
-        }
+    /* Мінімальні розміри */
+    min-height: 90px; 
+    min-width: 300px;
+    
+    /* Оптимізація для GPU */
+    will-change: transform;
+}
+
+/* АКТИВНИЙ БЛОК: Не повинен мати затримки, слідує чітко за мишкою */
+.template-field-group.is-resizing {
+    z-index: 1000 !important;
+    transition: none !important; /* Вимикаємо плавність для того, кого тягнемо */
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25); /* Тінь, щоб бачити, що він активний */
+    opacity: 0.95;
+}
+        
+        /* --- ПРИХОВУЄМО РУЧКУ ПЕРЕТЯГУВАННЯ --- */
+.template-drag-handle {
+    display: none !important; /* Забороняємо перетягування */
+}
         
         .template-header {
     display: flex;
@@ -1560,7 +1599,7 @@ body.dark .line-marker-gutter {
     color: #007bff;
     pointer-events: none; 
     font-family: 'Fira Code', monospace !important;
-	margin-top: -3px;
+	margin-top: -5px;
 }
 
 body.dark .line-marker {
@@ -1727,8 +1766,10 @@ body.dark .calc-action-button:hover {
     padding: 16px 7px 7px 7px; 
     
     /* --- ЗМІНА 2: Вмикаємо скрол саме тут --- */
-    overflow-y: auto; 
-    height: 100%; 
+    overflow-y: auto;
+overflow-x: hidden;	
+    height: 100%;
+ display: block;	
     
     /* --- ЗМІНА 3: Фікс графічного багу (курсора/артефактів) --- */
     /* Цей рядок змушує браузер краще обробляти краї при скролі */
@@ -1995,7 +2036,7 @@ body {
     height: 100vh;          /* Рівно висота екрана */
     display: flex;          /* Вмикаємо режим Flexbox */
     flex-direction: column; /* Елементи йдуть зверху вниз */
-    overflow: hidden;       /* Прибираємо скрол самої сторінки */
+    overflow: hidden !important;
     padding-bottom: 0;      /* Прибираємо зайві відступи знизу */
 }
 
@@ -2037,12 +2078,6 @@ body {
     padding-bottom: 20px;   /* Трохи місця знизу контенту */
 }
 
-/* 5. Фікс для шаблонів (щоб сітка не ламала висоту) */
-#templates-grid-wrapper {
-    height: auto !important; 
-    min-height: 100%;
-}
-
 /* === ЄДИНІ НАЛАШТУВАННЯ ВІДСТУПУ ДЛЯ ШАБЛОНІВ ТА КОМАНД === */
 
 /* 1. Налаштування "Вікна" (Зовнішні контейнери) */
@@ -2065,13 +2100,29 @@ body {
     overflow-y: auto;   /* Скрол з'являється, якщо контент не влазить */
 }
 
+/* Клас для миттєвої появи без анімації */
+.no-transition {
+    transition: none !important;
+}
+
+/* Основний клас (анімацію залишаємо для ресайзу) */
+.template-field-group {
+    position: absolute;
+    /* ... ваші інші стилі ... */
+   transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+    
+    /* Фікс розмитості тексту */
+    backface-visibility: hidden;
+    transform: translateZ(0);
+    -webkit-font-smoothing: antialiased;
+}
 </style>
 </head>
 <body class="holiday-mode"> 
 <!-- === НОВИЙ БЛОК ВЕРСІЇ (Вставте сюди) === -->
 <div class="version-pill" title="Поточна версія">
     <img src="snowman.webp" alt="Snowman" class="version-emoji">
-    <span class="version-text">Версія 3.3.8</span>
+    <span class="version-text">Версія 3.4.1</span>
 </div>   
 <div id="snow-container"></div>	
     <div class="toggle-button-wrapper">
@@ -2188,22 +2239,24 @@ body {
 </div>
             <div class="container" data-content="text-templates" data-default-width="100%" data-default-height="100%">
 			<div class="content-card">
-                <div class="templates-header-wrapper">
+<div class="templates-header-wrapper">
+    <!-- 1. Заголовок тепер окремо і буде по центру -->
+    <h2 class="template-main-title">📝 Текстові шаблони</h2>
+
+    <!-- 2. Кнопки окремо в блоці, який піде вправо -->
     <div class="template-global-actions">
-    <h2 style="margin-top: 0; text-align: center; margin-bottom: 0;">📝 Текстові шаблони</h2>
-    <button id="add-template-button" title="Додати шаблон">+</button>
-    <input type="file" id="import-file-input" accept=".json" style="display: none;">
-    <button id="import-templates-button" title="Імпортувати шаблони з файлу">
-        <i class="fas fa-download"></i>
-    </button>
-    <button id="export-templates-button" title="Експортувати шаблони у файл">
-        <i class="fas fa-upload"></i>
-    </button>
-    <!-- Ось нова кнопка -->
-    <button id="clear-all-templates-button" title="Видалити всі шаблони">
-        <i class="fas fa-trash-alt"></i>
-    </button>
-</div>
+        <button id="add-template-button" title="Додати шаблон">+</button>
+        <input type="file" id="import-file-input" accept=".json" style="display: none;">
+        <button id="import-templates-button" title="Імпортувати шаблони з файлу">
+            <i class="fas fa-download"></i>
+        </button>
+        <button id="export-templates-button" title="Експортувати шаблони у файл">
+            <i class="fas fa-upload"></i>
+        </button>
+        <button id="clear-all-templates-button" title="Видалити всі шаблони">
+            <i class="fas fa-trash-alt"></i>
+        </button>
+    </div>
 </div>
                 <div id="templates-grid-wrapper">
                     </div>
@@ -2219,6 +2272,26 @@ body {
     
     <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
 <script>
+// Функція-обмежувач: не дає запускати важкі задачі частіше, ніж раз на 'limit' мс
+function throttle(func, limit) {
+    let inThrottle;
+    return function() {
+        const args = arguments;
+        const context = this;
+        if (!inThrottle) {
+            func.apply(context, args);
+            inThrottle = true;
+            setTimeout(() => inThrottle = false, limit);
+        }
+    }
+}
+
+// Створюємо "гальмо", щоб функція не викликалась мільйон разів на секунду
+// 10мс - це дуже швидко, щоб не було візуальних затримок
+const throttledPackTemplates = throttle(() => {
+    packTemplates();
+}, 10);
+
 // 1. Спочатку оголошуємо допоміжну функцію
 function debounce(func, delay) {
     let timeout;
@@ -2245,41 +2318,11 @@ function clearAllTemplates() {
         // Цей код виконається, тільки якщо користувач натисне "ОК"
         templatesGrid.innerHTML = ''; // Очищуємо контейнер з шаблонами
         saveTemplates(); // Зберігаємо порожній стан
-        updateGridWrapperHeight(); // Оновлюємо висоту контейнера
         showNotification("Усі шаблони було видалено.");
     }
 }
 
 let lastGeneratedLogin = ''; // Зберігатиме останній згенерований логін
-    function updateGridWrapperHeight() {
-    const container = document.getElementById('templates-grid-wrapper');
-    const templates = container.querySelectorAll('.template-field-group');
-    
-    // МІНІМАЛЬНА ВИСОТА ПОЛОТНА (як ви просили)
-    const minCanvasHeight = 1700; 
-    const paddingBottom = 200; // Запас місця знизу
-
-    let maxBottom = 0;
-
-    // Шукаємо найнижчий шаблон
-    if (templates.length > 0) {
-        templates.forEach(template => {
-            const yPos = parseFloat(template.getAttribute('data-y')) || 0;
-            const height = template.offsetHeight;
-            const bottomEdge = yPos + height;
-
-            if (bottomEdge > maxBottom) {
-                maxBottom = bottomEdge;
-            }
-        });
-    }
-
-    // Висота = або 1700px, або (найнижчий шаблон + відступ), залежно що більше
-    const requiredHeight = Math.max(minCanvasHeight, maxBottom + paddingBottom);
-
-    container.style.minHeight = `${requiredHeight}px`;
-}
-
     function handleDeviceTypeChange() {
         const selectedValue = document.getElementById('device-type').value;
         displayCommands(selectedValue);
@@ -3001,186 +3044,60 @@ function areDatesInDefaultState() {
         setTimeout(() => notification.classList.remove('show'), 2000);
     }
     
-    // --- ФУНКЦІОНАЛ ТЕКСТОВИХ ШАБЛОНІВ ---
-    
-    function isIntersecting(r1, r2) {
-        return !(r2.left >= r1.right || r2.right <= r1.left || r2.top >= r1.bottom || r2.bottom <= r1.top);
-    }
+function initDraggableAndResizable(element) {
+    interact(element).resizable({
+        edges: { left: false, right: true, bottom: true, top: false },
+        
+        listeners: {
+            start(event) {
+                event.target.classList.add('is-resizing');
+                event.target.style.zIndex = '5000';
+            },
+            move(event) {
+                let target = event.target;
+                const container = document.getElementById('templates-grid-wrapper');
+                
+                // 1. Отримуємо ширину контейнера
+                const containerWidth = container.clientWidth;
 
-    function initDraggableAndResizable(element) {
-         const scrollContainer = element.closest('.content-card');
-        const GAP = 6;
-        const position = {
-            x: parseFloat(element.getAttribute('data-x')) || 0,
-            y: parseFloat(element.getAttribute('data-y')) || 0
-        };
-        element.style.transform = `translate(${position.x}px, ${position.y}px)`;
+                // 2. Отримуємо поточну позицію X елемента
+                const style = window.getComputedStyle(target);
+                const matrix = new DOMMatrix(style.transform);
+                const currentX = matrix.m41;
 
-        const syncStateOnStart = (event) => {
-            const target = event.target;
-            const transformValue = window.getComputedStyle(target).transform;
-            if (transformValue && transformValue !== 'none') {
-                const matrix = new DOMMatrix(transformValue);
-                position.x = matrix.e; position.y = matrix.f;
-            } else {
-                position.x = parseFloat(target.getAttribute('data-x')) || 0;
-                position.y = parseFloat(target.getAttribute('data-y')) || 0;
+                // 3. Рахуємо МАКСИМАЛЬНО можливу ширину для цього блоку
+                // Віднімаємо 10px, щоб він точно не впирався в край і не викликав глюк переносу
+                const maxAvailableWidth = containerWidth - currentX - 0;
+
+                // 4. Головна магія: 
+                // Беремо або ширину від мишки, або максимум. Що менше - те і беремо.
+                // Це прибирає "відскок", блок просто впирається в невидиму стіну.
+                let newWidth = Math.min(event.rect.width, maxAvailableWidth);
+                let newHeight = event.rect.height;
+
+                // 5. Застосовуємо (Math.floor прибирає дробові пікселі, що теж зменшує дрижання)
+                target.style.width = Math.floor(newWidth) + 'px';
+                target.style.height = Math.floor(newHeight) + 'px';
+                
+                // Оновлюємо сусідів
+                throttledPackTemplates(); 
+            },
+            end(event) {
+                event.target.classList.remove('is-resizing');
+                event.target.style.zIndex = '';
+                
+                saveTemplates();
+                packTemplates();
             }
-            target.setAttribute('data-x', position.x);
-            target.setAttribute('data-y', position.y);
-        };
-
-        interact(element).draggable({
-            allowFrom: '.template-drag-handle',
-            inertia: false,
-            autoScroll: { container: scrollContainer, margin: 50, speed: 600 },
-            listeners: {
-                start: syncStateOnStart,
-                move(event) {
-                    const target = event.target;
-                    const parentContainer = document.getElementById('templates-grid-wrapper');
-                    const parentWidth = parentContainer.offsetWidth;
-
-                    let newX = position.x + event.dx;
-                    let newY = position.y + event.dy;
-
-                    if (newX < 0) newX = 0;
-                    if (newY < 0) newY = 0;
-                    
-                    if (newX + target.offsetWidth > parentWidth) {
-                        newX = parentWidth - target.offsetWidth;
-                    }
-
-                    const fullMoveRect = { left: newX, top: newY, right: newX + target.offsetWidth, bottom: newY + target.offsetHeight };
-                    const xMoveRect = { left: newX, top: position.y, right: newX + target.offsetWidth, bottom: position.y + target.offsetHeight };
-                    const yMoveRect = { left: position.x, top: newY, right: position.x + target.offsetWidth, bottom: position.y + target.offsetHeight };
-
-                    let canMoveFull = true, canMoveX = true, canMoveY = true;
-                    
-                    for (const other of document.querySelectorAll('.template-field-group')) {
-                        if (other === target) continue;
-                        const otherRect = { left: parseFloat(other.getAttribute('data-x')), top: parseFloat(other.getAttribute('data-y')), right: parseFloat(other.getAttribute('data-x')) + other.offsetWidth, bottom: parseFloat(other.getAttribute('data-y')) + other.offsetHeight };
-                        const paddedRect = { left: otherRect.left - GAP, top: otherRect.top - GAP, right: otherRect.right + GAP, bottom: otherRect.bottom + GAP };
-                        
-                        if (canMoveFull && isIntersecting(fullMoveRect, paddedRect)) canMoveFull = false;
-                        if (canMoveX && isIntersecting(xMoveRect, paddedRect)) canMoveX = false;
-                        if (canMoveY && isIntersecting(yMoveRect, paddedRect)) canMoveY = false;
-                    }
-
-                    if (canMoveFull) {
-                        position.x = newX;
-                        position.y = newY;
-                    } else if (canMoveX) {
-                        position.x = newX;
-                    } else if (canMoveY) {
-                        position.y = newY;
-                    }
-                   
-                    target.style.transform = `translate(${position.x}px, ${position.y}px)`;
-                },
-                end(event) {
-                    event.target.setAttribute('data-x', position.x);
-                    event.target.setAttribute('data-y', position.y);
-                    saveTemplates();
-                    updateGridWrapperHeight();
-                }
-            }
-        }).resizable({
-            edges: { left: false, right: true, bottom: true, top: false },
-            margin: 16,
-            listeners: {
-        start: syncStateOnStart,
-        move(event) {
-            const target = event.target;
-            const parentContainer = document.getElementById('templates-grid-wrapper');
-            const x = parseFloat(target.getAttribute('data-x')) || 0;
-            const y = parseFloat(target.getAttribute('data-y')) || 0;
-
-            // Потенційні нові розміри з події
-            let newWidth = event.rect.width;
-            let newHeight = event.rect.height;
-
-            // --- КРОК 1: ПЕРЕВІРКА ТА ЗАСТОСУВАННЯ ШИРИНИ ---
-
-            // Створюємо тестовий прямокутник ТІЛЬКИ для зміни ширини
-            const widthTestRect = {
-                left: x,
-                top: y,
-                right: x + newWidth,
-                bottom: y + target.offsetHeight // Висота залишається поточною
-            };
-            
-            let widthCollides = false;
-            // Перевірка на вихід за межі батьківського контейнера
-            if (widthTestRect.right > parentContainer.offsetWidth) {
-                widthCollides = true;
-                // Коригуємо ширину, щоб вона не виходила за межі
-                newWidth = parentContainer.offsetWidth - x; 
-            }
-
-            // Перевіряємо зіткнення з іншими блоками по ширині
-            if (!widthCollides) {
-                for (const other of document.querySelectorAll('.template-field-group')) {
-                    if (other === target) continue;
-                    const otherRect = { left: parseFloat(other.getAttribute('data-x')), top: parseFloat(other.getAttribute('data-y')), right: parseFloat(other.getAttribute('data-x')) + other.offsetWidth, bottom: parseFloat(other.getAttribute('data-y')) + other.offsetHeight };
-                    const paddedOtherRect = { left: otherRect.left - GAP, top: otherRect.top - GAP, right: otherRect.right + GAP, bottom: otherRect.bottom + GAP };
-                    
-                    if (isIntersecting(widthTestRect, paddedOtherRect)) {
-                        widthCollides = true;
-                        break;
-                    }
-                }
-            }
-
-            // Застосовуємо нову ширину, ТІЛЬКИ якщо не було зіткнень
-            if (!widthCollides) {
-                target.style.width = `${newWidth}px`;
-            }
-
-            // --- КРОК 2: ПЕРЕВІРКА ТА ЗАСТОСУВАННЯ ВИСОТИ ---
-
-            // Створюємо тестовий прямокутник ТІЛЬКИ для зміни висоти
-            const heightTestRect = {
-                left: x,
-                top: y,
-                right: x + target.offsetWidth, // Ширина залишається поточною (вже, можливо, оновленою)
-                bottom: y + newHeight
-            };
-
-            let heightCollides = false;
-            for (const other of document.querySelectorAll('.template-field-group')) {
-                if (other === target) continue;
-                const otherRect = { left: parseFloat(other.getAttribute('data-x')), top: parseFloat(other.getAttribute('data-y')), right: parseFloat(other.getAttribute('data-x')) + other.offsetWidth, bottom: parseFloat(other.getAttribute('data-y')) + other.offsetHeight };
-                const paddedOtherRect = { left: otherRect.left - GAP, top: otherRect.top - GAP, right: otherRect.right + GAP, bottom: otherRect.bottom + GAP };
-
-                if (isIntersecting(heightTestRect, paddedOtherRect)) {
-                    heightCollides = true;
-                    break;
-                }
-            }
-            
-            // Застосовуємо нову висоту, ТІЛЬКИ якщо не було зіткнень
-            if (!heightCollides) {
-                target.style.height = `${newHeight}px`;
-            }
-
-            // --- КРОК 3: Оновлення позиції (необхідно для interact.js) ---
-            position.x += event.deltaRect.left;
-            position.y += event.deltaRect.top;
-            target.style.transform = `translate(${position.x}px, ${position.y}px)`;
         },
-        end(event) {
-            // ... (ця частина залишається без змін)
-            event.target.setAttribute('data-x', position.x);
-            event.target.setAttribute('data-y', position.y);
-            saveTemplates();
-            updateGridWrapperHeight();
-        }
-    },
-            modifiers: [ interact.modifiers.restrictSize({ min: { width: 300, height: 110 } }) ],
-            inertia: false
-        });
-    }
+        modifiers: [
+            interact.modifiers.restrictSize({
+                min: { width: 300, height: 90 }
+            })
+        ],
+        inertia: false
+    });
+}
 
     // --- ПОЧАТОК НОВОЇ, ПОКРАЩЕНОЇ СИСТЕМИ ЗАКЛАДОК ---
 
@@ -3350,7 +3267,8 @@ function areDatesInDefaultState() {
     }
 	
     function createTemplateField(data = {}) {
-        const { name = '', content = '', width = '300px', height = '110px', x = 0, y = 0, bookmarks = [] } = data;
+        // Прибираємо x та y з деструктуризації
+        const { name = '', content = '', width = '300px', height = '90px', bookmarks = [] } = data;
         const container = document.getElementById('templates-grid-wrapper'); 
         const fieldGroup = document.createElement('div');
         fieldGroup.className = 'template-field-group';
@@ -3358,27 +3276,22 @@ function areDatesInDefaultState() {
         let modernBookmarks = [];
         if (bookmarks.length > 0) {
             const lines = content.split('\n');
-            if (typeof bookmarks[0] === 'number') { // Старий формат
+            if (typeof bookmarks[0] === 'number') { 
                 bookmarks.forEach(lineNumber => {
                     if (lineNumber > 0 && lineNumber <= lines.length) {
                         modernBookmarks.push({ lineNumber: lineNumber, content: lines[lineNumber - 1] });
                     }
                 });
-            } else { // Новий формат
+            } else { 
                 modernBookmarks = bookmarks;
             }
         }
         fieldGroup.dataset.bookmarks = JSON.stringify(modernBookmarks);
         
+        // Встановлюємо розміри
         fieldGroup.style.width = width;
         fieldGroup.style.height = height;
-        fieldGroup.setAttribute('data-x', x);
-        fieldGroup.setAttribute('data-y', y);
-        
-        const dragHandle = document.createElement('div');
-        dragHandle.className = 'template-drag-handle';
-        dragHandle.innerHTML = '⠿';
-        
+              
         const headerDiv = document.createElement('div');
         headerDiv.className = 'template-header';
         
@@ -3466,12 +3379,12 @@ function areDatesInDefaultState() {
         deleteButton.title = 'Видалити шаблон';
         deleteButton.className = 'delete-template-btn';
         deleteButton.onclick = () => {
-            if (confirm('Ви впевнені, що хочете видалити цей шаблон?')) {
-                fieldGroup.remove();
-                saveTemplates();
-                updateGridWrapperHeight();
-            }
-        };
+    if (confirm('Ви впевнені, що хочете видалити цей шаблон?')) {
+        fieldGroup.remove();
+        saveTemplates();
+        packTemplates(); // ДОДАТИ ЦЕ, щоб блоки перегрупувалися
+    }
+};
 
         const textareaWrapper = document.createElement('div');
         textareaWrapper.className = 'textarea-wrapper';
@@ -3494,11 +3407,18 @@ function areDatesInDefaultState() {
         textarea.value = content;
         highlighter.innerHTML = escapeHtml(content) + '\n';
         
-        const syncScroll = () => {
+        let isScrolling = false;
+const syncScroll = () => {
+    if (!isScrolling) {
+        window.requestAnimationFrame(() => {
             markerContainer.style.transform = `translateY(-${textarea.scrollTop}px)`;
             highlighter.scrollTop = textarea.scrollTop;
             highlighter.scrollLeft = textarea.scrollLeft;
-        };
+            isScrolling = false;
+        });
+        isScrolling = true;
+    }
+};
 
         textarea.addEventListener('input', () => {
     updateHighlight(textarea, highlighter); // Підсвітка має бути миттєвою
@@ -3529,30 +3449,38 @@ function areDatesInDefaultState() {
         textarea.addEventListener('blur', () => updateHighlight(textarea, highlighter));
 
         gutter.onclick = (event) => {
-            const style = window.getComputedStyle(textarea);
-            const lineHeight = parseFloat(style.lineHeight);
-            const paddingTop = parseFloat(style.paddingTop);
-            
-            const clickedLineNumber = Math.floor((event.offsetY + textarea.scrollTop - paddingTop) / lineHeight) + 1;
-            
-            const lines = textarea.value.split('\n');
-            if (clickedLineNumber > lines.length || clickedLineNumber < 1) return;
+    const style = window.getComputedStyle(textarea);
+    const fontSize = parseFloat(style.fontSize) || 14;
+    let lineHeight = parseFloat(style.lineHeight);
+    if (isNaN(lineHeight)) lineHeight = fontSize * 1.5;
 
-            let currentBookmarks = JSON.parse(fieldGroup.dataset.bookmarks || '[]');
-            const existingBookmarkIndex = currentBookmarks.findIndex(b => b.lineNumber === clickedLineNumber);
+    const paddingTop = parseFloat(style.paddingTop) || 10;
+    
+    // Отримуємо реальний Y кліку з урахуванням прокрутки
+    const rect = gutter.getBoundingClientRect();
+    const clickY = event.clientY - rect.top + textarea.scrollTop;
+    
+    // Розраховуємо номер рядка
+    const clickedLineNumber = Math.floor((clickY - paddingTop) / lineHeight) + 1;
+    
+    const lines = textarea.value.split('\n');
+    if (clickedLineNumber > lines.length || clickedLineNumber < 1) return;
 
-            if (existingBookmarkIndex > -1) {
-                currentBookmarks.splice(existingBookmarkIndex, 1);
-            } else {
-                currentBookmarks.push({
-                    lineNumber: clickedLineNumber,
-                    content: lines[clickedLineNumber - 1]
-                });
-            }
-            fieldGroup.dataset.bookmarks = JSON.stringify(currentBookmarks);
-            renderLineMarkers(fieldGroup);
-            saveTemplates();
-        };
+    let currentBookmarks = JSON.parse(fieldGroup.dataset.bookmarks || '[]');
+    const existingBookmarkIndex = currentBookmarks.findIndex(b => b.lineNumber === clickedLineNumber);
+
+    if (existingBookmarkIndex > -1) {
+        currentBookmarks.splice(existingBookmarkIndex, 1);
+    } else {
+        currentBookmarks.push({
+            lineNumber: clickedLineNumber,
+            content: lines[clickedLineNumber - 1]
+        });
+    }
+    fieldGroup.dataset.bookmarks = JSON.stringify(currentBookmarks);
+    renderLineMarkers(fieldGroup);
+    saveTemplates();
+};
         
         highlightingContainer.appendChild(highlighter);
         highlightingContainer.appendChild(textarea);
@@ -3569,109 +3497,106 @@ function areDatesInDefaultState() {
         const resizeHandle = document.createElement('div');
         resizeHandle.className = 'resize-handle';    
         
-        fieldGroup.appendChild(dragHandle); 
         fieldGroup.appendChild(headerDiv); 
         fieldGroup.appendChild(textareaWrapper);
         fieldGroup.appendChild(resizeHandle);
+        
+        // ОСЬ ЦЕЙ РЯДОК МАЄ БУТИ ТУТ:
         container.appendChild(fieldGroup); 
         
         initDraggableAndResizable(fieldGroup);
         renderLineMarkers(fieldGroup);
-        interact(fieldGroup).on('resizemove', syncScroll);
         
         return fieldGroup;
     }
 
     function renderLineMarkers(fieldGroup) {
-        // *** Оновлена функція для роботи з новим контейнером ***
-        const markerContainer = fieldGroup.querySelector('.line-marker-container');
-        const textarea = fieldGroup.querySelector('textarea');
-        if (!markerContainer || !textarea) return;
+    const markerContainer = fieldGroup.querySelector('.line-marker-container');
+    const textarea = fieldGroup.querySelector('textarea');
+    if (!markerContainer || !textarea) return;
+    
+    markerContainer.innerHTML = ''; 
+    const bookmarks = JSON.parse(fieldGroup.dataset.bookmarks || '[]');
+    const style = window.getComputedStyle(textarea);
+    
+    // Надійний розрахунок висоти рядка
+    const fontSize = parseFloat(style.fontSize) || 14;
+    let lineHeight = parseFloat(style.lineHeight);
+    if (isNaN(lineHeight)) lineHeight = fontSize * 1.5; // Резервний розрахунок (1.5 - ваш коефіцієнт)
+
+    const paddingTop = parseFloat(style.paddingTop) || 10;
+    
+    bookmarks.forEach(bookmark => {
+        const marker = document.createElement('div');
+        marker.className = 'line-marker';
+        marker.textContent = '●';
         
-        markerContainer.innerHTML = ''; 
-        const bookmarks = JSON.parse(fieldGroup.dataset.bookmarks || '[]');
-        const style = window.getComputedStyle(textarea);
-        const lineHeight = parseFloat(style.lineHeight);
-        const paddingTop = parseFloat(style.paddingTop);
+        // Математика центрування точки:
+        // (номер рядка - 1) * висота рядка + відступ зверху + (половина висоти рядка для центрування)
+        // - 12px (приблизна половина висоти самого символу ● розміром 25px)
+        const yPosition = paddingTop + (bookmark.lineNumber - 1) * lineHeight + (lineHeight / 2) - 13;
         
-        bookmarks.forEach(bookmark => {
-            const marker = document.createElement('div');
-            marker.className = 'line-marker';
-            marker.textContent = '●';
-            marker.style.top = `${paddingTop + (bookmark.lineNumber - 1) * lineHeight - 4.5}px`;
-            markerContainer.appendChild(marker);
-        });
-    }
+        marker.style.top = `${yPosition}px`;
+        markerContainer.appendChild(marker);
+    });
+}
 
     // --- КІНЕЦЬ НОВОЇ СИСТЕМИ ЗАКЛАДОК ---
 
-    function addTemplate() {
-        const container = document.getElementById('templates-grid-wrapper');
-        const layoutWrapper = container.closest('.tab-content-wrapper');
-        if (!layoutWrapper) {
-            console.error("Не вдалося знайти батьківський контейнер.");
-            return;
-        }
+function addTemplate() {
+    const container = document.getElementById('templates-grid-wrapper');
+    
+    // 1. Фіксуємо поточну висоту, щоб уникнути ривків
+    container.style.height = container.offsetHeight + 'px';
+
+    const newData = { name: '', content: '', width: '300px', height: '90px' };
+    const newField = createTemplateField(newData);
+    
+    // Тимчасово вимикаємо анімацію появи
+    newField.style.transition = 'none';
+    container.appendChild(newField); 
+
+    // 2. Розкладаємо шаблони (Tetris)
+    packTemplates();
+    
+    // 3. Через мить (коли тетріс відпрацював) робимо магію
+    setTimeout(() => {
+        container.style.height = 'auto';
+        newField.style.transition = ''; // Повертаємо анімацію
         
-        const containerWidth = layoutWrapper.offsetWidth;
-        const existingTemplates = Array.from(container.querySelectorAll('.template-field-group'));
-        const newTemplateWidth = 300;
-        const newTemplateHeight = 110;
-        const GAP = 6;
-        let finalPosition = null;
-    
-        if (existingTemplates.length === 0) {
-            finalPosition = { x: 0, y: 0 };
-        } else {
-            const candidatePoints = [{ x: 0, y: 0 }];
-            existingTemplates.forEach(el => {
-                const x = parseFloat(el.getAttribute('data-x'));
-                const y = parseFloat(el.getAttribute('data-y'));
-                candidatePoints.push({ x: x + el.offsetWidth + GAP, y: y });
-                candidatePoints.push({ x: x, y: y + el.offsetHeight + GAP });
-            });
-    
-            candidatePoints.sort((a, b) => a.y - b.y || a.x - b.x);
-    
-            for (const point of candidatePoints) {
-                if (point.x < 0 || point.x + newTemplateWidth > containerWidth) continue;
-    
-                const candidateRect = { left: point.x, top: point.y, right: point.x + newTemplateWidth, bottom: point.y + newTemplateHeight };
-                
-                const isOverlapping = existingTemplates.some(el => {
-                    const rect = { 
-                        left: parseFloat(el.getAttribute('data-x')), 
-                        top: parseFloat(el.getAttribute('data-y')), 
-                        right: parseFloat(el.getAttribute('data-x')) + el.offsetWidth, 
-                        bottom: parseFloat(el.getAttribute('data-y')) + el.offsetHeight 
-                    };
-                    return isIntersecting(candidateRect, rect);
-                });
-    
-                if (!isOverlapping) {
-                    finalPosition = point;
-                    break; 
-                }
-            }
-        }
+        // Фокусуємось без стрибка браузера
+        const nameInput = newField.querySelector('.template-name-input');
+        if (nameInput) nameInput.focus({ preventScroll: true });
         
-        if (finalPosition === null) {
-            let lowestY = 0;
-            existingTemplates.forEach(el => {
-                const bottom = parseFloat(el.getAttribute('data-y')) + el.offsetHeight;
-                if (bottom > lowestY) lowestY = bottom;
-            });
-            finalPosition = { x: 0, y: lowestY + GAP };
-        }
-        
-        const newField = createTemplateField({ name: '', content: '', width: `${newTemplateWidth}px`, height: `${newTemplateHeight}px`, x: finalPosition.x, y: finalPosition.y });
-        newField.querySelector('.template-name-input').focus();
         saveTemplates();
-        updateGridWrapperHeight();
-    }
+
+        // --- НОВА БЕЗПЕЧНА ПРОКРУТКА ---
+        // Знаходимо саме той контейнер, який має скрол (біла картка)
+        const scrollContainer = newField.closest('.content-card');
+
+        if (scrollContainer) {
+            // Отримуємо координати нового блоку і контейнера
+            const elementRect = newField.getBoundingClientRect();
+            const containerRect = scrollContainer.getBoundingClientRect();
+
+            // Рахуємо, де знаходиться блок відносно верхнього краю видимого контейнера
+            const relativeTop = elementRect.top - containerRect.top;
+
+            // Рахуємо центр: (відступ блоку) - (половина висоти екрану) + (половина висоти блоку)
+            const centerOffset = relativeTop - (containerRect.height / 2) + (elementRect.height / 2);
+
+            // Плавно крутимо тільки внутрішній контейнер
+            scrollContainer.scrollTo({
+                top: scrollContainer.scrollTop + centerOffset,
+                behavior: 'smooth'
+            });
+        }
+    }, 50);
+}
     
     function saveTemplates() {
         const templates = [];
+        // Зберігаємо в тому порядку, в якому вони йдуть в HTML (зліва направо, зверху вниз)
         document.querySelectorAll('#templates-grid-wrapper .template-field-group').forEach(group => {
             const nameInput = group.querySelector('.template-name-input');
             const textarea = group.querySelector('textarea');
@@ -3680,8 +3605,6 @@ function areDatesInDefaultState() {
                 content: textarea ? textarea.value : '',
                 width: group.style.width,
                 height: group.style.height,
-                x: group.getAttribute('data-x'),
-                y: group.getAttribute('data-y'),
                 bookmarks: JSON.parse(group.dataset.bookmarks || '[]')
             });
         });
@@ -3696,14 +3619,17 @@ function areDatesInDefaultState() {
             try {
                 const templates = JSON.parse(templatesJson);
                 if (Array.isArray(templates)) {
-                    templates.forEach(template => createTemplateField(template));
+                    templates.forEach(template => {
+    const field = createTemplateField(template);
+    templatesGrid.appendChild(field); 
+});
                 }
-                updateGridWrapperHeight();
             } catch (e) {
-                console.error("Помилка завантаження шаблонів:", e);
-                localStorage.removeItem('textTemplates');
+                console.error("Помилка завантаження:", e);
             }
         }
+        // ВАЖЛИВО: Пакуємо все після завантаження
+        setTimeout(packTemplates, 50);
     }
     
     function exportToFile() {
@@ -3726,120 +3652,35 @@ function areDatesInDefaultState() {
         const fileInput = event.target;
         if (!fileInput.files.length) return;
         const file = fileInput.files[0];
-        if (file.type !== 'application/json') {
-            alert('Будь ласка, виберіть правильний файл .json!');
-            return;
-        }
+
         const reader = new FileReader();
         reader.onload = (e) => {
             try {
                 const templates = JSON.parse(e.target.result);
-                if (!Array.isArray(templates)) throw new Error("Некоректний формат даних у файлі.");
+                if (!Array.isArray(templates)) throw new Error("Некоректний формат");
+                
                 const templatesGrid = document.getElementById('templates-grid-wrapper');
-                templatesGrid.innerHTML = '';
-                templates.forEach(template => createTemplateField(template));
-                saveTemplates();
-                updateGridWrapperHeight();
+                templatesGrid.innerHTML = ''; // Очищуємо екран перед імпортом
+                
+                templates.forEach(template => {
+                    createTemplateField(template); // Створюємо шаблони
+                });
+                
+                saveTemplates(); // Зберігаємо в браузер
+                
+                // Чекаємо 50мс, щоб браузер "побачив" блоки, і розставляємо їх Тетрісом
+                setTimeout(() => {
+                    packTemplates();
+                    showNotification("Шаблони успішно імпортовано!");
+                }, 50);
+
             } catch (error) {
                 console.error("Помилка імпорту:", error);
-                alert('Помилка! Не вдалося прочитати файл. Можливо, він пошкоджений або має неправильний формат.');
+                alert('Помилка! Не вдалося прочитати файл.');
             }
         };
-        reader.onerror = () => alert('Сталася помилка під час читання файлу.');
         reader.readAsText(file);
         fileInput.value = '';
-    }
-
-    function rearrangeTemplates() {
-        const container = document.querySelector('.container[data-content="text-templates"]');
-        // Перевіряємо, чи активна вкладка і чи існує контейнер
-        if (!container || !container.classList.contains('active')) return;
-
-        const allTemplates = Array.from(document.querySelectorAll('#templates-grid-wrapper .template-field-group'));
-        if (allTemplates.length === 0) {
-            updateGridWrapperHeight();
-            return;
-        }
-
-        const containerWidth = container.clientWidth; // Ширина видимого екрана
-        const GAP = 10; // Відступ між шаблонами
-
-        let hasConflicts = false;
-
-        // 1. Перевірка: чи вилазить хоча б один шаблон за межі по ширині?
-        for (let i = 0; i < allTemplates.length; i++) {
-            const t = allTemplates[i];
-            const t_width = t.offsetWidth;
-            // Беремо збережену координату X
-            const storedX = parseFloat(t.getAttribute('data-x')) || 0;
-
-            // Якщо правий край шаблону далі, ніж ширина екрана
-            if (storedX + t_width > containerWidth) {
-                hasConflicts = true;
-                break;
-            }
-        }
-
-        // --- ОСНОВНА ЛОГІКА ---
-
-        if (hasConflicts) {
-            // === РЕЖИМ МАЛОГО ЕКРАНУ (SMART FLOW) ===
-            
-            // Крок А: Сортуємо шаблони, щоб вони йшли логічно (зліва-направо, зверху-вниз)
-            // Використовуємо "толерантність" 50px, щоб елементи, які стоять "майже" в один ряд, вважалися одним рядом
-            allTemplates.sort((a, b) => {
-                const ay = parseFloat(a.getAttribute('data-y')) || 0;
-                const by = parseFloat(b.getAttribute('data-y')) || 0;
-                const ax = parseFloat(a.getAttribute('data-x')) || 0;
-                const bx = parseFloat(b.getAttribute('data-x')) || 0;
-
-                if (Math.abs(ay - by) > 50) {
-                    return ay - by; // Якщо різниця висоти велика - сортуємо по Y
-                } else {
-                    return ax - bx; // Інакше сортуємо по X (хто лівіше)
-                }
-            });
-
-            // Крок Б: Викладаємо їх рядками
-            let currentX = 0;
-            let currentY = 0;
-            let rowHeight = 0; // Висота найвищого елемента в поточному рядку
-
-            allTemplates.forEach(template => {
-                const w = template.offsetWidth;
-                const h = template.offsetHeight;
-
-                // Перевіряємо, чи влізе шаблон у цей рядок
-                if (currentX + w > containerWidth) {
-                    // НЕ ВЛАЗИТЬ -> Перенос на новий рядок
-                    currentX = 0; 
-                    currentY += rowHeight + GAP;
-                    rowHeight = 0; // Скидаємо висоту для нового рядка
-                }
-
-                // Застосовуємо ВІЗУАЛЬНУ позицію (не змінюючи data-x/y, щоб не псувати збереження)
-                template.style.transform = `translate(${currentX}px, ${currentY}px)`;
-
-                // Оновлюємо висоту поточного рядка (якщо цей шаблон вищий за сусідів)
-                if (h > rowHeight) rowHeight = h;
-
-                // Зсуваємо курсор вправо для наступного елемента
-                currentX += w + GAP;
-            });
-
-        } else {
-            // === РЕЖИМ ВЕЛИКОГО ЕКРАНУ (ВІДНОВЛЕННЯ) ===
-            // Якщо все влазить, повертаємо шаблони на їхні збережені місця
-            
-            allTemplates.forEach(template => {
-                const x = parseFloat(template.getAttribute('data-x')) || 0;
-                const y = parseFloat(template.getAttribute('data-y')) || 0;
-                template.style.transform = `translate(${x}px, ${y}px)`;
-            });
-        }
-
-        // Оновлюємо загальну висоту контейнера (скрол)
-        updateGridWrapperHeight();
     }
 
     const checkbox = document.getElementById("dark-mode-checkbox");
@@ -3916,6 +3757,10 @@ document.getElementById('add-1-year-btn').addEventListener('click', () => addDur
     
     // Спочатку завантажуємо шаблони
     loadTemplates();
+	
+	window.addEventListener('resize', debounce(() => {
+        packTemplates();
+    }, 200)); 
 
 // Цей код один раз при завантаженні встановлює розміри для ВСІХ вкладок
 document.querySelectorAll('.container[data-content]').forEach(container => {
@@ -3924,12 +3769,6 @@ document.querySelectorAll('.container[data-content]').forEach(container => {
     container.style.setProperty('--local-width', defaultWidth);
     container.style.setProperty('--local-height', defaultHeight);
 });	
-    
-    // --- ПОЧАТОК ВИПРАВЛЕННЯ ---
-    // А тепер, після невеликої паузи, запускаємо логіку перебудови.
-    // Це гарантує, що вона спрацює на початковому завантаженні сторінки.
-    setTimeout(rearrangeTemplates, 50);
-    // --- КІНЕЦЬ ВИПРАВЛЕННЯ ---
     
     const importFileInput = document.getElementById('import-file-input');
     const importButton = document.getElementById('import-templates-button');
@@ -3947,8 +3786,6 @@ document.querySelectorAll('.container[data-content]').forEach(container => {
          const deviceSelect = document.getElementById('device-type');
          if (deviceSelect) displayCommands(deviceSelect.value);
     }
-    const debouncedRearrange = debounce(rearrangeTemplates, 250); 
-    window.addEventListener('resize', debouncedRearrange);
 	
 // === ВИПРАВЛЕНИЙ РОЗУМНИЙ СНІГОПАД ===
     function createSnowflakes() {
@@ -4026,6 +3863,91 @@ document.querySelectorAll('.container[data-content]').forEach(container => {
     // ВАЖЛИВО: Цей рядок запускає сніг!
     createSnowflakes();
 });
+
+function packTemplates() {
+    const container = document.getElementById('templates-grid-wrapper');
+    const templates = Array.from(container.querySelectorAll('.template-field-group'));
+    
+    if (templates.length === 0) {
+        container.style.minHeight = '500px';
+        return;
+    }
+
+    const containerWidth = Math.floor(container.offsetWidth);
+    const GAP = 8; // Відступ між шаблонами
+
+    // --- ВИДАЛЕНО СОРТУВАННЯ ЗА КООРДИНАТАМИ ---
+    // Тепер масив 'templates' використовує порядок елементів у DOM.
+    // Це гарантує, що Шаблон №1 завжди буде оброблятися першим.
+
+    const placedRects = [];
+    let maxContentHeight = 0;
+
+    // Функція перевірки зіткнень
+    const checkCollision = (rect) => {
+        for (let r of placedRects) {
+            if (rect.x < r.x + r.w + GAP &&
+                rect.x + rect.w + GAP > r.x &&
+                rect.y < r.y + r.h + GAP &&
+                rect.y + rect.h + GAP > r.y) {
+                return true;
+            }
+        }
+        return false;
+    };
+
+    templates.forEach(template => {
+        const w = Math.round(template.offsetWidth);
+        const h = Math.round(template.offsetHeight);
+        
+        let found = false;
+        let bestX = 0;
+        let bestY = 0;
+
+        // Генеруємо точки-кандидати для розміщення
+        let candidatePoints = [{x: 0, y: 0}]; 
+        placedRects.forEach(r => {
+            candidatePoints.push({ x: r.x + r.w + GAP, y: r.y }); // Праворуч
+            candidatePoints.push({ x: 0, y: r.y + r.h + GAP });   // Новий рядок
+            candidatePoints.push({ x: r.x, y: r.y + r.h + GAP }); // Під блоком
+        });
+
+        // Сортуємо точки: спочатку верхні, потім ліві
+        candidatePoints.sort((a, b) => a.y - b.y || a.x - b.x);
+
+        for (let p of candidatePoints) {
+            if (p.x + w <= containerWidth) {
+                if (!checkCollision({ x: p.x, y: p.y, w: w, h: h })) {
+                    bestX = p.x;
+                    bestY = p.y;
+                    found = true;
+                    break;
+                }
+            }
+        }
+
+        if (!found) {
+            let maxY = 0;
+            placedRects.forEach(r => maxY = Math.max(maxY, r.y + r.h + GAP));
+            bestX = 0;
+            bestY = maxY;
+        }
+
+        // Застосовуємо координати
+        template.style.transform = `translate(${bestX}px, ${bestY}px)`;
+        
+        placedRects.push({ x: bestX, y: bestY, w: w, h: h });
+        
+        // Оновлюємо загальну висоту контенту
+        maxContentHeight = Math.max(maxContentHeight, bestY + h);
+    });
+
+    // ОЦЕ ТІ САМІ РЯДКИ, ЯКІ ТРЕБА ЗАМІНИТИ/ДОДАТИ:
+    const finalHeight = maxContentHeight + 150; // Додаємо запас знизу
+    container.style.height = finalHeight + 'px';    // Жорстко ставимо висоту
+    container.style.minHeight = finalHeight + 'px'; // Дублюємо для надійності
+}
+
     </script>
 </body>
 </html>
