@@ -3238,32 +3238,37 @@ function initDraggableAndResizable(element) {
         // 1. Обрізаємо пробіли
         const selectedText = text.substring(selectionStart, selectionEnd).trim();
 
-        // 2. ВАШ ЗАПИТ: Перевірка довжини (мінімум 2 символи)
-        // Якщо менше 2 символів (0 або 1) або занадто довго — виходимо
+        // 2. Перевірка довжини (мінімум 2 символи)
         if (selectedText.length < 2 || selectedText.length > 50) { 
             highlighter.innerHTML = escapeHtml(text) + '\n';
             return;
         }
 
-        // Екрануємо спецсимволи для регулярного виразу
         const escapedSelectedText = selectedText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-
-        // 3. ВИПРАВЛЕННЯ ДЛЯ МОВ:
-        // Визначаємо, що ми вважаємо "літерою" (Англ + Укр + цифри + підкреслення)
-        const wordChars = "a-zA-Z0-9_а-яА-ЯіїєґІЇЄҐ";
-
-        // Перевіряємо, чи складається виділене ТІЛЬКИ з цих літер
-        const isPureWord = new RegExp(`^[${wordChars}]+$`).test(selectedText);
         
+        // 3. Визначаємо типи символів
+        const wordChars = "a-zA-Z0-9_а-яА-ЯіїєґІЇЄҐ";
+        const isDigitsOnly = /^\d+$/.test(selectedText); // Чи це тільки цифри?
+        const isPureWord = new RegExp(`^[${wordChars}]+$`).test(selectedText); // Чи це букви/цифри?
+
         let regex;
 
-        if (isPureWord) {
-            // Якщо це слово — використовуємо "Lookbehind" і "Lookahead" замість \b.
-            // Це означає: шукати слово, перед яким НЕМАЄ літери, і після якого НЕМАЄ літери.
-            // Це працює і для Eng, і для Ukr однаково.
+        if (isDigitsOnly) {
+            // === ЛОГІКА ДЛЯ ЧИСЕЛ (50, 100, 192) ===
+            // Шукаємо число, якщо зліва і справа НЕМАЄ іншої ЦИФРИ.
+            // Це дозволяє: "50M", "Vlan50", "10G".
+            // Це забороняє: "50" всередині "2500".
+            regex = new RegExp(`(?<!\\d)(${escapedSelectedText})(?!\\d)`, 'gi');
+        } 
+        else if (isPureWord) {
+            // === ЛОГІКА ДЛЯ СЛІВ (тест, admin) ===
+            // Шукаємо слово, якщо зліва і справа НЕМАЄ БУКВИ або ЦИФРИ.
+            // Це забороняє: "те" всередині "тест".
             regex = new RegExp(`(?<![${wordChars}])(${escapedSelectedText})(?![${wordChars}])`, 'gi');
-        } else {
-            // Якщо є інші символи (пробіли, дужки тощо) — шукаємо точний збіг
+        } 
+        else {
+            // === ЛОГІКА ДЛЯ СПЕЦСИМВОЛІВ (0/1, mac-address) ===
+            // Шукаємо точний збіг всюди.
             regex = new RegExp(`(${escapedSelectedText})`, 'gi');
         }
         
@@ -3957,3 +3962,4 @@ function packTemplates() {
     </script>
 </body>
 </html>
+
