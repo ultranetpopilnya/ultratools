@@ -2122,7 +2122,7 @@ body {
 <!-- === НОВИЙ БЛОК ВЕРСІЇ (Вставте сюди) === -->
 <div class="version-pill" title="Поточна версія">
     <img src="snowman.webp" alt="Snowman" class="version-emoji">
-    <span class="version-text">Версія 3.4.1</span>
+    <span class="version-text">Версія 3.4.2</span>
 </div>   
 <div id="snow-container"></div>	
     <div class="toggle-button-wrapper">
@@ -3235,13 +3235,12 @@ function initDraggableAndResizable(element) {
             return;
         }
 
-        // ОСЬ ГОЛОВНА ЗМІНА: додаємо .trim()
-        // Тепер ми обрізаємо пробіли з обох боків виділеного тексту
+        // 1. Обрізаємо пробіли
         const selectedText = text.substring(selectionStart, selectionEnd).trim();
 
-        // Якщо після обрізки нічого не залишилось (тобто були виділені лише пробіли),
-        // або текст занадто короткий/довгий, то виходимо.
-        if (selectedText.length < 1 || selectedText.length > 50) { 
+        // 2. ВАШ ЗАПИТ: Перевірка довжини (мінімум 2 символи)
+        // Якщо менше 2 символів (0 або 1) або занадто довго — виходимо
+        if (selectedText.length < 2 || selectedText.length > 50) { 
             highlighter.innerHTML = escapeHtml(text) + '\n';
             return;
         }
@@ -3249,15 +3248,22 @@ function initDraggableAndResizable(element) {
         // Екрануємо спецсимволи для регулярного виразу
         const escapedSelectedText = selectedText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-        // "Розумний" вибір режиму пошуку
-        const isPureWord = /^[a-zA-Z0-9_]+$/.test(selectedText);
+        // 3. ВИПРАВЛЕННЯ ДЛЯ МОВ:
+        // Визначаємо, що ми вважаємо "літерою" (Англ + Укр + цифри + підкреслення)
+        const wordChars = "a-zA-Z0-9_а-яА-ЯіїєґІЇЄҐ";
+
+        // Перевіряємо, чи складається виділене ТІЛЬКИ з цих літер
+        const isPureWord = new RegExp(`^[${wordChars}]+$`).test(selectedText);
+        
         let regex;
 
         if (isPureWord) {
-            // Якщо це просте слово (літери, цифри, _), шукаємо як ціле слово
-            regex = new RegExp(`\\b(${escapedSelectedText})\\b`, 'gi');
+            // Якщо це слово — використовуємо "Lookbehind" і "Lookahead" замість \b.
+            // Це означає: шукати слово, перед яким НЕМАЄ літери, і після якого НЕМАЄ літери.
+            // Це працює і для Eng, і для Ukr однаково.
+            regex = new RegExp(`(?<![${wordChars}])(${escapedSelectedText})(?![${wordChars}])`, 'gi');
         } else {
-            // Якщо містить інші символи, шукаємо точний збіг
+            // Якщо є інші символи (пробіли, дужки тощо) — шукаємо точний збіг
             regex = new RegExp(`(${escapedSelectedText})`, 'gi');
         }
         
