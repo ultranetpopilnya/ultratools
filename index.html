@@ -1777,15 +1777,6 @@ overflow-x: hidden;
     will-change: scroll-position;
 }
 
-/* Для ноутбуків та планшетів (ширина екрану менше 1400px) */
-    @media (max-width: 1400px) {
-        .container.gpon-commands-container {
-            /* !important потрібен, щоб перебити значення, яке виставляє JavaScript */
-            --local-width: 95% !important; 
-            width: 95% !important;
-        }
-    }
-	
 	::placeholder {
     color: #999;
     opacity: 1; /* Firefox вимагає це */
@@ -2117,6 +2108,29 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
+/* Для ноутбуків та планшетів (ширина екрану менше 1400px) */
+    @media (max-width: 1400px) {
+        /* Налаштування для GPON (залишаємо як було або міняємо на бажання) */
+        .container.gpon-commands-container {
+            --local-width: 90% !important; 
+            width: 90% !important;
+        }
+
+        /* === НОВЕ: Налаштування для Шаблонів === */
+        .container[data-content="text-templates"] {
+            /* Займаємо всю ширину */
+            --local-width: 100% !important; 
+            width: 100% !important;
+            
+            /* Прибираємо заокруглення знизу, щоб виглядало як суцільний екран */
+            border-radius: 0 !important; 
+            
+            /* Трохи зменшуємо внутрішні відступи, щоб влізло більше тексту */
+            padding-left: 5px !important;
+            padding-right: 5px !important;
+        }
+    }
+	
 /* === ФІНАЛЬНИЙ РОБОЧИЙ ВАРІАНТ (З ПРОКРУТКОЮ) === */
     @media (max-height: 800px) {
         
@@ -2201,7 +2215,7 @@ body {
 <!-- === НОВИЙ БЛОК ВЕРСІЇ (Вставте сюди) === -->
 <div class="version-pill" title="Поточна версія">
     <img src="snowman.webp" alt="Snowman" class="version-emoji">
-    <span class="version-text">Версія 3.4.3</span>
+    <span class="version-text">Версія 3.4.5</span>
 </div>   
 <div id="snow-container"></div>	
     <div class="toggle-button-wrapper">
@@ -2430,7 +2444,7 @@ let lastGeneratedLogin = ''; // Зберігатиме останній зген
             
             activeContent.style.setProperty('--local-width', defaultWidth);
             activeContent.style.setProperty('--local-height', defaultHeight);
-			document.querySelector('.tab-content-wrapper').style.minHeight = defaultHeight;
+            document.querySelector('.tab-content-wrapper').style.minHeight = defaultHeight;
             
             if (tabId === 'gpon-commands') {
                  const deviceSelect = document.getElementById('device-type');
@@ -2438,7 +2452,18 @@ let lastGeneratedLogin = ''; // Зберігатиме останній зген
                     displayCommands(deviceSelect.value);
                  }
             }
-            
+
+            // === ДОДАНО: Примусове перепакування шаблонів при відкритті вкладки ===
+            if (tabId === 'text-templates') {
+                // Робимо це через невелику затримку, щоб CSS встиг застосувати display: block
+                setTimeout(() => {
+                    packTemplates();
+                }, 50);
+                // І ще раз трохи пізніше для надійності (страховка від повільного рендеру)
+                setTimeout(() => {
+                    packTemplates();
+                }, 200);
+            }
         }
         if (activeButton) {
             activeButton.classList.add('active');
@@ -3719,7 +3744,8 @@ function addTemplate() {
             }
         }
         // ВАЖЛИВО: Пакуємо все після завантаження
-        setTimeout(packTemplates, 50);
+        setTimeout(packTemplates, 100);
+        setTimeout(packTemplates, 500); // Контрольний постріл
     }
     
     function exportToFile() {
@@ -4038,6 +4064,13 @@ function packTemplates() {
     container.style.minHeight = finalHeight + 'px'; // Дублюємо для надійності
 }
 
+// Додаткова страховка: коли ВСЕ завантажиться (включно зі шрифтами)
+window.addEventListener('load', () => {
+    // Якщо активна вкладка - шаблони, пакуємо їх
+    if (localStorage.getItem('activeTab') === 'text-templates') {
+        setTimeout(packTemplates, 100);
+    }
+});
     </script>
 </body>
 </html>
