@@ -777,12 +777,12 @@ margin: 1px;
 
         .container {
             background: transparent; 
-            padding: 1rem;
+            padding-top: 1rem;
             border-radius: 0 0 8px 8px; 
             box-shadow: none; 
             width: var(--local-width, 100%); 
             min-width: var(--local-width-min, 300px); 
-            height: var(--local-height, 600px); 
+            height: auto;
             min-height: var(--local-height-min, 0px);
             display: none; 
             flex-direction: column;
@@ -806,6 +806,8 @@ margin: 1px;
     resize: none;
     margin-left: auto;   /* <-- ДОДАНО */
     margin-right: auto;  /* <-- ДОДАНО */
+	flex-shrink: 0;      /* ЗАБОРОНЯЄМО стискатись, навіть якщо місця мало */
+    min-height: 100px;   /* Гарантуємо висоту на 5 рядків */
 }
 		
 		.login-generator-container {
@@ -1402,28 +1404,49 @@ body.dark #clear-all-templates-button:hover {
     color: white;
 }
     
-/* === СТИЛЬ ШАБЛОНУ === */
 .template-field-group {
-    /* Повертаємо absolute, бо скрипт буде керувати координатами */
-    position: absolute; 
-    
-    border: 2px solid var(--template-border-color); 
+    /* Обов'язково absolute */
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    /* Дизайн */
+    border: 2px solid var(--template-border-color);
     padding: 0;
     border-radius: 12px;
     background-color: var(--template-bg-color);
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    
-    display: flex; 
+
+    display: flex;
     flex-direction: column;
     box-sizing: border-box;
     overflow: hidden;
-        
-    /* Мінімальні розміри */
-    min-height: 90px; 
+
+    /* Розміри */
+    min-height: 90px;
     min-width: 300px;
+
+    /* --- ГОЛОВНЕ: АНІМАЦІЯ --- */
+    /* Анімуємо transform (рух) і розміри */
+    transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), 
+                width 0.1s linear, 
+                height 0.1s linear;
+
+    /* --- ХАК ДЛЯ ЧІТКОСТІ --- */
+    /* Це змушує браузер малювати текст чітко навіть при GPU анімації */
+    -webkit-font-smoothing: subpixel-antialiased;
+    backface-visibility: hidden; 
     
-    /* Оптимізація для GPU */
-    will-change: transform;
+    /* Важливо: не використовуємо will-change, бо він милить текст */
+    will-change: auto; 
+}
+
+/* Коли тягнемо руками - анімації бути не повинно */
+.template-field-group.is-resizing,
+.template-field-group.is-dragging {
+    transition: none !important;
+    z-index: 1000;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
 }
 
 /* АКТИВНИЙ БЛОК: Не повинен мати затримки, слідує чітко за мишкою */
@@ -2047,48 +2070,12 @@ body {
     min-height: 0;          /* Дозволяє стискатися, якщо треба */
 }
 
-/* 3. Змушуємо конкретні контейнери слухатися батьків */
-.container[data-content="gpon-commands"],
-.container[data-content="text-templates"] {
-
-    height: 100% !important; /* Завжди 100% від tab-content-wrapper */
-    
-    /* Перевизначаємо змінні, щоб скрипт не заважав */
-    --local-height: 100% !important; 
-    
-    /* Прибираємо min-height, щоб не вилазило за екран на мобільних */
-    min-height: 0 !important; 
-    bottom: 0;
-}
-
 /* 4. Вмикаємо скрол ТІЛЬКИ всередині карток */
 .container[data-content="gpon-commands"] .content-card,
 .container[data-content="text-templates"] .content-card {
     height: 100%;
     overflow-y: auto;       /* Скрол з'являється тут */
     padding-bottom: 20px;   /* Трохи місця знизу контенту */
-}
-
-/* === ЄДИНІ НАЛАШТУВАННЯ ВІДСТУПУ ДЛЯ ШАБЛОНІВ ТА КОМАНД === */
-
-/* 1. Налаштування "Вікна" (Зовнішні контейнери) */
-.container[data-content="text-templates"],
-.container[data-content="gpon-commands"] {  /* <--- ДОДАНО ЦЕЙ РЯДОК */
-    /* Займає все доступне місце, але залишає 20px знизу */
-    height: calc(100% - 33px) !important;
-    
-    /* Відступ від низу екрана */
-    margin-bottom: 33px !important;
-    
-    /* Оновлюємо змінну для JS */
-    --local-height: calc(100% - 33px) !important;
-}
-
-/* 2. Налаштування скролу (Біла картка всередині) */
-.container[data-content="text-templates"] .content-card,
-.container[data-content="gpon-commands"] .content-card { /* <--- І ТУТ ДОДАНО */
-    height: 100%;       
-    overflow-y: auto;   /* Скрол з'являється, якщо контент не влазить */
 }
 
 /* Клас для миттєвої появи без анімації */
@@ -2209,13 +2196,142 @@ body {
             width: 90% !important;
         }
     }
+	
+.login-generator-container .content-card {
+    height: 100%;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    
+    /* ЦЕ ГОЛОВНЕ: Весь вміст завжди прибивається до верху */
+    justify-content: flex-start !important; 
+}
+
+/* Гарантуємо, що результати не стискаються */
+#results-container {
+    flex-shrink: 0;
+    margin-bottom: 20px;
+}
+
+/* Сам блок історії */
+.history-section {
+    width: 85%;
+    margin: 20px auto 0 auto;
+    flex-shrink: 0;
+    border-top: 1px solid var(--input-border-color);
+}
+
+.history-header-row {
+    display: flex;
+    justify-content: space-between; /* Розносить елементи по краях */
+    align-items: center;
+    width: 100%;
+    border-bottom: 1px solid transparent; /* Резерв місця */
+}
+
+/* Кнопка відкриття (Ліва частина) */
+.history-toggle-btn {
+    flex-grow: 1; /* Займає все вільне місце */
+    background: transparent;
+    border: none;
+    padding: 15px 0;
+    cursor: pointer;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    color: var(--header-color);
+    font-weight: 600;
+    font-size: 1rem;
+    outline: none;
+    transition: color 0.2s;
+}
+
+.clear-history-header-btn {
+    background: transparent;
+    border: none;
+    color: var(--tab-inactive-text); /* Неяскравий колір */
+    cursor: pointer;
+    padding: 10px;
+    font-size: 1rem;
+    transition: color 0.2s, transform 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.empty-history-msg {
+    text-align: center;
+    color: var(--tab-inactive-text);
+    padding: 15px;
+    font-style: italic;
+    font-size: 0.9em;
+}
+
+.clear-history-header-btn:hover {
+    color: var(--danger-color); /* Червоний при наведенні */
+    transform: scale(1.1);
+}
+
+.history-toggle-btn:hover { color: var(--primary-accent-color); }
+
+#history-arrow { margin-right: 10px; transition: transform 0.3s ease; font-size: 0.8em; }
+.history-toggle-btn.active #history-arrow { transform: rotate(90deg); }
+
+.history-content-wrapper { display: none; padding-bottom: 10px; animation: slideDown 0.3s ease-out; }
+.history-content-wrapper.open { display: block; }
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    border: 1px solid var(--input-border-color);
+    border-radius: 8px;
+    margin-bottom: 6px;
+    background-color: var(--bg-color);
+}
+
+.history-item span { font-family: 'Fira Code', monospace; font-weight: 600; }
+
+.history-copy-btn {
+    background: transparent; border: 1px solid var(--input-border-color); color: var(--text-color);
+    border-radius: 50%; width: 28px; height: 28px; cursor: pointer;
+    display: flex; justify-content: center; align-items: center; transition: all 0.2s;
+}
+.history-copy-btn:hover { background: var(--primary-accent-color); color: white; border-color: var(--primary-accent-color); }
+
+.clear-history-footer-btn {
+    width: 100%; margin-top: 10px; padding: 8px; background: transparent;
+    border: 1px dashed var(--danger-color); color: var(--danger-color);
+    border-radius: 8px; cursor: pointer; transition: all 0.2s;
+}
+.clear-history-footer-btn:hover { background: var(--danger-color); color: white; }
+
+.container[data-content="text-templates"]{
+    height: calc(100% - 5px) !important;
+    
+    /* Відступ від низу екрана */
+    margin-bottom: 5px !important;
+    
+    /* Оновлюємо змінну для JS */
+    --local-height: calc(100% - 5px) !important;
+}
+
+.container[data-content="text-templates"] {
+width: calc(100% - 5px) !important;
+}
 </style>
 </head>
 <body class="holiday-mode"> 
 <!-- === НОВИЙ БЛОК ВЕРСІЇ (Вставте сюди) === -->
 <div class="version-pill" title="Поточна версія">
     <img src="snowman.webp" alt="Snowman" class="version-emoji">
-    <span class="version-text">Версія 3.4.5</span>
+    <span class="version-text">Версія 3.4.7</span>
 </div>   
 <div id="snow-container"></div>	
     <div class="toggle-button-wrapper">
@@ -2247,8 +2363,28 @@ body {
 			<div class="content-card">
                 <h2 style="margin-top: 0; text-align: center;">🔐 Генератор логінів</h2>
                 <p style="text-align: center;">Введіть повністю одне або декілька ПІБ, кожне — з нового рядка.<br>Також можливий трансліт ФОП, ТОВ, ПП, АТ, КБ, ГО.</p>
-                <textarea id="fullNameInput" rows="5" placeholder="Прізвище, Ім'я, та по Батькові" oninput="generateLogins()"></textarea>
+                <textarea id="fullNameInput" rows="1" placeholder="Прізвище, Ім'я, та по Батькові" oninput="generateLogins()"></textarea>
                 <div id="results-container"></div>
+				<div class="history-section">
+    <!-- Верхня панель: Кнопка відкриття + Кнопка очистки -->
+    <div class="history-header-row">
+        <button id="history-toggle-btn" class="history-toggle-btn" onclick="toggleHistory()">
+            <span class="history-title">
+                <i class="fas fa-chevron-right" id="history-arrow"></i> 
+                🕒 Історія логінів (<span id="history-count">0</span>)
+            </span>
+        </button>
+        
+        <button id="clear-history-btn" class="clear-history-header-btn" title="Очистити всю історію">
+            <i class="fas fa-trash-alt"></i>
+        </button>
+    </div>
+    
+    <!-- Список (спочатку прихований) -->
+    <div id="history-content-wrapper" class="history-content-wrapper">
+        <div id="history-list"></div>
+    </div>
+</div>
 				</div>
             </div>
 
@@ -2308,7 +2444,7 @@ body {
                 </div>
             </div>
             
-            <div class="container gpon-commands-container" data-content="gpon-commands" data-default-width="63%" data-default-height="100%">
+            <div class="container gpon-commands-container" data-content="gpon-commands" data-default-width="63%" data-default-height="85%">
     <div class="content-card">
     <h2 style="margin-top: 0; text-align: center;">💻 Команди GPON/EPON/BDCOM</h2>
 	<div id="controls-and-clarification" style="display: flex; align-items: flex-start; gap: 10px; margin-bottom: 5px; flex-wrap: wrap;">
@@ -2330,7 +2466,7 @@ body {
     <div id="command-output" class="command-list"> </div>
 </div>
 </div>
-            <div class="container" data-content="text-templates" data-default-width="100%" data-default-height="100%">
+            <div class="container" data-content="text-templates" data-default-width="100%">
 			<div class="content-card">
 <div class="templates-header-wrapper">
     <!-- 1. Заголовок тепер окремо і буде по центру -->
@@ -2592,29 +2728,28 @@ function generateAlternativeLogin(buttonElement) {
 }
 	
 	function copyLogin(button) {
-    // 1. Знаходимо текст логіна
     const resultItem = button.closest('.result-item');
     const loginText = resultItem.querySelector('span').textContent;
+    // Отримуємо ім'я для історії
+    const originalName = resultItem.querySelector('.original-name')?.textContent || 'Вручну';
 
-    // 2. Копіюємо в буфер обміну
     navigator.clipboard.writeText(loginText).then(() => {
-        // --- Візуальна реакція кнопки ---
         button.innerHTML = '<i class="fas fa-check"></i>';
         button.classList.add('copied');
         
-        // --- Повідомлення ---
         showNotification(`Логін скопійовано: ${loginText}`);
 
-        // --- ОЧИЩЕННЯ ПОЛЯ ВВОДУ (те, що ви просили) ---
+        // === ДОДАЄМО В ІСТОРІЮ ===
+        addToHistory(loginText, originalName);
+
         document.getElementById('fullNameInput').value = '';
 
-        // --- Повернення кнопки до початкового стану через 1.5 сек ---
         setTimeout(() => {
             button.innerHTML = '<i class="fas fa-copy"></i>';
             button.classList.remove('copied');
         }, 1500);
     }).catch(err => {
-        console.error('Не вдалося скопіювати: ', err);
+        console.error('Помилка:', err);
         showNotification('Помилка копіювання!');
     });
 }
@@ -2722,6 +2857,10 @@ function generateAlternativeLogin(buttonElement) {
             `;
             resultsContainer.appendChild(resultItem);
         });
+		        // === ВСТАВ ЦЕЙ КОД СЮДИ ===
+        const scrollCard = document.querySelector('.login-generator-container .content-card');
+        if (scrollCard) scrollCard.scrollTop = 0;
+        // ==========================
     }
 
     function getCorrectDayWord(number) {
@@ -3826,9 +3965,92 @@ function addTemplate() {
 	
     checkbox.addEventListener("change", () => applyTheme(checkbox.checked));
 
+// --- ФУНКЦІЇ ІСТОРІЇ ---
+function toggleHistory() {
+    const wrapper = document.getElementById('history-content-wrapper');
+    const btn = document.getElementById('history-toggle-btn');
+    const isOpen = wrapper.classList.toggle('open');
+    btn.classList.toggle('active', isOpen);
+    if (isOpen) {
+        setTimeout(() => {
+            wrapper.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+    }
+}
+
+function loadHistory() {
+    const history = JSON.parse(localStorage.getItem('loginHistory') || '[]');
+    renderHistory(history);
+}
+
+function addToHistory(login, originalName) {
+    let history = JSON.parse(localStorage.getItem('loginHistory') || '[]');
+    history = history.filter(item => item.login !== login);
+    history.unshift({ login, originalName });
+    if (history.length > 10) history = history.slice(0, 10);
+    localStorage.setItem('loginHistory', JSON.stringify(history));
+    renderHistory(history);
+}
+
+function renderHistory(history) {
+    const listContainer = document.getElementById('history-list');
+    const countSpan = document.getElementById('history-count');
+    const section = document.querySelector('.history-section');
+    const clearBtn = document.getElementById('clear-history-btn');
+    
+    // Оновлюємо лічильник
+    if (countSpan) countSpan.textContent = history.length;
+    
+    // Очищуємо список
+    listContainer.innerHTML = '';
+
+    // Блок ЗАВЖДИ показуємо
+    section.style.display = 'block'; 
+
+    // Якщо пусто - пишемо повідомлення і ховаємо кнопку "смітник"
+    if (history.length === 0) {
+        listContainer.innerHTML = '<div class="empty-history-msg">Тут поки що пусто...</div>';
+        if(clearBtn) clearBtn.style.display = 'none'; // Ховаємо смітник, бо нема що чистити
+        return;
+    }
+    
+    // Якщо не пусто - показуємо смітник
+    if(clearBtn) clearBtn.style.display = 'flex';
+
+    // Малюємо список
+    history.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'history-item';
+        div.innerHTML = `
+            <div style="display:flex; flex-direction:column; gap:2px; overflow:hidden;">
+                <span style="font-size: 0.95em;">${item.login}</span>
+                <small style="color:var(--tab-inactive-text); font-size:0.75rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                    ${item.originalName}
+                </small>
+            </div>
+            <button class="history-copy-btn" onclick="copyFromHistory('${item.login}')" title="Копіювати знову">
+                <i class="fas fa-copy"></i>
+            </button>
+        `;
+        listContainer.appendChild(div);
+    });
+}
+
+function copyFromHistory(text) {
+    navigator.clipboard.writeText(text).then(() => showNotification(`Скопійовано: ${text}`));
+}
+
+document.getElementById('clear-history-btn').addEventListener('click', () => {
+    if(confirm('Очистити історію?')) {
+        localStorage.removeItem('loginHistory');
+        renderHistory([]);
+    }
+});
+
     document.addEventListener('DOMContentLoaded', () => {
     loadTheme();
     setupTabs();
+	loadHistory();
 	
 	// Обробник для кнопки "Сьогоднішня дата'"
 document.getElementById('set-start-now-btn').addEventListener('click', () => {
@@ -3990,16 +4212,12 @@ function packTemplates() {
     }
 
     const containerWidth = Math.floor(container.offsetWidth);
-    const GAP = 8; // Відступ між шаблонами
-
-    // --- ВИДАЛЕНО СОРТУВАННЯ ЗА КООРДИНАТАМИ ---
-    // Тепер масив 'templates' використовує порядок елементів у DOM.
-    // Це гарантує, що Шаблон №1 завжди буде оброблятися першим.
+    const GAP = 8; 
 
     const placedRects = [];
     let maxContentHeight = 0;
 
-    // Функція перевірки зіткнень
+    // Перевірка на перетин
     const checkCollision = (rect) => {
         for (let r of placedRects) {
             if (rect.x < r.x + r.w + GAP &&
@@ -4020,15 +4238,13 @@ function packTemplates() {
         let bestX = 0;
         let bestY = 0;
 
-        // Генеруємо точки-кандидати для розміщення
         let candidatePoints = [{x: 0, y: 0}]; 
         placedRects.forEach(r => {
-            candidatePoints.push({ x: r.x + r.w + GAP, y: r.y }); // Праворуч
-            candidatePoints.push({ x: 0, y: r.y + r.h + GAP });   // Новий рядок
-            candidatePoints.push({ x: r.x, y: r.y + r.h + GAP }); // Під блоком
+            candidatePoints.push({ x: r.x + r.w + GAP, y: r.y });
+            candidatePoints.push({ x: 0, y: r.y + r.h + GAP });
+            candidatePoints.push({ x: r.x, y: r.y + r.h + GAP });
         });
 
-        // Сортуємо точки: спочатку верхні, потім ліві
         candidatePoints.sort((a, b) => a.y - b.y || a.x - b.x);
 
         for (let p of candidatePoints) {
@@ -4049,19 +4265,22 @@ function packTemplates() {
             bestY = maxY;
         }
 
-        // Застосовуємо координати
-        template.style.transform = `translate(${bestX}px, ${bestY}px)`;
+        // --- ВИПРАВЛЕННЯ ---
+        // 1. Скидаємо top/left, щоб вони не конфліктували
+        template.style.top = '0px';
+        template.style.left = '0px';
+
+        // 2. Використовуємо transform (це дає плавну анімацію)
+        // 3. ВАЖЛИВО: Math.round() прибирає розмиття
+        template.style.transform = `translate(${Math.round(bestX)}px, ${Math.round(bestY)}px)`;
         
         placedRects.push({ x: bestX, y: bestY, w: w, h: h });
-        
-        // Оновлюємо загальну висоту контенту
         maxContentHeight = Math.max(maxContentHeight, bestY + h);
     });
 
-    // ОЦЕ ТІ САМІ РЯДКИ, ЯКІ ТРЕБА ЗАМІНИТИ/ДОДАТИ:
-    const finalHeight = maxContentHeight + 150; // Додаємо запас знизу
-    container.style.height = finalHeight + 'px';    // Жорстко ставимо висоту
-    container.style.minHeight = finalHeight + 'px'; // Дублюємо для надійності
+    const finalHeight = maxContentHeight + 150; 
+    container.style.height = finalHeight + 'px';    
+    container.style.minHeight = finalHeight + 'px'; 
 }
 
 // Додаткова страховка: коли ВСЕ завантажиться (включно зі шрифтами)
