@@ -2116,13 +2116,92 @@ body {
     transform: translateZ(0);
     -webkit-font-smoothing: antialiased;
 }
+
+/* === ФІНАЛЬНИЙ РОБОЧИЙ ВАРІАНТ (З ПРОКРУТКОЮ) === */
+    @media (max-height: 800px) {
+        
+        /* 1. Компактна шапка */
+        h1.page-title {
+            font-size: 1.4rem !important;
+            margin: 5px 0 !important;
+        }
+        
+        .tabs {
+            margin: 0 auto 5px auto !important;
+            transform: scale(0.9);
+        }
+
+        /* 2. Скидаємо обгортку */
+        .tab-content-wrapper {
+            height: auto !important;
+            min-height: 0 !important;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* 3. НАЛАШТУВАННЯ КОНТЕЙНЕРІВ */
+        .container.active {
+            /* Висота 80% від екрану - гарантовано влазить */
+            height: 80vh !important;
+            min-height: 0 !important;
+            
+            /* Ваш відступ знизу */
+            margin-bottom: 30px !important;
+            
+            /* Центрування блоку */
+            position: relative !important;
+            top: auto !important; left: auto !important;
+            transform: none !important;
+            margin-left: auto !important; margin-right: auto !important;
+            
+            overflow: hidden !important; /* Скрол тільки всередині картки */
+            display: flex !important;
+            flex-direction: column;
+        }
+        
+        .container:not(.active) { display: none !important; }
+
+        /* 4. ВНУТРІШНЯ КАРТКА (ТУТ ЖИВЕ ПРОКРУТКА) */
+        .container .content-card {
+            flex-grow: 1;
+            height: 100% !important;
+            
+            /* --- ГОЛОВНЕ ВИПРАВЛЕННЯ --- */
+            display: block !important; /* Flex ламав скрол, повернув Block */
+            overflow-y: auto !important; /* Вмикаємо вертикальний скрол */
+            overflow-x: hidden !important;
+            
+            padding: 10px !important;
+            text-align: center !important; /* Центруємо вміст */
+        }
+
+        /* 5. ЦЕНТРУВАННЯ ЕЛЕМЕНТІВ ВСЕРЕДИНІ */
+        
+        /* Для Калькулятора */
+        .date-calculator-container .date-inputs-row,
+        .date-calculator-container .calculator-panel,
+        .date-calculator-container #result-section {
+            margin-left: auto !important;
+            margin-right: auto !important;
+            width: fit-content !important; /* Щоб не розтягувались на 100% */
+            max-width: 100% !important;
+        }
+
+        /* Для Генератора */
+        .login-generator-container textarea,
+        .login-generator-container #results-container {
+            margin-left: auto !important;
+            margin-right: auto !important;
+            width: 90% !important;
+        }
+    }
 </style>
 </head>
 <body class="holiday-mode"> 
 <!-- === НОВИЙ БЛОК ВЕРСІЇ (Вставте сюди) === -->
 <div class="version-pill" title="Поточна версія">
     <img src="snowman.webp" alt="Snowman" class="version-emoji">
-    <span class="version-text">Версія 3.4.2</span>
+    <span class="version-text">Версія 3.4.3</span>
 </div>   
 <div id="snow-container"></div>	
     <div class="toggle-button-wrapper">
@@ -3962,4 +4041,3 @@ function packTemplates() {
     </script>
 </body>
 </html>
-
