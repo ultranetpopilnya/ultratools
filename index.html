@@ -794,38 +794,11 @@ margin: 1px;
         .container.active {
             display: flex; 
         }
-        
-.login-generator-container textarea {
-    width: 85%;
-    padding: 10px;
-    font-size: 1rem;
-    border-radius: 12px;
-    border: 1px solid var(--input-border-color);
-    box-sizing: border-box;
-    margin-bottom: 1rem;
-    resize: none;
-    margin-left: auto;   /* <-- ДОДАНО */
-    margin-right: auto;  /* <-- ДОДАНО */
-	flex-shrink: 0;      /* ЗАБОРОНЯЄМО стискатись, навіть якщо місця мало */
-    min-height: 100px;   /* Гарантуємо висоту на 5 рядків */
-}
-		
+        		
 		.login-generator-container {
     align-items: center;
 }
-
-        .login-generator-container #results-container {
-    margin-top: -10px;
-    text-align: left;
-    width: 85%;
-    overflow-y: auto; 
-    padding-right: 0px;
-    height: auto;
-    align-items: center;
-    margin-left: auto;   /* <-- ДОДАНО */
-    margin-right: auto;  /* <-- ДОДАНО */
-}
-        
+       
         .login-generator-container .result-item {
 			display: flex;
             justify-content: space-between;
@@ -2197,16 +2170,6 @@ body {
         }
     }
 	
-.login-generator-container .content-card {
-    height: 100%;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    
-    /* ЦЕ ГОЛОВНЕ: Весь вміст завжди прибивається до верху */
-    justify-content: flex-start !important; 
-}
-
 /* Гарантуємо, що результати не стискаються */
 #results-container {
     flex-shrink: 0;
@@ -2216,7 +2179,7 @@ body {
 /* Сам блок історії */
 .history-section {
     width: 85%;
-    margin: 20px auto 0 auto;
+    margin: 28px auto 0 auto;
     flex-shrink: 0;
     border-top: 1px solid var(--input-border-color);
 }
@@ -2234,14 +2197,14 @@ body {
     flex-grow: 1; /* Займає все вільне місце */
     background: transparent;
     border: none;
-    padding: 15px 0;
+    padding: 14px 0;
     cursor: pointer;
     text-align: left;
     display: flex;
     align-items: center;
     color: var(--header-color);
     font-weight: 600;
-    font-size: 1rem;
+    font-size: 1.1rem;
     outline: none;
     transition: color 0.2s;
 }
@@ -2325,13 +2288,148 @@ body {
 .container[data-content="text-templates"] {
 width: calc(100% - 5px) !important;
 }
+
+/* === ДИНАМІЧНИЙ РОЗМІР ДЛЯ GPON КОНТЕЙНЕРА === */
+
+/* 1. Налаштовуємо сам контейнер, коли він активний */
+.container.gpon-commands-container.active {
+    /* "auto" дозволяє контейнеру стискатися, коли списки закриті, 
+       і розширюватися, коли відкриті */
+    height: auto !important; 
+    
+    /* Це найголовніше: контейнер не виросте більше, ніж висота екрану мінус 5px.
+       calc(100% - 5px) працює відносно батьківського блоку, який займає все вільне місце */
+    max-height: calc(100% - 5px) !important;
+    
+    /* Важливо для правильного позиціонування */
+    display: flex !important;
+    flex-direction: column;
+    
+    /* Прибираємо фіксовані розміри, які задаються скриптом */
+    min-height: 0 !important;
+}
+
+/* 2. Налаштовуємо внутрішню картку (білий фон) */
+.container.gpon-commands-container .content-card {
+    /* Картка теж має підлаштовуватися під висоту контейнера */
+    height: auto !important;
+    
+    /* Вона може займати 100% від доступного місця контейнера, але не більше */
+    max-height: 100% !important;
+    
+    /* Скрол з'являється ТІЛЬКИ тоді, коли контент впирається в ліміт (низ екрана) */
+    overflow-y: auto !important;
+    overflow-x: hidden;
+    
+    /* Забираємо зайві відступи, щоб математика 5px працювала точно */
+    padding-bottom: 10px; 
+}
+
+/* === ДИНАМІЧНИЙ РОЗМІР ДЛЯ ГЕНЕРАТОРА ЛОГІНІВ === */
+
+/* 1. Контейнер: висота "auto" (по вмісту), але не більше екрана мінус 5px */
+.container.login-generator-container.active {
+    height: auto !important; /* Перебиваємо фіксовану висоту JS */
+    max-height: calc(100% - 5px) !important; /* Обмежуємо "стелею" */
+    
+    display: flex !important;
+    flex-direction: column;
+    min-height: 0 !important;
+    
+    /* Відключаємо центрування по вертикалі, щоб контент починався зверху */
+    justify-content: flex-start !important; 
+}
+
+/* 2. Картка всередині: теж підлаштовується, і вмикає скрол, якщо вперлися в стелю */
+.container.login-generator-container .content-card {
+    height: auto !important;
+    max-height: 100% !important; /* Не вилазити за межі контейнера */
+    
+    overflow-y: auto !important; /* Скрол тільки коли треба */
+    overflow-x: hidden;
+    
+    display: block !important; /* Важливо для коректної висоти */
+    padding-bottom: 10px;
+	 min-height: 330px;
+}
+
+/* 3. Гарантуємо, що блок результатів не розтягує все зайве місце, якщо його мало */
+.login-generator-container #results-container {
+    height: auto !important;
+    max-height: none !important; /* Скролити буде картка, а не цей блок */
+    overflow: visible !important;
+}
+
+/* =========================================================
+   ФІНАЛЬНІ СТИЛІ: ДИНАМІЧНА ВИСОТА (GPON + ГЕНЕРАТОР)
+   ========================================================= */
+
+/* 1. Налаштування контейнерів: стискаються і розширюються, але не більше екрану */
+.container.gpon-commands-container.active,
+.container.login-generator-container.active {
+    height: auto !important;                 /* Висота залежить від контенту */
+    max-height: calc(100% - 5px) !important; /* Зупиняємось за 5px до низу */
+    min-height: 0 !important;                /* Дозволяємо бути маленькими */
+    
+    display: flex !important;
+    flex-direction: column;
+    justify-content: flex-start !important;
+    padding-bottom: 0 !important;
+}
+
+/* 2. Налаштування білої картки: тут живе скрол */
+.container.gpon-commands-container .content-card,
+.container.login-generator-container .content-card {
+    height: auto !important;
+    max-height: 100% !important;
+    
+    display: block !important;               /* Важливо для центрування */
+    
+    overflow-y: auto !important;             /* Скрол з'являється тільки тут */
+    overflow-x: hidden;
+    
+    padding-bottom: 15px;                    /* Відступ знизу для краси */
+}
+
+/* 3. Оновлений стиль для поля вводу (Велике і по центру) */
+.login-generator-container textarea {
+    display: block;
+    width: 85%;
+    min-height: 100px;                       /* <--- ЗБІЛЬШЕНА ВИСОТА ПОЛЯ */
+    
+    padding: 10px;
+    font-size: 1rem;
+    border-radius: 12px;
+    border: 1px solid var(--input-border-color);
+    box-sizing: border-box;
+    resize: none;
+    
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 1rem;
+}
+
+/* 4. Результати та Історія: рівно по центру */
+.login-generator-container #results-container,
+.login-generator-container .history-section {
+    width: 85%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.login-generator-container #results-container {
+    margin-top: -5px;
+    margin-bottom: 15px;
+    height: auto;
+    overflow: visible !important;
+}
 </style>
 </head>
 <body class="holiday-mode"> 
 <!-- === НОВИЙ БЛОК ВЕРСІЇ (Вставте сюди) === -->
 <div class="version-pill" title="Поточна версія">
     <img src="snowman.webp" alt="Snowman" class="version-emoji">
-    <span class="version-text">Версія 3.4.7</span>
+    <span class="version-text">Версія 3.5</span>
 </div>   
 <div id="snow-container"></div>	
     <div class="toggle-button-wrapper">
@@ -2359,7 +2457,7 @@ width: calc(100% - 5px) !important;
 
         <div class="tab-content-wrapper"> 
 
-            <div class="container login-generator-container active" data-content="login-generator" data-default-width="871px" data-default-height="588px">
+            <div class="container login-generator-container active" data-content="login-generator" data-default-width="840px" data-default-height="588px">
 			<div class="content-card">
                 <h2 style="margin-top: 0; text-align: center;">🔐 Генератор логінів</h2>
                 <p style="text-align: center;">Введіть повністю одне або декілька ПІБ, кожне — з нового рядка.<br>Також можливий трансліт ФОП, ТОВ, ПП, АТ, КБ, ГО.</p>
@@ -2388,7 +2486,7 @@ width: calc(100% - 5px) !important;
 				</div>
             </div>
 
-            <div class="container date-calculator-container" data-content="date-calculator" data-default-width="871px" data-default-height="588px">
+            <div class="container date-calculator-container" data-content="date-calculator" data-default-width="840px" data-default-height="588px">
 			<div class="content-card">
                 <h2 style="margin-top: 0; text-align: center;">🗓️ Калькулятор тривалості між датами</h2>
 
@@ -4204,6 +4302,11 @@ document.querySelectorAll('.container[data-content]').forEach(container => {
 
 function packTemplates() {
     const container = document.getElementById('templates-grid-wrapper');
+	
+	if (container.offsetWidth === 0 || container.offsetParent === null) {
+        return;
+    }
+	
     const templates = Array.from(container.querySelectorAll('.template-field-group'));
     
     if (templates.length === 0) {
