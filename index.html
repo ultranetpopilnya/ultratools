@@ -2092,84 +2092,6 @@ body {
         }
     }
 	
-/* === ФІНАЛЬНИЙ РОБОЧИЙ ВАРІАНТ (З ПРОКРУТКОЮ) === */
-    @media (max-height: 800px) {
-        
-        /* 1. Компактна шапка */
-        h1.page-title {
-            font-size: 1.4rem !important;
-            margin: 5px 0 !important;
-        }
-        
-        .tabs {
-            margin: 0 auto 5px auto !important;
-            transform: scale(0.9);
-        }
-
-        /* 2. Скидаємо обгортку */
-        .tab-content-wrapper {
-            height: auto !important;
-            min-height: 0 !important;
-            display: flex;
-            justify-content: center;
-        }
-
-        /* 3. НАЛАШТУВАННЯ КОНТЕЙНЕРІВ */
-        .container.active {
-            /* Висота 80% від екрану - гарантовано влазить */
-            height: 80vh !important;
-            min-height: 0 !important;
-            
-            /* Ваш відступ знизу */
-            margin-bottom: 30px !important;
-            
-            /* Центрування блоку */
-            position: relative !important;
-            top: auto !important; left: auto !important;
-            transform: none !important;
-            margin-left: auto !important; margin-right: auto !important;
-            
-            overflow: hidden !important; /* Скрол тільки всередині картки */
-            display: flex !important;
-            flex-direction: column;
-        }
-        
-        .container:not(.active) { display: none !important; }
-
-        /* 4. ВНУТРІШНЯ КАРТКА (ТУТ ЖИВЕ ПРОКРУТКА) */
-        .container .content-card {
-            flex-grow: 1;
-            height: 100% !important;
-            
-            /* --- ГОЛОВНЕ ВИПРАВЛЕННЯ --- */
-            display: block !important; /* Flex ламав скрол, повернув Block */
-            overflow-y: auto !important; /* Вмикаємо вертикальний скрол */
-            overflow-x: hidden !important;
-            
-            padding: 10px !important;
-            text-align: center !important; /* Центруємо вміст */
-        }
-
-        /* 5. ЦЕНТРУВАННЯ ЕЛЕМЕНТІВ ВСЕРЕДИНІ */
-        
-        /* Для Калькулятора */
-        .date-calculator-container .date-inputs-row,
-        .date-calculator-container .calculator-panel,
-        .date-calculator-container #result-section {
-            margin-left: auto !important;
-            margin-right: auto !important;
-            width: fit-content !important; /* Щоб не розтягувались на 100% */
-            max-width: 100% !important;
-        }
-
-        /* Для Генератора */
-        .login-generator-container textarea,
-        .login-generator-container #results-container {
-            margin-left: auto !important;
-            margin-right: auto !important;
-            width: 90% !important;
-        }
-    }
 	
 /* Гарантуємо, що результати не стискаються */
 #results-container {
@@ -2424,13 +2346,117 @@ width: calc(100% - 5px) !important;
     height: auto;
     overflow: visible !important;
 }
+
+/* === ФІНАЛЬНИЙ ВАРІАНТ (НИЗЬКЕ РОЗШИРЕННЯ) === */
+    @media (max-height: 800px) {
+        
+        /* 1. Компактна шапка */
+        h1.page-title {
+            font-size: 1.4rem !important;
+            margin: 5px 0 !important;
+        }
+        
+        .tabs {
+            margin: 0 auto 5px auto !important;
+            transform: scale(0.9);
+        }
+
+        /* 2. Обгортка контенту */
+        .tab-content-wrapper {
+            height: 100% !important;
+            min-height: 0 !important;
+            display: flex;
+            justify-content: center;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        /* 3. ЗАГАЛЬНІ НАЛАШТУВАННЯ ДЛЯ ВСІХ КОНТЕЙНЕРІВ 
+           (Прибираємо відступи знизу, але НЕ чіпаємо ширину) */
+        .container.active {
+            height: 100% !important;
+            max-height: 100% !important;
+            min-height: 0 !important;
+            
+            /* ВІДСТУПИ: Прибираємо будь-які зазори знизу */
+            margin-bottom: 0 !important;
+            padding-bottom: 0 !important;
+            
+            /* СТИЛЬ: Прибираємо заокруглення знизу */
+            border-bottom-left-radius: 0 !important;
+            border-bottom-right-radius: 0 !important;
+            border-bottom: none !important;
+            
+            /* ПОЗИЦІЯ: Центрування для звичайних контейнерів */
+            position: relative !important;
+            top: auto !important; left: auto !important;
+            transform: none !important;
+            margin-left: auto !important; margin-right: auto !important;
+            
+            overflow: hidden !important;
+            display: flex !important;
+            flex-direction: column;
+        }
+
+        /* 4. СПЕЦИФІЧНИЙ ФІКС ДЛЯ ШАБЛОНІВ 
+           (Тільки вони розтягуються на 100% ширини і гарантовано вбивають 5px) */
+        .container[data-content="text-templates"] {
+            width: 100% !important;       /* На всю ширину */
+            height: 100% !important;      /* На всю висоту */
+            max-height: 100% !important;  /* Перебиваємо старий calc */
+            margin: 0 !important;         /* Перебиваємо старий margin */
+            border-radius: 0 !important;  /* Гострі кути всюди */
+        }
+
+        /* 5. ВНУТРІШНЯ КАРТКА */
+        .container .content-card {
+            flex-grow: 1;
+            height: 100% !important;
+            max-height: 100% !important;
+            
+            border-bottom-left-radius: 0 !important;
+            border-bottom-right-radius: 0 !important;
+            border-bottom: none !important;
+            
+            display: block !important;
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            
+            padding: 10px !important;
+            padding-bottom: 20px !important;
+            
+            box-sizing: border-box !important;
+        }
+
+        /* Для Шаблонів прибираємо зайві паддінги всередині картки */
+        .container[data-content="text-templates"] .content-card {
+            padding: 5px !important;
+        }
+
+        /* 6. ЦЕНТРУВАННЯ ВМІСТУ ІНШИХ ВКЛАДОК */
+        .date-calculator-container .date-inputs-row,
+        .date-calculator-container .calculator-panel,
+        .date-calculator-container #result-section {
+            margin-left: auto !important;
+            margin-right: auto !important;
+            width: fit-content !important;
+            max-width: 100% !important;
+        }
+
+        .login-generator-container textarea,
+        .login-generator-container #results-container {
+            margin-left: auto !important;
+            margin-right: auto !important;
+            width: 90% !important;
+        }
+    }
 </style>
 </head>
 <body class="holiday-mode"> 
 <!-- === НОВИЙ БЛОК ВЕРСІЇ (Вставте сюди) === -->
 <div class="version-pill" title="Поточна версія">
     <img src="snowman.webp" alt="Snowman" class="version-emoji">
-    <span class="version-text">Версія 3.5</span>
+    <span class="version-text">Версія 3.5.1</span>
 </div>   
 <div id="snow-container"></div>	
     <div class="toggle-button-wrapper">
@@ -4397,4 +4423,3 @@ window.addEventListener('load', () => {
     </script>
 </body>
 </html>
-
