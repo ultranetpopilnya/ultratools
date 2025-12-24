@@ -2199,17 +2199,17 @@ body {
 .clear-history-footer-btn:hover { background: var(--danger-color); color: white; }
 
 .container[data-content="text-templates"]{
-    height: calc(100% - 5px) !important;
+    height: calc(100% - 5px);
     
     /* Відступ від низу екрана */
     margin-bottom: 5px !important;
     
     /* Оновлюємо змінну для JS */
-    --local-height: calc(100% - 5px) !important;
+    --local-height: calc(100% - 5px);
 }
 
 .container[data-content="text-templates"] {
-width: calc(100% - 5px) !important;
+width: calc(100% - 5px);
 }
 
 /* === ДИНАМІЧНИЙ РОЗМІР ДЛЯ GPON КОНТЕЙНЕРА === */
@@ -2222,7 +2222,7 @@ width: calc(100% - 5px) !important;
     
     /* Це найголовніше: контейнер не виросте більше, ніж висота екрану мінус 5px.
        calc(100% - 5px) працює відносно батьківського блоку, який займає все вільне місце */
-    max-height: calc(100% - 5px) !important;
+    max-height: calc(100% - 5px);
     
     /* Важливо для правильного позиціонування */
     display: flex !important;
@@ -2253,7 +2253,7 @@ width: calc(100% - 5px) !important;
 /* 1. Контейнер: висота "auto" (по вмісту), але не більше екрана мінус 5px */
 .container.login-generator-container.active {
     height: auto !important; /* Перебиваємо фіксовану висоту JS */
-    max-height: calc(100% - 5px) !important; /* Обмежуємо "стелею" */
+    max-height: calc(100% - 5px); /* Обмежуємо "стелею" */
     
     display: flex !important;
     flex-direction: column;
@@ -2291,7 +2291,7 @@ width: calc(100% - 5px) !important;
 .container.gpon-commands-container.active,
 .container.login-generator-container.active {
     height: auto !important;                 /* Висота залежить від контенту */
-    max-height: calc(100% - 5px) !important; /* Зупиняємось за 5px до низу */
+    max-height: calc(100% - 5px); /* Зупиняємось за 5px до низу */
     min-height: 0 !important;                /* Дозволяємо бути маленькими */
     
     display: flex !important;
