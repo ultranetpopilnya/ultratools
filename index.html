@@ -2709,7 +2709,11 @@ let lastGeneratedLogin = ''; // Зберігатиме останній зген
             
             if (tabId === 'gpon-commands') {
                  const deviceSelect = document.getElementById('device-type');
-                 if (deviceSelect) {
+                 const commandOutput = document.getElementById('command-output');
+                 
+                 // ЗМІНА: Перевіряємо, чи список пустий. 
+                 // Якщо там вже є команди — НЕ перемальовуємо їх, щоб зберегти відкриті стани.
+                 if (deviceSelect && commandOutput && commandOutput.children.length === 0) {
                     displayCommands(deviceSelect.value);
                  }
             }
