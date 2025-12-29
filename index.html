@@ -11,35 +11,40 @@
     <style>
 	
 	/* === НОВИЙ СТИЛЬ ДЛЯ ВЕРСІЇ (ПІГУЛКА ЗЛІВА) === */
+/* === НОВИЙ СТИЛЬ ДЛЯ ВЕРСІЇ (АВТОМАТИЧНА ШИРИНА) === */
 .version-pill {
     position: fixed;
-    top: 18px; /* На тому ж рівні, що й перемикач теми */
-    left: 30px; /* Симетричний відступ зліва */
+    top: 18px;
+    left: 30px;
     z-index: 100;
     
-    /* Розміри та форма */
     height: 38px;
-    width: 38px; /* Початкова ширина (тільки іконка) */
-    border-radius: 50px;
     
-    /* Кольори (беремо з ваших змінних) */
+    /* --- ЗМІНА 1: Використовуємо max-width замість width --- */
+    width: auto;          /* Ширина визначається вмістом */
+    max-width: 38px;      /* Але не більше 38px у згорнутому стані */
+    
+    border-radius: 50px;
     background-color: var(--input-bg-color);
     border: 1px solid var(--input-border-color);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     
-    /* Вирівнювання вмісту */
     display: flex;
     align-items: center;
-    overflow: hidden; /* Ховає текст, поки блок згорнутий */
+    overflow: hidden;
     
-    /* Анімація "виїжджання" */
-    transition: width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s;
+    /* --- ЗМІНА 2: Анімуємо max-width для плавності --- */
+    transition: max-width 0.5s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.3s;
     cursor: default;
 }
 
-/* При наведенні пігулка розширюється */
 .version-pill:hover {
-    width: 130px; /* Ширина, достатня для тексту */
+    /* --- ЗМІНА 3: Дозволяємо рости до великого значення (текст сам займе скільки треба) --- */
+    max-width: 300px; 
+    
+    /* Додаємо відступ справа, щоб текст не прилипав до краю */
+    padding-right: 10px; 
+    
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
@@ -69,7 +74,7 @@
     box-sizing: border-box;
 }
 
-/* Показуємо текст при наведенні на батьківський блок */
+/* Показуємо текст */
 .version-pill:hover .version-text {
     opacity: 1;
     transform: translateX(0);
@@ -1481,7 +1486,7 @@ body.dark .template-field-group textarea {
             resize: none !important; 
             transition: border-color 0.2s;
             margin: 0 4px 4px 4px;
-			 - 8px);
+			width: calc(100% - 8px);
 			white-space: pre-wrap;
             overflow-wrap: normal;
             word-break: normal;
@@ -1549,7 +1554,7 @@ body.dark .clear-template-btn {
     display: flex;
     flex-grow: 1; 
     margin: 0 4px 4px 4px;
-     - 8px);
+    width: calc(100% - 8px);
      border: 1px solid var(--input-border-color);
     border-radius: 12px;
     overflow: hidden; 
@@ -1785,20 +1790,24 @@ body.dark ::placeholder {
 
 /* === СТИЛІ ДЛЯ ПІДКОМАНД (SUB-COMMANDS) === */
 
-/* Контейнер для списку підкоманд (прихований за замовчуванням) */
 .sub-command-list {
-    display: none;
+    max-height: 0; /* Приховано за замовчуванням */
+    overflow: hidden; /* Обрізаємо все, що виходить за max-height */
+    opacity: 0; /* Приховано (прозорість) */
+    transform: translateY(-5px); /* Трохи посунуто вгору для ефекту появи */
+    transition: max-height 0.4s ease-out, opacity 0.3s ease-out, transform 0.3s ease-out; /* Плавний перехід */
     flex-direction: column;
     margin-left: 20px; /* Відступ зліва */
     padding-left: 10px;
     border-left: 2px solid var(--input-border-color); /* Лінія зліва для візуального зв'язку */
     margin-bottom: 5px;
+    display: flex; /* Залишаємо flex, але керуємо видимістю через max-height */
 }
 
-/* Коли батьківський елемент має клас open, показуємо список */
 .sub-command-list.open {
-    display: flex;
-    animation: fadeIn 0.3s ease-in-out;
+    max-height: 500px; /* Достатньо велике значення, щоб показати весь вміст. Можете збільшити. */
+    opacity: 1; /* Повністю видно */
+    transform: translateY(0); /* Повертаємо на місце */
 }
 
 /* Стиль елемента підкоманди */
@@ -1841,11 +1850,6 @@ body.dark .sub-command-item .command-text {
 /* Поворот стрілочки при відкритті */
 .command-item.expanded .chevron-icon {
     transform: rotate(180deg);
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-5px); }
-    to { opacity: 1; transform: translateY(0); }
 }
 
 /* Додайте це до стилів підкоманд, які ви вставляли раніше */
@@ -2163,12 +2167,20 @@ body {
 #history-arrow { margin-right: 10px; transition: transform 0.3s ease; font-size: 0.8em; }
 .history-toggle-btn.active #history-arrow { transform: rotate(90deg); }
 
-.history-content-wrapper { display: none; padding-bottom: 10px; animation: slideDown 0.3s ease-out; }
-.history-content-wrapper.open { display: block; }
+.history-content-wrapper {
+    max-height: 0; /* Приховано за замовчуванням */
+    overflow: hidden; /* Обрізаємо все, що виходить за max-height */
+    opacity: 0; /* Приховано (прозорість) */
+    transform: translateY(-10px); /* Трохи посунуто вгору для ефекту появи */
+    transition: max-height 0.4s ease-out, opacity 0.3s ease-out, transform 0.3s ease-out; /* Плавний перехід */
+    display: block; /* Залишаємо block, але керуємо видимістю через max-height */
+	padding-bottom: 10px;
+}
 
-@keyframes slideDown {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
+.history-content-wrapper.open {
+    max-height: 500px; /* Достатньо велике значення, щоб показати весь вміст. Можете збільшити, якщо історія дуже довга. */
+    opacity: 1; /* Повністю видно */
+    transform: translateY(0); /* Повертаємо на місце */
 }
 
 .history-item {
@@ -2209,7 +2221,7 @@ body {
 }
 
 .container[data-content="text-templates"] {
-width: calc(100% - 10px);
+width: calc(100% - 5px);
 }
 
 /* === ДИНАМІЧНИЙ РОЗМІР ДЛЯ GPON КОНТЕЙНЕРА === */
@@ -2272,8 +2284,7 @@ width: calc(100% - 10px);
     overflow-x: hidden;
     
     display: block !important; /* Важливо для коректної висоти */
-    padding-bottom: 10px;
-	 min-height: 330px;
+	min-height: 300px;
 }
 
 /* 3. Гарантуємо, що блок результатів не розтягує все зайве місце, якщо його мало */
@@ -2311,7 +2322,7 @@ width: calc(100% - 10px);
     overflow-y: auto !important;             /* Скрол з'являється тільки тут */
     overflow-x: hidden;
     
-    padding-bottom: 15px;                    /* Відступ знизу для краси */
+	scrollbar-gutter: stable;
 }
 
 /* 3. Оновлений стиль для поля вводу (Велике і по центру) */
@@ -2456,7 +2467,7 @@ width: calc(100% - 10px);
 <!-- === НОВИЙ БЛОК ВЕРСІЇ (Вставте сюди) === -->
 <div class="version-pill" title="Поточна версія">
     <img src="snowman.webp" alt="Snowman" class="version-emoji">
-    <span class="version-text">Версія 3.5.2</span>
+    <span class="version-text">Версія 3.5.3</span>
 </div>   
 <div id="snow-container"></div>	
     <div class="toggle-button-wrapper">
@@ -2484,7 +2495,7 @@ width: calc(100% - 10px);
 
         <div class="tab-content-wrapper"> 
 
-            <div class="container login-generator-container active" data-content="login-generator" data-default-width="840px" data-default-height="588px">
+            <div class="container login-generator-container active" data-content="login-generator" data-default-width="840px">
 			<div class="content-card">
                 <h2 style="margin-top: 0; text-align: center;">🔐 Генератор логінів</h2>
                 <p style="text-align: center;">Введіть повністю одне або декілька ПІБ, кожне — з нового рядка.<br>Також можливий трансліт ФОП, ТОВ, ПП, АТ, КБ, ГО.</p>
@@ -4397,4 +4408,3 @@ window.addEventListener('load', () => {
     </script>
 </body>
 </html>
-
