@@ -3210,6 +3210,7 @@ function areDatesInDefaultState() {
             { command: 'show ip dhcp snooping dynamic port pon gpon-onu_1/1/1:1 vport 1', description: 'Показати Mac адресу, IP та VLAN роутера' }, 
             { command: 'show ip dhcp snooping port gpon-onu_1/1/1:1', description: 'Показати Mac адресу, IP та VLAN роутера' }, 
             { command: 'show pon power onu-rx gpon-olt_1/1/1', description: 'Показати сигнали всіх ONU на порту' },
+			{ command: 'show gpon onu by sn', description: 'Показати порт на якому зареєстрована ONU' },
             
             // --- ОСЬ ТУТ ЗМІНИ ДЛЯ GPON ---
             { 
@@ -3223,7 +3224,7 @@ function areDatesInDefaultState() {
 					{ command: 'onu 111 type GPON-1GE sn PTNHUYLO', description: 'Реєстрація ONU за серійним номером на PON' },
 					{ command: 'pon-onu-mng gpon-onu_1/1/1:1', description: 'Конфігурація ONU після реєстрації' },
 					{ command: 'reboot', description: 'Перезавантаження ONU віддалено. Використовується після pon-onu-mng' },
-					{ command: 'interface eth eth_0/1 state lock/unlock', description: 'Видалення сесії без відєднування ethernet кабелю. Використовується після pon-onu-mng' },
+					{ command: 'interface eth eth_0/1 state lock/unlock', description: 'Очистка сесії без відєднування ethernet кабелю. Використовується після pon-onu-mng' },
 					
                 ]
             }
@@ -4409,6 +4410,7 @@ window.addEventListener('load', () => {
     </script>
 </body>
 </html>
+
 
 
 
