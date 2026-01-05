@@ -227,6 +227,7 @@ body.dark .progress-ring-fg {
 --button-paste-hover-bg: #117a8b;
 --resize-handle-color: rgba(0,0,0,0.3);
 --highlight-bg-color: rgba(255, 229, 100, 0.7);
+    --snow-color: #46d1ff;  /* Обов'язково 6 символів і крапка з комою */
 }
 
 body.dark {
@@ -257,16 +258,7 @@ body.dark {
 --button-paste-hover-bg: #138496;
 --resize-handle-color: rgba(255,255,255,0.3);
 --highlight-bg-color: rgba(230, 162, 46, 0.5);
-
-    /* ДОДАЙТЕ ЦЕЙ РЯДОК ДЛЯ СВІТЛОЇ ТЕМИ: */
-    --snow-color: #d1d5db; /* Сіро-блакитний, щоб було видно на світлому фоні */
-}
-
-body.dark {
-    /* ... ваші існуючі змінні темної теми ... */
-    
-    /* ДОДАЙТЕ ЦЕЙ РЯДОК ДЛЯ ТЕМНОЇ ТЕМИ: */
-    --snow-color: rgba(255, 255, 255, 0.8); /* Білий напівпрозорий */
+    --snow-color: #ffffff; 
 }
 
 /* === СТИЛІ ДЛЯ СНІГУ (КЕРОВАНІ) === */
@@ -293,7 +285,6 @@ body.holiday-mode #snow-container {
     color: var(--snow-color);
     font-size: 1em;
     font-family: Arial, sans-serif; /* Для коректного відображення символів */
-    text-shadow: 0 0 5px rgba(0,0,0,0.1); /* Легка тінь для об'єму */
     user-select: none;
     will-change: transform; /* Оптимізація для GPU */
     animation-name: fall, sway;
@@ -4410,12 +4401,3 @@ window.addEventListener('load', () => {
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
