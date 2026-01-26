@@ -2458,7 +2458,7 @@ width: calc(100% - 5px);
 <!-- === НОВИЙ БЛОК ВЕРСІЇ (Вставте сюди) === -->
 <div class="version-pill" title="Поточна версія">
     <img src="snowman.webp" alt="Snowman" class="version-emoji">
-    <span class="version-text">Версія 3.5.3</span>
+    <span class="version-text">Версія 3.5.4</span>
 </div>   
 <div id="snow-container"></div>	
     <div class="toggle-button-wrapper">
@@ -2884,7 +2884,7 @@ function generateAlternativeLogin(buttonElement) {
     });
 }
 
-    function generateLogins() {
+function generateLogins() {
         const fullNameInput = document.getElementById('fullNameInput');
         const fullNames = fullNameInput.value.trim();
         const resultsContainer = document.getElementById('results-container');
@@ -2895,8 +2895,9 @@ function generateAlternativeLogin(buttonElement) {
         if (!fullNames) return;
 
         const lines = fullNames.split('\n');
-        // Розширений список типів компаній
-        const companyRegex = /(^|\s)(фоп|тов|пп|ат|кб|го)(\s|$)/i;
+        
+        // --- ЗМІНА 1: Додано "кп" до списку ---
+        const companyRegex = /(^|\s)(фоп|тов|пп|ат|кб|го|кп)(\s|$)/i;
 
         lines.forEach(line => {
             const fullName = line.trim();
@@ -2912,7 +2913,13 @@ function generateAlternativeLogin(buttonElement) {
             }
 
             const parts = fullName.split(/\s+/).filter(p => p.length > 0);
-            const isCompany = companyRegex.test(fullName.toLowerCase()) || parts.length > 3 || /\d/.test(fullName);
+            
+            // --- ЗМІНА 2: Додано перевірку на лапки (звичайні " або типографські “”) ---
+            // Якщо є лапки, вважаємо це компанією/назвою і не скорочуємо до ініціалів
+            const isCompany = companyRegex.test(fullName.toLowerCase()) || 
+                              parts.length > 3 || 
+                              /\d/.test(fullName) || 
+                              /["'“”«»]/.test(fullName); 
             
             let login = '';
             
@@ -2921,7 +2928,7 @@ function generateAlternativeLogin(buttonElement) {
             resultItem.className = 'result-item';
 
             if (isCompany) {
-                // === ЛОГІКА ДЛЯ КОМПАНІЙ ===
+                // === ЛОГІКА ДЛЯ КОМПАНІЙ (повна транслітерація без скорочень) ===
                 login = transliterate(fullName).replace(/[^a-z0-9]/g, '');
                 
                 // Зберігаємо дані для генератора
@@ -2987,7 +2994,7 @@ function generateAlternativeLogin(buttonElement) {
             `;
             resultsContainer.appendChild(resultItem);
         });
-		        // === ВСТАВ ЦЕЙ КОД СЮДИ ===
+		// === ВСТАВ ЦЕЙ КОД СЮДИ ===
         const scrollCard = document.querySelector('.login-generator-container .content-card');
         if (scrollCard) scrollCard.scrollTop = 0;
         // ==========================
