@@ -2458,7 +2458,7 @@ width: calc(100% - 5px);
 <!-- === НОВИЙ БЛОК ВЕРСІЇ (Вставте сюди) === -->
 <div class="version-pill" title="Поточна версія">
     <img src="snowman.webp" alt="Snowman" class="version-emoji">
-    <span class="version-text">Версія 3.5.4</span>
+    <span class="version-text">Версія 3.5.5</span>
 </div>   
 <div id="snow-container"></div>	
     <div class="toggle-button-wrapper">
@@ -2903,6 +2903,15 @@ function generateLogins() {
             const fullName = line.trim();
             if (fullName === '') return;
 
+            // Валідація на "Тільки цифри"
+            if (/^[\d\s]+$/.test(fullName)) {
+                const errorElement = document.createElement('div');
+                errorElement.className = 'result-item';
+                errorElement.innerHTML = `<span style="color: #dc3545; font-weight: bold; font-size: 1.1em; text-align: center">Вхідні дані не можуть бути лише цифрами!</span>`;
+                resultsContainer.appendChild(errorElement);
+                return;
+            }
+			
             // Валідація на латиницю
             if (/[a-z]/i.test(fullName)) {
                 const errorElement = document.createElement('div');
@@ -4408,6 +4417,3 @@ window.addEventListener('load', () => {
     </script>
 </body>
 </html>
-
-
-
