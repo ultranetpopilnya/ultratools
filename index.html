@@ -2458,7 +2458,7 @@ width: calc(100% - 5px);
 <!-- === НОВИЙ БЛОК ВЕРСІЇ (Вставте сюди) === -->
 <div class="version-pill" title="Поточна версія">
     <img src="snowman.webp" alt="Snowman" class="version-emoji">
-    <span class="version-text">Версія 3.5.5</span>
+    <span class="version-text">Версія 3.6</span>
 </div>   
 <div id="snow-container"></div>	
     <div class="toggle-button-wrapper">
@@ -3440,6 +3440,8 @@ function initDraggableAndResizable(element) {
                 // 5. Застосовуємо (Math.floor прибирає дробові пікселі, що теж зменшує дрижання)
                 target.style.width = Math.floor(newWidth) + 'px';
                 target.style.height = Math.floor(newHeight) + 'px';
+				
+				renderLineMarkers(target); 
                 
                 // Оновлюємо сусідів
                 throttledPackTemplates(); 
@@ -3879,6 +3881,8 @@ const syncScroll = () => {
         
         initDraggableAndResizable(fieldGroup);
         renderLineMarkers(fieldGroup);
+		
+		if (window.textareaObserver) window.textareaObserver.observe(textarea);
         
         return fieldGroup;
     }
@@ -3887,29 +3891,84 @@ const syncScroll = () => {
     const markerContainer = fieldGroup.querySelector('.line-marker-container');
     const textarea = fieldGroup.querySelector('textarea');
     if (!markerContainer || !textarea) return;
-    
-    markerContainer.innerHTML = ''; 
-    const bookmarks = JSON.parse(fieldGroup.dataset.bookmarks || '[]');
+
+    // 1. Створюємо (або знаходимо) "дзеркало" для вимірювань
+    // Ми робимо це прямо тут, щоб не лізти в CSS
+    let mirror = fieldGroup.querySelector('.textarea-mirror');
+    if (!mirror) {
+        mirror = document.createElement('div');
+        mirror.className = 'textarea-mirror';
+        // Встановлюємо критичні стилі через JS
+        mirror.style.cssText = `
+            position: absolute;
+            top: 0; left: 0;
+            visibility: hidden;
+            height: auto;
+            white-space: pre-wrap;       /* Обов'язково: переноси як у textarea */
+            overflow-wrap: break-word;   /* Переноси довгих слів */
+            word-wrap: break-word;       /* Дублюємо для сумісності */
+            pointer-events: none;
+            z-index: -100;
+            box-sizing: border-box;      /* Розміри враховують padding */
+            border: 1px solid transparent; 
+        `;
+        // Вставляємо дзеркало в той самий контейнер, що й textarea
+        textarea.parentNode.insertBefore(mirror, textarea);
+    }
+
+    // 2. Копіюємо параметри шрифту та ширини з реального textarea
     const style = window.getComputedStyle(textarea);
     
-    // Надійний розрахунок висоти рядка
-    const fontSize = parseFloat(style.fontSize) || 14;
-    let lineHeight = parseFloat(style.lineHeight);
-    if (isNaN(lineHeight)) lineHeight = fontSize * 1.5; // Резервний розрахунок (1.5 - ваш коефіцієнт)
-
-    const paddingTop = parseFloat(style.paddingTop) || 10;
+    mirror.style.width = textarea.clientWidth + 'px';
+    mirror.style.fontFamily = style.fontFamily;
+    mirror.style.fontSize = style.fontSize;
+    mirror.style.fontWeight = style.fontWeight;
+    mirror.style.letterSpacing = style.letterSpacing;
+    mirror.style.lineHeight = style.lineHeight;
+    mirror.style.textTransform = style.textTransform;
     
+    // ВАЖЛИВО: Копіюємо тільки горизонтальні відступи. 
+    // Вертикальні додамо математично, щоб уникнути плутанини з box-model.
+    mirror.style.paddingLeft = style.paddingLeft;
+    mirror.style.paddingRight = style.paddingRight;
+    mirror.style.paddingTop = '0px'; 
+    mirror.style.paddingBottom = '0px';
+
+    markerContainer.innerHTML = ''; 
+    const bookmarks = JSON.parse(fieldGroup.dataset.bookmarks || '[]');
+    const lines = textarea.value.split('\n');
+    
+    // Розрахунок висоти одного рядка та відступу зверху
+    const paddingTop = parseFloat(style.paddingTop) || 0;
+    const fontSize = parseFloat(style.fontSize) || 14;
+    let singleLineHeight = parseFloat(style.lineHeight);
+    if (isNaN(singleLineHeight)) singleLineHeight = fontSize * 1.5;
+
     bookmarks.forEach(bookmark => {
+        const lineIndex = bookmark.lineNumber - 1;
+        
+        // Якщо закладка вказує на неіснуючий рядок - пропускаємо
+        if (lineIndex >= lines.length) return;
+
+        // 3. Беремо весь текст ДО нашого рядка
+        const textBefore = lines.slice(0, lineIndex).join('\n');
+        
+        // Вставляємо в дзеркало. 
+        // Додаємо "\u200B" (невидимий пробіл), щоб порожній рядок теж мав висоту
+        mirror.textContent = textBefore + '\u200B';
+
+        // 4. Отримуємо реальну висоту тексту (вже з урахуванням переносів!)
+        const measuredHeight = mirror.clientHeight;
+
+        // 5. Розраховуємо позицію
+        // Висота тексту + відступ textarea зверху + половина рядка (для центрування) - поправка на розмір крапки
+        const yPosition = measuredHeight + paddingTop + (singleLineHeight / 2) - 13; // 13px - це ~половина висоти символу крапки (25px)
+        
         const marker = document.createElement('div');
         marker.className = 'line-marker';
         marker.textContent = '●';
-        
-        // Математика центрування точки:
-        // (номер рядка - 1) * висота рядка + відступ зверху + (половина висоти рядка для центрування)
-        // - 12px (приблизна половина висоти самого символу ● розміром 25px)
-        const yPosition = paddingTop + (bookmark.lineNumber - 1) * lineHeight + (lineHeight / 2) - 13;
-        
         marker.style.top = `${yPosition}px`;
+        
         markerContainer.appendChild(marker);
     });
 }
@@ -4214,6 +4273,41 @@ document.getElementById('add-1-year-btn').addEventListener('click', () => addDur
     
     // Спочатку завантажуємо шаблони
     loadTemplates();
+	
+	// Функція, яка пробігається по всіх шаблонах і оновлює маркери
+    function refreshAllMarkers() {
+        document.querySelectorAll('.template-field-group').forEach(group => {
+            renderLineMarkers(group);
+        });
+        packTemplates(); // Заодно і тетріс поправимо
+    }
+
+    // 1. Чекаємо, поки завантажаться шрифти (Fira Code)
+    document.fonts.ready.then(() => {
+        refreshAllMarkers();
+        // На всяк випадок ще раз через мить, для повільних браузерів
+        setTimeout(refreshAllMarkers, 100);
+        setTimeout(refreshAllMarkers, 500);
+    });
+    
+    // 2. Додатковий наглядач за зміною розмірів елементів (ResizeObserver)
+    // Це вирішить проблему назавжди: якщо з'явиться скрол, маркери перемалюються самі
+    window.textareaObserver = new ResizeObserver((entries) => {
+        for (let entry of entries) {
+            // entry.target - це textarea
+            const fieldGroup = entry.target.closest('.template-field-group');
+            if (fieldGroup) {
+                renderLineMarkers(fieldGroup);
+            }
+        }
+    });
+
+    // Підключаємо наглядач до всіх існуючих textarea
+    setTimeout(() => {
+        document.querySelectorAll('.template-field-group textarea').forEach(textarea => {
+            window.textareaObserver.observe(textarea);
+        });
+    }, 200);
 	
 	window.addEventListener('resize', debounce(() => {
         packTemplates();
