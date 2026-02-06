@@ -845,11 +845,6 @@ margin: 1px;
     flex-grow: 1; /* <-- ДОДАЙТЕ ЦЕЙ РЯДОК */
 	gap: 0px;
 }
-		
-	.date-calculator-container .date-input-group .quick-add-buttons {
-    width: 220px;    /* можеш змінити – 200–240 пікселів нормально */
-    margin: 0 auto;  /* центрування горизонтально */
-}
 
         .date-calculator-container .date-input-group label {
             margin-bottom: 10px;
@@ -2585,10 +2580,10 @@ body.dark .calculator-actions-block {
         <!-- Вертикальний роздільник між датою і часом (для краси) -->
         <div class="action-divider"></div>
 
-        <button id="set-start-time-now-btn" class="calc-action-button" title="Встановити початковий час на поточний">
-            <i class="far fa-clock"></i>
-            <span>Поточний час</span>
-        </button>
+        <button id="set-end-time-now-btn" class="calc-action-button" title="Встановити кінцевий час на поточний">
+    <i class="far fa-clock"></i>
+    <span>Поточний час</span>
+</button>
     </div>
 
     <!-- ГОРИЗОНТАЛЬНИЙ РОЗДІЛЬНИК ПОВЕРХІВ -->
@@ -4315,13 +4310,13 @@ document.getElementById('set-start-now-btn').addEventListener('click', () => {
     handleInputAndTimer(); 
 });
 
-// === ВСТАВИТИ ЦЕЙ КОД СЮДИ (ДЛЯ КНОПКИ "ЗАРАЗ") ===
-document.getElementById('set-start-time-now-btn').addEventListener('click', () => {
+document.getElementById('set-end-time-now-btn').addEventListener('click', () => {
     const now = new Date();
     // Форматуємо час у формат HH:MM
     const timeString = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
     
-    document.getElementById('start-time').value = timeString;
+    // Встановлюємо у поле КІНЦЕВОГО часу (end-time)
+    document.getElementById('end-time').value = timeString;
     handleInputAndTimer(); // Оновлюємо розрахунок
 });
 
