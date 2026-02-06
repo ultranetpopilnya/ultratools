@@ -1680,22 +1680,6 @@ body.dark .calculator-panel {
     background-color: #2c2c2e;
 }
 
-/* Головний контейнер для кнопок (вже всередині панелі) */
-.calculator-actions-row {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    padding: 6px;
-    border-radius: 9999px;
-    background-color: #ffffff; 
-    border: 1px solid var(--input-border-color); 
-    width: fit-content;
-}
-body.dark .calculator-actions-row {
-     background-color: var(--template-handle-bg);
-}
-
 /* Стиль для елегантного вертикального роздільника */
 .action-divider {
     width: 1px;
@@ -2452,13 +2436,63 @@ width: calc(100% - 5px);
             width: 90% !important;
         }
     }
+	
+/* === НОВІ СТИЛІ ДЛЯ ДВОПОВЕРХОВОЇ ПАНЕЛІ (ВИПРАВЛЕНО) === */
+
+/* === ОНОВЛЕНИЙ КОМПАКТНИЙ СТИЛЬ (418px) === */
+
+.calculator-actions-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
+    /* 1. Зменшуємо проміжок між поверхами (було 8px) */
+    gap: 6px; 
+    
+    /* 2. Зменшуємо відступи зверху/знизу (було 10px) */
+    padding: 10px 10px; 
+    
+    border-radius: 12px; 
+    
+    background-color: #ffffff; 
+    border: 1px solid var(--input-border-color);
+    
+    /* 3. Чітка ширина */
+    width: 418px; 
+    box-sizing: border-box; 
+    
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05); 
+}
+
+/* Стилі для темної теми та роздільника залишаються ті самі */
+
+/* Темна тема */
+body.dark .calculator-actions-block {
+    background-color: var(--template-handle-bg);
+    border-color: var(--input-border-color);
+}
+
+.actions-floor {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px; 
+    width: 100%;
+}
+
+.horizontal-divider {
+    width: 100%;       
+    height: 1px;       
+    background-color: var(--input-border-color);
+    opacity: 0.7;      
+}
 </style>
 </head>
 <body class="holiday-modee"> 
 <!-- === НОВИЙ БЛОК ВЕРСІЇ (Вставте сюди) === -->
 <div class="version-pill" title="Поточна версія">
     <img src="snowman.webp" alt="Snowman" class="version-emoji">
-    <span class="version-text">Версія 3.6.1</span>
+    <span class="version-text">Версія 3.6.3</span>
 </div>   
 <div id="snow-container"></div>	
     <div class="toggle-button-wrapper">
@@ -2515,7 +2549,7 @@ width: calc(100% - 5px);
 				</div>
             </div>
 
-            <div class="container date-calculator-container" data-content="date-calculator" data-default-width="840px" data-default-height="588px">
+            <div class="container date-calculator-container" data-content="date-calculator" data-default-width="840px" data-default-height="616px">
 			<div class="content-card">
                 <h2 style="margin-top: 0; text-align: center;">🗓️ Калькулятор тривалості між датами</h2>
 
@@ -2537,16 +2571,37 @@ width: calc(100% - 5px);
                 <!-- НОВА, ОБ'ЄДНАНА ПАНЕЛЬ КЕРУВАННЯ -->
                 <div class="calculator-panel">
                     <!-- Рядок 1: Кнопки дій -->
-                    <div class="calculator-actions-row">
-                        <button id="set-start-now-btn" class="calc-action-button" title="Встановити початкову дату на сьогодні">
-                            <i class="fas fa-calendar-check"></i>
-                            <span>Сьогодні</span>
-                        </button>
-                        <div class="action-divider"></div>
-                        <button id="add-6-months-btn" class="calc-action-button quick-add-btn" title="Додати 6 місяців до початкової дати">+6 міс. </button>
-                        <button id="add-7-months-btn" class="calc-action-button quick-add-btn" title="Додати 7 місяців до початкової дати">+7 міс.</button>
-                        <button id="add-1-year-btn" class="calc-action-button quick-add-btn" title="Додати 1 рік до початкової дати">+1 рік</button>
-                    </div>
+                    <!-- Знайдіть цей блок і замініть його вміст на наступний: -->
+<!-- === НОВА ДВОПОВЕРХОВА ПАНЕЛЬ === -->
+<div class="calculator-actions-block">
+    
+    <!-- ПОВЕРХ 1: Початкові налаштування -->
+    <div class="actions-floor">
+        <button id="set-start-now-btn" class="calc-action-button" title="Встановити початкову дату на сьогодні">
+            <i class="fas fa-calendar-check"></i>
+            <span>Поточна дата</span>
+        </button>
+        
+        <!-- Вертикальний роздільник між датою і часом (для краси) -->
+        <div class="action-divider"></div>
+
+        <button id="set-start-time-now-btn" class="calc-action-button" title="Встановити початковий час на поточний">
+            <i class="far fa-clock"></i>
+            <span>Поточний час</span>
+        </button>
+    </div>
+
+    <!-- ГОРИЗОНТАЛЬНИЙ РОЗДІЛЬНИК ПОВЕРХІВ -->
+    <div class="horizontal-divider"></div>
+
+    <!-- ПОВЕРХ 2: Додавання терміну -->
+    <div class="actions-floor">
+        <button id="add-6-months-btn" class="calc-action-button quick-add-btn" title="Додати 6 місяців до початкової дати">+6 міс.</button>
+        <button id="add-7-months-btn" class="calc-action-button quick-add-btn" title="Додати 7 місяців до початкової дати">+7 міс.</button>
+        <button id="add-1-year-btn" class="calc-action-button quick-add-btn" title="Додати 1 рік до початкової дати">+1 рік</button>
+    </div>
+
+</div>
 
                     <!-- Рядок 2: Перемикач автоскидання -->
                     <div class="reset-toggle-container">
@@ -4250,6 +4305,23 @@ document.getElementById('set-start-now-btn').addEventListener('click', () => {
     const now = new Date();
     document.getElementById('start-date').value = formatDate(now);
     document.getElementById('start-time').value = '00:00'; // Встановлюємо час на початок дня
+    handleInputAndTimer(); // Оновлюємо розрахунок
+});
+
+document.getElementById('set-start-now-btn').addEventListener('click', () => {
+    const now = new Date();
+    document.getElementById('start-date').value = formatDate(now);
+    document.getElementById('start-time').value = '00:00'; 
+    handleInputAndTimer(); 
+});
+
+// === ВСТАВИТИ ЦЕЙ КОД СЮДИ (ДЛЯ КНОПКИ "ЗАРАЗ") ===
+document.getElementById('set-start-time-now-btn').addEventListener('click', () => {
+    const now = new Date();
+    // Форматуємо час у формат HH:MM
+    const timeString = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+    
+    document.getElementById('start-time').value = timeString;
     handleInputAndTimer(); // Оновлюємо розрахунок
 });
 
