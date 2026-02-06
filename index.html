@@ -2458,7 +2458,7 @@ width: calc(100% - 5px);
 <!-- === НОВИЙ БЛОК ВЕРСІЇ (Вставте сюди) === -->
 <div class="version-pill" title="Поточна версія">
     <img src="snowman.webp" alt="Snowman" class="version-emoji">
-    <span class="version-text">Версія 3.6</span>
+    <span class="version-text">Версія 3.6.1</span>
 </div>   
 <div id="snow-container"></div>	
     <div class="toggle-button-wrapper">
@@ -3823,39 +3823,54 @@ const syncScroll = () => {
         // Прибираємо підсвітку, коли поле втрачає фокус.
         textarea.addEventListener('blur', () => updateHighlight(textarea, highlighter));
 
-        gutter.onclick = (event) => {
-    const style = window.getComputedStyle(textarea);
-    const fontSize = parseFloat(style.fontSize) || 14;
-    let lineHeight = parseFloat(style.lineHeight);
-    if (isNaN(lineHeight)) lineHeight = fontSize * 1.5;
+    gutter.onclick = (event) => {
+            const style = window.getComputedStyle(textarea);
+            const fontSize = parseFloat(style.fontSize) || 14;
+            let lineHeight = parseFloat(style.lineHeight);
+            
+            // === ВИПРАВЛЕННЯ 1: Захист від множників (1.5 vs 21px) ===
+            // Якщо висота рядка менша за розмір шрифту (наприклад "1.5"), 
+            // значить це множник, і треба перевести його в пікселі.
+            if (isNaN(lineHeight) || lineHeight < fontSize) {
+                const multiplier = (isNaN(lineHeight) || lineHeight === 0) ? 1.5 : lineHeight;
+                lineHeight = fontSize * multiplier;
+            }
 
-    const paddingTop = parseFloat(style.paddingTop) || 10;
-    
-    // Отримуємо реальний Y кліку з урахуванням прокрутки
-    const rect = gutter.getBoundingClientRect();
-    const clickY = event.clientY - rect.top + textarea.scrollTop;
-    
-    // Розраховуємо номер рядка
-    const clickedLineNumber = Math.floor((clickY - paddingTop) / lineHeight) + 1;
-    
-    const lines = textarea.value.split('\n');
-    if (clickedLineNumber > lines.length || clickedLineNumber < 1) return;
+            const paddingTop = parseFloat(style.paddingTop) || 10;
+            
+            const rect = gutter.getBoundingClientRect();
+            const clickY = event.clientY - rect.top; 
+            const absoluteY = clickY + textarea.scrollTop;
+            
+            // === ВИПРАВЛЕННЯ 2: Буферна зона (-3px) ===
+            // Ми віднімаємо 3 пікселі, щоб "підняти" точку кліку.
+            // Це захищає від випадкового потрапляння на наступний рядок,
+            // якщо ви клікнули в нижню частину поточного рядка.
+            let rawLineIndex = Math.floor((absoluteY - paddingTop - 3) / lineHeight);
+            
+            // Якщо клікнули у верхній відступ або в самий верх першого рядка -> це завжди Рядок 1
+            if (rawLineIndex < 0) rawLineIndex = 0;
+            
+            const clickedLineNumber = rawLineIndex + 1;
+            
+            const lines = textarea.value.split('\n');
+            if (clickedLineNumber > lines.length) return;
 
-    let currentBookmarks = JSON.parse(fieldGroup.dataset.bookmarks || '[]');
-    const existingBookmarkIndex = currentBookmarks.findIndex(b => b.lineNumber === clickedLineNumber);
+            let currentBookmarks = JSON.parse(fieldGroup.dataset.bookmarks || '[]');
+            const existingBookmarkIndex = currentBookmarks.findIndex(b => b.lineNumber === clickedLineNumber);
 
-    if (existingBookmarkIndex > -1) {
-        currentBookmarks.splice(existingBookmarkIndex, 1);
-    } else {
-        currentBookmarks.push({
-            lineNumber: clickedLineNumber,
-            content: lines[clickedLineNumber - 1]
-        });
-    }
-    fieldGroup.dataset.bookmarks = JSON.stringify(currentBookmarks);
-    renderLineMarkers(fieldGroup);
-    saveTemplates();
-};
+            if (existingBookmarkIndex > -1) {
+                currentBookmarks.splice(existingBookmarkIndex, 1);
+            } else {
+                currentBookmarks.push({
+                    lineNumber: clickedLineNumber,
+                    content: lines[clickedLineNumber - 1]
+                });
+            }
+            fieldGroup.dataset.bookmarks = JSON.stringify(currentBookmarks);
+            renderLineMarkers(fieldGroup);
+            saveTemplates();
+        };
         
         highlightingContainer.appendChild(highlighter);
         highlightingContainer.appendChild(textarea);
@@ -3887,36 +3902,33 @@ const syncScroll = () => {
         return fieldGroup;
     }
 
-    function renderLineMarkers(fieldGroup) {
+function renderLineMarkers(fieldGroup) {
     const markerContainer = fieldGroup.querySelector('.line-marker-container');
     const textarea = fieldGroup.querySelector('textarea');
     if (!markerContainer || !textarea) return;
 
     // 1. Створюємо (або знаходимо) "дзеркало" для вимірювань
-    // Ми робимо це прямо тут, щоб не лізти в CSS
     let mirror = fieldGroup.querySelector('.textarea-mirror');
     if (!mirror) {
         mirror = document.createElement('div');
         mirror.className = 'textarea-mirror';
-        // Встановлюємо критичні стилі через JS
         mirror.style.cssText = `
             position: absolute;
             top: 0; left: 0;
             visibility: hidden;
             height: auto;
-            white-space: pre-wrap;       /* Обов'язково: переноси як у textarea */
-            overflow-wrap: break-word;   /* Переноси довгих слів */
-            word-wrap: break-word;       /* Дублюємо для сумісності */
+            white-space: pre-wrap;
+            overflow-wrap: break-word;
+            word-wrap: break-word;
             pointer-events: none;
             z-index: -100;
-            box-sizing: border-box;      /* Розміри враховують padding */
+            box-sizing: border-box;
             border: 1px solid transparent; 
         `;
-        // Вставляємо дзеркало в той самий контейнер, що й textarea
         textarea.parentNode.insertBefore(mirror, textarea);
     }
 
-    // 2. Копіюємо параметри шрифту та ширини з реального textarea
+    // 2. Копіюємо стилі
     const style = window.getComputedStyle(textarea);
     
     mirror.style.width = textarea.clientWidth + 'px';
@@ -3927,8 +3939,6 @@ const syncScroll = () => {
     mirror.style.lineHeight = style.lineHeight;
     mirror.style.textTransform = style.textTransform;
     
-    // ВАЖЛИВО: Копіюємо тільки горизонтальні відступи. 
-    // Вертикальні додамо математично, щоб уникнути плутанини з box-model.
     mirror.style.paddingLeft = style.paddingLeft;
     mirror.style.paddingRight = style.paddingRight;
     mirror.style.paddingTop = '0px'; 
@@ -3938,42 +3948,47 @@ const syncScroll = () => {
     const bookmarks = JSON.parse(fieldGroup.dataset.bookmarks || '[]');
     const lines = textarea.value.split('\n');
     
-    // Розрахунок висоти одного рядка та відступу зверху
-    const paddingTop = parseFloat(style.paddingTop) || 0;
+    // === ВИПРАВЛЕННЯ 1: Сінхронізуємо дефолтний відступ з CSS (було || 0, стало || 10) ===
+    const paddingTop = parseFloat(style.paddingTop) || 10;
+    
     const fontSize = parseFloat(style.fontSize) || 14;
     let singleLineHeight = parseFloat(style.lineHeight);
     if (isNaN(singleLineHeight)) singleLineHeight = fontSize * 1.5;
 
     bookmarks.forEach(bookmark => {
         const lineIndex = bookmark.lineNumber - 1;
-        
-        // Якщо закладка вказує на неіснуючий рядок - пропускаємо
         if (lineIndex >= lines.length) return;
 
-        // 3. Беремо весь текст ДО нашого рядка
-        const textBefore = lines.slice(0, lineIndex).join('\n');
-        
-        // Вставляємо в дзеркало. 
-        // Додаємо "\u200B" (невидимий пробіл), щоб порожній рядок теж мав висоту
-        mirror.textContent = textBefore + '\u200B';
+        let measuredHeight = 0;
 
-        // 4. Отримуємо реальну висоту тексту (вже з урахуванням переносів!)
-        const measuredHeight = mirror.clientHeight;
+        // Вимірюємо висоту попереднього тексту
+        if (lineIndex > 0) {
+            const textBefore = lines.slice(0, lineIndex).join('\n');
+            mirror.textContent = textBefore + '\u200B';
+            measuredHeight = mirror.clientHeight;
+        }
 
-        // 5. Розраховуємо позицію
-        // Висота тексту + відступ textarea зверху + половина рядка (для центрування) - поправка на розмір крапки
-        const yPosition = measuredHeight + paddingTop + (singleLineHeight / 2) - 13; // 13px - це ~половина висоти символу крапки (25px)
+        // === ВИПРАВЛЕННЯ 2: Точне центрування без магічних чисел ===
+        // Рахуємо чистий центр рядка
+        const yPosition = measuredHeight + paddingTop + (singleLineHeight / 2) - 2; 
         
         const marker = document.createElement('div');
         marker.className = 'line-marker';
         marker.textContent = '●';
+        
+        // Ставимо точку по Y
         marker.style.top = `${yPosition}px`;
         
+        // Додаємо зсув через CSS transform, щоб центр крапки співпав з yPosition
+        // translateX(-50%) центрує по горизонталі (вже було у вас в CSS, але тут дублюємо для певності по Y)
+        marker.style.transform = 'translate(-50%, -50%)'; 
+        
+        // Трохи підправляємо CSS самої крапки, щоб прибрати старий margin-top, якщо він там був
+        marker.style.marginTop = '0';
+
         markerContainer.appendChild(marker);
     });
 }
-
-    // --- КІНЕЦЬ НОВОЇ СИСТЕМИ ЗАКЛАДОК ---
 
 function addTemplate() {
     const container = document.getElementById('templates-grid-wrapper');
