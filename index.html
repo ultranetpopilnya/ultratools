@@ -2487,7 +2487,7 @@ body.dark .calculator-actions-block {
 <!-- === НОВИЙ БЛОК ВЕРСІЇ (Вставте сюди) === -->
 <div class="version-pill" title="Поточна версія">
     <img src="snowman.webp" alt="Snowman" class="version-emoji">
-    <span class="version-text">Версія 3.6.3</span>
+    <span class="version-text">Версія 3.6.4</span>
 </div>   
 <div id="snow-container"></div>	
     <div class="toggle-button-wrapper">
@@ -2816,15 +2816,18 @@ let lastGeneratedLogin = ''; // Зберігатиме останній зген
     const mapping = {
       'а': 'a', 'б': 'b', 'в': 'v', 'г': 'h', 'ґ': 'g', 'д': 'd', 'е': 'e', 'ж': 'zh', 'з': 'z', 'и': 'y', 'і': 'i', 'й': 'i',
       'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'kh',
-      'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'shch', 'ь': '', "'": '', 'є': 'ie', 'ї': 'i', 'ю': 'iu', 'я': 'ia', 'l': 'l'
+      'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'shch', 'ь': '', 'є': 'ie', 'ї': 'i', 'ю': 'iu', 'я': 'ia'
     };
+    
+    // Видаляємо всі види апострофів перед обробкою
+    text = text.toLowerCase().replace(/['’ʼ]/g, "");
+
     const positionalRules = {
         'є': { start: 'ye', other: 'ie' }, 'ї': { start: 'yi', other: 'i' }, 'й': { start: 'y', other: 'i' },
         'ю': { start: 'yu', other: 'iu' }, 'я': { start: 'ya', other: 'ia' }
     };
 
     let result = '';
-    text = text.toLowerCase();
     for (let i = 0; i < text.length; i++) {
         const char = text[i];
         if (char === 'з' && i + 1 < text.length && text[i + 1] === 'г') {
@@ -2835,9 +2838,7 @@ let lastGeneratedLogin = ''; // Зберігатиме останній зген
             result += isStartOfWord ? positionalRules[char].start : positionalRules[char].other;
         } else if (mapping[char]) {
             result += mapping[char];
-        } else if (!isNaN(parseInt(char))) { // <-- ЦЕЙ РЯДОК ВАЖЛИВИЙ
-            result += char;
-        } else if (/[a-z0-9]/.test(char)) { // <-- І ЦЕЙ ТАКОЖ
+        } else if (/[a-z0-9]/.test(char)) {
             result += char;
         }
     }
@@ -2973,12 +2974,10 @@ function generateLogins() {
 
             const parts = fullName.split(/\s+/).filter(p => p.length > 0);
             
-            // --- ЗМІНА 2: Додано перевірку на лапки (звичайні " або типографські “”) ---
-            // Якщо є лапки, вважаємо це компанією/назвою і не скорочуємо до ініціалів
             const isCompany = companyRegex.test(fullName.toLowerCase()) || 
-                              parts.length > 3 || 
-                              /\d/.test(fullName) || 
-                              /["'“”«»]/.test(fullName); 
+                  parts.length > 3 || 
+                  /\d/.test(fullName) || 
+                  /["“”«»]/.test(fullName);
             
             let login = '';
             
@@ -2987,42 +2986,38 @@ function generateLogins() {
             resultItem.className = 'result-item';
 
             if (isCompany) {
-                // === ЛОГІКА ДЛЯ КОМПАНІЙ (повна транслітерація без скорочень) ===
+                // === КОМПАНІЇ: Повний трансліт ===
                 login = transliterate(fullName).replace(/[^a-z0-9]/g, '');
                 
-                // Зберігаємо дані для генератора
                 resultItem.dataset.isCompany = 'true';
                 resultItem.dataset.baseLogin = login;
                 resultItem.dataset.suffixCounter = '1';
 
             } else {
-                // === ЛОГІКА ДЛЯ ЛЮДЕЙ ===
-                // Нам потрібно мінімум 3 частини: Прізвище, Ім'я, По-батькові
-                // Якщо частин менше (наприклад, немає по-батькові), то працюємо по-старому
+                // === ЛЮДИ / ПІБ ===
                 if (parts.length < 3) {
-                     let transliteratedLastName = parts.length >= 1 ? transliterate(parts[0]) : '';
-                     let firstNameInitial = parts.length >= 2 ? transliterate(parts[1].charAt(0)) : '';
-                     login = (transliteratedLastName + firstNameInitial).replace(/[^a-z0-9]/g, '');
-                     
-                     // Позначаємо як "компанію", щоб просто додавати цифри, бо розширювати нічого
-                     resultItem.dataset.isCompany = 'true'; 
-                     resultItem.dataset.baseLogin = login;
-                     resultItem.dataset.suffixCounter = '1';
+                    // НОВА ЛОГІКА ДЛЯ 1 АБО 2 СЛІВ:
+                    // Робимо повну транслітерацію кожного слова і склеюємо їх
+                    login = parts.map(part => transliterate(part)).join('');
+                    login = login.replace(/[^a-z0-9]/g, '');
+                    
+                    // Позначаємо як 'company', щоб кнопка "Оновити" просто додавала цифри
+                    resultItem.dataset.isCompany = 'true'; 
+                    resultItem.dataset.baseLogin = login;
+                    resultItem.dataset.suffixCounter = '1';
                 } else {
-                    // Стандартна людина з ПІБ
+                    // СТАНДАРТНИЙ ПІБ (3 слова): Прізвище + ініціали
                     let surname = transliterate(parts[0]);
                     let nameInitial = transliterate(parts[1].charAt(0));
-                    let patronymicFull = transliterate(parts[2]); // Повне по-батькові транслітом
+                    let patronymicFull = transliterate(parts[2]);
 
-                    // Початковий логін: Прізвище + 1 літера імені + 1 літера по-батькові
                     login = (surname + nameInitial + patronymicFull.charAt(0)).replace(/[^a-z0-9]/g, '');
 
-                    // Зберігаємо складові частини
                     resultItem.dataset.isCompany = 'false';
                     resultItem.dataset.surname = surname.replace(/[^a-z0-9]/g, '');
                     resultItem.dataset.nameInitial = nameInitial.replace(/[^a-z0-9]/g, '');
                     resultItem.dataset.patronymicFull = patronymicFull.replace(/[^a-z0-9]/g, '');
-                    resultItem.dataset.patrIndex = '1'; // Починаємо з 1 літери по-батькові
+                    resultItem.dataset.patrIndex = '1';
                 }
             }
 
