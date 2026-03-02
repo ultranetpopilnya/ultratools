@@ -3881,7 +3881,7 @@ function initDraggableAndResizable(element) {
     
     const clearButton = document.createElement('button');
     clearButton.innerHTML = '<i class="fas fa-eraser"></i>';
-    clearButton.title = 'Очистити';
+    clearButton.title = 'Очистити текст';
     clearButton.className = 'clear-template-btn';
     clearButton.onclick = () => {
         if (confirm('Очистити вміст?')) {
@@ -3898,7 +3898,7 @@ function initDraggableAndResizable(element) {
    // === КНОПКА ПОШУКУ (ОНОВЛЕНА) ===
     const searchToggleButton = document.createElement('button');
     searchToggleButton.innerHTML = '<i class="fas fa-search"></i>';
-    searchToggleButton.title = 'Пошук і заміна';
+    searchToggleButton.title = 'Пошук і заміна тексту';
     searchToggleButton.style.backgroundColor = '#6f42c1'; 
     searchToggleButton.style.color = 'white';
     
@@ -3927,7 +3927,7 @@ function initDraggableAndResizable(element) {
 
     const deleteButton = document.createElement('button');
     deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
-    deleteButton.title = 'Видалити';
+    deleteButton.title = 'Видалити шаблон';
     deleteButton.className = 'delete-template-btn';
     deleteButton.onclick = () => {
         if (confirm('Видалити шаблон?')) {
