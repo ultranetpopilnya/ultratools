@@ -2481,13 +2481,124 @@ body.dark .calculator-actions-block {
     background-color: var(--input-border-color);
     opacity: 0.7;      
 }
+
+/* === ОНОВЛЕНІ СТИЛІ ДЛЯ ШАБЛОНУ === */
+.template-field-group {
+    /* ЗБІЛЬШЕНО МІНІМАЛЬНУ ШИРИНУ, щоб кнопки влізли */
+    min-width: 350px !important; 
+    /* ...інші старі стилі залишаються (border, background, transition)... */
+}
+
+/* === СТИЛЬ СПЛИВАЮЧОЇ ПАНЕЛІ ПОШУКУ === */
+.template-search-bar {
+    /* Позиціонування: висить у повітрі */
+    position: absolute;
+    top: 45px; /* Відступ від верху (висота шапки + трохи повітря) */
+    right: 10px; /* Притиснута до правого краю */
+    z-index: 20; /* Поверх тексту */
+    
+    width: 300px; /* Фіксована ширина для зручності */
+    
+    background-color: var(--input-bg-color);
+    border: 1px solid var(--primary-accent-color);
+    border-radius: 12px;
+    
+    /* Тінь, щоб відірвати від фону */
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    
+    /* Анімація появи (виростає з правого верхнього кута) */
+    transform-origin: top right;
+    transform: scale(0.8) translateY(-10px);
+    opacity: 0;
+    pointer-events: none; /* Щоб не заважала клікати крізь прозору */
+    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); /* Ефект пружини */
+}
+
+.template-search-bar.active {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Стрілочка зверху (трикутник), що вказує на кнопку */
+.template-search-bar::before {
+    content: '';
+    position: absolute;
+    top: -7px;
+    right: 31px; /* Підлаштовано під положення кнопки пошуку */
+    width: 12px;
+    height: 12px;
+    background-color: var(--input-bg-color);
+    border-top: 1px solid var(--primary-accent-color);
+    border-left: 1px solid var(--primary-accent-color);
+    transform: rotate(45deg);
+}
+
+/* Поля вводу в панелі */
+.search-inputs-row {
+    display: flex;
+    gap: 8px;
+}
+
+.search-inputs-row input {
+    width: 50%;
+    padding: 5px 10px;
+    border-radius: 8px;
+    border: 1px solid var(--input-border-color);
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-size: 13px;
+}
+.search-inputs-row input:focus {
+    border-color: var(--primary-accent-color);
+}
+
+/* Кнопки в панелі */
+.search-buttons-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 5px;
+}
+
+.search-cmd-btn {
+    flex: 1; /* Кнопки розтягуються на всю ширину */
+    padding: 6px;
+    border: none;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    color: white;
+    transition: transform 0.1s;
+}
+.search-cmd-btn:active { transform: scale(0.95); }
+
+.btn-find { background-color: var(--primary-accent-color); }
+.btn-replace { background-color: var(--secondary-accent-color); }
+.btn-replace-all { background-color: var(--success-color); }
+
+/* Темна тема */
+body.dark .template-search-bar {
+    background-color: #2b2b2b;
+    border-color: var(--secondary-accent-color);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+body.dark .template-search-bar::before {
+    background-color: #2b2b2b;
+    border-color: var(--secondary-accent-color);
+}
 </style>
 </head>
 <body class="holiday-modee"> 
 <!-- === НОВИЙ БЛОК ВЕРСІЇ (Вставте сюди) === -->
 <div class="version-pill" title="Поточна версія">
-    <img src="snowman.webp" alt="Snowman" class="version-emoji">
-    <span class="version-text">Версія 3.6.4</span>
+    <img src="lupa.webp" alt="" class="version-emoji">
+    <span class="version-text">Версія 3.7.0</span>
 </div>   
 <div id="snow-container"></div>	
     <div class="toggle-button-wrapper">
@@ -3501,7 +3612,7 @@ function initDraggableAndResizable(element) {
         },
         modifiers: [
             interact.modifiers.restrictSize({
-                min: { width: 300, height: 90 }
+                min: { width: 350, height: 90 }
             })
         ],
         inertia: false
@@ -3687,265 +3798,374 @@ function initDraggableAndResizable(element) {
     }
 	
     function createTemplateField(data = {}) {
-        // Прибираємо x та y з деструктуризації
-        const { name = '', content = '', width = '300px', height = '90px', bookmarks = [] } = data;
-        const container = document.getElementById('templates-grid-wrapper'); 
-        const fieldGroup = document.createElement('div');
-        fieldGroup.className = 'template-field-group';
-        
-        let modernBookmarks = [];
-        if (bookmarks.length > 0) {
-            const lines = content.split('\n');
-            if (typeof bookmarks[0] === 'number') { 
-                bookmarks.forEach(lineNumber => {
-                    if (lineNumber > 0 && lineNumber <= lines.length) {
-                        modernBookmarks.push({ lineNumber: lineNumber, content: lines[lineNumber - 1] });
-                    }
-                });
-            } else { 
-                modernBookmarks = bookmarks;
-            }
+    // Встановлюємо дефолтну ширину 350px, якщо це новий шаблон
+    const { name = '', content = '', width = '350px', height = '90px', bookmarks = [] } = data;
+    const container = document.getElementById('templates-grid-wrapper'); 
+    const fieldGroup = document.createElement('div');
+    fieldGroup.className = 'template-field-group';
+    
+    // Відновлення закладок
+    let modernBookmarks = [];
+    if (bookmarks.length > 0) {
+        const lines = content.split('\n');
+        if (typeof bookmarks[0] === 'number') { 
+            bookmarks.forEach(lineNumber => {
+                if (lineNumber > 0 && lineNumber <= lines.length) {
+                    modernBookmarks.push({ lineNumber: lineNumber, content: lines[lineNumber - 1] });
+                }
+            });
+        } else { 
+            modernBookmarks = bookmarks;
         }
-        fieldGroup.dataset.bookmarks = JSON.stringify(modernBookmarks);
+    }
+    fieldGroup.dataset.bookmarks = JSON.stringify(modernBookmarks);
+    
+    fieldGroup.style.width = width;
+    fieldGroup.style.height = height;
+          
+    const headerDiv = document.createElement('div');
+    headerDiv.className = 'template-header';
+    
+    const nameInput = document.createElement('input');
+    nameInput.type = 'text';
+    nameInput.className = 'template-name-input';
+    nameInput.placeholder = 'Назва шаблону';
+    nameInput.value = name;
+    nameInput.oninput = saveTemplates;
+    
+    const actionsDiv = document.createElement('div');
+    actionsDiv.className = 'template-actions';
+    
+    // --- КНОПКИ ---
+    
+    const copyButton = document.createElement('button');
+    copyButton.innerHTML = '<i class="fas fa-copy"></i>';
+    copyButton.title = 'Копіювати текст';
+    copyButton.className = 'copy-template-btn';
+    copyButton.onclick = () => {
+        const textarea = fieldGroup.querySelector('textarea');
+        const textToCopy = textarea.value.substring(textarea.selectionStart, textarea.selectionEnd) || textarea.value;
+        if (!textToCopy.trim()) return; 
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            copyButton.innerHTML = '<i class="fas fa-check"></i>';
+            copyButton.disabled = true;
+            setTimeout(() => { copyButton.innerHTML = '<i class="fas fa-copy"></i>'; copyButton.disabled = false; }, 1500);
+        }).catch(err => console.error('Error:', err));
+    };
+    
+    const pasteLoginButton = document.createElement('button');
+    pasteLoginButton.innerHTML = '<i class="fas fa-paste"></i>';
+    pasteLoginButton.title = 'Вставити логін';
+    pasteLoginButton.className = 'paste-login-btn';
+    pasteLoginButton.onclick = () => {
+        if (!lastGeneratedLogin) {
+            showNotification('Спочатку згенеруйте логін!');
+            return;
+        }
+        const textarea = fieldGroup.querySelector('textarea');
+        const highlighter = fieldGroup.querySelector('.highlighter-backdrop');
+        const savedScrollTop = textarea.scrollTop;
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const text = textarea.value;
         
-        // Встановлюємо розміри
-        fieldGroup.style.width = width;
-        fieldGroup.style.height = height;
-              
-        const headerDiv = document.createElement('div');
-        headerDiv.className = 'template-header';
-        
-        const nameInput = document.createElement('input');
-        nameInput.type = 'text';
-        nameInput.className = 'template-name-input';
-        nameInput.placeholder = 'Назва шаблону';
-        nameInput.value = name;
-        nameInput.oninput = saveTemplates;
-        
-        const actionsDiv = document.createElement('div');
-        actionsDiv.className = 'template-actions';
-        
-        const copyButton = document.createElement('button');
-        copyButton.innerHTML = '<i class="fas fa-copy"></i>';
-        copyButton.title = 'Копіювати текст';
-        copyButton.className = 'copy-template-btn';
-        copyButton.onclick = () => {
-            const textarea = fieldGroup.querySelector('textarea');
-            const selectedText = textarea.value.substring(textarea.selectionStart, textarea.selectionEnd);
-            const textToCopy = selectedText || textarea.value;
-            if (!textToCopy.trim()) return; 
-            navigator.clipboard.writeText(textToCopy).then(() => {
-                copyButton.innerHTML = '<i class="fas fa-check"></i>';
-                copyButton.disabled = true;
-                setTimeout(() => { copyButton.innerHTML = '<i class="fas fa-copy"></i>'; copyButton.disabled = false; }, 1500);
-            }).catch(err => console.error('Не вдалося скопіювати текст: ', err));
-        };
-        
-        const pasteLoginButton = document.createElement('button');
-        pasteLoginButton.innerHTML = '<i class="fas fa-paste"></i>';
-        pasteLoginButton.title = 'Вставити згенерований логін';
-        pasteLoginButton.className = 'paste-login-btn';
-        pasteLoginButton.onclick = () => {
-            if (!lastGeneratedLogin) {
-                showNotification('Спочатку згенеруйте логін!');
-                return;
-            }
-            
+        textarea.value = text.substring(0, start) + lastGeneratedLogin + text.substring(end);
+        textarea.focus({ preventScroll: true });
+        const newCursorPos = start + lastGeneratedLogin.length;
+        textarea.setSelectionRange(newCursorPos, newCursorPos);
+        textarea.scrollTop = savedScrollTop;
+        updateHighlight(textarea, highlighter); 
+        updateBookmarksOnTextChange(fieldGroup);
+        saveTemplates();
+    };
+    
+    const clearButton = document.createElement('button');
+    clearButton.innerHTML = '<i class="fas fa-eraser"></i>';
+    clearButton.title = 'Очистити';
+    clearButton.className = 'clear-template-btn';
+    clearButton.onclick = () => {
+        if (confirm('Очистити вміст?')) {
             const textarea = fieldGroup.querySelector('textarea');
             const highlighter = fieldGroup.querySelector('.highlighter-backdrop');
-            
-            // 1. Запам'ятовуємо позицію скролу самого тексту
-            const savedScrollTop = textarea.scrollTop;
-            const start = textarea.selectionStart;
-            const end = textarea.selectionEnd;
-            const text = textarea.value;
-            
-            // 2. Вставляємо текст
-            textarea.value = text.substring(0, start) + lastGeneratedLogin + text.substring(end);
-            
-            // 3. ГОЛОВНА ЗМІНА: Фокусуємося БЕЗ прокрутки сторінки
-            textarea.focus({ preventScroll: true });
-            
-            // 4. Ставимо курсор в кінець вставки
-            const newCursorPos = start + lastGeneratedLogin.length;
-            textarea.setSelectionRange(newCursorPos, newCursorPos);
-            
-            // 5. Відновлюємо скрол тексту (якщо він був прокручений)
-            textarea.scrollTop = savedScrollTop;
-
-            updateHighlight(textarea, highlighter); 
-            updateBookmarksOnTextChange(fieldGroup);
-            saveTemplates();
-        };
-        
-        const clearButton = document.createElement('button');
-        clearButton.innerHTML = '<i class="fas fa-eraser"></i>';
-        clearButton.title = 'Очистити текстове поле';
-        clearButton.className = 'clear-template-btn';
-        clearButton.onclick = () => {
-            if (confirm('Очистити вміст цього шаблону?')) {
-                const textarea = fieldGroup.querySelector('textarea');
-                const highlighter = fieldGroup.querySelector('.highlighter-backdrop');
-                textarea.value = '';
-                highlighter.innerHTML = '';
-                fieldGroup.dataset.bookmarks = '[]';
-                renderLineMarkers(fieldGroup);
-                saveTemplates();
-            }
-        };
-        
-        const deleteButton = document.createElement('button');
-        deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
-        deleteButton.title = 'Видалити шаблон';
-        deleteButton.className = 'delete-template-btn';
-        deleteButton.onclick = () => {
-    if (confirm('Ви впевнені, що хочете видалити цей шаблон?')) {
-        fieldGroup.remove();
-        saveTemplates();
-        packTemplates(); // ДОДАТИ ЦЕ, щоб блоки перегрупувалися
-    }
-};
-
-        const textareaWrapper = document.createElement('div');
-        textareaWrapper.className = 'textarea-wrapper';
-        
-        const gutter = document.createElement('div');
-        gutter.className = 'line-marker-gutter';
-
-        const markerContainer = document.createElement('div');
-        markerContainer.className = 'line-marker-container';
-        gutter.appendChild(markerContainer);
-
-        const highlightingContainer = document.createElement('div');
-        highlightingContainer.className = 'highlighting-container';
-
-        const highlighter = document.createElement('div');
-        highlighter.className = 'highlighter-backdrop';
-
-        const textarea = document.createElement('textarea');
-        textarea.placeholder = 'Введіть текст тут...';
-        textarea.value = content;
-        highlighter.innerHTML = escapeHtml(content) + '\n';
-        
-        let isScrolling = false;
-const syncScroll = () => {
-    if (!isScrolling) {
-        window.requestAnimationFrame(() => {
-            markerContainer.style.transform = `translateY(-${textarea.scrollTop}px)`;
-            highlighter.scrollTop = textarea.scrollTop;
-            highlighter.scrollLeft = textarea.scrollLeft;
-            isScrolling = false;
-        });
-        isScrolling = true;
-    }
-};
-
-        textarea.addEventListener('input', () => {
-    updateHighlight(textarea, highlighter); // Підсвітка має бути миттєвою
-    updateBookmarksOnTextChange(fieldGroup);
-    debouncedSaveTemplates(); // А збереження - відкладеним
-});
-
-        textarea.addEventListener('scroll', syncScroll);
-
-        // Обробник для виділення мишею та клавіатурою.
-        // Цей об'єднаний підхід робить код простішим.
-        const selectionHandler = () => {
-            // Використовуємо requestAnimationFrame для оновлення після того, як
-            // браузер завершив обробку виділення. Це більш сучасний та
-            // ефективний підхід, ніж setTimeout(..., 0).
-            requestAnimationFrame(() => {
-                updateHighlight(textarea, highlighter);
-            });
-        };
-
-        // Спрацьовує, коли відпускаємо кнопку миші (завершення виділення).
-        textarea.addEventListener('mouseup', selectionHandler);
-        
-        // Спрацьовує, коли відпускаємо клавішу (для виділення з Shift).
-        textarea.addEventListener('keyup', selectionHandler);
-        
-        // Прибираємо підсвітку, коли поле втрачає фокус.
-        textarea.addEventListener('blur', () => updateHighlight(textarea, highlighter));
-
-    gutter.onclick = (event) => {
-            const style = window.getComputedStyle(textarea);
-            const fontSize = parseFloat(style.fontSize) || 14;
-            let lineHeight = parseFloat(style.lineHeight);
-            
-            // === ВИПРАВЛЕННЯ 1: Захист від множників (1.5 vs 21px) ===
-            // Якщо висота рядка менша за розмір шрифту (наприклад "1.5"), 
-            // значить це множник, і треба перевести його в пікселі.
-            if (isNaN(lineHeight) || lineHeight < fontSize) {
-                const multiplier = (isNaN(lineHeight) || lineHeight === 0) ? 1.5 : lineHeight;
-                lineHeight = fontSize * multiplier;
-            }
-
-            const paddingTop = parseFloat(style.paddingTop) || 10;
-            
-            const rect = gutter.getBoundingClientRect();
-            const clickY = event.clientY - rect.top; 
-            const absoluteY = clickY + textarea.scrollTop;
-            
-            // === ВИПРАВЛЕННЯ 2: Буферна зона (-3px) ===
-            // Ми віднімаємо 3 пікселі, щоб "підняти" точку кліку.
-            // Це захищає від випадкового потрапляння на наступний рядок,
-            // якщо ви клікнули в нижню частину поточного рядка.
-            let rawLineIndex = Math.floor((absoluteY - paddingTop - 3) / lineHeight);
-            
-            // Якщо клікнули у верхній відступ або в самий верх першого рядка -> це завжди Рядок 1
-            if (rawLineIndex < 0) rawLineIndex = 0;
-            
-            const clickedLineNumber = rawLineIndex + 1;
-            
-            const lines = textarea.value.split('\n');
-            if (clickedLineNumber > lines.length) return;
-
-            let currentBookmarks = JSON.parse(fieldGroup.dataset.bookmarks || '[]');
-            const existingBookmarkIndex = currentBookmarks.findIndex(b => b.lineNumber === clickedLineNumber);
-
-            if (existingBookmarkIndex > -1) {
-                currentBookmarks.splice(existingBookmarkIndex, 1);
-            } else {
-                currentBookmarks.push({
-                    lineNumber: clickedLineNumber,
-                    content: lines[clickedLineNumber - 1]
-                });
-            }
-            fieldGroup.dataset.bookmarks = JSON.stringify(currentBookmarks);
+            textarea.value = '';
+            highlighter.innerHTML = '';
+            fieldGroup.dataset.bookmarks = '[]';
             renderLineMarkers(fieldGroup);
             saveTemplates();
-        };
-        
-        highlightingContainer.appendChild(highlighter);
-        highlightingContainer.appendChild(textarea);
-        textareaWrapper.appendChild(gutter);
-        textareaWrapper.appendChild(highlightingContainer);
+        }
+    };
 
-        headerDiv.appendChild(nameInput);
-        actionsDiv.appendChild(copyButton);
-        actionsDiv.appendChild(pasteLoginButton);
-        actionsDiv.appendChild(clearButton);
-        actionsDiv.appendChild(deleteButton);
-        headerDiv.appendChild(actionsDiv);
+   // === КНОПКА ПОШУКУ (ОНОВЛЕНА) ===
+    const searchToggleButton = document.createElement('button');
+    searchToggleButton.innerHTML = '<i class="fas fa-search"></i>';
+    searchToggleButton.title = 'Пошук і заміна';
+    searchToggleButton.style.backgroundColor = '#6f42c1'; 
+    searchToggleButton.style.color = 'white';
+    
+    searchToggleButton.onclick = (e) => {
+        e.stopPropagation(); // Зупиняємо подію, щоб глобальний клік не спрацював одразу
         
-        const resizeHandle = document.createElement('div');
-        resizeHandle.className = 'resize-handle';    
+        const panel = fieldGroup.querySelector('.template-search-bar');
+        const isActive = panel.classList.contains('active');
+
+        // 1. Закриваємо панелі В ІНШИХ шаблонах (щоб не було відкрито декілька одночасно)
+        document.querySelectorAll('.template-search-bar.active').forEach(p => {
+            if (p !== panel) p.classList.remove('active');
+        });
+
+        // 2. Перемикаємо стан поточної
+        if (isActive) {
+            panel.classList.remove('active');
+        } else {
+            panel.classList.add('active');
+            setTimeout(() => {
+                const input = panel.querySelector('.input-find');
+                if (input) input.focus();
+            }, 50);
+        }
+    };
+
+    const deleteButton = document.createElement('button');
+    deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
+    deleteButton.title = 'Видалити';
+    deleteButton.className = 'delete-template-btn';
+    deleteButton.onclick = () => {
+        if (confirm('Видалити шаблон?')) {
+            fieldGroup.remove();
+            saveTemplates();
+            packTemplates();
+        }
+    };
+
+    // === СПЛИВАЮЧА ПАНЕЛЬ ПОШУКУ ===
+    const searchPanel = document.createElement('div');
+    searchPanel.className = 'template-search-bar';
+    
+    // Щоб клік всередині панелі не закривав її
+    searchPanel.onclick = (e) => e.stopPropagation();
+
+    const savedFind = localStorage.getItem('lastSearchTerm') || '';
+    const savedReplace = localStorage.getItem('lastReplaceTerm') || '';
+
+    searchPanel.innerHTML = `
+        <div class="search-inputs-row">
+            <input type="text" class="input-find" placeholder="Знайти..." value="${savedFind}">
+            <input type="text" class="input-replace" placeholder="Замінити..." value="${savedReplace}">
+        </div>
+        <div class="search-buttons-row">
+            <button class="search-cmd-btn btn-find">Знайти</button>
+            <button class="search-cmd-btn btn-replace">Замінити</button>
+            <button class="search-cmd-btn btn-replace-all">Замінити все</button>
+        </div>
+    `;
+
+    const inputFind = searchPanel.querySelector('.input-find');
+    const inputReplace = searchPanel.querySelector('.input-replace');
+    const btnFind = searchPanel.querySelector('.btn-find');
+    const btnReplace = searchPanel.querySelector('.btn-replace');
+    const btnReplaceAll = searchPanel.querySelector('.btn-replace-all');
+
+    inputFind.addEventListener('input', (e) => localStorage.setItem('lastSearchTerm', e.target.value));
+    inputReplace.addEventListener('input', (e) => localStorage.setItem('lastReplaceTerm', e.target.value));
+    
+    // Закриття панелі на клавішу Escape
+    searchPanel.addEventListener('keydown', (e) => {
+        if(e.key === 'Escape') searchPanel.classList.remove('active');
+    });
+
+    const performFind = () => {
+        const textarea = fieldGroup.querySelector('textarea');
+        const term = inputFind.value;
+        if (!term) return;
+
+        const text = textarea.value;
+        let startPos = textarea.selectionEnd;
+        let index = text.toLowerCase().indexOf(term.toLowerCase(), startPos);
+
+        if (index === -1) {
+            index = text.toLowerCase().indexOf(term.toLowerCase(), 0);
+        }
+
+        if (index !== -1) {
+            textarea.focus();
+            textarea.setSelectionRange(index, index + term.length);
+            // Розумна прокрутка
+            const lines = text.substring(0, index).split('\n');
+            const lineHeight = 21; 
+            textarea.scrollTop = (lines.length * lineHeight) - (textarea.clientHeight / 2);
+        } else {
+            showNotification("Не знайдено");
+        }
+    };
+
+    btnFind.onclick = performFind;
+
+    btnReplace.onclick = () => {
+        const textarea = fieldGroup.querySelector('textarea');
+        const term = inputFind.value;
+        const replacement = inputReplace.value;
+
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const selectedText = textarea.value.substring(start, end);
+
+        if (selectedText.toLowerCase() === term.toLowerCase() && term !== '') {
+            const text = textarea.value;
+            const newText = text.substring(0, start) + replacement + text.substring(end);
+            
+            const savedScroll = textarea.scrollTop;
+            textarea.value = newText;
+            
+            const highlighter = fieldGroup.querySelector('.highlighter-backdrop');
+            updateHighlight(textarea, highlighter);
+            updateBookmarksOnTextChange(fieldGroup);
+            saveTemplates();
+            
+            textarea.scrollTop = savedScroll;
+            textarea.focus();
+            textarea.setSelectionRange(start + replacement.length, start + replacement.length);
+        } else {
+            performFind();
+        }
+    };
+
+    btnReplaceAll.onclick = () => {
+        const textarea = fieldGroup.querySelector('textarea');
+        const term = inputFind.value;
+        const replacement = inputReplace.value;
         
-        fieldGroup.appendChild(headerDiv); 
-        fieldGroup.appendChild(textareaWrapper);
-        fieldGroup.appendChild(resizeHandle);
+        if (!term) return;
+
+        const text = textarea.value;
+        const regex = new RegExp(term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
         
-        // ОСЬ ЦЕЙ РЯДОК МАЄ БУТИ ТУТ:
-        container.appendChild(fieldGroup); 
+        if (!regex.test(text)) {
+            showNotification("Не знайдено");
+            return;
+        }
+
+        const newText = text.replace(regex, replacement);
         
-        initDraggableAndResizable(fieldGroup);
+        const savedScroll = textarea.scrollTop;
+        textarea.value = newText;
+        
+        const highlighter = fieldGroup.querySelector('.highlighter-backdrop');
+        updateHighlight(textarea, highlighter);
+        updateBookmarksOnTextChange(fieldGroup);
+        saveTemplates();
+        
+        textarea.scrollTop = savedScroll;
+        showNotification("Замінено!");
+    };
+
+    // --- СТРУКТУРА HTML ---
+
+    const textareaWrapper = document.createElement('div');
+    textareaWrapper.className = 'textarea-wrapper';
+    
+    const gutter = document.createElement('div');
+    gutter.className = 'line-marker-gutter';
+
+    const markerContainer = document.createElement('div');
+    markerContainer.className = 'line-marker-container';
+    gutter.appendChild(markerContainer);
+
+    const highlightingContainer = document.createElement('div');
+    highlightingContainer.className = 'highlighting-container';
+
+    const highlighter = document.createElement('div');
+    highlighter.className = 'highlighter-backdrop';
+
+    const textarea = document.createElement('textarea');
+    textarea.placeholder = 'Введіть текст тут...';
+    textarea.value = content;
+    highlighter.innerHTML = escapeHtml(content) + '\n';
+    
+    let isScrolling = false;
+    const syncScroll = () => {
+        if (!isScrolling) {
+            window.requestAnimationFrame(() => {
+                markerContainer.style.transform = `translateY(-${textarea.scrollTop}px)`;
+                highlighter.scrollTop = textarea.scrollTop;
+                highlighter.scrollLeft = textarea.scrollLeft;
+                isScrolling = false;
+            });
+            isScrolling = true;
+        }
+    };
+
+    textarea.addEventListener('input', () => {
+        updateHighlight(textarea, highlighter);
+        updateBookmarksOnTextChange(fieldGroup);
+        debouncedSaveTemplates();
+    });
+    textarea.addEventListener('scroll', syncScroll);
+
+    const selectionHandler = () => requestAnimationFrame(() => updateHighlight(textarea, highlighter));
+    textarea.addEventListener('mouseup', selectionHandler);
+    textarea.addEventListener('keyup', selectionHandler);
+    textarea.addEventListener('blur', () => updateHighlight(textarea, highlighter));
+
+    gutter.onclick = (event) => {
+        // ... (Стара логіка gutter залишається без змін) ...
+        const style = window.getComputedStyle(textarea);
+        const fontSize = parseFloat(style.fontSize) || 14;
+        let lineHeight = parseFloat(style.lineHeight);
+        if (isNaN(lineHeight) || lineHeight < fontSize) {
+            lineHeight = fontSize * 1.5;
+        }
+        const paddingTop = parseFloat(style.paddingTop) || 10;
+        const rect = gutter.getBoundingClientRect();
+        const clickY = event.clientY - rect.top; 
+        const absoluteY = clickY + textarea.scrollTop;
+        let rawLineIndex = Math.floor((absoluteY - paddingTop - 3) / lineHeight);
+        if (rawLineIndex < 0) rawLineIndex = 0;
+        const clickedLineNumber = rawLineIndex + 1;
+        const lines = textarea.value.split('\n');
+        if (clickedLineNumber > lines.length) return;
+        let currentBookmarks = JSON.parse(fieldGroup.dataset.bookmarks || '[]');
+        const existingBookmarkIndex = currentBookmarks.findIndex(b => b.lineNumber === clickedLineNumber);
+        if (existingBookmarkIndex > -1) {
+            currentBookmarks.splice(existingBookmarkIndex, 1);
+        } else {
+            currentBookmarks.push({lineNumber: clickedLineNumber, content: lines[clickedLineNumber - 1]});
+        }
+        fieldGroup.dataset.bookmarks = JSON.stringify(currentBookmarks);
         renderLineMarkers(fieldGroup);
-		
-		if (window.textareaObserver) window.textareaObserver.observe(textarea);
-        
-        return fieldGroup;
-    }
+        saveTemplates();
+    };
+    
+    highlightingContainer.appendChild(highlighter);
+    highlightingContainer.appendChild(textarea);
+    textareaWrapper.appendChild(gutter);
+    textareaWrapper.appendChild(highlightingContainer);
+
+    headerDiv.appendChild(nameInput);
+    actionsDiv.appendChild(copyButton);
+    actionsDiv.appendChild(pasteLoginButton);
+    actionsDiv.appendChild(clearButton);
+    actionsDiv.appendChild(searchToggleButton);
+    actionsDiv.appendChild(deleteButton);
+    headerDiv.appendChild(actionsDiv);
+    
+    const resizeHandle = document.createElement('div');
+    resizeHandle.className = 'resize-handle';    
+    
+    fieldGroup.appendChild(headerDiv); 
+    // Панель пошуку додана в структуру, але винесена "над" потоком через absolute
+    fieldGroup.appendChild(searchPanel); 
+    fieldGroup.appendChild(textareaWrapper);
+    fieldGroup.appendChild(resizeHandle);
+    
+    container.appendChild(fieldGroup); 
+    
+    initDraggableAndResizable(fieldGroup);
+    renderLineMarkers(fieldGroup);
+    
+    if (window.textareaObserver) window.textareaObserver.observe(textarea);
+    
+    return fieldGroup;
+}
 
 function renderLineMarkers(fieldGroup) {
     const markerContainer = fieldGroup.querySelector('.line-marker-container');
@@ -4584,6 +4804,24 @@ window.addEventListener('load', () => {
     if (localStorage.getItem('activeTab') === 'text-templates') {
         setTimeout(packTemplates, 100);
     }
+});
+
+document.addEventListener('click', (event) => {
+    // Знаходимо всі активні панелі пошуку
+    const activePanels = document.querySelectorAll('.template-search-bar.active');
+
+    activePanels.forEach(panel => {
+        // Знаходимо шаблон, якому належить ця панель
+        const parentTemplate = panel.closest('.template-field-group');
+
+        // Перевіряємо, чи клік був ВСЕРЕДИНІ цього шаблону
+        const isClickInsideTemplate = parentTemplate.contains(event.target);
+
+        // Якщо клікнули НЕ в цей шаблон — закриваємо панель
+        if (!isClickInsideTemplate) {
+            panel.classList.remove('active');
+        }
+    });
 });
     </script>
 </body>
