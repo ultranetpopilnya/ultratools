@@ -2180,18 +2180,11 @@ body {
 }
 .clear-history-footer-btn:hover { background: var(--danger-color); color: white; }
 
-.container[data-content="text-templates"]{
-    height: calc(100% - 5px);
-    
-    /* Відступ від низу екрана */
-    margin-bottom: 5px !important;
-    
-    /* Оновлюємо змінну для JS */
-    --local-height: calc(100% - 5px);
-}
-
 .container[data-content="text-templates"] {
-width: calc(100% - 5px);
+    height: calc(100% - 5px);
+    width: calc(100% - 5px);
+    margin-bottom: 5px !important;
+    --local-height: calc(100% - 5px);
 }
 
 /* === ДИНАМІЧНИЙ РОЗМІР ДЛЯ GPON КОНТЕЙНЕРА === */
@@ -2489,116 +2482,165 @@ body.dark .calculator-actions-block {
     /* ...інші старі стилі залишаються (border, background, transition)... */
 }
 
-/* === СТИЛЬ СПЛИВАЮЧОЇ ПАНЕЛІ ПОШУКУ === */
+/* === ІДЕАЛЬНИЙ ІНТЕГРОВАНИЙ СТИЛЬ ПОШУКУ === */
 .template-search-bar {
-    /* Позиціонування: висить у повітрі */
-    position: absolute;
-    top: 45px; /* Відступ від верху (висота шапки + трохи повітря) */
-    right: 10px; /* Притиснута до правого краю */
-    z-index: 20; /* Поверх тексту */
+    position: relative; 
+    width: 100%; 
+    z-index: 5; 
     
-    width: 300px; /* Фіксована ширина для зручності */
+    /* ГОЛОВНА ЗМІНА: Фон тепер прозорий (або колір картки), 
+       щоб зливатися з заголовком */
+    background-color: transparent; 
     
-    background-color: var(--input-bg-color);
-    border: 1px solid var(--primary-accent-color);
-    border-radius: 12px;
+    /* Ніяких рамок, щоб не різати очі */
+    border: none !important;
+    box-shadow: none !important;
     
-    /* Тінь, щоб відірвати від фону */
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    /* Анімація */
+    max-height: 0;
+    min-height: 0;
+    opacity: 0;
+    padding: 0; 
+    margin: 0;
+    overflow: hidden; 
     
-    padding: 5px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    align-items: center; 
+    gap: 6px; 
     
-    /* Анімація появи (виростає з правого верхнього кута) */
-    transform-origin: top right;
-    transform: scale(0.8) translateY(-10px);
-    opacity: 0;
-    pointer-events: none; /* Щоб не заважала клікати крізь прозору */
-    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); /* Ефект пружини */
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-sizing: border-box;
 }
 
+/* Стан "ВІДКРИТО" */
 .template-search-bar.active {
-    transform: scale(1) translateY(0);
+    /* Висота підлаштовується під контент */
+    max-height: 80px; 
+    min-height: 65px;
     opacity: 1;
-    pointer-events: auto;
+	margin-top: 3px;
 }
 
-/* Стрілочка зверху (трикутник), що вказує на кнопку */
-.template-search-bar::before {
-    content: '';
-    position: absolute;
-    top: -7px;
-    right: 31px; /* Підлаштовано під положення кнопки пошуку */
-    width: 12px;
-    height: 12px;
-    background-color: var(--input-bg-color);
-    border-top: 1px solid var(--primary-accent-color);
-    border-left: 1px solid var(--primary-accent-color);
-    transform: rotate(45deg);
-}
-
-/* Поля вводу в панелі */
+/* Обгортка полів вводу */
 .search-inputs-row {
     display: flex;
-    gap: 8px;
+    align-items: center;
+    gap: 4px;
+    width: 96%;
+    max-width: 340px; /* Компактна ширина */
+    justify-content: center;
 }
 
 .search-inputs-row input {
-    width: 50%;
-    padding: 5px 10px;
-    border-radius: 8px;
+    flex: 1; 
+    padding: 3px 8px;
+    height: 28px; /* Трохи вищі, щоб пасували до інпуту заголовка */
+    
+    /* Стиль такий самий, як у інпуту назви шаблону */
+    border-radius: 8px; /* Більш округлі */
     border: 1px solid var(--input-border-color);
-    background-color: var(--bg-color);
+    background-color: var(--input-bg-color); /* Білий фон, як у сусідів */
     color: var(--text-color);
     font-size: 13px;
-}
-.search-inputs-row input:focus {
-    border-color: var(--primary-accent-color);
+    min-width: 80px;
+    
+    /* Тінь як у основних полів */
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.03);
 }
 
-/* Кнопки в панелі */
+.search-inputs-row input:focus {
+    border-color: var(--primary-accent-color);
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.15);
+    outline: none;
+}
+
+/* Кнопка SWAP */
+.swap-inputs-btn {
+    flex: 0 0 auto;
+    width: 24px;
+    height: 24px;
+    border: none;
+    background: transparent;
+    color: var(--tab-inactive-text);
+    cursor: pointer;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    font-size: 12px;
+}
+.swap-inputs-btn:hover {
+    background-color: rgba(0,0,0,0.05);
+    color: var(--primary-accent-color);
+}
+
+/* Обгортка кнопок */
 .search-buttons-row {
     display: flex;
-    justify-content: space-between;
-    gap: 5px;
+    gap: 6px; 
+    width: 96%;
+    max-width: 340px;
 }
 
 .search-cmd-btn {
-    flex: 1; /* Кнопки розтягуються на всю ширину */
-    padding: 6px;
+    flex: 1; 
+    height: 24px;
+    padding: 0;
     border: none;
-    border-radius: 6px;
+    border-radius: 6px; 
     font-size: 12px;
-    font-weight: bold;
+    font-weight: 600; /* Жирніший текст */
     cursor: pointer;
     color: white;
-    transition: transform 0.1s;
+    transition: filter 0.2s, transform 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    /* Легка тінь, щоб кнопки виділялися на фоні */
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
-.search-cmd-btn:active { transform: scale(0.95); }
 
+.search-cmd-btn:hover { 
+    filter: brightness(0.92); 
+    transform: translateY(-1px);
+}
+.search-cmd-btn:active {
+    transform: translateY(0);
+}
+
+/* Кольори кнопок */
 .btn-find { background-color: var(--primary-accent-color); }
 .btn-replace { background-color: var(--secondary-accent-color); }
 .btn-replace-all { background-color: var(--success-color); }
 
-/* Темна тема */
+/* --- ТЕМНА ТЕМА --- */
 body.dark .template-search-bar {
-    background-color: #2b2b2b;
-    border-color: var(--secondary-accent-color);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    background-color: transparent; /* Прозорий і в темній */
 }
-body.dark .template-search-bar::before {
-    background-color: #2b2b2b;
-    border-color: var(--secondary-accent-color);
+body.dark .template-search-bar.active {
+    /* Жодних бордерів */
+    border: none !important;
+}
+body.dark .search-inputs-row input {
+    background-color: var(--input-bg-color); /* Темний фон інпутів */
+    border-color: var(--input-border-color);
+}
+body.dark .swap-inputs-btn {
+    color: #888;
+}
+body.dark .swap-inputs-btn:hover {
+    background-color: rgba(255,255,255,0.1);
+    color: var(--secondary-accent-color);
 }
 </style>
 </head>
 <body class="holiday-modee"> 
-<!-- === НОВИЙ БЛОК ВЕРСІЇ (Вставте сюди) === -->
 <div class="version-pill" title="Поточна версія">
     <img src="lupa.webp" alt="" class="version-emoji">
-    <span class="version-text">Версія 3.7.0</span>
+    <span class="version-text">Версія 3.7.2</span>
 </div>   
 <div id="snow-container"></div>	
     <div class="toggle-button-wrapper">
@@ -3162,7 +3204,6 @@ function generateLogins() {
 		// === ВСТАВ ЦЕЙ КОД СЮДИ ===
         const scrollCard = document.querySelector('.login-generator-container .content-card');
         if (scrollCard) scrollCard.scrollTop = 0;
-        // ==========================
     }
 
     function getCorrectDayWord(number) {
@@ -3937,12 +3978,11 @@ function initDraggableAndResizable(element) {
         }
     };
 
-    // === СПЛИВАЮЧА ПАНЕЛЬ ПОШУКУ ===
     const searchPanel = document.createElement('div');
     searchPanel.className = 'template-search-bar';
     
-    // Щоб клік всередині панелі не закривав її
-    searchPanel.onclick = (e) => e.stopPropagation();
+    // Запобігаємо, щоб кліки по інпутах не викликали перетягування картки
+    searchPanel.addEventListener('mousedown', (e) => e.stopPropagation());
 
     const savedFind = localStorage.getItem('lastSearchTerm') || '';
     const savedReplace = localStorage.getItem('lastReplaceTerm') || '';
@@ -3950,6 +3990,12 @@ function initDraggableAndResizable(element) {
     searchPanel.innerHTML = `
         <div class="search-inputs-row">
             <input type="text" class="input-find" placeholder="Знайти..." value="${savedFind}">
+            
+            <!-- КНОПКА ОБМІНУ -->
+            <button class="swap-inputs-btn" title="Поміняти місцями">
+                <i class="fas fa-exchange-alt"></i>
+            </button>
+            
             <input type="text" class="input-replace" placeholder="Замінити..." value="${savedReplace}">
         </div>
         <div class="search-buttons-row">
@@ -3961,9 +4007,21 @@ function initDraggableAndResizable(element) {
 
     const inputFind = searchPanel.querySelector('.input-find');
     const inputReplace = searchPanel.querySelector('.input-replace');
+    const btnSwap = searchPanel.querySelector('.swap-inputs-btn'); // Отримуємо кнопку
     const btnFind = searchPanel.querySelector('.btn-find');
     const btnReplace = searchPanel.querySelector('.btn-replace');
     const btnReplaceAll = searchPanel.querySelector('.btn-replace-all');
+
+    // === ЛОГІКА КНОПКИ ОБМІНУ ===
+    btnSwap.onclick = () => {
+        const temp = inputFind.value;
+        inputFind.value = inputReplace.value;
+        inputReplace.value = temp;
+        
+        // Зберігаємо нові значення в пам'ять
+        localStorage.setItem('lastSearchTerm', inputFind.value);
+        localStorage.setItem('lastReplaceTerm', inputReplace.value);
+    };
 
     inputFind.addEventListener('input', (e) => localStorage.setItem('lastSearchTerm', e.target.value));
     inputReplace.addEventListener('input', (e) => localStorage.setItem('lastReplaceTerm', e.target.value));
@@ -4152,8 +4210,11 @@ function initDraggableAndResizable(element) {
     resizeHandle.className = 'resize-handle';    
     
     fieldGroup.appendChild(headerDiv); 
-    // Панель пошуку додана в структуру, але винесена "над" потоком через absolute
+    
+    // Вставляємо панель пошуку ВІДРАЗУ після заголовка,
+    // перед обгорткою тексту. Це забезпечить правильне "витіснення".
     fieldGroup.appendChild(searchPanel); 
+    
     fieldGroup.appendChild(textareaWrapper);
     fieldGroup.appendChild(resizeHandle);
     
@@ -4516,13 +4577,6 @@ document.getElementById('set-start-now-btn').addEventListener('click', () => {
     document.getElementById('start-date').value = formatDate(now);
     document.getElementById('start-time').value = '00:00'; // Встановлюємо час на початок дня
     handleInputAndTimer(); // Оновлюємо розрахунок
-});
-
-document.getElementById('set-start-now-btn').addEventListener('click', () => {
-    const now = new Date();
-    document.getElementById('start-date').value = formatDate(now);
-    document.getElementById('start-time').value = '00:00'; 
-    handleInputAndTimer(); 
 });
 
 document.getElementById('set-end-time-now-btn').addEventListener('click', () => {
