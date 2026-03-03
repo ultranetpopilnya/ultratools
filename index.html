@@ -831,19 +831,21 @@ margin: 1px;
         .date-inputs-row {
             display: flex;
             justify-content: center;
-            gap: 25px;
+            gap: 24px;
             margin-bottom: 20px;
             width: 100%;
+			max-width: 700px;
+			margin: 0 auto 20px auto;
         }
 
         .date-calculator-container .date-input-group {
     display: flex;
     flex-direction: column;
     margin-bottom: 0px;
-    max-width: 180px;
     position: relative;
     flex-grow: 1; /* <-- ДОДАЙТЕ ЦЕЙ РЯДОК */
-	gap: 0px;
+	gap: 1px;
+	max-width: 180px;
 }
 
         .date-calculator-container .date-input-group label {
@@ -901,7 +903,7 @@ body.dark .date-calculator-container #result-section {
     border: 1px solid var(--input-border-color);
     border-radius: 12px; 
     
-    width: 450px;
+    width: 100%;
     margin-right: auto;
     margin-left: auto;
     overflow: hidden; 
@@ -2482,7 +2484,7 @@ body {
     border: 1px solid var(--input-border-color);
     
     /* 3. Чітка ширина */
-    width: 418px; 
+    width: 388px; 
     box-sizing: border-box; 
     
     box-shadow: 0 1px 3px rgba(0,0,0,0.05); 
@@ -2677,7 +2679,7 @@ body.dark .swap-inputs-btn:hover {
     display: flex;
     justify-content: center; /* Центруємо обидва блоки по горизонталі */
     align-items: flex-start; /* Вирівнюємо по верхньому краю (або center для середини) */
-    gap: 80px;               /* Відступ між калькуляторами */
+    gap: 24px;               /* Відступ між калькуляторами */
     flex-wrap: wrap;
     width: 100%;
 }
@@ -2736,14 +2738,14 @@ body.dark .win11-calc {
 }
 body.dark .calc-title { color: var(--text-color); }
 
-/* Кнопка історії */
-.history-toggle-btn {
+/* Кнопка історії (КАЛЬКУЛЯТОР - ВИПРАВЛЕНО КОНФЛІКТ) */
+.calc-head-history-btn {
     appearance: none;
     background: transparent;
     border: none;
     box-shadow: none;
-    width: 36px;  /* Збільшено */
-    height: 36px; /* Збільшено */
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
     display: flex;
     justify-content: center;
@@ -2755,17 +2757,17 @@ body.dark .calc-title { color: var(--text-color); }
     margin: 0;
 }
 
-.history-toggle-btn i {
-    font-size: 18px; /* Збільшено іконку */
+.calc-head-history-btn i {
+    font-size: 18px;
     pointer-events: none;
 }
 
-.history-toggle-btn:hover {
+.calc-head-history-btn:hover {
     background-color: rgba(0, 0, 0, 0.08);
     color: var(--primary-accent-color);
 }
-body.dark .history-toggle-btn { color: #aaa; }
-body.dark .history-toggle-btn:hover {
+body.dark .calc-head-history-btn { color: #aaa; }
+body.dark .calc-head-history-btn:hover {
     background-color: rgba(255, 255, 255, 0.15);
     color: var(--secondary-accent-color);
 }
@@ -2999,12 +3001,27 @@ body.dark .hist-item:hover {
     border-style: solid;
 }
 body.dark .hist-close-btn:hover { background-color: rgba(255,255,255,0.05); }
+
+/* 1. Дозволяємо самому контейнеру рости більше, ніж 630px */
+.container.date-calculator-container.active {
+    height: auto !important;       /* Скасовуємо фіксовану висоту JS */
+    min-height: 630px;             /* Мінімальний розмір, щоб не був малим */
+    display: flex !important;      /* Зберігаємо структуру */
+}
+
+/* 2. Картка всередині теж має рости */
+.container.date-calculator-container .content-card {
+    height: auto !important;       /* Висота по контенту */
+    min-height: 100%;              
+    display: flex;
+    flex-direction: column;
+}
 </style>
 </head>
 <body class="holiday-modee"> 
 <div class="version-pill" title="Поточна версія">
     <img src="lupa.webp" alt="" class="version-emoji">
-    <span class="version-text">Версія 3.8</span>
+    <span class="version-text">Версія 3.8.2</span>
 </div>   
 <div id="snow-container"></div>	
     <div class="toggle-button-wrapper">
@@ -3062,9 +3079,9 @@ body.dark .hist-close-btn:hover { background-color: rgba(255,255,255,0.05); }
             </div>
 
             <!-- === ПОЧАТОК ЗМІНЕНОГО БЛОКУ DATE CALCULATOR === -->
-<div class="container date-calculator-container" data-content="date-calculator" data-default-width="910px" data-default-height="630px">
+<div class="container date-calculator-container" data-content="date-calculator" data-default-width="840px">
     <div class="content-card">
-        <h2 style="margin-top: 0; text-align: center; width: 100%;">🗓️ Калькулятор та Обчислення</h2>
+        <h2 style="margin-top: 0; text-align: center; width: 100%;">🗓️ Комбінований калькулятор</h2>
         
         <!-- ГНУЧКА ОБГОРТКА ДЛЯ ДВОХ КОЛОНОК -->
         <div class="calc-flex-wrapper">
@@ -3098,10 +3115,10 @@ body.dark .hist-close-btn:hover { background-color: rgba(255,255,255,0.05); }
                         </div>
                         <div class="horizontal-divider"></div>
                         <div class="actions-floor">
-                            <button id="add-6-months-btn" class="calc-action-button quick-add-btn">+6 міс.</button>
-                            <button id="add-7-months-btn" class="calc-action-button quick-add-btn">+7 міс.</button>
-                            <button id="add-1-year-btn" class="calc-action-button quick-add-btn">+1 рік</button>
-                        </div>
+        <button id="add-6-months-btn" class="calc-action-button quick-add-btn" title="Додати 6 місяців до початкової дати">+6 міс.</button>
+        <button id="add-7-months-btn" class="calc-action-button quick-add-btn" title="Додати 7 місяців до початкової дати">+7 міс.</button>
+        <button id="add-1-year-btn" class="calc-action-button quick-add-btn" title="Додати 1 рік до початкової дати">+1 рік</button>
+    </div>
                     </div>
 
                     <div class="reset-toggle-container">
@@ -3127,12 +3144,12 @@ body.dark .hist-close-btn:hover { background-color: rgba(255,255,255,0.05); }
         
         <!-- Шапка: Назва зліва, Кнопка справа -->
         <div class="calc-header-row">
-            <span class="calc-title">Калькулятор</span>
+            <span class="calc-title">Calculator3000</span>
             <div class="calc-header-actions">
-                <button class="history-toggle-btn" onclick="calcToggleHistory()" title="Відкрити журнал обчислень">
-                    <i class="fas fa-history"></i>
-                </button>
-            </div>
+    <button class="calc-head-history-btn" onclick="calcToggleHistory()" title="Відкрити журнал обчислень">
+        <i class="fas fa-history"></i>
+    </button>
+</div>
         </div>
 
         <div class="calc-display-container">
@@ -5474,10 +5491,10 @@ function calcClearHistory() {
     renderCalcHistory();
 }
 
-// Підтримка клавіатури
 document.addEventListener('keydown', (e) => {
     const activeTab = document.querySelector('.container.date-calculator-container.active');
-    if (!activeTab) return;
+    // Якщо ми не на вкладці калькулятора АБО курсор стоїть у полі вводу (дата, час тощо) - ігноруємо
+    if (!activeTab || e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
 
     if (e.key >= 0 && e.key <= 9) calcAppend(e.key);
     if (e.key === '.' || e.key === ',') calcAppend('.');
