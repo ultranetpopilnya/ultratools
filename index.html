@@ -2671,12 +2671,340 @@ body.dark .swap-inputs-btn:hover {
     background-color: rgba(255,255,255,0.1);
     color: var(--secondary-accent-color);
 }
+
+/* === ІНТЕГРАЦІЯ КАЛЬКУЛЯТОРА === */
+.calc-flex-wrapper {
+    display: flex;
+    justify-content: center; /* Центруємо обидва блоки по горизонталі */
+    align-items: flex-start; /* Вирівнюємо по верхньому краю (або center для середини) */
+    gap: 80px;               /* Відступ між калькуляторами */
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.date-calc-column {
+    /* ЗАМІСТЬ flex: 1 (який розтягував блок), ставимо авто-ширину */
+    flex: 0 1 auto;          
+    
+    /* Фіксуємо ширину лівого блоку, щоб він був співмірний з правим */
+    width: 420px;            
+    max-width: 100%;
+    
+    display: flex;
+    flex-direction: column;
+    align-items: center;     /* Центруємо вміст лівої колонки */
+}
+
+/* Права колонка залишається без змін, але для певності: */
+.std-calc-column {
+    flex: 0 0 auto;
+    /* Якщо хочете вирівняти їх візуально по верху, можна додати відступ, 
+       бо у лівого блоку є написи над полями */
+    margin-top: 5px; 
+}
+
+/* Основний блок калькулятора (ЗБІЛЬШЕНО ШИРИНУ) */
+.win11-calc {
+    width: 320px; /* Було 280px -> Стало 320px (+~15%) */
+    background-color: #fcfcfc;
+    border: 1px solid var(--input-border-color);
+    border-radius: 12px; /* Трохи більше заокруглення */
+    padding: 10px;       /* Більше внутрішнього відступу */
+    display: flex;
+    flex-direction: column;
+}
+
+body.dark .win11-calc {
+    background-color: #2c2c2e;
+    border-color: var(--input-border-color);
+}
+
+/* Шапка калькулятора */
+.calc-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    height: 34px;
+    padding: 0 4px;
+}
+
+.calc-title {
+    font-weight: 600;
+    font-size: 17px; /* Збільшено шрифт */
+    color: var(--header-color);
+}
+body.dark .calc-title { color: var(--text-color); }
+
+/* Кнопка історії */
+.history-toggle-btn {
+    appearance: none;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    width: 36px;  /* Збільшено */
+    height: 36px; /* Збільшено */
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    color: #666;
+    transition: background-color 0.2s, color 0.2s;
+    padding: 0;
+    margin: 0;
+}
+
+.history-toggle-btn i {
+    font-size: 18px; /* Збільшено іконку */
+    pointer-events: none;
+}
+
+.history-toggle-btn:hover {
+    background-color: rgba(0, 0, 0, 0.08);
+    color: var(--primary-accent-color);
+}
+body.dark .history-toggle-btn { color: #aaa; }
+body.dark .history-toggle-btn:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: var(--secondary-accent-color);
+}
+
+/* === ЕКРАН (ЗБІЛЬШЕНО) === */
+.calc-display-container {
+    background-color: #f9f9f9;
+    border: 1px solid var(--input-border-color);
+    border-radius: 12px;
+    margin-bottom: 15px;
+    padding: 12px;
+    position: relative;
+    text-align: right;
+    height: 95px; /* Збільшено висоту (було 80px) */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.03);
+}
+
+body.dark .calc-display-container {
+    background-color: var(--input-bg-color);
+    border-color: var(--input-border-color);
+}
+
+#calc-prev-operation {
+    font-size: 14px; /* Збільшено */
+    color: #888;
+    height: 20px;
+    overflow: hidden;
+    margin-bottom: 4px;
+}
+
+#calc-current-result {
+    font-size: 34px; /* Збільшено шрифт (було 28px) */
+    font-weight: 600;
+    color: var(--text-color);
+    overflow: hidden;
+    white-space: nowrap;
+    line-height: 1.2;
+}
+
+/* Кнопка копіювання */
+.calc-copy-btn {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: transparent;
+    border: none;
+    color: #bbb;
+    cursor: pointer;
+    font-size: 16px; /* Збільшено */
+    padding: 5px;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+.calc-copy-btn:hover {
+    color: var(--primary-accent-color);
+    background-color: rgba(0,0,0,0.05);
+}
+
+/* === КНОПКИ (СІТКА) === */
+.calc-body-wrapper {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.calc-buttons-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px; /* Збільшено відстань між кнопками */
+    
+    /* --- ВИПРАВЛЕННЯ ОБРІЗАННЯ --- */
+    /* Додаємо відступ зверху і знизу всередині контейнера кнопок.
+       Тепер кнопка може "підстрибнути" вверх, і їй вистачить місця. */
+    padding: 5px 2px; 
+}
+
+.c-btn {
+    height: 46px; /* Збільшено висоту кнопок (було 42px) */
+    border: 1px solid transparent;
+    border-radius: 12px;
+    font-size: 20px; /* Збільшено шрифт цифр (було 18px) */
+    cursor: pointer;
+    background-color: #fff;
+    color: #333;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    transition: all 0.15s ease-out;
+    padding: 0;
+}
+
+/* Ефекти кнопок */
+.c-btn:hover {
+    background-color: #f4f4f4;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+    transform: translateY(-2px); /* Кнопка піднімається */
+    z-index: 2;
+}
+.c-btn:active {
+    transform: translateY(0) scale(0.97);
+    box-shadow: none;
+}
+
+/* Стилі типів кнопок */
+.c-btn.operator { background-color: #f8f9fa; color: var(--primary-accent-color); font-weight: bold; font-size: 22px; }
+.c-btn.func { background-color: #f8f9fa; color: #666; font-size: 16px; }
+.c-btn.action-clear { background-color: #fff5f5; color: #dc3545; font-weight: 600; }
+.c-btn.action-back { color: #dc3545; font-size: 18px; }
+.c-btn.equal { 
+    grid-column: span 4; 
+    background-color: var(--primary-accent-color); 
+    color: white; 
+    font-weight: 600;
+    margin-top: 2px;
+    font-size: 24px;
+}
+.c-btn.equal:hover { background-color: #0069d9; color: white; }
+
+/* === ТЕМНА ТЕМА ДЛЯ КНОПОК === */
+body.dark .c-btn {
+    background-color: #3a3b3c;
+    color: #e0e0e0;
+    border-color: rgba(255,255,255,0.05);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+body.dark .c-btn:hover { background-color: #454647; }
+
+body.dark .c-btn.operator { background-color: #323232; color: var(--secondary-accent-color); }
+body.dark .c-btn.func { background-color: #323232; color: #aaa; }
+body.dark .c-btn.action-clear { background-color: rgba(220, 53, 69, 0.15); color: #ff6b6b; }
+body.dark .c-btn.action-back { color: #ff6b6b; }
+body.dark .c-btn.equal { background-color: var(--secondary-accent-color); color: #222; }
+
+/* === ВИСУВНА ПАНЕЛЬ ІСТОРІЇ (ЗБІЛЬШЕНО) === */
+.calc-history-panel {
+    position: absolute;
+    bottom: -110%;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    
+    background-color: rgba(255, 255, 255, 0.98); 
+    
+    transition: bottom 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    z-index: 20;
+    
+    display: flex;
+    flex-direction: column;
+    padding: 12px; /* Більше відступів */
+    box-sizing: border-box;
+    border-radius: 12px;
+}
+
+.calc-history-panel.open {
+    bottom: 0;
+}
+
+body.dark .calc-history-panel {
+    background-color: #2c2c2e;
+}
+
+/* Шапка історії */
+.hist-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--input-border-color);
+}
+.hist-header span { font-weight: bold; font-size: 16px; color: var(--text-color); }
+
+.hist-clear-btn {
+    background: none; border: none; cursor: pointer; color: var(--tab-inactive-text);
+    padding: 6px; border-radius: 4px; transition: color 0.2s; font-size: 15px;
+}
+.hist-clear-btn:hover { color: var(--danger-color); background-color: rgba(220,53,69,0.1); }
+
+/* Список */
+.calc-history-list {
+    flex-grow: 1;
+    overflow-y: auto;
+    margin-bottom: 8px;
+    scrollbar-width: thin;
+    padding-right: 4px;
+}
+
+.hist-empty {
+    text-align: center; color: #999; margin-top: 50%; 
+    transform: translateY(-50%); font-style: italic; font-size: 14px;
+}
+
+/* Елемент списку */
+.hist-item {
+    padding: 10px 12px; /* Більші елементи */
+    border-radius: 12px;
+    margin-bottom: 6px;
+    cursor: pointer;
+    text-align: right;
+    transition: background-color 0.2s;
+    border-right: 4px solid transparent;
+}
+
+.hist-item:hover {
+    background-color: rgba(0,0,0,0.05);
+    border-right-color: var(--primary-accent-color);
+}
+body.dark .hist-item:hover {
+    background-color: rgba(255,255,255,0.08);
+    border-right-color: var(--secondary-accent-color);
+}
+
+.hist-op { font-size: 12px; color: #888; margin-bottom: 3px; }
+.hist-res { font-size: 18px; font-weight: 600; color: var(--text-color); }
+
+/* Кнопка "Приховати" */
+.hist-close-btn {
+    width: 100%;
+    padding: 10px;
+    background: transparent;
+    border: 1px dashed var(--input-border-color);
+    border-radius: 12px;
+    color: var(--text-color);
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.hist-close-btn:hover {
+    background-color: rgba(0,0,0,0.05);
+    border-style: solid;
+}
+body.dark .hist-close-btn:hover { background-color: rgba(255,255,255,0.05); }
 </style>
 </head>
 <body class="holiday-modee"> 
 <div class="version-pill" title="Поточна версія">
     <img src="lupa.webp" alt="" class="version-emoji">
-    <span class="version-text">Версія 3.7.4</span>
+    <span class="version-text">Версія 3.8</span>
 </div>   
 <div id="snow-container"></div>	
     <div class="toggle-button-wrapper">
@@ -2733,12 +3061,17 @@ body.dark .swap-inputs-btn:hover {
 				</div>
             </div>
 
-            <div class="container date-calculator-container" data-content="date-calculator" data-default-width="840px" data-default-height="616px">
-			<div class="content-card">
-                <h2 style="margin-top: 0; text-align: center;">🗓️ Калькулятор тривалості між датами</h2>
-
-               <div class="date-inputs-row">
-                    <!-- Поля вводу дати стали чистішими -->
+            <!-- === ПОЧАТОК ЗМІНЕНОГО БЛОКУ DATE CALCULATOR === -->
+<div class="container date-calculator-container" data-content="date-calculator" data-default-width="910px" data-default-height="630px">
+    <div class="content-card">
+        <h2 style="margin-top: 0; text-align: center; width: 100%;">🗓️ Калькулятор та Обчислення</h2>
+        
+        <!-- ГНУЧКА ОБГОРТКА ДЛЯ ДВОХ КОЛОНОК -->
+        <div class="calc-flex-wrapper">
+            
+            <!-- ЛІВА КОЛОНКА: КАЛЬКУЛЯТОР ДАТ (Ваш старий код) -->
+            <div class="date-calc-column">
+                <div class="date-inputs-row">
                     <div class="date-input-group">
                         <label for="start-date">🗓️ Початкова дата:</label>
                         <input type="date" id="start-date" name="start-date" onchange="handleInputAndTimer()" required>
@@ -2752,42 +3085,25 @@ body.dark .swap-inputs-btn:hover {
                     </div>
                 </div>
 
-                <!-- НОВА, ОБ'ЄДНАНА ПАНЕЛЬ КЕРУВАННЯ -->
                 <div class="calculator-panel">
-                    <!-- Рядок 1: Кнопки дій -->
-                    <!-- Знайдіть цей блок і замініть його вміст на наступний: -->
-<!-- === НОВА ДВОПОВЕРХОВА ПАНЕЛЬ === -->
-<div class="calculator-actions-block">
-    
-    <!-- ПОВЕРХ 1: Початкові налаштування -->
-    <div class="actions-floor">
-        <button id="set-start-now-btn" class="calc-action-button" title="Встановити початкову дату на сьогодні">
-            <i class="fas fa-calendar-check"></i>
-            <span>Поточна дата</span>
-        </button>
-        
-        <!-- Вертикальний роздільник між датою і часом (для краси) -->
-        <div class="action-divider"></div>
+                    <div class="calculator-actions-block">
+                        <div class="actions-floor">
+                            <button id="set-start-now-btn" class="calc-action-button" title="Встановити початкову дату на сьогодні">
+                                <i class="fas fa-calendar-check"></i> <span>Поточна дата</span>
+                            </button>
+                            <div class="action-divider"></div>
+                            <button id="set-end-time-now-btn" class="calc-action-button" title="Встановити кінцевий час на поточний">
+                                <i class="far fa-clock"></i> <span>Поточний час</span>
+                            </button>
+                        </div>
+                        <div class="horizontal-divider"></div>
+                        <div class="actions-floor">
+                            <button id="add-6-months-btn" class="calc-action-button quick-add-btn">+6 міс.</button>
+                            <button id="add-7-months-btn" class="calc-action-button quick-add-btn">+7 міс.</button>
+                            <button id="add-1-year-btn" class="calc-action-button quick-add-btn">+1 рік</button>
+                        </div>
+                    </div>
 
-        <button id="set-end-time-now-btn" class="calc-action-button" title="Встановити кінцевий час на поточний">
-    <i class="far fa-clock"></i>
-    <span>Поточний час</span>
-</button>
-    </div>
-
-    <!-- ГОРИЗОНТАЛЬНИЙ РОЗДІЛЬНИК ПОВЕРХІВ -->
-    <div class="horizontal-divider"></div>
-
-    <!-- ПОВЕРХ 2: Додавання терміну -->
-    <div class="actions-floor">
-        <button id="add-6-months-btn" class="calc-action-button quick-add-btn" title="Додати 6 місяців до початкової дати">+6 міс.</button>
-        <button id="add-7-months-btn" class="calc-action-button quick-add-btn" title="Додати 7 місяців до початкової дати">+7 міс.</button>
-        <button id="add-1-year-btn" class="calc-action-button quick-add-btn" title="Додати 1 рік до початкової дати">+1 рік</button>
-    </div>
-
-</div>
-
-                    <!-- Рядок 2: Перемикач автоскидання -->
                     <div class="reset-toggle-container">
                         <button id="auto-reset-button" title="Увімкнути/вимкнути автоскидання">
                             <svg class="progress-ring" width="40" height="40">
@@ -2796,19 +3112,95 @@ body.dark .swap-inputs-btn:hover {
                             </svg>
                             <i class="fas fa-sync-alt timer-icon"></i>
                         </button>
-                        <span class="reset-toggle-text">Автоматичне скидання дати та часу</span>
+                        <span class="reset-toggle-text">Авто-скидання дати та часу</span>
                     </div>
                 </div>
 
-                <!-- Єдиний, правильний блок результату -->
                 <div id="result-section">
-                    <h2>⏱️ Результат розрахунку</h2>
-                    <div id="result-display">
-                        Оберіть дві дати для розрахунку.
-                    </div>
-					</div>
+                    <h2>⏱️ Результат дати</h2>
+                    <div id="result-display">Оберіть дати...</div>
                 </div>
             </div>
+<!-- ПРАВА КОЛОНКА: ЗВИЧАЙНИЙ КАЛЬКУЛЯТОР (ВИПРАВЛЕНО) -->
+<div class="std-calc-column">
+    <div class="win11-calc">
+        
+        <!-- Шапка: Назва зліва, Кнопка справа -->
+        <div class="calc-header-row">
+            <span class="calc-title">Калькулятор</span>
+            <div class="calc-header-actions">
+                <button class="history-toggle-btn" onclick="calcToggleHistory()" title="Відкрити журнал обчислень">
+                    <i class="fas fa-history"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="calc-display-container">
+            <button class="calc-copy-btn" onclick="copyCalcResult()" title="Копіювати результат">
+                <i class="fas fa-copy"></i>
+            </button>
+            <div class="calc-display">
+                <div id="calc-prev-operation"></div>
+                <div id="calc-current-result">0</div>
+            </div>
+        </div>
+
+        <!-- Тіло калькулятора (Кнопки + Панель історії) -->
+        <div class="calc-body-wrapper">
+            
+            <div class="calc-buttons-grid">
+                <button class="c-btn func" onclick="calcPercent()">%</button>
+                <button class="c-btn func" onclick="calcSquare()">x²</button>
+                <button class="c-btn func" onclick="calcRoot()">√x</button>
+                <button class="c-btn action-clear" onclick="calcClear()">C</button>
+
+                <button class="c-btn digit" onclick="calcAppend('7')">7</button>
+                <button class="c-btn digit" onclick="calcAppend('8')">8</button>
+                <button class="c-btn digit" onclick="calcAppend('9')">9</button>
+                <button class="c-btn operator" onclick="calcAppendOperator('*')">×</button>
+
+                <button class="c-btn digit" onclick="calcAppend('4')">4</button>
+                <button class="c-btn digit" onclick="calcAppend('5')">5</button>
+                <button class="c-btn digit" onclick="calcAppend('6')">6</button>
+                <button class="c-btn operator" onclick="calcAppendOperator('-')">-</button>
+
+                <button class="c-btn digit" onclick="calcAppend('1')">1</button>
+                <button class="c-btn digit" onclick="calcAppend('2')">2</button>
+                <button class="c-btn digit" onclick="calcAppend('3')">3</button>
+                <button class="c-btn operator" onclick="calcAppendOperator('+')">+</button>
+
+                <button class="c-btn action-back" onclick="calcDelete()">⌫</button>
+                <button class="c-btn digit" onclick="calcAppend('0')">0</button>
+                <button class="c-btn digit" onclick="calcAppend('.')">,</button>
+                <button class="c-btn operator" onclick="calcAppendOperator('/')">÷</button>
+
+                <button class="c-btn equal" onclick="calcCalculate()">=</button>
+            </div>
+
+            <!-- ВИСУВНА ПАНЕЛЬ ІСТОРІЇ -->
+            <div id="calc-history-panel" class="calc-history-panel">
+                <div class="hist-header">
+                    <span>Журнал</span>
+                    <button class="hist-clear-btn" onclick="calcClearHistory()" title="Очистити журнал">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </div>
+                <div id="calc-history-list" class="calc-history-list">
+                    <div class="hist-empty">Історії немає</div>
+                </div>
+                <button class="hist-close-btn" onclick="calcToggleHistory()">
+                    <i class="fas fa-chevron-down"></i> Приховати
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+        </div> <!-- Кінець calc-flex-wrapper -->
+    </div>
+</div>
+<!-- === КІНЕЦЬ ЗМІНЕНОГО БЛОКУ === -->
             
             <div class="container gpon-commands-container" data-content="gpon-commands" data-default-width="63%" data-default-height="85%">
     <div class="content-card">
@@ -4912,6 +5304,190 @@ document.addEventListener('click', (event) => {
             panel.classList.remove('active');
         }
     });
+});
+
+/* === ОНОВЛЕНИЙ JS КАЛЬКУЛЯТОРА З ІСТОРІЄЮ === */
+
+let calcCurrent = '0';
+let calcPrev = '';
+let calcOp = null;
+let calcReset = false;
+let calcHistory = []; // Масив для зберігання історії
+
+function calcUpdateDisplay() {
+    const display = document.getElementById('calc-current-result');
+    const prevDisplay = document.getElementById('calc-prev-operation');
+    if(display) display.innerText = calcCurrent.toString().replace('.', ',');
+    if(prevDisplay) prevDisplay.innerText = (calcPrev + (calcOp ? ' ' + calcOp : '')).replace('.', ',');
+}
+
+function calcAppend(num) {
+    if (calcCurrent === '0' || calcReset) {
+        calcCurrent = num === '.' ? '0.' : num;
+        calcReset = false;
+    } else {
+        if (num === '.' && calcCurrent.includes('.')) return;
+        if (calcCurrent.length > 12) return; 
+        calcCurrent += num;
+    }
+    calcUpdateDisplay();
+}
+
+function calcAppendOperator(op) {
+    if (calcOp !== null) calcCalculate();
+    calcPrev = calcCurrent;
+    calcOp = op;
+    calcReset = true;
+    calcUpdateDisplay();
+}
+
+function calcCalculate() {
+    if (calcOp === null || calcReset) return;
+    const prev = parseFloat(calcPrev);
+    const current = parseFloat(calcCurrent);
+    let result;
+
+    if (isNaN(prev) || isNaN(current)) return;
+
+    switch (calcOp) {
+        case '+': result = prev + current; break;
+        case '-': result = prev - current; break;
+        case '*': result = prev * current; break;
+        case '/': 
+            if (current === 0) { alert("Ділення на 0!"); return; }
+            result = prev / current; 
+            break;
+        default: return;
+    }
+
+    const formattedResult = parseFloat(result.toFixed(8)).toString();
+    
+    // === ДОДАЄМО В ІСТОРІЮ ===
+    addToCalcHistory(`${calcPrev} ${calcOp} ${calcCurrent} =`, formattedResult);
+
+    calcCurrent = formattedResult;
+    calcOp = null;
+    calcPrev = '';
+    calcReset = true;
+    calcUpdateDisplay();
+}
+
+function calcSquare() {
+    const val = parseFloat(calcCurrent);
+    const res = Math.pow(val, 2);
+    // Додаємо в історію
+    addToCalcHistory(`sqr(${calcCurrent}) =`, res.toString());
+    
+    calcCurrent = res.toString();
+    calcReset = true;
+    calcUpdateDisplay();
+}
+
+function calcRoot() {
+    const val = parseFloat(calcCurrent);
+    if (val < 0) return;
+    const res = Math.sqrt(val);
+    // Додаємо в історію
+    addToCalcHistory(`√(${calcCurrent}) =`, res.toString());
+    
+    calcCurrent = res.toString();
+    calcReset = true;
+    calcUpdateDisplay();
+}
+
+function calcPercent() {
+    const current = parseFloat(calcCurrent);
+    const prev = parseFloat(calcPrev);
+    if (calcOp === '+' || calcOp === '-') {
+        calcCurrent = (prev * (current / 100)).toString();
+    } else {
+        calcCurrent = (current / 100).toString();
+    }
+    calcUpdateDisplay();
+}
+
+function calcClear() {
+    calcCurrent = '0';
+    calcPrev = '';
+    calcOp = null;
+    calcReset = false;
+    calcUpdateDisplay();
+}
+
+function calcDelete() {
+    if (calcCurrent.length === 1) {
+        calcCurrent = '0';
+    } else {
+        calcCurrent = calcCurrent.slice(0, -1);
+    }
+    calcUpdateDisplay();
+}
+
+function copyCalcResult() {
+    navigator.clipboard.writeText(calcCurrent.replace('.', ','));
+    const btn = document.querySelector('.calc-copy-btn');
+    const originalHtml = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-check" style="color:var(--success-color)"></i>';
+    setTimeout(() => btn.innerHTML = originalHtml, 1200);
+}
+
+/* === ЛОГІКА ІСТОРІЇ === */
+
+function calcToggleHistory() {
+    const panel = document.getElementById('calc-history-panel');
+    panel.classList.toggle('open');
+}
+
+function addToCalcHistory(expression, result) {
+    // Додаємо на початок
+    calcHistory.unshift({ op: expression, res: result });
+    // Обмежуємо 20 записами
+    if (calcHistory.length > 20) calcHistory.pop();
+    renderCalcHistory();
+}
+
+function renderCalcHistory() {
+    const list = document.getElementById('calc-history-list');
+    if (calcHistory.length === 0) {
+        list.innerHTML = '<div class="hist-empty">Історії немає</div>';
+        return;
+    }
+    
+    list.innerHTML = calcHistory.map((item, index) => `
+        <div class="hist-item" onclick="useCalcHistoryItem(${index})">
+            <div class="hist-op">${item.op.replace('.', ',')}</div>
+            <div class="hist-res">${item.res.replace('.', ',')}</div>
+        </div>
+    `).join('');
+}
+
+function useCalcHistoryItem(index) {
+    const item = calcHistory[index];
+    calcCurrent = item.res;
+    calcReset = true; // Щоб при введенні наступної цифри почалось нове число
+    calcUpdateDisplay();
+    calcToggleHistory(); // Закриваємо панель
+}
+
+function calcClearHistory() {
+    calcHistory = [];
+    renderCalcHistory();
+}
+
+// Підтримка клавіатури
+document.addEventListener('keydown', (e) => {
+    const activeTab = document.querySelector('.container.date-calculator-container.active');
+    if (!activeTab) return;
+
+    if (e.key >= 0 && e.key <= 9) calcAppend(e.key);
+    if (e.key === '.' || e.key === ',') calcAppend('.');
+    if (e.key === '+') calcAppendOperator('+');
+    if (e.key === '-') calcAppendOperator('-');
+    if (e.key === '*') calcAppendOperator('*');
+    if (e.key === '/') calcAppendOperator('/');
+    if (e.key === 'Enter') { e.preventDefault(); calcCalculate(); }
+    if (e.key === 'Backspace') calcDelete();
+    if (e.key === 'Escape') calcClear();
 });
     </script>
 </body>
