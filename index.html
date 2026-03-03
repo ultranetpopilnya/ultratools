@@ -1487,27 +1487,58 @@ body.dark .template-field-group textarea {
             flex-shrink: 0; 
         }
         
-        .template-actions button {
-            padding: 5px 10px;
-            border: none;
-            border-radius: 9999px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            width: 26px;
-            height: 26px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 1rem;
-        }
-        
-        .copy-template-btn {
+        /* === ОНОВЛЕНІ СТИЛІ КНОПОК ШАБЛОНУ (ЖИВА РЕАКЦІЯ) === */
+
+.template-actions button {
+    padding: 0;
+    border: none;
+    border-radius: 50%; /* Робимо ідеальне коло */
+    cursor: pointer;
+    
+    /* Розміри */
+    width: 28px;
+    height: 28px;
+    
+    /* Центрування іконки */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.9rem;
+    
+    /* Тінь для об'єму */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    
+    /* Анімація: пружиниста та плавна */
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    z-index: 1;
+}
+
+/* Ефект при наведенні: кнопка підлітає і збільшується */
+.template-actions button:hover {
+    transform: translateY(-1px) scale(1.1);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    filter: brightness(1.1); /* Трохи яскравіше */
+    z-index: 2;
+}
+
+/* Ефект при натисканні (Клік): кнопка вдавлюється */
+.template-actions button:active {
+    transform: scale(0.90) translateY(0); /* Стискається */
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1); /* Тінь зникає */
+    filter: brightness(0.9); /* Трохи темніше */
+    transition: transform 0.05s ease-out; /* Миттєва реакція */
+}
+
+/* --- КОЛЬОРИ КНОПОК --- */
+
+/* Копіювати (Зелена) */
+.copy-template-btn {
     background-color: var(--success-color);
     color: white;
 }
-.copy-template-btn:hover {
-    filter: brightness(0.85); /* Універсальний ефект затемнення для всіх тем */
-}
+
+/* Вставити логін (Блакитна) */
 .paste-login-btn {
     background-color: var(--button-paste-bg);
     color: white;
@@ -1515,22 +1546,27 @@ body.dark .template-field-group textarea {
 .paste-login-btn:hover {
     background-color: var(--button-paste-hover-bg);
 }
+
+/* Очистити (Синя) */
 .clear-template-btn {
     background-color: var(--primary-accent-color);
     color: white;
 }
-.clear-template-btn:hover {
-    filter: brightness(0.85);
-}
 body.dark .clear-template-btn {
     background-color: var(--secondary-accent-color);
+    color: white;
 }
+
+/* Видалити (Червона) */
 .delete-template-btn {
     background-color: var(--danger-color);
     color: white;
 }
-.delete-template-btn:hover {
-    filter: brightness(0.85);
+
+/* Кнопка Пошуку (Фіолетова) - Стиль додається JS, але це додасть реакцію */
+.template-actions button[title="Пошук і заміна тексту"] {
+    background-color: #6f42c1 !important; /* Переконаємось що колір правильний */
+    color: white;
 }
 	
 /* === СТИЛІ ДЛЯ ФУНКЦІЇ ПОЗНАЧОК В ШАБЛОНАХ (ВИПРАВЛЕНО) === */
@@ -2640,7 +2676,7 @@ body.dark .swap-inputs-btn:hover {
 <body class="holiday-modee"> 
 <div class="version-pill" title="Поточна версія">
     <img src="lupa.webp" alt="" class="version-emoji">
-    <span class="version-text">Версія 3.7.2</span>
+    <span class="version-text">Версія 3.7.3</span>
 </div>   
 <div id="snow-container"></div>	
     <div class="toggle-button-wrapper">
