@@ -552,10 +552,6 @@ body.dark ::-webkit-scrollbar-thumb:hover {
     background-color: var(--secondary-accent-color);
 }
 
-        body.dark {
-            scrollbar-color: #5d6063 #242526; 
-        }
-
         body.dark .page-title .ultranet-color {
             color: #811e71 !important; 
         }
@@ -1140,7 +1136,6 @@ body.dark .tab-button.active {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border: 0px solid #1b1c1d; 
             box-shadow: 
                 inset 0px 0px 1px rgba(0,0,0,0.3); 
             overflow: hidden; 
@@ -3017,7 +3012,7 @@ body.dark .hist-close-btn:hover { background-color: rgba(255,255,255,0.05); }
 <body class="holiday-modee"> 
 <div class="version-pill" title="Поточна версія">
     <img src="calc.webp" alt="" class="version-emoji">
-    <span class="version-text">Версія 3.8.2</span>
+    <span class="version-text">Версія 3.8.4</span>
 </div>   
 <div id="snow-container"></div>	
     <div class="toggle-button-wrapper">
@@ -5012,11 +5007,11 @@ document.getElementById('clear-history-btn').addEventListener('click', () => {
     setupTabs();
 	loadHistory();
 	
-	// Обробник для кнопки "Сьогоднішня дата'"
+// Обробник для кнопки "Поточна дата"
 document.getElementById('set-start-now-btn').addEventListener('click', () => {
     const now = new Date();
     document.getElementById('start-date').value = formatDate(now);
-    document.getElementById('start-time').value = '00:00'; // Встановлюємо час на початок дня
+    // РЯДОК З ЧАСОМ ВИДАЛЕНО: Тепер час залишається таким, яким був (введеним вручну або 00:00)
     handleInputAndTimer(); // Оновлюємо розрахунок
 });
 
@@ -5033,13 +5028,15 @@ document.getElementById('set-end-time-now-btn').addEventListener('click', () => 
 // Універсальна функція для додавання періоду до кінцевої дати
 const addDurationToEndDate = (monthsToAdd, yearsToAdd) => {
     const startDateValue = document.getElementById('start-date').value;
-    const startTimeValue = document.getElementById('start-time').value;
+    
     if (!startDateValue) {
         showNotification("Спочатку встановіть початкову дату!");
         return;
     }
 
-    const newEndDate = new Date(`${startDateValue}T${startTimeValue}`);
+    // Безпечно розбиваємо дату, щоб уникнути зсувів через часові пояси
+    const [year, month, day] = startDateValue.split('-');
+    const newEndDate = new Date(year, month - 1, day);
     
     // Розраховуємо нову дату
     if (monthsToAdd > 0) {
@@ -5049,9 +5046,10 @@ const addDurationToEndDate = (monthsToAdd, yearsToAdd) => {
         newEndDate.setFullYear(newEndDate.getFullYear() + yearsToAdd);
     }
 
-    // Встановлюємо нові значення
+    // Встановлюємо ТІЛЬКИ нову дату. 
+    // Ми більше не чіпаємо 'start-time' і не перезаписуємо 'end-time'.
     document.getElementById('end-date').value = formatDate(newEndDate);
-    document.getElementById('end-time').value = startTimeValue; // Зберігаємо той самий час
+    
     handleInputAndTimer(); // Оновлюємо розрахунок
 };
 
@@ -5319,116 +5317,175 @@ document.addEventListener('click', (event) => {
     });
 });
 
-/* === ОНОВЛЕНИЙ JS КАЛЬКУЛЯТОРА З ІСТОРІЄЮ === */
+/* === ПРАВИЛЬНИЙ JS КАЛЬКУЛЯТОРА (З ПРІОРИТЕТАМИ ТА ІСТОРІЄЮ) === */
 
 let calcCurrent = '0';
-let calcPrev = '';
-let calcOp = null;
+let calcExpression = []; // Масив для збереження всього математичного виразу
 let calcReset = false;
-let calcHistory = []; // Масив для зберігання історії
+let calcHistory = []; 
 
 function calcUpdateDisplay() {
     const display = document.getElementById('calc-current-result');
     const prevDisplay = document.getElementById('calc-prev-operation');
-    if(display) display.innerText = calcCurrent.toString().replace('.', ',');
-    if(prevDisplay) prevDisplay.innerText = (calcPrev + (calcOp ? ' ' + calcOp : '')).replace('.', ',');
+    
+    if(display) {
+        display.innerText = calcCurrent.toString().replace('.', ',');
+    }
+    
+    if(prevDisplay) {
+        // Форматуємо масив у красивий рядок для верхнього екрану
+        let exprStr = calcExpression.join(' ').replace(/\*/g, '×').replace(/\//g, '÷');
+        prevDisplay.innerText = exprStr;
+    }
 }
 
 function calcAppend(num) {
-    if (calcCurrent === '0' || calcReset) {
+    if (calcCurrent === '0' || calcCurrent === 'Помилка' || calcReset) {
         calcCurrent = num === '.' ? '0.' : num;
         calcReset = false;
     } else {
         if (num === '.' && calcCurrent.includes('.')) return;
-        if (calcCurrent.length > 12) return; 
+        if (calcCurrent.length > 15) return; // Захист від надто довгих чисел
         calcCurrent += num;
     }
     calcUpdateDisplay();
 }
 
 function calcAppendOperator(op) {
-    if (calcOp !== null) calcCalculate();
-    calcPrev = calcCurrent;
-    calcOp = op;
+    if (calcCurrent === 'Помилка') return;
+
+    // Якщо ми тільки що натиснули "=", починаємо новий вираз з результату
+    if (calcExpression.length === 0 && calcReset) {
+        calcExpression.push(calcCurrent);
+    } 
+    // Якщо ми вводимо нове число, додаємо його до виразу
+    else if (!calcReset) {
+        calcExpression.push(calcCurrent);
+    } 
+    // Якщо користувач натиснув один знак, а потім інший (напр. "+" потім "*") - замінюємо знак
+    else {
+        if (calcExpression.length > 0 && isNaN(calcExpression[calcExpression.length - 1])) {
+            calcExpression[calcExpression.length - 1] = op;
+            calcUpdateDisplay();
+            return;
+        }
+    }
+    
+    calcExpression.push(op);
     calcReset = true;
     calcUpdateDisplay();
 }
 
 function calcCalculate() {
-    if (calcOp === null || calcReset) return;
-    const prev = parseFloat(calcPrev);
-    const current = parseFloat(calcCurrent);
-    let result;
+    if (calcExpression.length === 0 || calcCurrent === 'Помилка') return;
+    
+    // Якщо користувач вводив число, додаємо його до виразу
+    if (!calcReset) {
+        calcExpression.push(calcCurrent);
+    } 
 
-    if (isNaN(prev) || isNaN(current)) return;
-
-    switch (calcOp) {
-        case '+': result = prev + current; break;
-        case '-': result = prev - current; break;
-        case '*': result = prev * current; break;
-        case '/': 
-            if (current === 0) { alert("Ділення на 0!"); return; }
-            result = prev / current; 
-            break;
-        default: return;
+    // === ОСЬ ТУТ ВИПРАВЛЕННЯ ===
+    // Перевіряємо, чи останній елемент у виразі є знаком (+, -, *, /)
+    // isNaN повертає true для знаків
+    if (calcExpression.length > 0 && isNaN(calcExpression[calcExpression.length - 1])) {
+        // Видаляємо останній елемент (знак) з масиву
+        calcExpression.pop();
     }
 
-    const formattedResult = parseFloat(result.toFixed(8)).toString();
-    
-    // === ДОДАЄМО В ІСТОРІЮ ===
-    addToCalcHistory(`${calcPrev} ${calcOp} ${calcCurrent} =`, formattedResult);
+    // Якщо після видалення знаку вираз став порожнім (наприклад, просто натиснули "=")
+    if (calcExpression.length === 0) return;
 
-    calcCurrent = formattedResult;
-    calcOp = null;
-    calcPrev = '';
+    // Збираємо рядок виразу для обчислення
+    let evalStr = calcExpression.join(' ');
+    
+    try {
+        // Безпечне обчислення рядка з математичним пріоритетом
+        let result = Function('"use strict";return (' + evalStr + ')')();
+        
+        if (!isFinite(result) || isNaN(result)) {
+            calcCurrent = "Помилка";
+        } else {
+            // Відкидаємо "сміття" при обчисленні дробів (наприклад 0.1+0.2 = 0.3)
+            result = parseFloat(result.toFixed(10));
+            
+            // Запис в історію
+            let historyExpr = evalStr.replace(/\*/g, '×').replace(/\//g, '÷') + ' =';
+            addToCalcHistory(historyExpr, result.toString());
+            
+            calcCurrent = result.toString();
+        }
+    } catch (e) {
+        calcCurrent = "Помилка";
+    }
+
+    // Очищаємо вираз для наступних операцій
+    calcExpression = [];
     calcReset = true;
     calcUpdateDisplay();
 }
 
 function calcSquare() {
+    if (calcCurrent === 'Помилка') return;
     const val = parseFloat(calcCurrent);
-    const res = Math.pow(val, 2);
-    // Додаємо в історію
-    addToCalcHistory(`sqr(${calcCurrent}) =`, res.toString());
+    const res = parseFloat(Math.pow(val, 2).toFixed(10));
     
+    addToCalcHistory(`sqr(${val}) =`, res.toString());
     calcCurrent = res.toString();
     calcReset = true;
     calcUpdateDisplay();
 }
 
 function calcRoot() {
+    if (calcCurrent === 'Помилка') return;
     const val = parseFloat(calcCurrent);
-    if (val < 0) return;
-    const res = Math.sqrt(val);
-    // Додаємо в історію
-    addToCalcHistory(`√(${calcCurrent}) =`, res.toString());
-    
-    calcCurrent = res.toString();
+    if (val < 0) {
+        calcCurrent = "Помилка";
+    } else {
+        const res = parseFloat(Math.sqrt(val).toFixed(10));
+        addToCalcHistory(`√(${val}) =`, res.toString());
+        calcCurrent = res.toString();
+    }
     calcReset = true;
     calcUpdateDisplay();
 }
 
 function calcPercent() {
+    if (calcCurrent === 'Помилка') return;
     const current = parseFloat(calcCurrent);
-    const prev = parseFloat(calcPrev);
-    if (calcOp === '+' || calcOp === '-') {
-        calcCurrent = (prev * (current / 100)).toString();
+    let res;
+
+    // Розумний відсоток. Якщо є "100 +", то 10% = 10 (10% від 100)
+    if (calcExpression.length >= 2) {
+        let lastOp = calcExpression[calcExpression.length - 1];
+        if (lastOp === '+' || lastOp === '-') {
+            let prevVal = parseFloat(calcExpression[calcExpression.length - 2]);
+            res = prevVal * (current / 100);
+        } else {
+            res = current / 100;
+        }
     } else {
-        calcCurrent = (current / 100).toString();
+        res = current / 100;
     }
+    
+    res = parseFloat(res.toFixed(10));
+    calcCurrent = res.toString();
+    calcReset = true;
     calcUpdateDisplay();
 }
 
 function calcClear() {
     calcCurrent = '0';
-    calcPrev = '';
-    calcOp = null;
+    calcExpression = [];
     calcReset = false;
     calcUpdateDisplay();
 }
 
 function calcDelete() {
-    if (calcCurrent.length === 1) {
+    if (calcCurrent === 'Помилка' || calcReset) {
+        calcClear();
+        return;
+    }
+    if (calcCurrent.length === 1 || (calcCurrent.length === 2 && calcCurrent.startsWith('-'))) {
         calcCurrent = '0';
     } else {
         calcCurrent = calcCurrent.slice(0, -1);
@@ -5437,6 +5494,7 @@ function calcDelete() {
 }
 
 function copyCalcResult() {
+    if (calcCurrent === 'Помилка') return;
     navigator.clipboard.writeText(calcCurrent.replace('.', ','));
     const btn = document.querySelector('.calc-copy-btn');
     const originalHtml = btn.innerHTML;
@@ -5445,17 +5503,14 @@ function copyCalcResult() {
 }
 
 /* === ЛОГІКА ІСТОРІЇ === */
-
 function calcToggleHistory() {
     const panel = document.getElementById('calc-history-panel');
     panel.classList.toggle('open');
 }
 
 function addToCalcHistory(expression, result) {
-    // Додаємо на початок
     calcHistory.unshift({ op: expression, res: result });
-    // Обмежуємо 20 записами
-    if (calcHistory.length > 20) calcHistory.pop();
+    if (calcHistory.length > 20) calcHistory.pop(); // Обмежуємо 20 записами
     renderCalcHistory();
 }
 
@@ -5477,7 +5532,8 @@ function renderCalcHistory() {
 function useCalcHistoryItem(index) {
     const item = calcHistory[index];
     calcCurrent = item.res;
-    calcReset = true; // Щоб при введенні наступної цифри почалось нове число
+    calcExpression = []; // Очищаємо поточний вираз
+    calcReset = true; 
     calcUpdateDisplay();
     calcToggleHistory(); // Закриваємо панель
 }
@@ -5487,21 +5543,21 @@ function calcClearHistory() {
     renderCalcHistory();
 }
 
+// Управління калькулятором з клавіатури
 document.addEventListener('keydown', (e) => {
     const activeTab = document.querySelector('.container.date-calculator-container.active');
-    // Якщо ми не на вкладці калькулятора АБО курсор стоїть у полі вводу (дата, час тощо) - ігноруємо
     if (!activeTab || e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
 
-    if (e.key >= 0 && e.key <= 9) calcAppend(e.key);
+    if (e.key >= '0' && e.key <= '9') calcAppend(e.key);
     if (e.key === '.' || e.key === ',') calcAppend('.');
     if (e.key === '+') calcAppendOperator('+');
     if (e.key === '-') calcAppendOperator('-');
     if (e.key === '*') calcAppendOperator('*');
     if (e.key === '/') calcAppendOperator('/');
-    if (e.key === 'Enter') { e.preventDefault(); calcCalculate(); }
+    if (e.key === 'Enter' || e.key === '=') { e.preventDefault(); calcCalculate(); }
     if (e.key === 'Backspace') calcDelete();
     if (e.key === 'Escape') calcClear();
 });
-    </script>
+</script>
 </body>
 </html>
