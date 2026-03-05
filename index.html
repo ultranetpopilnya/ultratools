@@ -186,7 +186,10 @@ body.dark .progress-ring-fg {
 /* Клас, що запускає анімацію */
 #auto-reset-button.timer-running .progress-ring-fg {
     stroke-dashoffset: 0;
-    transition: stroke-dashoffset 20s linear; /* Плавна анімація за 20 секунд */
+    
+    /* БУЛО: transition: stroke-dashoffset 20s linear; */
+    /* СТАЛО (7 секунд): */
+    transition: stroke-dashoffset 7s linear; 
 }
 
 #auto-reset-button.timer-running .timer-icon {
@@ -3008,33 +3011,78 @@ body.dark .hist-close-btn:hover { background-color: rgba(255,255,255,0.05); }
     flex-direction: column;
 }
 
-/* 1. Жорстко вимикаємо скрол для всіх вкладок, які не є активними. 
-   Це гарантує, що під час анімації зникнення скролбар не з'явиться. */
-.container:not(.active) {
-    overflow: hidden !important;
-}
-.container:not(.active) .content-card {
-    overflow: hidden !important;
-}
-
-/* 2. Ховаємо "хвости", які можуть вилізти за межі екрану під час 
-   анімації масштабування scale() у головної обгортки */
-.tab-content-wrapper {
-    overflow: hidden !important; 
+/* === КНОПКИ ПРОКРУТКИ ДЛЯ ШАБЛОНІВ === */
+.scroll-nav-buttons {
+    position: absolute;
+    bottom: 30px;
+    right: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 2000; /* Поверх шаблонів */
+    pointer-events: none; /* Щоб область навколо кнопок пропускала кліки */
 }
 
-/* 3. Щоб скролбар нової вкладки з'являвся ПЛАВНО разом з контентом, 
-   а не "вистрибував" раніше часу */
-.container.active .content-card {
-    /* Додаємо мікро-затримку для появи скролбара (тільки для Webkit браузерів) */
-    transition: overflow 0.1s ease-in-out 0.2s;
+.scroll-nav-btn {
+    pointer-events: auto; /* Самі кнопки клікабельні */
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    border: 1px solid var(--input-border-color);
+    
+    /* Напівпрозорий фон (ефект матового скла) */
+    background-color: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(4px);
+    
+    color: var(--text-color);
+    font-size: 1.2rem;
+    cursor: pointer;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    transition: all 0.3s ease;
+    opacity: 0; /* Приховано за замовчуванням (JS покаже) */
+    transform: translateY(10px);
+    visibility: hidden;
+    
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* Стан, коли кнопка видима */
+.scroll-nav-btn.visible {
+    opacity: 0.7; /* Напівпрозорість у спокої */
+    transform: translateY(0);
+    visibility: visible;
+}
+
+/* При наведенні стають чіткими */
+.scroll-nav-btn.visible:hover {
+    opacity: 1;
+    background-color: var(--input-bg-color);
+    border-color: var(--primary-accent-color);
+    color: var(--primary-accent-color);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+    transform: scale(1.1);
+}
+
+/* Темна тема */
+body.dark .scroll-nav-btn {
+    background-color: rgba(40, 40, 40, 0.6);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+body.dark .scroll-nav-btn.visible:hover {
+    background-color: var(--template-bg-color);
+    border-color: var(--secondary-accent-color);
+    color: var(--secondary-accent-color);
 }
 </style>
 </head>
 <body class="holiday-modee"> 
 <div class="version-pill" title="Поточна версія">
     <img src="calc.webp" alt="" class="version-emoji">
-    <span class="version-text">Версія 3.8.5</span>
+    <span class="version-text">Версія 3.8.6</span>
 </div>   
 <div id="snow-container"></div>	
     <div class="toggle-button-wrapper">
@@ -3092,7 +3140,7 @@ body.dark .hist-close-btn:hover { background-color: rgba(255,255,255,0.05); }
             </div>
 
             <!-- === ПОЧАТОК ЗМІНЕНОГО БЛОКУ DATE CALCULATOR === -->
-<div class="container date-calculator-container" data-content="date-calculator" data-default-width="840px">
+<div class="container date-calculator-container" data-content="date-calculator" data-default-width="840px" data-default-height="auto">
     <div class="content-card">
         <h2 style="margin-top: 0; text-align: center; width: 100%;">🗓️ Комбінований калькулятор</h2>
         
@@ -3232,7 +3280,7 @@ body.dark .hist-close-btn:hover { background-color: rgba(255,255,255,0.05); }
 </div>
 <!-- === КІНЕЦЬ ЗМІНЕНОГО БЛОКУ === -->
             
-            <div class="container gpon-commands-container" data-content="gpon-commands" data-default-width="63%" data-default-height="85%">
+            <div class="container gpon-commands-container" data-content="gpon-commands" data-default-width="63%" data-default-height="100%">
     <div class="content-card">
     <h2 style="margin-top: 0; text-align: center;">💻 Команди GPON/EPON/BDCOM</h2>
 	<div id="controls-and-clarification" style="display: flex; align-items: flex-start; gap: 10px; margin-bottom: 5px; flex-wrap: wrap;">
@@ -3278,7 +3326,14 @@ body.dark .hist-close-btn:hover { background-color: rgba(255,255,255,0.05); }
                 <div id="templates-grid-wrapper">
                     </div>
             </div>
-            
+    <div class="scroll-nav-buttons">
+        <button id="scroll-up-btn" class="scroll-nav-btn" title="Прокрутити вгору">
+            <i class="fas fa-chevron-up"></i>
+        </button>
+        <button id="scroll-down-btn" class="scroll-nav-btn" title="Прокрутити вниз">
+            <i class="fas fa-chevron-down"></i>
+        </button>
+    </div>        
         </div> 
     </div>
 </div>	
@@ -5049,6 +5104,64 @@ document.getElementById('clear-history-btn').addEventListener('click', () => {
     loadTheme();
     setupTabs();
 	loadHistory();
+	
+	// === ЛОГІКА КНОПОК ПРОКРУТКИ ===
+    const scrollUpBtn = document.getElementById('scroll-up-btn');
+    const scrollDownBtn = document.getElementById('scroll-down-btn');
+    // Знаходимо елемент, який реально скролиться (content-card всередині text-templates)
+    const templateScrollContainer = document.querySelector('.container[data-content="text-templates"] .content-card');
+
+    if (scrollUpBtn && scrollDownBtn && templateScrollContainer) {
+        
+        // Функція перевірки видимості кнопок
+        const checkScrollButtons = () => {
+            const scrollTop = templateScrollContainer.scrollTop;
+            const scrollHeight = templateScrollContainer.scrollHeight;
+            const clientHeight = templateScrollContainer.clientHeight;
+
+            // Логіка для кнопки "Вгору": показуємо, якщо прокрутили більше 100px
+            if (scrollTop > 100) {
+                scrollUpBtn.classList.add('visible');
+            } else {
+                scrollUpBtn.classList.remove('visible');
+            }
+
+            // Логіка для кнопки "Вниз": показуємо, якщо до низу більше 100px
+            // scrollHeight - scrollTop - clientHeight = відстань до низу
+            if (scrollHeight - scrollTop - clientHeight > 100) {
+                scrollDownBtn.classList.add('visible');
+            } else {
+                scrollDownBtn.classList.remove('visible');
+            }
+        };
+
+        // Слухаємо подію скролу (використовуємо debounce/throttle якщо є, або просто так)
+        templateScrollContainer.addEventListener('scroll', checkScrollButtons);
+        
+        // Також перевіряємо при зміні розміру вікна або додаванні шаблонів
+        window.addEventListener('resize', checkScrollButtons);
+        // Запускаємо перевірку періодично (на випадок зміни контенту JS-ом)
+        setInterval(checkScrollButtons, 1000);
+
+        // Клік "Вгору"
+        scrollUpBtn.addEventListener('click', () => {
+            templateScrollContainer.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // Клік "Вниз"
+        scrollDownBtn.addEventListener('click', () => {
+            templateScrollContainer.scrollTo({
+                top: templateScrollContainer.scrollHeight,
+                behavior: 'smooth'
+            });
+        });
+        
+        // Первинна перевірка
+        checkScrollButtons();
+    }
 	
 // Обробник для кнопки "Поточна дата"
 document.getElementById('set-start-now-btn').addEventListener('click', () => {
