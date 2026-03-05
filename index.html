@@ -186,10 +186,7 @@ body.dark .progress-ring-fg {
 /* Клас, що запускає анімацію */
 #auto-reset-button.timer-running .progress-ring-fg {
     stroke-dashoffset: 0;
-    
-    /* БУЛО: transition: stroke-dashoffset 20s linear; */
-    /* СТАЛО (7 секунд): */
-    transition: stroke-dashoffset 7s linear; 
+    transition: stroke-dashoffset 20s linear; /* Плавна анімація за 20 секунд */
 }
 
 #auto-reset-button.timer-running .timer-icon {
@@ -3140,7 +3137,7 @@ body.dark .scroll-nav-btn.visible:hover {
             </div>
 
             <!-- === ПОЧАТОК ЗМІНЕНОГО БЛОКУ DATE CALCULATOR === -->
-<div class="container date-calculator-container" data-content="date-calculator" data-default-width="840px" data-default-height="auto">
+<div class="container date-calculator-container" data-content="date-calculator" data-default-width="840px">
     <div class="content-card">
         <h2 style="margin-top: 0; text-align: center; width: 100%;">🗓️ Комбінований калькулятор</h2>
         
@@ -3280,7 +3277,7 @@ body.dark .scroll-nav-btn.visible:hover {
 </div>
 <!-- === КІНЕЦЬ ЗМІНЕНОГО БЛОКУ === -->
             
-            <div class="container gpon-commands-container" data-content="gpon-commands" data-default-width="63%" data-default-height="100%">
+            <div class="container gpon-commands-container" data-content="gpon-commands" data-default-width="63%" data-default-height="85%">
     <div class="content-card">
     <h2 style="margin-top: 0; text-align: center;">💻 Команди GPON/EPON/BDCOM</h2>
 	<div id="controls-and-clarification" style="display: flex; align-items: flex-start; gap: 10px; margin-bottom: 5px; flex-wrap: wrap;">
@@ -3326,14 +3323,14 @@ body.dark .scroll-nav-btn.visible:hover {
                 <div id="templates-grid-wrapper">
                     </div>
             </div>
-    <div class="scroll-nav-buttons">
+             <div class="scroll-nav-buttons">
         <button id="scroll-up-btn" class="scroll-nav-btn" title="Прокрутити вгору">
             <i class="fas fa-chevron-up"></i>
         </button>
         <button id="scroll-down-btn" class="scroll-nav-btn" title="Прокрутити вниз">
             <i class="fas fa-chevron-down"></i>
         </button>
-    </div>        
+    </div>   
         </div> 
     </div>
 </div>	
@@ -5105,64 +5102,6 @@ document.getElementById('clear-history-btn').addEventListener('click', () => {
     setupTabs();
 	loadHistory();
 	
-	// === ЛОГІКА КНОПОК ПРОКРУТКИ ===
-    const scrollUpBtn = document.getElementById('scroll-up-btn');
-    const scrollDownBtn = document.getElementById('scroll-down-btn');
-    // Знаходимо елемент, який реально скролиться (content-card всередині text-templates)
-    const templateScrollContainer = document.querySelector('.container[data-content="text-templates"] .content-card');
-
-    if (scrollUpBtn && scrollDownBtn && templateScrollContainer) {
-        
-        // Функція перевірки видимості кнопок
-        const checkScrollButtons = () => {
-            const scrollTop = templateScrollContainer.scrollTop;
-            const scrollHeight = templateScrollContainer.scrollHeight;
-            const clientHeight = templateScrollContainer.clientHeight;
-
-            // Логіка для кнопки "Вгору": показуємо, якщо прокрутили більше 100px
-            if (scrollTop > 100) {
-                scrollUpBtn.classList.add('visible');
-            } else {
-                scrollUpBtn.classList.remove('visible');
-            }
-
-            // Логіка для кнопки "Вниз": показуємо, якщо до низу більше 100px
-            // scrollHeight - scrollTop - clientHeight = відстань до низу
-            if (scrollHeight - scrollTop - clientHeight > 100) {
-                scrollDownBtn.classList.add('visible');
-            } else {
-                scrollDownBtn.classList.remove('visible');
-            }
-        };
-
-        // Слухаємо подію скролу (використовуємо debounce/throttle якщо є, або просто так)
-        templateScrollContainer.addEventListener('scroll', checkScrollButtons);
-        
-        // Також перевіряємо при зміні розміру вікна або додаванні шаблонів
-        window.addEventListener('resize', checkScrollButtons);
-        // Запускаємо перевірку періодично (на випадок зміни контенту JS-ом)
-        setInterval(checkScrollButtons, 1000);
-
-        // Клік "Вгору"
-        scrollUpBtn.addEventListener('click', () => {
-            templateScrollContainer.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
-        });
-
-        // Клік "Вниз"
-        scrollDownBtn.addEventListener('click', () => {
-            templateScrollContainer.scrollTo({
-                top: templateScrollContainer.scrollHeight,
-                behavior: 'smooth'
-            });
-        });
-        
-        // Первинна перевірка
-        checkScrollButtons();
-    }
-	
 // Обробник для кнопки "Поточна дата"
 document.getElementById('set-start-now-btn').addEventListener('click', () => {
     const now = new Date();
@@ -5359,6 +5298,64 @@ document.querySelectorAll('.container[data-content]').forEach(container => {
 
     // ВАЖЛИВО: Цей рядок запускає сніг!
     createSnowflakes();
+	
+	// === ЛОГІКА КНОПОК ПРОКРУТКИ ===
+    const scrollUpBtn = document.getElementById('scroll-up-btn');
+    const scrollDownBtn = document.getElementById('scroll-down-btn');
+    // Знаходимо елемент, який реально скролиться (content-card всередині text-templates)
+    const templateScrollContainer = document.querySelector('.container[data-content="text-templates"] .content-card');
+
+    if (scrollUpBtn && scrollDownBtn && templateScrollContainer) {
+        
+        // Функція перевірки видимості кнопок
+        const checkScrollButtons = () => {
+            const scrollTop = templateScrollContainer.scrollTop;
+            const scrollHeight = templateScrollContainer.scrollHeight;
+            const clientHeight = templateScrollContainer.clientHeight;
+
+            // Логіка для кнопки "Вгору": показуємо, якщо прокрутили більше 100px
+            if (scrollTop > 100) {
+                scrollUpBtn.classList.add('visible');
+            } else {
+                scrollUpBtn.classList.remove('visible');
+            }
+
+            // Логіка для кнопки "Вниз": показуємо, якщо до низу більше 100px
+            // scrollHeight - scrollTop - clientHeight = відстань до низу
+            if (scrollHeight - scrollTop - clientHeight > 100) {
+                scrollDownBtn.classList.add('visible');
+            } else {
+                scrollDownBtn.classList.remove('visible');
+            }
+        };
+
+        // Слухаємо подію скролу (використовуємо debounce/throttle якщо є, або просто так)
+        templateScrollContainer.addEventListener('scroll', checkScrollButtons);
+        
+        // Також перевіряємо при зміні розміру вікна або додаванні шаблонів
+        window.addEventListener('resize', checkScrollButtons);
+        // Запускаємо перевірку періодично (на випадок зміни контенту JS-ом)
+        setInterval(checkScrollButtons, 1000);
+
+        // Клік "Вгору"
+        scrollUpBtn.addEventListener('click', () => {
+            templateScrollContainer.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // Клік "Вниз"
+        scrollDownBtn.addEventListener('click', () => {
+            templateScrollContainer.scrollTo({
+                top: templateScrollContainer.scrollHeight,
+                behavior: 'smooth'
+            });
+        });
+        
+        // Первинна перевірка
+        checkScrollButtons();
+    }
 });
 
 function packTemplates() {
