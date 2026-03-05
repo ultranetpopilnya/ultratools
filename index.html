@@ -4678,11 +4678,12 @@ function initDraggableAndResizable(element) {
     textareaWrapper.appendChild(gutter);
     textareaWrapper.appendChild(highlightingContainer);
 
-    headerDiv.appendChild(nameInput);
+headerDiv.appendChild(nameInput);
     actionsDiv.appendChild(copyButton);
     actionsDiv.appendChild(pasteLoginButton);
-    actionsDiv.appendChild(clearButton);
+    // === ПЕРЕНЕСЛИ КНОПКУ ПОШУКУ СЮДИ (Одразу після вставки логіну) ===
     actionsDiv.appendChild(searchToggleButton);
+    actionsDiv.appendChild(clearButton);
     actionsDiv.appendChild(deleteButton);
     headerDiv.appendChild(actionsDiv);
     
