@@ -3007,12 +3007,34 @@ body.dark .hist-close-btn:hover { background-color: rgba(255,255,255,0.05); }
     display: flex;
     flex-direction: column;
 }
+
+/* 1. Жорстко вимикаємо скрол для всіх вкладок, які не є активними. 
+   Це гарантує, що під час анімації зникнення скролбар не з'явиться. */
+.container:not(.active) {
+    overflow: hidden !important;
+}
+.container:not(.active) .content-card {
+    overflow: hidden !important;
+}
+
+/* 2. Ховаємо "хвости", які можуть вилізти за межі екрану під час 
+   анімації масштабування scale() у головної обгортки */
+.tab-content-wrapper {
+    overflow: hidden !important; 
+}
+
+/* 3. Щоб скролбар нової вкладки з'являвся ПЛАВНО разом з контентом, 
+   а не "вистрибував" раніше часу */
+.container.active .content-card {
+    /* Додаємо мікро-затримку для появи скролбара (тільки для Webkit браузерів) */
+    transition: overflow 0.1s ease-in-out 0.2s;
+}
 </style>
 </head>
 <body class="holiday-modee"> 
 <div class="version-pill" title="Поточна версія">
     <img src="calc.webp" alt="" class="version-emoji">
-    <span class="version-text">Версія 3.8.4</span>
+    <span class="version-text">Версія 3.8.5</span>
 </div>   
 <div id="snow-container"></div>	
     <div class="toggle-button-wrapper">
@@ -4002,6 +4024,21 @@ function areDatesInDefaultState() {
                     // Копіювання НЕ відбувається
                     const isExpanded = commandDiv.classList.toggle('expanded');
                     subListDiv.classList.toggle('open', isExpanded);
+
+                    // --- ДОДАНО: РОЗУМНИЙ СКРОЛ ---
+                    if (isExpanded) {
+                        // Коли відкриваємо: чекаємо 250мс (поки йде CSS анімація розкриття)
+                        // і плавно підтягуємо НИЗ списку, щоб було видно всі команди
+                        setTimeout(() => {
+                            subListDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                        }, 250);
+                    } else {
+                        // Коли закриваємо: фокус повертається на головну команду,
+                        // щоб екран не залишався "висіти" на порожньому місці
+                        setTimeout(() => {
+                            commandDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                        }, 250);
+                    }
                 });
 
             } else {
@@ -4372,7 +4409,7 @@ function initDraggableAndResizable(element) {
         }
     };
 
-   // === КНОПКА ПОШУКУ (ОНОВЛЕНА) ===
+   // === КНОПКА ПОШУКУ (НЕЗАЛЕЖНА) ===
     const searchToggleButton = document.createElement('button');
     searchToggleButton.innerHTML = '<i class="fas fa-search"></i>';
     searchToggleButton.title = 'Пошук і заміна тексту';
@@ -4380,25 +4417,24 @@ function initDraggableAndResizable(element) {
     searchToggleButton.style.color = 'white';
     
     searchToggleButton.onclick = (e) => {
-        e.stopPropagation(); // Зупиняємо подію, щоб глобальний клік не спрацював одразу
+        e.stopPropagation(); 
         
         const panel = fieldGroup.querySelector('.template-search-bar');
         const isActive = panel.classList.contains('active');
 
-        // 1. Закриваємо панелі В ІНШИХ шаблонах (щоб не було відкрито декілька одночасно)
-        document.querySelectorAll('.template-search-bar.active').forEach(p => {
-            if (p !== panel) p.classList.remove('active');
-        });
-
-        // 2. Перемикаємо стан поточної
+        // Просто перемикаємо стан поточної панелі (БЕЗ впливу на інші шаблони)
         if (isActive) {
             panel.classList.remove('active');
         } else {
             panel.classList.add('active');
+            // Автоматично ставимо курсор у поле "Знайти" через мить після відкриття
             setTimeout(() => {
                 const input = panel.querySelector('.input-find');
                 if (input) input.focus();
             }, 50);
+            
+            // Оновлюємо сітку Тетрісу, бо шаблон став трохи вищим
+            setTimeout(() => packTemplates(), 260); 
         }
     };
 
@@ -4462,9 +4498,17 @@ function initDraggableAndResizable(element) {
     inputFind.addEventListener('input', (e) => localStorage.setItem('lastSearchTerm', e.target.value));
     inputReplace.addEventListener('input', (e) => localStorage.setItem('lastReplaceTerm', e.target.value));
     
-    // Закриття панелі на клавішу Escape
-    searchPanel.addEventListener('keydown', (e) => {
-        if(e.key === 'Escape') searchPanel.classList.remove('active');
+    // Закриття панелі на клавішу Escape (тепер працює для всього блоку шаблону)
+    fieldGroup.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            const isActive = searchPanel.classList.contains('active');
+            if (isActive) {
+                searchPanel.classList.remove('active');
+                // Після закриття пошуку повертаємо курсор назад у текст, щоб можна було відразу друкувати
+                const textarea = fieldGroup.querySelector('textarea');
+                if (textarea) textarea.focus(); 
+            }
+        }
     });
 
     const performFind = () => {
@@ -4926,11 +4970,9 @@ function toggleHistory() {
     const btn = document.getElementById('history-toggle-btn');
     const isOpen = wrapper.classList.toggle('open');
     btn.classList.toggle('active', isOpen);
-    if (isOpen) {
-        setTimeout(() => {
-            wrapper.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }, 100);
-    }
+    
+    // Ми ПОВНІСТЮ видалили блок із setTimeout та scrollIntoView.
+    // Тепер історія просто плавно відкриється вниз без ривків екрану!
 }
 
 function loadHistory() {
@@ -5299,24 +5341,6 @@ window.addEventListener('load', () => {
     }
 });
 
-document.addEventListener('click', (event) => {
-    // Знаходимо всі активні панелі пошуку
-    const activePanels = document.querySelectorAll('.template-search-bar.active');
-
-    activePanels.forEach(panel => {
-        // Знаходимо шаблон, якому належить ця панель
-        const parentTemplate = panel.closest('.template-field-group');
-
-        // Перевіряємо, чи клік був ВСЕРЕДИНІ цього шаблону
-        const isClickInsideTemplate = parentTemplate.contains(event.target);
-
-        // Якщо клікнули НЕ в цей шаблон — закриваємо панель
-        if (!isClickInsideTemplate) {
-            panel.classList.remove('active');
-        }
-    });
-});
-
 /* === ПРАВИЛЬНИЙ JS КАЛЬКУЛЯТОРА (З ПРІОРИТЕТАМИ ТА ІСТОРІЄЮ) === */
 
 let calcCurrent = '0';
@@ -5561,5 +5585,3 @@ document.addEventListener('keydown', (e) => {
 </script>
 </body>
 </html>
-
-
