@@ -2996,16 +2996,17 @@ body.dark .hist-close-btn:hover { background-color: rgba(255,255,255,0.05); }
 /* 1. Дозволяємо самому контейнеру рости більше, ніж 630px */
 .container.date-calculator-container.active {
     height: auto !important;       /* Скасовуємо фіксовану висоту JS */
-    min-height: 630px;             /* Мінімальний розмір, щоб не був малим */
     display: flex !important;      /* Зберігаємо структуру */
 }
 
 /* 2. Картка всередині теж має рости */
 .container.date-calculator-container .content-card {
-    height: auto !important;       /* Висота по контенту */
-    min-height: 100%;              
-    display: flex;
+    height: auto !important;       
+    min-height: 100% !important;              
+    flex-grow: 1 !important;       /* ГОЛОВНЕ: змушує білий фон розтягнутися на всі 900px */
+    display: flex !important;
     flex-direction: column;
+	padding-bottom: 30px !important; 
 }
 
 /* === КНОПКИ ПРОКРУТКИ ДЛЯ ШАБЛОНІВ === */
@@ -5696,4 +5697,3 @@ document.addEventListener('keydown', (e) => {
 </script>
 </body>
 </html>
-
