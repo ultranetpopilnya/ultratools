@@ -2293,6 +2293,21 @@ body {
 /* =========================================================
    ФІНАЛЬНІ СТИЛІ: ДИНАМІЧНА ВИСОТА (GPON + ГЕНЕРАТОР)
    ========================================================= */
+/* 1. КОНТЕЙНЕР: Розміри зафіксовані завжди (навіть без .active) */
+.container.gpon-commands-container {
+    /* Висота "авто" (по контенту), але не більше екрана */
+    height: auto !important; 
+    max-height: calc(100% - 5px) !important; 
+    min-height: 0 !important;
+    
+    display: flex !important;
+    flex-direction: column;
+    justify-content: flex-start !important;
+    padding-bottom: 0 !important;
+    
+    /* Забороняємо скрол на самому контейнері, щоб не було подвійних смуг */
+    overflow: hidden !important; 
+} 
 
 /* 1. Налаштування контейнерів: стискаються і розширюються, але не більше екрану */
 .container.gpon-commands-container.active,
@@ -2313,12 +2328,17 @@ body {
     height: auto !important;
     max-height: 100% !important;
     
-    display: block !important;               /* Важливо для центрування */
+    display: block !important;
     
-    overflow-y: auto !important;             /* Скрол з'являється тільки тут */
+    /* ЗАМОВЧУВАННЯ: Скрол прихований (прибирає миготіння смуги при закритті) */
+    overflow: hidden !important; 
+    
+    scrollbar-gutter: stable;
+}
+
+.container.gpon-commands-container.active .content-card {
+    overflow-y: auto !important;
     overflow-x: hidden;
-    
-	scrollbar-gutter: stable;
 }
 
 /* 3. Оновлений стиль для поля вводу (Велике і по центру) */
@@ -2993,20 +3013,33 @@ body.dark .hist-item:hover {
 }
 body.dark .hist-close-btn:hover { background-color: rgba(255,255,255,0.05); }
 
-/* 1. Дозволяємо самому контейнеру рости більше, ніж 630px */
-.container.date-calculator-container.active {
-    height: auto !important;       /* Скасовуємо фіксовану висоту JS */
-    display: flex !important;      /* Зберігаємо структуру */
+/* 1. КОНТЕЙНЕР: Забороняємо "схлопування" висоти при закритті */
+/* Прибираємо .active з селектора, щоб висота лишалась auto під час анімації зникнення */
+.container.date-calculator-container {
+    height: auto !important;       
+    display: flex !important;
+    /* Гарантуємо, що він не стане меншим за контент під час фейду */
+    min-height: 612px !important; 
 }
 
-/* 2. Картка всередині теж має рости */
+/* 2. КАРТКА (ВМІСТ): Базові налаштування */
 .container.date-calculator-container .content-card {
     height: auto !important;       
-    min-height: 100% !important;              
-    flex-grow: 1 !important;       /* ГОЛОВНЕ: змушує білий фон розтягнутися на всі 900px */
+    min-height: 612px !important;              
+    flex-grow: 1 !important;
     display: flex !important;
     flex-direction: column;
-	padding-bottom: 30px !important; 
+    padding-bottom: 30px !important;
+    
+    /* --- ВИПРАВЛЕННЯ: Ховаємо скрол МИТТЄВО, коли вкладка закривається --- */
+    /* Це прибирає блимання скролу під час анімації opacity */
+    overflow: hidden !important; 
+}
+
+/* 3. СКРОЛ: З'являється ТІЛЬКИ коли вкладка активна і ви її бачите */
+.container.date-calculator-container.active .content-card {
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
 }
 
 /* === КНОПКИ ПРОКРУТКИ ДЛЯ ШАБЛОНІВ === */
@@ -3080,7 +3113,7 @@ body.dark .scroll-nav-btn.visible:hover {
 <body class="holiday-modee"> 
 <div class="version-pill" title="Поточна версія">
     <img src="calc.webp" alt="" class="version-emoji">
-    <span class="version-text">Версія 3.8.6</span>
+    <span class="version-text">Версія 3.8.7</span>
 </div>   
 <div id="snow-container"></div>	
     <div class="toggle-button-wrapper">
