@@ -90,13 +90,52 @@
 }
 
 /* Шапка картки (номер версії) */
+/* === ОНОВЛЕННЯ ДЛЯ ШАПКИ (НАЗВА + ВЕРСІЯ) === */
+
 .version-header {
     display: flex;
-    justify-content: space-between;
-    align-items: baseline;
+    justify-content: space-between; /* Розносить текст по краях: Назва зліва, Версія справа */
+    align-items: center;
+    
     border-bottom: 1px solid var(--input-border-color);
-    padding-bottom: 5px;
-    margin-bottom: 8px;
+    padding-bottom: 8px;
+    margin-bottom: 10px;
+}
+
+/* Стиль для нового напису "Історія змін" */
+.version-title {
+    font-weight: 700;
+    font-size: 13px;
+    text-transform: uppercase; /* Робить літери ВЕЛИКИМИ для стилю */
+    letter-spacing: 0.5px;
+    color: var(--text-color); /* Темний у світлій темі */
+}
+
+/* Стиль для номера версії (справа) */
+.version-number {
+    font-weight: 700;
+    font-family: 'Fira Code', monospace;
+    font-size: 14px;
+    
+    /* Робимо фон для версії, щоб виділялася (світла тема - синій бейдж) */
+    background-color: rgba(0, 123, 255, 0.1);
+    color: var(--primary-accent-color);
+    padding: 2px 8px;
+    border-radius: 6px;
+}
+
+/* === ТЕМНА ТЕМА === */
+
+/* Напис "Історія змін" стає світлим */
+body.dark .version-title {
+    color: #b0b0b0; 
+}
+
+/* Номер версії стає оранжевим бейджем */
+body.dark .version-number {
+    background-color: rgba(230, 162, 46, 0.15); /* Напівпрозорий оранжевий фон */
+    color: var(--secondary-accent-color);       /* Яскравий оранжевий текст */
+    box-shadow: 0 0 10px rgba(230, 162, 46, 0.1); /* Легке світіння */
 }
 .version-number { font-weight: 700; font-family: 'Fira Code', monospace; color: var(--text-color); font-size: 14px; }
 .version-date { font-size: 11px; color: var(--tab-inactive-text); }
@@ -3240,11 +3279,15 @@ body.dark .scroll-nav-btn.visible:hover {
     <!-- Прихований контейнер, що виїжджає при наведенні -->
     <div class="version-content">
         <div class="version-header">
-            <!-- Сюди JS вставить номер версії -->
-            <span id="ver-number" class="version-number">Завантаження...</span>
-            <!-- Сюди JS вставить дату -->
-            <span id="ver-date" class="version-date"></span>
-        </div>
+    <!-- Додали статичний напис -->
+    <span class="version-title">Історія змін </span>
+    
+    <!-- Номер версії, який підставляє JS -->
+    <span id="ver-number" class="version-number">...</span>
+    
+    <!-- Дату ми прибрали, тому цей span можна видалити або залишити пустим -->
+    <span id="ver-date" class="version-date"></span>
+</div>
         
         <!-- Сюди JS вставить список змін (li) -->
         <ul id="ver-list" class="version-log"></ul>
