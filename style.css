@@ -1146,8 +1146,8 @@ body.dark .tabs {
     /* Робимо фон майже прозорим, щоб видно було тільки контур */
     background-color: transparent !important;
     
-    /* Малюємо пунктирну рамку */
-    border: 1px dashed var(--input-border-color) !important;
+    outline: 1px dashed var(--input-border-color) !important;
+    outline-offset: -1px; /* Щоб рамка була всередині */
     
     /* Зберігаємо форму пігулки, щоб не ставало квадратом чи кругом */
     border-radius: 9999px !important;
@@ -3195,7 +3195,7 @@ body.dark .scroll-nav-btn.visible:hover {
     
     font-weight: 800;      
     font-family: 'Fira Code', monospace; 
-    color: var(--header-color);          
+    color: var(--primary-accent-color);          
     font-size: 14px;
     
     /* --- ВИПРАВЛЕННЯ --- */
@@ -3221,4 +3221,3 @@ body.dark .scroll-nav-btn.visible:hover {
     display: block;
     margin-top: -2px;       /* Підтягуємо ближче до основного пункту */
 }
-
