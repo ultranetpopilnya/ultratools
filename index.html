@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+	<meta charset="UTF-8">
+    <title>Набір інструментів для Ультранет та ISP Energy</title>
+    <link rel="icon" href="tools.png" type="image/png">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="holiday-modee"> 
+<div class="version-pill">
+    <!-- Іконка, яка завжди видима -->
+    <img src="emojis/calc.webp" alt="" class="version-emoji">
+    
+    <!-- Прихований контейнер, що виїжджає при наведенні -->
+    <div class="version-content">
+        <div class="version-header">
+    <!-- Додали статичний напис -->
+    <span class="version-title">Історія змін</span>&nbsp;
+    
+    <!-- Номер версії, який підставляє JS -->
+    <span id="ver-number" class="version-number">...</span>
+</div>
+        
+        <!-- Сюди JS вставить список змін (li) -->
+        <ul id="ver-list" class="version-log"></ul>
+    </div>
+</div>
+<div id="snow-container"></div>	
+    <div class="toggle-button-wrapper">
+        <input type="checkbox" class="checkbox" id="dark-mode-checkbox">
+        <label for="dark-mode-checkbox" class="checkbox-label">
+            <i class="fas fa-moon"></i> 
+            <i class="fas fa-sun"></i>
+            <span class="ball"></span>
+        </label>
+    </div>
+	
+    <h1 class="page-title">Ультимативний набір інструментів
+        <br>
+        <span class="ultranet-color" style="color: #811e71;">Ультранет</span> та
+        <span class="isp-e-color-i" style="color: #ffcf00;">I</span><span class="isp-e-color-s" style="color: #00c100;">S</span><span class="isp-e-color-p" style="color: #00d4ff;">P</span> Energy
+    </h1>
+    
+    <div class="main-content-wrapper"> 
+        <div class="tabs"> 
+            <div class="tab-button active" data-tab="login-generator"><i class="fas fa-key"></i>Генератор логінів</div>
+            <div class="tab-button" data-tab="date-calculator"><i class="fas fa-calendar-alt"></i>Калькулятор</div>
+            <div class="tab-button" data-tab="gpon-commands"><i class="fas fa-terminal"></i>Команди</div>
+            <div class="tab-button" data-tab="text-templates"><i class="fas fa-file-alt"></i>Шаблони</div>
+        </div>
+
+        <div class="tab-content-wrapper"> 
+
+            <div class="container login-generator-container active" data-content="login-generator" data-default-width="840px">
+			<div class="content-card">
+                <h2 style="margin-top: 0; text-align: center;">🔐 Генератор логінів</h2>
+                <p style="text-align: center;">Введіть повністю одне або декілька ПІБ, кожне — з нового рядка.<br>Також можливий трансліт ФОП, ТОВ, ПП, АТ, КБ, ГО, КП.</p>
+                <textarea id="fullNameInput" rows="1" placeholder="Прізвище, Ім'я, та по Батькові"></textarea>
+                <div id="results-container"></div>
+				<div class="history-section">
+    <!-- Верхня панель: Кнопка відкриття + Кнопка очистки -->
+    <div class="history-header-row">
+        <button id="history-toggle-btn" class="history-toggle-btn" onclick="toggleHistory()">
+            <span class="history-title">
+                <i class="fas fa-chevron-right" id="history-arrow"></i> 
+                🕒 Історія логінів (<span id="history-count">0</span>)
+            </span>
+        </button>
+        
+        <button id="clear-history-btn" class="clear-history-header-btn" title="Очистити всю історію">
+            <i class="fas fa-trash-alt"></i>
+        </button>
+    </div>
+    
+    <!-- Список (спочатку прихований) -->
+    <div id="history-content-wrapper" class="history-content-wrapper">
+        <div id="history-list"></div>
+    </div>
+</div>
+				</div>
+            </div>
+
+            <!-- === ПОЧАТОК ЗМІНЕНОГО БЛОКУ DATE CALCULATOR === -->
+<div class="container date-calculator-container" data-content="date-calculator" data-default-width="840px">
+    <div class="content-card">
+        <h2 style="margin-top: 0; text-align: center; width: 100%;">🗓️ Комбінований калькулятор</h2>
+        
+        <!-- ГНУЧКА ОБГОРТКА ДЛЯ ДВОХ КОЛОНОК -->
+        <div class="calc-flex-wrapper">
+            
+            <!-- ЛІВА КОЛОНКА: КАЛЬКУЛЯТОР ДАТ (Ваш старий код) -->
+            <div class="date-calc-column">
+                <div class="date-inputs-row">
+                    <div class="date-input-group">
+                        <label for="start-date">🗓️ Початкова дата:</label>
+                        <input type="date" id="start-date" name="start-date" onchange="handleInputAndTimer()" required>
+                        <input type="time" id="start-time" name="start-time" onchange="handleInputAndTimer()" value="00:00" required>
+                    </div>
+
+                    <div class="date-input-group">
+                        <label for="end-date">➡️ Кінцева дата:</label>
+                        <input type="date" id="end-date" name="end-date" onchange="handleInputAndTimer()" required>
+                        <input type="time" id="end-time" name="end-time" onchange="handleInputAndTimer()" value="00:00" required>
+                    </div>
+                </div>
+
+                <div class="calculator-panel">
+                    <div class="calculator-actions-block">
+                        <div class="actions-floor">
+                            <button id="set-start-now-btn" class="calc-action-button" title="Встановити початкову дату на сьогодні">
+                                <i class="fas fa-calendar-check"></i> <span>Поточна дата</span>
+                            </button>
+                            <div class="action-divider"></div>
+                            <button id="set-end-time-now-btn" class="calc-action-button" title="Встановити кінцевий час на поточний">
+                                <i class="far fa-clock"></i> <span>Поточний час</span>
+                            </button>
+                        </div>
+                        <div class="horizontal-divider"></div>
+                        <div class="actions-floor">
+        <button id="add-6-months-btn" class="calc-action-button quick-add-btn" title="Додати 6 місяців до початкової дати">+6 міс.</button>
+        <button id="add-7-months-btn" class="calc-action-button quick-add-btn" title="Додати 7 місяців до початкової дати">+7 міс.</button>
+        <button id="add-1-year-btn" class="calc-action-button quick-add-btn" title="Додати 1 рік до початкової дати">+1 рік</button>
+    </div>
+                    </div>
+
+                    <div class="reset-toggle-container">
+                        <button id="auto-reset-button" title="Увімкнути/вимкнути автоскидання">
+                            <svg class="progress-ring" width="40" height="40">
+                                <circle class="progress-ring-bg" cx="20" cy="20" r="18"></circle>
+                                <circle class="progress-ring-fg" cx="20" cy="20" r="18"></circle>
+                            </svg>
+                            <i class="fas fa-sync-alt timer-icon"></i>
+                        </button>
+                        <span class="reset-toggle-text">Авто-скидання дати та часу</span>
+                    </div>
+                </div>
+
+                <div id="result-section">
+                    <h2>⏱️ Результат дати</h2>
+                    <div id="result-display">Оберіть дати...</div>
+                </div>
+            </div>
+<!-- ПРАВА КОЛОНКА: ЗВИЧАЙНИЙ КАЛЬКУЛЯТОР (ВИПРАВЛЕНО) -->
+<div class="std-calc-column">
+    <div class="win11-calc">
+        
+        <!-- Шапка: Назва зліва, Кнопка справа -->
+        <div class="calc-header-row">
+            <span class="calc-title">Calculator3000</span>
+            <div class="calc-header-actions">
+    <button class="calc-head-history-btn" onclick="calcToggleHistory()" title="Відкрити журнал обчислень">
+        <i class="fas fa-history"></i>
+    </button>
+</div>
+        </div>
+
+        <div class="calc-display-container">
+            <button class="calc-copy-btn" onclick="copyCalcResult()" title="Копіювати результат">
+                <i class="fas fa-copy"></i>
+            </button>
+            <div class="calc-display">
+                <div id="calc-prev-operation"></div>
+                <div id="calc-current-result">0</div>
+            </div>
+        </div>
+
+        <!-- Тіло калькулятора (Кнопки + Панель історії) -->
+        <div class="calc-body-wrapper">
+            
+            <div class="calc-buttons-grid">
+                <button class="c-btn func" onclick="calcPercent()">%</button>
+                <button class="c-btn func" onclick="calcSquare()">x²</button>
+                <button class="c-btn func" onclick="calcRoot()">√x</button>
+                <button class="c-btn action-clear" onclick="calcClear()">C</button>
+
+                <button class="c-btn digit" onclick="calcAppend('7')">7</button>
+                <button class="c-btn digit" onclick="calcAppend('8')">8</button>
+                <button class="c-btn digit" onclick="calcAppend('9')">9</button>
+                <button class="c-btn operator" onclick="calcAppendOperator('*')">×</button>
+
+                <button class="c-btn digit" onclick="calcAppend('4')">4</button>
+                <button class="c-btn digit" onclick="calcAppend('5')">5</button>
+                <button class="c-btn digit" onclick="calcAppend('6')">6</button>
+                <button class="c-btn operator" onclick="calcAppendOperator('-')">-</button>
+
+                <button class="c-btn digit" onclick="calcAppend('1')">1</button>
+                <button class="c-btn digit" onclick="calcAppend('2')">2</button>
+                <button class="c-btn digit" onclick="calcAppend('3')">3</button>
+                <button class="c-btn operator" onclick="calcAppendOperator('+')">+</button>
+
+                <button class="c-btn action-back" onclick="calcDelete()">⌫</button>
+                <button class="c-btn digit" onclick="calcAppend('0')">0</button>
+                <button class="c-btn digit" onclick="calcAppend('.')">,</button>
+                <button class="c-btn operator" onclick="calcAppendOperator('/')">÷</button>
+
+                <button class="c-btn equal" onclick="calcCalculate()">=</button>
+            </div>
+
+            <!-- ВИСУВНА ПАНЕЛЬ ІСТОРІЇ -->
+            <div id="calc-history-panel" class="calc-history-panel">
+                <div class="hist-header">
+                    <span>Журнал</span>
+                    <button class="hist-clear-btn" onclick="calcClearHistory()" title="Очистити журнал">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </div>
+                <div id="calc-history-list" class="calc-history-list">
+                    <div class="hist-empty">Історії немає</div>
+                </div>
+                <button class="hist-close-btn" onclick="calcToggleHistory()">
+                    <i class="fas fa-chevron-down"></i> Приховати
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+        </div> <!-- Кінець calc-flex-wrapper -->
+    </div>
+</div>
+<!-- === КІНЕЦЬ ЗМІНЕНОГО БЛОКУ === -->
+            
+            <div class="container gpon-commands-container" data-content="gpon-commands" data-default-width="63%" data-default-height="85%">
+    <div class="content-card">
+    <h2 style="margin-top: 0; text-align: center;">💻 Команди GPON/EPON/BDCOM</h2>
+	<div id="controls-and-clarification" style="display: flex; align-items: flex-start; gap: 10px; margin-bottom: 5px; flex-wrap: wrap;">
+    
+    <div id="gpon-select-row" style="display: flex; align-items: center; gap: 2px;"> 
+        <label for="device-type" style="margin-bottom: 0; white-space: nowrap;">Виберіть тип обладнання:</label>
+        <select id="device-type" onchange="handleDeviceTypeChange()">
+            <option value="gpon">GPON</option>
+            <option value="epon">EPON</option>
+            <option value="bdcom">BDCOM</option>
+        </select>
+    </div>
+
+    <p id="static-clarification-message" style="margin-right: 0px; padding: 0px; flex-grow: 1;">
+        ℹ️ Натисніть на будь-яку команду для автоматичного копіювання!
+    </p>
+</div>
+    
+    <div id="command-output" class="command-list"> </div>
+</div>
+</div>
+            <div class="container" data-content="text-templates" data-default-width="100%">
+			<div class="content-card">
+<div class="templates-header-wrapper">
+    <!-- 1. Заголовок тепер окремо і буде по центру -->
+    <h2 class="template-main-title">📝 Текстові шаблони</h2>
+
+    <!-- 2. Кнопки окремо в блоці, який піде вправо -->
+    <div class="template-global-actions">
+        <button id="add-template-button" title="Додати шаблон">+</button>
+        <input type="file" id="import-file-input" accept=".json" style="display: none;">
+        <button id="import-templates-button" title="Імпортувати шаблони з файлу">
+            <i class="fas fa-download"></i>
+        </button>
+        <button id="export-templates-button" title="Експортувати шаблони у файл">
+            <i class="fas fa-upload"></i>
+        </button>
+        <button id="clear-all-templates-button" title="Видалити всі шаблони">
+            <i class="fas fa-trash-alt"></i>
+        </button>
+    </div>
+</div>
+                <div id="templates-grid-wrapper">
+                    </div>
+            </div>
+             <div class="scroll-nav-buttons">
+        <button id="scroll-up-btn" class="scroll-nav-btn" title="Прокрутити вгору">
+            <i class="fas fa-chevron-up"></i>
+        </button>
+        <button id="scroll-down-btn" class="scroll-nav-btn" title="Прокрутити вниз">
+            <i class="fas fa-chevron-down"></i>
+        </button>
+    </div>   
+        </div> 
+    </div>
+</div>	
+    
+    <div id="notification" class="notification">
+        Команда скопійована!
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
+
+
+
+
