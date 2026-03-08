@@ -103,10 +103,11 @@
 /* Стиль для нового напису "Історія змін" */
 .version-title {
     font-weight: 700;
-    font-size: 13px;
+    font-size: 14px;
     text-transform: uppercase; /* Робить літери ВЕЛИКИМИ для стилю */
     letter-spacing: 0.5px;
     color: var(--text-color); /* Темний у світлій темі */
+	line-height: 1;
 }
 
 /* Стиль для номера версії (справа) */
@@ -120,6 +121,7 @@
     color: var(--primary-accent-color);
     padding: 2px 8px;
     border-radius: 6px;
+	line-height: 1;
 }
 
 /* === ТЕМНА ТЕМА === */
@@ -3219,6 +3221,3 @@ body.dark .scroll-nav-btn.visible:hover {
     display: block;
     margin-top: -2px;       /* Підтягуємо ближче до основного пункту */
 }
-
-
-
