@@ -3209,3 +3209,11 @@ body.dark .scroll-nav-btn.visible:hover {
 .log-item:first-child .history-separator {
     margin-top: 0;
 }	
+
+.log-sub-description {
+    font-size: 12px;        /* Трішки менший шрифт */
+    opacity: 0.8;           /* Трішки світліший колір */
+    line-height: 1.3;
+    display: block;
+    margin-top: -2px;       /* Підтягуємо ближче до основного пункту */
+}
