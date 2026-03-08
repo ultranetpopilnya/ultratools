@@ -2533,8 +2533,9 @@ document.addEventListener('keydown', (e) => {
                                 <span>${desc}</span>
                             `;
                         } else {
-                            li.innerHTML = `<span>${changeText}</span>`;
-                        }
+    // Додаємо порожній span, щоб текст інструкції змістився вправо (у другу колонку сітки)
+    li.innerHTML = `<span></span><span class="log-sub-description">${changeText}</span>`;
+}
                         listContainer.appendChild(li);
                     });
                 });
@@ -2544,5 +2545,6 @@ document.addEventListener('keydown', (e) => {
                 document.getElementById('ver-number').textContent = "v?.?";
             });
     }
+
 
     document.addEventListener('DOMContentLoaded', initChangelog);
