@@ -3209,3 +3209,11 @@ body.dark .scroll-nav-btn.visible:hover {
 .log-item:first-child .history-separator {
     margin-top: 0;
 }	
+/* Якщо в елементі немає баджа, зміщуємо текст у другу колонку */
+.log-item:not(:has(.badge)) {
+    grid-column: 1 / -1; /* Розтягуємо на всю ширину */
+    padding-left: 42px;  /* Відступ, щоб текст був точно під текстом NEW (34px бадж + 8px gap) */
+    font-size: 0.9em;    /* Можна трохи зменшити шрифт для інструкції */
+    opacity: 0.8;        /* І зробити його менш яскравим */
+    margin-top: -4px;    /* Притискаємо ближче до основного пункту */
+}
