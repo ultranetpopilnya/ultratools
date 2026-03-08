@@ -137,8 +137,6 @@ body.dark .version-number {
     color: var(--secondary-accent-color);       /* Яскравий оранжевий текст */
     box-shadow: 0 0 10px rgba(230, 162, 46, 0.1); /* Легке світіння */
 }
-.version-number { font-weight: 700; font-family: 'Fira Code', monospace; color: var(--text-color); font-size: 14px; }
-.version-date { font-size: 11px; color: var(--tab-inactive-text); }
 
 /* Список змін (Задаємо точну висоту рядка тексту = 18px) */
 .version-log { 
@@ -178,11 +176,6 @@ body.dark .version-number {
 /* 1. Колір рамки (бордера) при наведенні */
 body.dark .version-pill:hover {
     border-color: var(--secondary-accent-color); /* Оранжевий бордюр */
-}
-
-/* 2. Колір номера версії в ШАПЦІ (найновіша) */
-body.dark .version-number {
-    color: var(--secondary-accent-color);
 }
 
 /* 3. Колір роздільників (старі версії в списку) */
@@ -631,9 +624,8 @@ select:focus,
 text-align: right;	
 }
 
-/* Вимикаємо стандартні обмеження браузера */
-* {
-scrollbar-width: thin !important; /* <--- БУЛО auto, СТАВ thin */
+html, body, .container, .content-card, .command-list, .calc-history-list {
+    scrollbar-width: thin; 
     scrollbar-color: var(--scrollbar-thumb) transparent;
 }
 
@@ -978,11 +970,9 @@ body.dark .date-calculator-container #result-section {
 }
 
         .date-calculator-container .date-input-group input[type="date"],
-        body.dark .date-calculator-container .date-input-group input[type="date"],
-        .date-calculator-container .date-input-group input[type="time"],
-        body.dark .date-calculator-container .date-input-group input[type="time"] { 
+        .date-calculator-container .date-input-group input[type="time"] { 
             padding: 10px;
-            border: 2px solid #ccc;
+            border: 2px solid #ccc; /* Це лише для світлої теми, якщо немає фокусу */
             border-radius: 12px; 
             font-size: 1em;
             cursor: pointer;
@@ -2372,76 +2362,6 @@ body {
     --local-height: calc(100% - 5px);
 }
 
-/* === ДИНАМІЧНИЙ РОЗМІР ДЛЯ GPON КОНТЕЙНЕРА === */
-
-/* 1. Налаштовуємо сам контейнер, коли він активний */
-.container.gpon-commands-container.active {
-    /* "auto" дозволяє контейнеру стискатися, коли списки закриті, 
-       і розширюватися, коли відкриті */
-    height: auto !important; 
-    
-    /* Це найголовніше: контейнер не виросте більше, ніж висота екрану мінус 5px.
-       calc(100% - 5px) працює відносно батьківського блоку, який займає все вільне місце */
-    max-height: calc(100% - 5px);
-    
-    /* Важливо для правильного позиціонування */
-    display: flex !important;
-    flex-direction: column;
-    
-    /* Прибираємо фіксовані розміри, які задаються скриптом */
-    min-height: 0 !important;
-}
-
-/* 2. Налаштовуємо внутрішню картку (білий фон) */
-.container.gpon-commands-container .content-card {
-    /* Картка теж має підлаштовуватися під висоту контейнера */
-    height: auto !important;
-    
-    /* Вона може займати 100% від доступного місця контейнера, але не більше */
-    max-height: 100% !important;
-    
-    /* Скрол з'являється ТІЛЬКИ тоді, коли контент впирається в ліміт (низ екрана) */
-    overflow-y: auto !important;
-    overflow-x: hidden;
-    
-    /* Забираємо зайві відступи, щоб математика 5px працювала точно */
-    padding-bottom: 10px; 
-}
-
-/* === ДИНАМІЧНИЙ РОЗМІР ДЛЯ ГЕНЕРАТОРА ЛОГІНІВ === */
-
-/* 1. Контейнер: висота "auto" (по вмісту), але не більше екрана мінус 5px */
-.container.login-generator-container.active {
-    height: auto !important; /* Перебиваємо фіксовану висоту JS */
-    max-height: calc(100% - 5px); /* Обмежуємо "стелею" */
-    
-    display: flex !important;
-    flex-direction: column;
-    min-height: 0 !important;
-    
-    /* Відключаємо центрування по вертикалі, щоб контент починався зверху */
-    justify-content: flex-start !important; 
-}
-
-/* 2. Картка всередині: теж підлаштовується, і вмикає скрол, якщо вперлися в стелю */
-.container.login-generator-container .content-card {
-    height: auto !important;
-    max-height: 100% !important; /* Не вилазити за межі контейнера */
-    
-    overflow-y: auto !important; /* Скрол тільки коли треба */
-    overflow-x: hidden;
-    
-    display: block !important; /* Важливо для коректної висоти */
-	min-height: 300px;
-}
-
-/* 3. Гарантуємо, що блок результатів не розтягує все зайве місце, якщо його мало */
-.login-generator-container #results-container {
-    height: auto !important;
-    max-height: none !important; /* Скролити буде картка, а не цей блок */
-    overflow: visible !important;
-}
-
 /* =========================================================
    ФІНАЛЬНІ СТИЛІ: ДИНАМІЧНА ВИСОТА (GPON + ГЕНЕРАТОР)
    ========================================================= */
@@ -2488,7 +2408,8 @@ body {
     scrollbar-gutter: stable;
 }
 
-.container.gpon-commands-container.active .content-card {
+.container.gpon-commands-container.active .content-card,
+.container.login-generator-container.active .content-card {
     overflow-y: auto !important;
     overflow-x: hidden;
 }
@@ -3279,9 +3200,6 @@ body.dark .scroll-nav-btn.visible:hover {
     opacity: 0.8;
 }
 		
-.version-header {
-    justify-content: flex-start; /* Притискаємо вміст вліво */
-}
 /* Дата в шапці (робимо її невидимою, якщо вона там залишилась) */
 .version-date {
     display: none !important;
@@ -3290,5 +3208,4 @@ body.dark .scroll-nav-btn.visible:hover {
 /* Робимо так, щоб перший роздільник (поточна версія) не мав відступу зверху */
 .log-item:first-child .history-separator {
     margin-top: 0;
-
 }	
