@@ -35,7 +35,7 @@
 /* --- СТАН ПРИ НАВЕДЕННІ (КАРТКА) --- */
 .version-pill:hover {
     width: 340px;          
-    max-height: 500px; /* Збільшив запас висоти */
+    max-height: 400px; /* Збільшив запас висоти */
     
     border-radius: 16px; 
     border-color: var(--primary-accent-color);
@@ -3290,4 +3290,5 @@ body.dark .scroll-nav-btn.visible:hover {
 /* Робимо так, щоб перший роздільник (поточна версія) не мав відступу зверху */
 .log-item:first-child .history-separator {
     margin-top: 0;
+
 }	
