@@ -726,7 +726,7 @@ body.dark .gpon-commands-container select {
             flex-grow: 1; 
             overflow-y: auto;    
             overflow-x: hidden;
-scrollbar-gutter: stable;			
+            scrollbar-gutter: stable;			
         }
         
         body.dark .command-list {
@@ -742,9 +742,9 @@ scrollbar-gutter: stable;
             background-color: transparent; 
             cursor: pointer;
             transition: background-color 0.2s, box-shadow 0.2s;
- border-radius: 12px;
-border-bottom: none;
-margin: 1px; 
+            border-radius: 6px;
+            border-bottom: none;
+            margin: 1px; 
         }
         
         body.dark .command-item {
@@ -1971,7 +1971,7 @@ body.dark ::placeholder {
     padding: 6px 12px;
     cursor: pointer;
     transition: background-color 0.2s;
-    border-radius: 8px;
+    border-radius: 6px;
     margin-top: 2px;
     font-size: 0.95em; /* Трохи менший шрифт */
 }
@@ -2342,7 +2342,7 @@ body {
     align-items: center;
     padding: 8px 12px;
     border: 1px solid var(--input-border-color);
-    border-radius: 8px;
+    border-radius: 12px;
     margin-bottom: 6px;
     background-color: var(--bg-color);
 }
@@ -2913,7 +2913,7 @@ body.dark .calc-display-container {
     cursor: pointer;
     font-size: 16px; /* Збільшено */
     padding: 5px;
-    border-radius: 4px;
+    border-radius: 6px;
     transition: all 0.2s;
 }
 .calc-copy-btn:hover {
@@ -3035,7 +3035,7 @@ body.dark .calc-history-panel {
 
 .hist-clear-btn {
     background: none; border: none; cursor: pointer; color: var(--tab-inactive-text);
-    padding: 6px; border-radius: 4px; transition: color 0.2s; font-size: 15px;
+    padding: 6px; border-radius: 6px; transition: color 0.2s; font-size: 15px;
 }
 .hist-clear-btn:hover { color: var(--danger-color); background-color: rgba(220,53,69,0.1); }
 
