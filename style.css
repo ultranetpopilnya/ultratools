@@ -508,9 +508,13 @@ body.dark .login-generator-container .result-item .regenerate-login-btn {
     resize: none !important;
 }
 .highlighter-backdrop mark {
-    background-color: var(--highlight-bg-color);
+    background-color: #85e07d;
     color: transparent; /* Не змінюємо колір тексту, лише фон */
     border-radius: 4px;
+}
+
+body.dark .highlighter-backdrop mark {
+background-color: var(--highlight-bg-color);
 }
 
 	/* СТИЛІ ДЛЯ НОВОЇ, БІЛЬШ ТОЧНОЇ РУЧКИ ЗМІНИ РОЗМІРУ */
