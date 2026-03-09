@@ -148,14 +148,20 @@
 <div class="std-calc-column">
     <div class="win11-calc">
         
-        <!-- Шапка: Назва зліва, Кнопка справа -->
+       <!-- Шапка: Назва зліва, Кнопки справа -->
         <div class="calc-header-row">
             <span class="calc-title">Calculator3000</span>
-            <div class="calc-header-actions">
-    <button class="calc-head-history-btn" onclick="calcToggleHistory()" title="Відкрити журнал обчислень">
-        <i class="fas fa-history"></i>
-    </button>
-</div>
+            
+            <div class="calc-header-actions" style="display: flex; gap: 2px;">
+                <button id="calc-auto-clear-btn" class="calc-head-history-btn" title="Автоматично стерти цифри з екрану через 7 сек." onclick="toggleCalcAutoClear()">
+    <i class="fas fa-eraser" id="calc-auto-clear-icon"></i>
+</button>
+
+                <!-- ІСНУЮЧА КНОПКА ІСТОРІЇ -->
+                <button class="calc-head-history-btn" onclick="calcToggleHistory()" title="Відкрити журнал обчислень">
+                    <i class="fas fa-history"></i>
+                </button>
+            </div>
         </div>
 
         <div class="calc-display-container">

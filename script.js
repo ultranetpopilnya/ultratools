@@ -2229,10 +2229,12 @@ function calcUpdateDisplay() {
     }
     
     if(prevDisplay) {
-        // Форматуємо масив у красивий рядок для верхнього екрану
         let exprStr = calcExpression.join(' ').replace(/\*/g, '×').replace(/\//g, '÷');
         prevDisplay.innerText = exprStr;
     }
+    
+    // ОСЬ ЦЕЙ РЯДОК: Скидає 7 секунд при кожній зміні на екрані
+    startCalcAutoClearTimer();
 }
 
 function calcAppend(num) {
@@ -2396,6 +2398,66 @@ function copyCalcResult() {
     const originalHtml = btn.innerHTML;
     btn.innerHTML = '<i class="fas fa-check" style="color:var(--success-color)"></i>';
     setTimeout(() => btn.innerHTML = originalHtml, 1200);
+}
+
+/* === АВТООЧИЩЕННЯ ЕКРАНУ КАЛЬКУЛЯТОРА (7 СЕКУНД БЕЗ ДІЯЛЬНОСТІ) === */
+let isCalcAutoClearEnabled = false;
+let calcAutoClearTimeout = null;
+
+function toggleCalcAutoClear() {
+    const btn = document.getElementById('calc-auto-clear-btn');
+    isCalcAutoClearEnabled = !isCalcAutoClearEnabled;
+    
+    // Вмикаємо або вимикаємо червоний колір кнопки
+    btn.classList.toggle('active', isCalcAutoClearEnabled);
+
+    if (isCalcAutoClearEnabled) {
+        startCalcAutoClearTimer();
+    } else {
+        // Якщо вимкнули - гарантовано зупиняємо таймер
+        clearTimeout(calcAutoClearTimeout);
+    }
+}
+
+// Функція, яка перезапускає таймер при кожній зміні на екрані
+function startCalcAutoClearTimer() {
+    if (!isCalcAutoClearEnabled) return;
+
+    // 1. Зупиняємо старий таймер (користувач щось натиснув)
+    clearTimeout(calcAutoClearTimeout);
+    
+    // 2. Якщо на екрані є введені цифри (не 0), починаємо відлік 7 секунд
+    if (calcCurrent !== '0' && calcCurrent !== 'Помилка') {
+        
+        calcAutoClearTimeout = setTimeout(() => {
+            // Перевіряємо ще раз через 7 секунд, чи екран досі не пустий
+            if (calcCurrent !== '0' && calcCurrent !== 'Помилка') {
+                calcCurrent = '0'; // Стираємо тільки поточні цифри
+                calcUpdateDisplay(); // Оновлюємо візуал
+                
+                // Показуємо галочку
+                showAutoClearSuccess();
+            }
+        }, 7000);
+    }
+}
+
+// Візуальна зміна іконки на галочку і назад
+function showAutoClearSuccess() {
+    const btn = document.getElementById('calc-auto-clear-btn');
+    const icon = document.getElementById('calc-auto-clear-icon');
+    
+    if (!btn || !icon) return;
+
+    // Міняємо іконку на галочку і додаємо зелений колір
+    icon.className = 'fas fa-check';
+    btn.classList.add('just-cleared');
+
+    // Через 1.5 секунди повертаємо гумку
+    setTimeout(() => {
+        icon.className = 'fas fa-eraser';
+        btn.classList.remove('just-cleared');
+    }, 1500);
 }
 
 /* === ЛОГІКА ІСТОРІЇ === */

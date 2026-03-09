@@ -2836,8 +2836,8 @@ body.dark .calc-title { color: var(--text-color); }
     background: transparent;
     border: none;
     box-shadow: none;
-    width: 36px;
-    height: 36px;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
     display: flex;
     justify-content: center;
@@ -3224,4 +3224,22 @@ body.dark .scroll-nav-btn.visible:hover {
     line-height: 1.3;
     display: block;
     margin-top: -2px;       /* Підтягуємо ближче до основного пункту */
+}
+
+#calc-auto-clear-btn {
+    position: relative;
+    transition: color 0.2s, background-color 0.2s;
+}
+
+/* Стан увімкненої кнопки (підсвічуємо червоним) */
+#calc-auto-clear-btn.active {
+    color: var(--danger-color);
+}
+body.dark #calc-auto-clear-btn.active {
+    color: #ff6b6b;
+}
+
+/* Стан "Тільки що стерто" (Зелена галочка) */
+#calc-auto-clear-btn.just-cleared {
+    color: var(--success-color) !important;
 }
