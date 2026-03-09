@@ -567,85 +567,85 @@ function areDatesInDefaultState() {
         resultDisplay.innerHTML = `<span class="total-hours-text">Кількість годин (загальна): ${totalHoursText}</span><br><span class="duration-text">Період (повний): ${durationText}</span><br><span class="total-days-text">Загальна кількість (днів): ${totalDaysInclusive} ${dayWord}.</span>`;
     }
     
-    const COMMANDS = {
-        gpon: [
-            { command: 'show gpon onu uncfg', description: 'Показати незареєстровані ONU на PON' }, 
-            { command: 'show pon power attenuation gpon-onu_1/1/1:1', description: 'Показати сигнал ONU абонента' },
-			{ command: 'show pon power onu-rx gpon-olt_1/1/1', description: 'Показати сигнали всіх ONU на PON' },	
-            { command: 'show gpon onu state gpon-olt_1/1/1', description: 'Показати кількість активних та зареєстрованих ONU на порту 1/1/1' },		
-            { command: 'show running-config interface gpon-onu_1/1/1:1', description: 'Показати конфіг ONU' }, 
-            { command: 'show gpon onu detail-info gpon-onu_1/1/1:1', description: 'Показати логи падіння та підняття ONU' }, 
-            { command: 'show clock', description: 'Показати час на OLT' }, 
-            { command: 'show gpon remote-onu interface eth gpon-onu_1/1/1:1', description: 'Перевірка зєднання між ONU та роутером (швидкість)' }, 
-            { command: 'show mac gpon onu gpon-onu_1/1/1:1', description: 'Показати Mac адресу роутера' }, 
-            { command: 'show ip dhcp snooping dynamic port pon gpon-onu_1/1/1:1 vport 1', description: 'Показати Mac адресу, IP та VLAN роутера' }, 
-            { command: 'show ip dhcp snooping port gpon-onu_1/1/1:1', description: 'Показати Mac адресу, IP та VLAN роутера' }, 
-            { command: 'show pon power onu-rx gpon-olt_1/1/1', description: 'Показати сигнали всіх ONU на порту' },
-			{ command: 'show gpon onu by sn abcd.efgh.1234', description: 'Показати порт на якому зареєстрована ONU' },
+    let COMMANDS = { gpon: [], epon: [], bdcom: [] }; // Тепер це порожній об'єкт, який заповниться сам
+    // === РОЗУМНИЙ ПАРСЕР КОМАНД ===
+function loadCommandsFromFile() {
+    // Додаємо ?v=Date.now(), щоб браузер не кешував файл при редагуванні
+    fetch('commands.txt?v=' + Date.now())
+        .then(response => {
+            if (!response.ok) throw new Error("Файл команд не знайдено");
+            return response.text();
+        })
+        .then(text => {
+            let currentType = null;
+            let lastCommand = null;
+            const lines = text.split('\n');
             
-            // --- ОСЬ ТУТ ЗМІНИ ДЛЯ GPON ---
-            { 
-                command: 'conf t', 
-                description: 'Зайти в налаштування OLT (Натисніть для списку)', 
-                subCommands: [
-                    { command: 'ip dhcp snooping clear pon abcd.efgh.1234 vlan 111 gpon-onu_1/1/1:1 vport 1', description: 'Очистка сесії' },
-                    { command: 'ip dhcp snooping clear abcd.efgh.1234 vlan 111', description: 'Очистка сесії' },
-                    { command: 'interface gpon-onu_1/1/1:1', description: 'Зайти в інтерфейс ONU' },
-					{ command: 'no onu 111', description: 'Видалення ONU з PON' },
-					{ command: 'onu 111 type GPON-1GE sn PTNHUYLO', description: 'Реєстрація ONU за серійним номером на PON' },
-					{ command: 'pon-onu-mng gpon-onu_1/1/1:1', description: 'Конфігурація ONU після реєстрації' },
-					{ command: 'reboot', description: 'Перезавантаження ONU віддалено. Використовується після pon-onu-mng' },
-					{ command: 'interface eth eth_0/1 state lock/unlock', description: 'Очистка сесії без відєднування ethernet кабелю. Використовується після pon-onu-mng' },
-					
-                ]
+            // Очищуємо старі команди перед завантаженням нових
+            COMMANDS = { gpon: [], epon: [], bdcom: [] };
+
+            lines.forEach(line => {
+                line = line.trim();
+                
+                // Пропускаємо порожні рядки та коментарі
+                if (!line || line.startsWith('#')) return; 
+
+                // Перевіряємо, чи це заголовок розділу, наприклад [gpon]
+                const sectionMatch = line.match(/^\[(.*)\]$/);
+                if (sectionMatch) {
+                    currentType = sectionMatch[1].toLowerCase();
+                    if (!COMMANDS[currentType]) COMMANDS[currentType] = [];
+                    lastCommand = null; // Скидаємо останню команду при зміні розділу
+                    return;
+                }
+
+                // Якщо ми ще не в розділі, ігноруємо текст
+                if (!currentType) return;
+
+                // Перевіряємо, чи це підкоманда (починається з >)
+                const isSub = line.startsWith('>');
+                let actualLine = isSub ? line.substring(1).trim() : line;
+
+                // Розділяємо команду та опис по '::'
+                let splitIndex = actualLine.indexOf('::');
+                let cmdText, cmdDesc;
+                
+                if (splitIndex !== -1) {
+                    cmdText = actualLine.substring(0, splitIndex).trim();
+                    cmdDesc = actualLine.substring(splitIndex + 2).trim();
+                } else {
+                    cmdText = actualLine;
+                    cmdDesc = "";
+                }
+
+                const cmdObj = { command: cmdText, description: cmdDesc };
+
+                if (isSub && lastCommand) {
+                    // Це підкоманда, додаємо її до попередньої головної команди
+                    if (!lastCommand.subCommands) lastCommand.subCommands = [];
+                    lastCommand.subCommands.push(cmdObj);
+                } else {
+                    // Це головна команда
+                    cmdObj.subCommands = [];
+                    COMMANDS[currentType].push(cmdObj);
+                    lastCommand = cmdObj; // Запам'ятовуємо, щоб додавати до неї підкоманди
+                }
+            });
+
+            // КОЛИ ФАЙЛ ЗАВАНТАЖЕНО: Перевіряємо, чи відкрита вкладка команд.
+            // Якщо так, одразу малюємо їх на екрані.
+            const activeTab = localStorage.getItem('activeTab');
+            if (activeTab === 'gpon-commands') {
+                const deviceSelect = document.getElementById('device-type');
+                if (deviceSelect) displayCommands(deviceSelect.value);
             }
-        ],
-        
-        epon: [
-            { command: 'show onu unauthentication', description: 'Пошук незареєстрованих ONU' }, 
-            { command: 'show epon onu state epon-olt_1/1/1', description: 'Показати всі зареєстровані ONU на OLT' }, 
-            { command: 'show running-config interface epon-onu_1/1/1:1', description: 'Показати конфіг ONU' }, 
-            { command: 'show onu detail-info epon-onu_1/1/1:1', description: 'Показати логи падіння та підняття ONU' }, 
-            { command: 'show pon power attenuation epon-onu_1/1/1:1', description: 'Показати сигнал ONU абонента' },
-			{ command: 'show pon power onu-rx epon-olt_1/1/1', description: 'Показати сигнали всіх ONU на PON' },		
-            { command: 'show mac epon onu epon-onu_1/1/1:1', description: 'Показати Mac адресу роутера' }, 
-            { command: 'show ip dhcp snooping port epon-onu_1/1/1:1', description: 'Показати Mac адресу, IP та VLAN роутера' },
-            
-            // --- ОСЬ ТУТ ЗМІНИ ДЛЯ EPON ---
-            { 
-                command: 'conf t', 
-                description: 'Зайти в налаштування OLT (Натисніть для списку)',
-                subCommands: [
-                     { command: 'interface epon-onu_1/1/1:1', description: 'Зайти в інтерфейс ONU' },
-					 { command: 'no onu 111', description: 'Видалення ONU з PON' },
-					 { command: 'onu 111 type  NTS-101 mac abcd.efgh.1234', description: 'Реєстрація ONU за MAC на PON' },
-					 { command: 'interface epon-onu_1/1/1:1', description: 'Зайти в інтерфейс ONU' },
-					 { command: 'pon-onu-mng epon-onu_1/1/1:1', description: 'Конфігурація ONU після реєстрації' },
-                ]
-            }
-        ],
-        
-        bdcom: [
-            { command: 'show epon active-onu interface ePON 0/1', description: 'Показати активні ONU на 4 порту' },
-            { command: 'show epon interface ePON 0/1:11 onu ctc optical-transceiver-diagnosis', description: 'Перевірка сигналу ONU' },
-            { command: 'show epon onu-information mac-address abcd.efgh.1234', description: 'Пошук ONU за Mac адресою' },
-            { command: 'show mac address-table interface ePON 0/1:11', description: 'Показати Mac адресу обладнання після ONU' },
-            { command: 'show epon interface ePON 0/1:11 onu port 1 state', description: 'Показати зєднання між ONU та роутером' },
-            { command: 'show epon onu-information | include abcd', description: 'Пошук ONU по частині Mac' },	
-            { command: 'show epon onu-information mac-address abcd.efgh.1234', description: 'Пошук ONU по Mac' },
-			{ command: 'show epon onu-ctc-optical-transceiver-diagnosis interface ePON 0/1', description: 'Показати сигнал PON' },
-			{ command: 'write all', description: 'Зберегти внесені зміни на OLT' },
-             // --- ОСЬ ТУТ ЗМІНИ ДЛЯ BDCOM ---
-            { 
-                command: 'conf', 
-                description: 'Зайти в налаштування OLT',
-                subCommands: [
-                    { command: 'interface ePON 0/1:11', description: 'Зайти в інтерфейс ONU' },
-					{ command: 'no epon bind-onu mac abcd.efgh.1234', description: 'Видалення ONU з PON' },
-                ]
-            }
-        ],
-    };
+        })
+        .catch(err => {
+            console.error("Помилка завантаження команд:", err);
+            document.getElementById('command-output').innerHTML = 
+                '<p style="text-align: center; color: #dc3545; padding: 20px;">Не вдалося завантажити файл commands.txt</p>';
+        });
+}
 
     const commandOutput = document.getElementById('command-output');
     const notification = document.getElementById('notification');
@@ -1863,6 +1863,7 @@ document.getElementById('clear-history-btn').addEventListener('click', () => {
     initTabDragging();
     setupTabs();
 	loadHistory();
+    loadCommandsFromFile();
 // Обробник для кнопки "Поточна дата"
 document.getElementById('set-start-now-btn').addEventListener('click', () => {
     const now = new Date();
