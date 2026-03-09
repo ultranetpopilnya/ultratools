@@ -721,12 +721,12 @@ body.dark .gpon-commands-container select {
         .command-list {
             border: none;
             border-radius: 6px;
-            padding: 0; 
             background-color: transparent; 
             flex-grow: 1; 
-            overflow-y: auto;    
+            overflow-y: visible;   
             overflow-x: hidden;
-            scrollbar-gutter: stable;			
+            margin: 0 auto;
+            width: 100%;          
         }
         
         body.dark .command-list {
@@ -2386,7 +2386,8 @@ body {
     padding-bottom: 0 !important;
     
     /* Забороняємо скрол на самому контейнері, щоб не було подвійних смуг */
-    overflow: hidden !important; 
+    overflow: hidden !important;
+    
 } 
 
 /* 1. Налаштування контейнерів: стискаються і розширюються, але не більше екрану */
@@ -2414,6 +2415,7 @@ body {
     overflow: hidden !important; 
     
     scrollbar-gutter: stable;
+
 }
 
 .container.gpon-commands-container.active .content-card,
@@ -2453,6 +2455,11 @@ body {
     margin-bottom: 15px;
     height: auto;
     overflow: visible !important;
+}
+
+.container.gpon-commands-container .content-card {
+    padding-right: 30px;
+    padding-left: 40px;
 }
 
 /* === ФІНАЛЬНИЙ ВАРІАНТ (НИЗЬКЕ РОЗШИРЕННЯ) === */
