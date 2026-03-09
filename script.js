@@ -1864,6 +1864,8 @@ document.getElementById('clear-history-btn').addEventListener('click', () => {
     setupTabs();
 	loadHistory();
     loadCommandsFromFile();
+    loadCalcAutoClearState();
+
 // Обробник для кнопки "Поточна дата"
 document.getElementById('set-start-now-btn').addEventListener('click', () => {
     const now = new Date();
@@ -2407,16 +2409,32 @@ let calcAutoClearTimeout = null;
 
 function toggleCalcAutoClear() {
     const btn = document.getElementById('calc-auto-clear-btn');
-    isCalcAutoClearEnabled = !isCalcAutoClearEnabled;
+    isCalcAutoClearEnabled = !isCalcAutoClearEnabled; 
     
-    // Вмикаємо або вимикаємо червоний колір кнопки
+    // ЗБЕРІГАЄМО СТАН:
+    localStorage.setItem('calcAutoClearEnabled', isCalcAutoClearEnabled);
+    
     btn.classList.toggle('active', isCalcAutoClearEnabled);
-
+    
     if (isCalcAutoClearEnabled) {
-        startCalcAutoClearTimer();
+        // Ваша логіка запуску таймера...
     } else {
-        // Якщо вимкнули - гарантовано зупиняємо таймер
-        clearTimeout(calcAutoClearTimeout);
+        if (calcAutoClearTimeout) clearTimeout(calcAutoClearTimeout);
+    }
+}
+
+function loadCalcAutoClearState() {
+    const savedState = localStorage.getItem('calcAutoClearEnabled');
+    const btn = document.getElementById('calc-auto-clear-btn');
+    
+    if (savedState === 'true') {
+        isCalcAutoClearEnabled = true;
+        if (btn) btn.classList.add('active');
+        // Якщо потрібно, щоб таймер відразу почав працювати:
+        // startCalcAutoClearTimer(); 
+    } else {
+        isCalcAutoClearEnabled = false;
+        if (btn) btn.classList.remove('active');
     }
 }
 
