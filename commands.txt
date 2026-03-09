@@ -1,0 +1,62 @@
+# ==========================================
+# ФАЙЛ КОМАНД ДЛЯ ОБЛАДНАННЯ
+# Формат: команда :: опис
+# Для підкоманд ставте знак > на початку рядка
+# ==========================================
+
+[gpon]
+show gpon onu uncfg :: Показати незареєстровані ONU на PON
+show pon power attenuation gpon-onu_1/1/1:1 :: Показати сигнал ONU абонента
+show pon power onu-rx gpon-olt_1/1/1 :: Показати сигнали всіх ONU на PON
+show gpon onu state gpon-olt_1/1/1 :: Показати кількість активних та зареєстрованих ONU на порту 1/1/1
+show running-config interface gpon-onu_1/1/1:1 :: Показати конфіг ONU
+show gpon onu detail-info gpon-onu_1/1/1:1 :: Показати логи падіння та підняття ONU
+show clock :: Показати час на OLT
+show gpon remote-onu interface eth gpon-onu_1/1/1:1 :: Перевірка зєднання між ONU та роутером (швидкість)
+show mac gpon onu gpon-onu_1/1/1:1 :: Показати Mac адресу роутера
+show ip dhcp snooping dynamic port pon gpon-onu_1/1/1:1 vport 1 :: Показати Mac адресу, IP та VLAN роутера
+show ip dhcp snooping port gpon-onu_1/1/1:1 :: Показати Mac адресу, IP та VLAN роутера
+show pon power onu-rx gpon-olt_1/1/1 :: Показати сигнали всіх ONU на порту
+show gpon onu by sn abcd.efgh.1234 :: Показати порт на якому зареєстрована ONU
+
+conf t :: Зайти в налаштування OLT (Натисніть для списку)
+> ip dhcp snooping clear pon abcd.efgh.1234 vlan 111 gpon-onu_1/1/1:1 vport 1 :: Очистка сесії
+> ip dhcp snooping clear abcd.efgh.1234 vlan 111 :: Очистка сесії
+> interface gpon-onu_1/1/1:1 :: Зайти в інтерфейс ONU
+> no onu 111 :: Видалення ONU з PON
+> onu 111 type GPON-1GE sn PTNHUYLO :: Реєстрація ONU за серійним номером на PON
+> pon-onu-mng gpon-onu_1/1/1:1 :: Конфігурація ONU після реєстрації
+> reboot :: Перезавантаження ONU віддалено. Використовується після pon-onu-mng
+> interface eth eth_0/1 state lock/unlock :: Очистка сесії без відєднування ethernet кабелю. Використовується після pon-onu-mng
+
+[epon]
+show onu unauthentication :: Пошук незареєстрованих ONU
+show epon onu state epon-olt_1/1/1 :: Показати всі зареєстровані ONU на OLT
+show running-config interface epon-onu_1/1/1:1 :: Показати конфіг ONU
+show onu detail-info epon-onu_1/1/1:1 :: Показати логи падіння та підняття ONU
+show pon power attenuation epon-onu_1/1/1:1 :: Показати сигнал ONU абонента
+show pon power onu-rx epon-olt_1/1/1 :: Показати сигнали всіх ONU на PON
+show mac epon onu epon-onu_1/1/1:1 :: Показати Mac адресу роутера
+show ip dhcp snooping port epon-onu_1/1/1:1 :: Показати Mac адресу, IP та VLAN роутера
+
+conf t :: Зайти в налаштування OLT (Натисніть для списку)
+> interface epon-onu_1/1/1:1 :: Зайти в інтерфейс ONU
+> no onu 111 :: Видалення ONU з PON
+> onu 111 type  NTS-101 mac abcd.efgh.1234 :: Реєстрація ONU за MAC на PON
+> interface epon-onu_1/1/1:1 :: Зайти в інтерфейс ONU
+> pon-onu-mng epon-onu_1/1/1:1 :: Конфігурація ONU після реєстрації
+
+[bdcom]
+show epon active-onu interface ePON 0/1 :: Показати активні ONU на 4 порту
+show epon interface ePON 0/1:11 onu ctc optical-transceiver-diagnosis :: Перевірка сигналу ONU
+show epon onu-information mac-address abcd.efgh.1234 :: Пошук ONU за Mac адресою
+show mac address-table interface ePON 0/1:11 :: Показати Mac адресу обладнання після ONU
+show epon interface ePON 0/1:11 onu port 1 state :: Показати зєднання між ONU та роутером
+show epon onu-information | include abcd :: Пошук ONU по частині Mac
+show epon onu-information mac-address abcd.efgh.1234 :: Пошук ONU по Mac
+show epon onu-ctc-optical-transceiver-diagnosis interface ePON 0/1 :: Показати сигнал PON
+write all :: Зберегти внесені зміни на OLT
+
+conf :: Зайти в налаштування OLT
+> interface ePON 0/1:11 :: Зайти в інтерфейс ONU
+> no epon bind-onu mac abcd.efgh.1234 :: Видалення ONU з PON
