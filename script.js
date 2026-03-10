@@ -651,36 +651,57 @@ function loadCommandsFromFile() {
     const notification = document.getElementById('notification');
     
     function displayCommands(deviceType) {
+        const commandOutput = document.getElementById('command-output');
         commandOutput.innerHTML = ''; 
         const commands = COMMANDS[deviceType] || [];
         
+        // --- РОЗУМНЕ РОЗШИРЕННЯ ТА "ВІДРА" ---
+        const mainContainer = document.querySelector('.container[data-content="gpon-commands"]');
+        const isExpanded = commands.length > 15; // Більше 12 команд = активуємо 2 колонки
+
+        if (mainContainer) {
+            if (isExpanded) {
+                mainContainer.classList.add('expanded-layout');
+            } else {
+                mainContainer.classList.remove('expanded-layout');
+            }
+        }
+
         if (commands.length === 0) {
             commandOutput.innerHTML = '<p style="text-align: center; color: #888; padding: 20px;">Команди для цього типу обладнання ще не додано.</p>';
             return;
         }
 
-        commands.forEach(item => {
+        // 1. Створюємо два фізичних "відра"
+        const leftBucket = document.createElement('div');
+        leftBucket.className = 'command-bucket left-bucket';
+        
+        const rightBucket = document.createElement('div');
+        rightBucket.className = 'command-bucket right-bucket';
+
+        // 2. Рахуємо місткість першого відра. 
+        // Заповнюємо мінімум 12 команд, але якщо їх дуже багато (напр. 30), 
+        // ділимо навпіл (по 15), щоб праве відро не стало довшим за ліве.
+        const leftCapacity = Math.max(15, Math.ceil(commands.length / 2));
+
+        commands.forEach((item, index) => {
             if (!item.command && !item.description) return;
 
             const hasSubCommands = item.subCommands && item.subCommands.length > 0;
 
-            // 1. Створюємо головний рядок
             const commandDiv = document.createElement('div');
             commandDiv.classList.add('command-item');
             commandDiv.setAttribute('data-command', item.command); 
             
-            // Якщо є підкоманди, додаємо спец-клас для CSS
             if (hasSubCommands) {
                 commandDiv.classList.add('has-subcommands');
                 commandDiv.title = "Натисніть на рядок, щоб розгорнути список. Натисніть на текст команди, щоб скопіювати.";
             }
 
-            // 2. Текст команди (Ліва частина)
             const commandTextSpan = document.createElement('span');
             commandTextSpan.classList.add('command-text');
             commandTextSpan.textContent = item.command;
             
-            // 3. Опис (Права частина)
             const commandDescriptionSpan = document.createElement('span');
             commandDescriptionSpan.classList.add('command-description');
             commandDescriptionSpan.textContent = item.description;
@@ -690,18 +711,14 @@ function loadCommandsFromFile() {
 
             let subListDiv = null;
 
-            // 4. Логіка для команд з підменю (наприклад, conf t)
             if (hasSubCommands) {
-                // Додаємо стрілочку
                 const chevron = document.createElement('i');
                 chevron.className = 'fas fa-chevron-down chevron-icon';
                 commandDiv.appendChild(chevron);
 
-                // Створюємо контейнер списку
                 subListDiv = document.createElement('div');
                 subListDiv.className = 'sub-command-list';
 
-                // Наповнюємо список
                 item.subCommands.forEach(subItem => {
                     const subDiv = document.createElement('div');
                     subDiv.className = 'sub-command-item';
@@ -711,7 +728,6 @@ function loadCommandsFromFile() {
                         <span class="command-description" style="font-size: 0.9em; color: #888;">${subItem.description}</span>
                     `;
                     
-                    // Клік по підпункту -> копіювання
                     subDiv.addEventListener('click', (e) => {
                         e.stopPropagation(); 
                         copyCommandToClipboard(subItem.command);
@@ -720,30 +736,20 @@ function loadCommandsFromFile() {
                     subListDiv.appendChild(subDiv);
                 });
 
-                // --- ГОЛОВНА ЗМІНА ЛОГІКИ ---
-                
-                // А) Клік по ТЕКСТУ команди -> ТІЛЬКИ копіювання
                 commandTextSpan.addEventListener('click', (e) => {
-                    e.stopPropagation(); // Зупиняємо подію, щоб список не відкрився/закрився
+                    e.stopPropagation();
                     copyCommandToClipboard(item.command);
                 });
 
-                // Б) Клік по РЯДКУ (все інше) -> ТІЛЬКИ відкриття/закриття
                 commandDiv.addEventListener('click', (e) => {
-                    // Копіювання НЕ відбувається
                     const isExpanded = commandDiv.classList.toggle('expanded');
                     subListDiv.classList.toggle('open', isExpanded);
 
-                    // --- ДОДАНО: РОЗУМНИЙ СКРОЛ ---
                     if (isExpanded) {
-                        // Коли відкриваємо: чекаємо 250мс (поки йде CSS анімація розкриття)
-                        // і плавно підтягуємо НИЗ списку, щоб було видно всі команди
                         setTimeout(() => {
                             subListDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                         }, 250);
                     } else {
-                        // Коли закриваємо: фокус повертається на головну команду,
-                        // щоб екран не залишався "висіти" на порожньому місці
                         setTimeout(() => {
                             commandDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                         }, 250);
@@ -751,17 +757,39 @@ function loadCommandsFromFile() {
                 });
 
             } else {
-                // 5. Логіка для звичайних команд (без підменю) -> Стара поведінка
                 commandDiv.addEventListener('click', () => {
                     copyCommandToClipboard(item.command);
                 });
             }
 
-            commandOutput.appendChild(commandDiv);
+            // --- ОБГОРТКА ---
+            const groupWrapper = document.createElement('div');
+            groupWrapper.className = 'command-group-wrapper';
+            
+            groupWrapper.appendChild(commandDiv);
             if (subListDiv) {
-                commandOutput.appendChild(subListDiv);
+                groupWrapper.appendChild(subListDiv);
+            }
+
+            // --- 3. СОРТУВАННЯ ПО ВІДРАХ ---
+            if (isExpanded) {
+                // Якщо команд багато, перші йдуть у ліве відро, решта — в праве
+                if (index < leftCapacity) {
+                    leftBucket.appendChild(groupWrapper);
+                } else {
+                    rightBucket.appendChild(groupWrapper);
+                }
+            } else {
+                // Якщо команд мало, всі йдуть у ліве відро
+                leftBucket.appendChild(groupWrapper);
             }
         });
+
+        // 4. Додаємо відра на екран
+        commandOutput.appendChild(leftBucket);
+        if (isExpanded && rightBucket.children.length > 0) {
+            commandOutput.appendChild(rightBucket);
+        }
     }
 
     // Функція копіювання залишається без змін (з попереднього кроку)

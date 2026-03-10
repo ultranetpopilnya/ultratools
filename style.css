@@ -738,7 +738,7 @@ body.dark .gpon-commands-container select {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 8px 12px; 
+            padding: 5px 12px; 
             background-color: transparent; 
             cursor: pointer;
             transition: background-color 0.2s, box-shadow 0.2s;
@@ -1967,7 +1967,7 @@ body.dark ::placeholder {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 6px 12px;
+    padding: 5px 12px;
     cursor: pointer;
     transition: background-color 0.2s;
     border-radius: 6px;
@@ -2248,7 +2248,24 @@ body {
         }
     }
 	
-	
+@media (max-width: 1366px) {
+    .container.gpon-commands-container.expanded-layout {
+        max-width: 100% !important; 
+    }
+    
+    #command-output {
+        flex-direction: column; /* Відра стають одне над одним */
+        
+        /* --- ГОЛОВНИЙ ФІКС --- */
+        align-items: stretch;   /* Змушуємо відра розтягнутися на 100% ширини */
+        gap: 0;                 /* Прибираємо зайвий відступ між відрами */
+    }
+
+    .command-bucket {
+        width: 100% !important; /* Гарантуємо, що відро займає весь екран */
+    }
+}
+
 /* Гарантуємо, що результати не стискаються */
 #results-container {
     flex-shrink: 0;
@@ -2457,8 +2474,8 @@ body {
 }
 
 .container.gpon-commands-container .content-card {
-    padding-right: 30px;
-    padding-left: 40px;
+    padding-right: 20px;
+    padding-left: 30px;
 }
 
 /* === ФІНАЛЬНИЙ ВАРІАНТ (НИЗЬКЕ РОЗШИРЕННЯ) === */
@@ -3243,5 +3260,44 @@ body.dark #calc-auto-clear-btn.active {
 /* Стан "Тільки що стерто" (Зелена галочка) */
 #calc-auto-clear-btn.just-cleared {
     color: var(--success-color) !important;
+}
+
+/* 1. Головний контейнер (ставить відра поруч) */
+#command-output {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    align-items: flex-start; /* ВАЖЛИВО: Щоб відра не розтягувались у висоту одне одного */
+}
+
+/* 2. Самі відра */
+.command-bucket {
+    flex: 1; /* Відра займають рівну ширину */
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+/* 3. Обгортка команди всередині відра */
+.command-group-wrapper {
+    width: 100%;
+    margin-bottom: 4px; /* Єдиний відступ між командами */
+}
+
+/* 4. БАЗОВИЙ СТАН КОНТЕЙНЕРА (Мало команд = вузький екран) */
+.container.gpon-commands-container {
+    width: 100% !important;
+    max-width: 54% !important;
+    margin: 0 auto;
+    
+    /* Плавна анімація "гармошки" */
+    transition: max-width 0.4s cubic-bezier(0.25, 1, 0.5, 1),
+                opacity 0.3s ease-in-out, 
+                transform 0.3s ease-in-out !important;
+}
+
+/* 5. РОЗШИРЕНИЙ СТАН (Багато команд = 2 відра = широкий екран) */
+.container.gpon-commands-container.expanded-layout {
+    max-width: 98% !important; 
 }
 
