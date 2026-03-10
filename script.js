@@ -787,7 +787,13 @@ function loadCommandsFromFile() {
 
         // 4. Додаємо відра на екран
         commandOutput.appendChild(leftBucket);
+        
         if (isExpanded && rightBucket.children.length > 0) {
+            // Створюємо та додаємо роздільник перед правим відром
+            const divider = document.createElement('div');
+            divider.className = 'command-vertical-divider';
+            commandOutput.appendChild(divider);
+            
             commandOutput.appendChild(rightBucket);
         }
     }

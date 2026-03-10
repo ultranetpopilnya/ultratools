@@ -3305,3 +3305,24 @@ body.dark #calc-auto-clear-btn.active {
     max-width: 98% !important; 
 }
 
+/* ВЕРТИКАЛЬНИЙ РОЗДІЛЬНИК МІЖ СТОВПЦЯМИ КОМАНД */
+.command-vertical-divider {
+    width: 1px;
+    background-color: var(--input-border-color);
+    align-self: stretch; /* Завжди тягнеться на висоту найвищого стовпця */
+    margin: 5px 0; /* Трохи відступаємо від верху і низу */
+    opacity: 0.7; /* Робимо лінію м'якою, щоб не різала очі */
+    border-radius: 2px;
+}
+
+/* Для темної теми */
+body.dark .command-vertical-divider {
+    background-color: rgba(255, 255, 255, 0.15); /* Напівпрозора біла лінія */
+}
+
+/* Приховуємо роздільник на мобільних телефонах (якщо стовпці стануть один під одним) */
+@media (max-width: 1366px) {
+    .command-vertical-divider {
+        display: none;
+    }
+}
