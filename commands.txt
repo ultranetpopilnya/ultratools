@@ -8,7 +8,7 @@
 show gpon onu uncfg :: Показати незареєстровані ONU на PON
 show pon power attenuation gpon-onu_1/1/1:1 :: Показати сигнал ONU абонента
 show pon power onu-rx gpon-olt_1/1/1 :: Показати сигнали всіх ONU на PON
-show gpon onu state gpon-olt_1/1/1 :: Показати кількість активних та зареєстрованих ONU на порту 1/1/1
+show gpon onu state gpon-olt_1/1/1 :: Показати кількість активних та зареєстрованих ONU на порту
 show running-config interface gpon-onu_1/1/1:1 :: Показати конфіг ONU
 show gpon onu detail-info gpon-onu_1/1/1:1 :: Показати логи падіння та підняття ONU
 show clock :: Показати час на OLT
@@ -67,5 +67,6 @@ write all :: Зберегти внесені зміни на OLT
 conf :: Зайти в налаштування OLT (Список команд)
 > interface ePON 0/1:11 :: Зайти в інтерфейс ONU
 > no epon bind-onu mac abcd.efgh.1234 :: Видалення ONU з PON
+
 
 
