@@ -683,7 +683,7 @@ function loadCommandsFromFile() {
             // 3. Опис (Права частина)
             const commandDescriptionSpan = document.createElement('span');
             commandDescriptionSpan.classList.add('command-description');
-            commandDescriptionSpan.textContent = `(${item.description})`;
+            commandDescriptionSpan.textContent = item.description;
 
             commandDiv.appendChild(commandTextSpan);
             commandDiv.appendChild(commandDescriptionSpan);
@@ -708,7 +708,7 @@ function loadCommandsFromFile() {
                     
                     subDiv.innerHTML = `
                         <span class="command-text" style="font-family: 'Fira Code', monospace; font-weight: 600;">${subItem.command}</span>
-                        <span class="command-description" style="font-size: 0.9em; color: #888;">(${subItem.description})</span>
+                        <span class="command-description" style="font-size: 0.9em; color: #888;">${subItem.description}</span>
                     `;
                     
                     // Клік по підпункту -> копіювання
