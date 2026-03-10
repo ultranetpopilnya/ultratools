@@ -651,152 +651,148 @@ function loadCommandsFromFile() {
     const notification = document.getElementById('notification');
     
     function displayCommands(deviceType) {
-        const commandOutput = document.getElementById('command-output');
-        commandOutput.innerHTML = ''; 
-        const commands = COMMANDS[deviceType] || [];
-        
-        // --- РОЗУМНЕ РОЗШИРЕННЯ ТА "ВІДРА" ---
-        const mainContainer = document.querySelector('.container[data-content="gpon-commands"]');
-        const isExpanded = commands.length > 15; // Більше 12 команд = активуємо 2 колонки
+    const commandOutput = document.getElementById('command-output');
+    commandOutput.innerHTML = ''; 
+    const commands = COMMANDS[deviceType] || [];
+    
+    // --- РОЗУМНЕ РОЗШИРЕННЯ ТА КОЛОНКИ ---
+    const mainContainer = document.querySelector('.container[data-content="gpon-commands"]');
+    const isExpanded = commands.length > 15; // Більше 15 команд = активуємо 2 колонки
 
-        if (mainContainer) {
-            if (isExpanded) {
-                mainContainer.classList.add('expanded-layout');
-            } else {
-                mainContainer.classList.remove('expanded-layout');
-            }
-        }
-
-        if (commands.length === 0) {
-            commandOutput.innerHTML = '<p style="text-align: center; color: #888; padding: 20px;">Команди для цього типу обладнання ще не додано.</p>';
-            return;
-        }
-
-        // 1. Створюємо два фізичних "відра"
-        const leftBucket = document.createElement('div');
-        leftBucket.className = 'command-bucket left-bucket';
-        
-        const rightBucket = document.createElement('div');
-        rightBucket.className = 'command-bucket right-bucket';
-
-        // 2. Рахуємо місткість першого відра. 
-        // Заповнюємо мінімум 12 команд, але якщо їх дуже багато (напр. 30), 
-        // ділимо навпіл (по 15), щоб праве відро не стало довшим за ліве.
-        const leftCapacity = Math.max(15, Math.ceil(commands.length / 2));
-
-        commands.forEach((item, index) => {
-            if (!item.command && !item.description) return;
-
-            const hasSubCommands = item.subCommands && item.subCommands.length > 0;
-
-            const commandDiv = document.createElement('div');
-            commandDiv.classList.add('command-item');
-            commandDiv.setAttribute('data-command', item.command); 
-            
-            if (hasSubCommands) {
-                commandDiv.classList.add('has-subcommands');
-                commandDiv.title = "Натисніть на рядок, щоб розгорнути список. Натисніть на текст команди, щоб скопіювати.";
-            }
-
-            const commandTextSpan = document.createElement('span');
-            commandTextSpan.classList.add('command-text');
-            commandTextSpan.textContent = item.command;
-            
-            const commandDescriptionSpan = document.createElement('span');
-            commandDescriptionSpan.classList.add('command-description');
-            commandDescriptionSpan.textContent = item.description;
-
-            commandDiv.appendChild(commandTextSpan);
-            commandDiv.appendChild(commandDescriptionSpan);
-
-            let subListDiv = null;
-
-            if (hasSubCommands) {
-                const chevron = document.createElement('i');
-                chevron.className = 'fas fa-chevron-down chevron-icon';
-                commandDiv.appendChild(chevron);
-
-                subListDiv = document.createElement('div');
-                subListDiv.className = 'sub-command-list';
-
-                item.subCommands.forEach(subItem => {
-                    const subDiv = document.createElement('div');
-                    subDiv.className = 'sub-command-item';
-                    
-                    subDiv.innerHTML = `
-                        <span class="command-text" style="font-family: 'Fira Code', monospace; font-weight: 600;">${subItem.command}</span>
-                        <span class="command-description" style="font-size: 0.9em; color: #888;">${subItem.description}</span>
-                    `;
-                    
-                    subDiv.addEventListener('click', (e) => {
-                        e.stopPropagation(); 
-                        copyCommandToClipboard(subItem.command);
-                    });
-                    
-                    subListDiv.appendChild(subDiv);
-                });
-
-                commandTextSpan.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    copyCommandToClipboard(item.command);
-                });
-
-                commandDiv.addEventListener('click', (e) => {
-                    const isExpanded = commandDiv.classList.toggle('expanded');
-                    subListDiv.classList.toggle('open', isExpanded);
-
-                    if (isExpanded) {
-                        setTimeout(() => {
-                            subListDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                        }, 250);
-                    } else {
-                        setTimeout(() => {
-                            commandDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                        }, 250);
-                    }
-                });
-
-            } else {
-                commandDiv.addEventListener('click', () => {
-                    copyCommandToClipboard(item.command);
-                });
-            }
-
-            // --- ОБГОРТКА ---
-            const groupWrapper = document.createElement('div');
-            groupWrapper.className = 'command-group-wrapper';
-            
-            groupWrapper.appendChild(commandDiv);
-            if (subListDiv) {
-                groupWrapper.appendChild(subListDiv);
-            }
-
-            // --- 3. СОРТУВАННЯ ПО ВІДРАХ ---
-            if (isExpanded) {
-                // Якщо команд багато, перші йдуть у ліве відро, решта — в праве
-                if (index < leftCapacity) {
-                    leftBucket.appendChild(groupWrapper);
-                } else {
-                    rightBucket.appendChild(groupWrapper);
-                }
-            } else {
-                // Якщо команд мало, всі йдуть у ліве відро
-                leftBucket.appendChild(groupWrapper);
-            }
-        });
-
-        // 4. Додаємо відра на екран
-        commandOutput.appendChild(leftBucket);
-        
-        if (isExpanded && rightBucket.children.length > 0) {
-            // Створюємо та додаємо роздільник перед правим відром
-            const divider = document.createElement('div');
-            divider.className = 'command-vertical-divider';
-            commandOutput.appendChild(divider);
-            
-            commandOutput.appendChild(rightBucket);
+    if (mainContainer) {
+        if (isExpanded) {
+            mainContainer.classList.add('expanded-layout');
+        } else {
+            mainContainer.classList.remove('expanded-layout');
         }
     }
+
+    if (commands.length === 0) {
+        commandOutput.innerHTML = '<p style="text-align: center; color: #888; padding: 20px;">Команди для цього типу обладнання ще не додано.</p>';
+        return;
+    }
+
+    // 1. Створюємо дві фізичні колонки
+    const leftColumn = document.createElement('div');
+    leftColumn.className = 'command-column left-column';
+    
+    const rightColumn = document.createElement('div');
+    rightColumn.className = 'command-column right-column';
+
+    // 2. Рахуємо місткість першої колонки
+    const leftColumnLimit = Math.max(15, Math.ceil(commands.length / 2));
+
+    commands.forEach((item, index) => {
+        if (!item.command && !item.description) return;
+
+        const hasSubCommands = item.subCommands && item.subCommands.length > 0;
+
+        const commandDiv = document.createElement('div');
+        commandDiv.classList.add('command-item');
+        commandDiv.setAttribute('data-command', item.command); 
+        
+        if (hasSubCommands) {
+            commandDiv.classList.add('has-subcommands');
+            commandDiv.title = "Натисніть на рядок, щоб розгорнути список. Натисніть на текст команди, щоб скопіювати.";
+        }
+
+        const commandTextSpan = document.createElement('span');
+        commandTextSpan.classList.add('command-text');
+        commandTextSpan.textContent = item.command;
+        
+        const commandDescriptionSpan = document.createElement('span');
+        commandDescriptionSpan.classList.add('command-description');
+        commandDescriptionSpan.textContent = item.description;
+
+        commandDiv.appendChild(commandTextSpan);
+        commandDiv.appendChild(commandDescriptionSpan);
+
+        let subListDiv = null;
+
+        if (hasSubCommands) {
+            const chevron = document.createElement('i');
+            chevron.className = 'fas fa-chevron-down chevron-icon';
+            commandDiv.appendChild(chevron);
+
+            subListDiv = document.createElement('div');
+            subListDiv.className = 'sub-command-list';
+
+            item.subCommands.forEach(subItem => {
+                const subDiv = document.createElement('div');
+                subDiv.className = 'sub-command-item';
+                
+                subDiv.innerHTML = `
+                    <span class="command-text" style="font-family: 'Fira Code', monospace; font-weight: 600;">${subItem.command}</span>
+                    <span class="command-description" style="font-size: 0.9em; color: #888;">${subItem.description}</span>
+                `;
+                
+                subDiv.addEventListener('click', (e) => {
+                    e.stopPropagation(); 
+                    copyCommandToClipboard(subItem.command);
+                });
+                
+                subListDiv.appendChild(subDiv);
+            });
+
+            commandTextSpan.addEventListener('click', (e) => {
+                e.stopPropagation();
+                copyCommandToClipboard(item.command);
+            });
+
+            commandDiv.addEventListener('click', (e) => {
+                const isExpanded = commandDiv.classList.toggle('expanded');
+                subListDiv.classList.toggle('open', isExpanded);
+
+                if (isExpanded) {
+                    setTimeout(() => {
+                        subListDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    }, 250);
+                } else {
+                    setTimeout(() => {
+                        commandDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    }, 250);
+                }
+            });
+
+        } else {
+            commandDiv.addEventListener('click', () => {
+                copyCommandToClipboard(item.command);
+            });
+        }
+
+        // --- ОБГОРТКА ---
+        const groupWrapper = document.createElement('div');
+        groupWrapper.className = 'command-group-wrapper';
+        
+        groupWrapper.appendChild(commandDiv);
+        if (subListDiv) {
+            groupWrapper.appendChild(subListDiv);
+        }
+
+        // --- 3. СОРТУВАННЯ ПО КОЛОНКАХ ---
+        if (isExpanded) {
+            if (index < leftColumnLimit) {
+                leftColumn.appendChild(groupWrapper);
+            } else {
+                rightColumn.appendChild(groupWrapper);
+            }
+        } else {
+            leftColumn.appendChild(groupWrapper);
+        }
+    });
+
+    // 4. Додаємо колонки на екран
+    commandOutput.appendChild(leftColumn);
+    
+    if (isExpanded && rightColumn.children.length > 0) {
+        // Додаємо красивий вертикальний роздільник між колонками
+        const divider = document.createElement('div');
+        divider.className = 'command-vertical-divider';
+        commandOutput.appendChild(divider);
+        
+        commandOutput.appendChild(rightColumn);
+    }
+}
 
     // Функція копіювання залишається без змін (з попереднього кроку)
     async function copyCommandToClipboard(text) {
