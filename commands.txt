@@ -28,11 +28,11 @@ conf t :: Зайти в налаштування OLT (Натисніть для 
 > interface gpon-onu_1/1/1:1 :: Зайти в інтерфейс ONU
 > no onu 111 :: Видалення ONU з PON
 > onu 111 type GPON-1GE sn PTNHUYLO :: Реєстрація ONU за серійним номером на PON
-> pon-onu-mng gpon-onu_1/1/1:1 :: Конфігурація ONU після реєстрації
-> reboot :: Перезавантаження ONU віддалено. Використовується після pon-onu-mng
-> interface eth eth_0/1 state lock/unlock :: Очистка сесії без відєднування ethernet кабелю. Використовується після pon-onu-mng
 > mac add permanent abcd.efgh.1234 gpon gpon-onu_1/1/1:1 vport 1 vlan 99 :: Привязати MAC роутера перманентно.
 > mac delete abcd.efgh.1234 :: Видалити перманентно привязану MAC адресу
+pon-onu-mng gpon-onu_1/1/1:1 :: Перехід в режим конфігурації ONU (Натисніть для списку)
+> interface eth eth_0/1 state lock/unlock :: Очистка сесії без відєднування ethernet кабелю.
+> reboot :: Перезавантаження ONU віддалено.
 
 [epon]
 show onu unauthentication :: Пошук незареєстрованих ONU
@@ -49,7 +49,9 @@ conf t :: Зайти в налаштування OLT (Натисніть для 
 > no onu 111 :: Видалення ONU з PON
 > onu 111 type  NTS-101 mac abcd.efgh.1234 :: Реєстрація ONU за MAC на PON
 > interface epon-onu_1/1/1:1 :: Зайти в інтерфейс ONU
-> pon-onu-mng epon-onu_1/1/1:1 :: Конфігурація ONU після реєстрації
+pon-onu-mng epon-onu_1/1/1:1 :: Перехід в режим конфігурації ONU
+> interface eth eth_0/1 state lock/unlock :: Очистка сесії без відєднування ethernet кабелю.
+> reboot :: Перезавантаження ONU віддалено.
 
 [bdcom]
 show epon active-onu interface ePON 0/1 :: Показати активні ONU на 4 порту
@@ -65,3 +67,4 @@ write all :: Зберегти внесені зміни на OLT
 conf :: Зайти в налаштування OLT (Натисніть для списку)
 > interface ePON 0/1:11 :: Зайти в інтерфейс ONU
 > no epon bind-onu mac abcd.efgh.1234 :: Видалення ONU з PON
+
