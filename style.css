@@ -621,7 +621,7 @@ select:focus,
 	/* Стилі для статичного напису-підказки */
 #static-clarification-message {
     font-style: italic; 
-    color: var(--success-color);
+    color: #1e9e12;
     margin: 0 0 10px 0; 
     padding: 5px 10px;
     border-radius: 1px;
@@ -630,6 +630,10 @@ select:focus,
     font-weight: 600;
     margin-top: 0px;
 text-align: right;	
+}
+
+body.dark #static-clarification-message {
+    color: #20be00;
 }
 
 html, body, .container, .content-card, .command-list, .calc-history-list {
