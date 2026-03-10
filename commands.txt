@@ -49,7 +49,7 @@ conf t :: Зайти в налаштування OLT (Список команд)
 > no onu 111 :: Видалення ONU з PON
 > onu 111 type  NTS-101 mac abcd.efgh.1234 :: Реєстрація ONU за MAC на PON
 > interface epon-onu_1/1/1:1 :: Зайти в інтерфейс ONU
-pon-onu-mng epon-onu_1/1/1:1 :: Перехід в режим конфігурації ONU
+pon-onu-mng epon-onu_1/1/1:1 :: Перехід в режим конфігурації ONU (Список команд)
 > interface eth eth_0/1 state lock/unlock :: Очистка сесії без відєднування ethernet кабелю.
 > reboot :: Перезавантаження ONU віддалено.
 
@@ -67,6 +67,7 @@ write all :: Зберегти внесені зміни на OLT
 conf :: Зайти в налаштування OLT (Список команд)
 > interface ePON 0/1:11 :: Зайти в інтерфейс ONU
 > no epon bind-onu mac abcd.efgh.1234 :: Видалення ONU з PON
+
 
 
 
