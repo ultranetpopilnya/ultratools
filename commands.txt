@@ -22,7 +22,7 @@ show mac vlan 99 :: Показати всі MAC адреси всіх ONU які
 show vlan summary :: Показати всі номери VLAN на OLT
 show card slotno 1 :: Показати інформацію про OLT (Скільки часу він працює)
 
-conf t :: Зайти в налаштування OLT (Натисніть для списку)
+conf t :: Зайти в налаштування OLT (Список команд)
 > ip dhcp snooping clear pon abcd.efgh.1234 vlan 111 gpon-onu_1/1/1:1 vport 1 :: Очистка сесії
 > ip dhcp snooping clear abcd.efgh.1234 vlan 111 :: Очистка сесії
 > interface gpon-onu_1/1/1:1 :: Зайти в інтерфейс ONU
@@ -30,7 +30,7 @@ conf t :: Зайти в налаштування OLT (Натисніть для 
 > onu 111 type GPON-1GE sn PTNHUYLO :: Реєстрація ONU за серійним номером на PON
 > mac add permanent abcd.efgh.1234 gpon gpon-onu_1/1/1:1 vport 1 vlan 99 :: Привязати MAC роутера перманентно.
 > mac delete abcd.efgh.1234 :: Видалити перманентно привязану MAC адресу
-pon-onu-mng gpon-onu_1/1/1:1 :: Перехід в режим конфігурації ONU (Натисніть для списку)
+pon-onu-mng gpon-onu_1/1/1:1 :: Перехід в режим конфігурації ONU (Список команд)
 > interface eth eth_0/1 state lock/unlock :: Очистка сесії без відєднування ethernet кабелю.
 > reboot :: Перезавантаження ONU віддалено.
 
@@ -44,7 +44,7 @@ show pon power onu-rx epon-olt_1/1/1 :: Показати сигнали всіх
 show mac epon onu epon-onu_1/1/1:1 :: Показати Mac адресу роутера
 show ip dhcp snooping port epon-onu_1/1/1:1 :: Показати Mac адресу, IP та VLAN роутера
 
-conf t :: Зайти в налаштування OLT (Натисніть для списку)
+conf t :: Зайти в налаштування OLT (Список команд)
 > interface epon-onu_1/1/1:1 :: Зайти в інтерфейс ONU
 > no onu 111 :: Видалення ONU з PON
 > onu 111 type  NTS-101 mac abcd.efgh.1234 :: Реєстрація ONU за MAC на PON
@@ -64,7 +64,8 @@ show epon onu-information mac-address abcd.efgh.1234 :: Пошук ONU по Mac
 show epon onu-ctc-optical-transceiver-diagnosis interface ePON 0/1 :: Показати сигнал PON
 write all :: Зберегти внесені зміни на OLT
 
-conf :: Зайти в налаштування OLT (Натисніть для списку)
+conf :: Зайти в налаштування OLT (Список команд)
 > interface ePON 0/1:11 :: Зайти в інтерфейс ONU
 > no epon bind-onu mac abcd.efgh.1234 :: Видалення ONU з PON
+
 
