@@ -1953,7 +1953,6 @@ body.dark ::placeholder {
     margin-left: 20px; /* Відступ зліва */
     padding-left: 10px;
     border-left: 2px solid var(--input-border-color); /* Лінія зліва для візуального зв'язку */
-    margin-bottom: 5px;
     display: flex; /* Залишаємо flex, але керуємо видимістю через max-height */
 }
 
@@ -3245,3 +3244,4 @@ body.dark #calc-auto-clear-btn.active {
 #calc-auto-clear-btn.just-cleared {
     color: var(--success-color) !important;
 }
+
