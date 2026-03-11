@@ -2205,7 +2205,7 @@ body {
 .container[data-content="text-templates"] .content-card {
     height: 100%;
     overflow-y: auto;       /* Скрол з'являється тут */
-    padding-bottom: 20px;   /* Трохи місця знизу контенту */
+    padding-bottom: 24px;   /* Трохи місця знизу контенту */
 }
 
 /* Клас для миттєвої появи без анімації */
@@ -3374,4 +3374,5 @@ body.dark .command-item.static-header .command-text {
 body.dark .command-item.static-header .command-text:hover {
     color: var(--secondary-accent-color);
     border-bottom: none !important;
+
 }
