@@ -570,7 +570,6 @@ function areDatesInDefaultState() {
     let COMMANDS = { gpon: [], epon: [], bdcom: [] }; // Тепер це порожній об'єкт, який заповниться сам
     // === РОЗУМНИЙ ПАРСЕР КОМАНД ===
 function loadCommandsFromFile() {
-    // Додаємо ?v=Date.now(), щоб браузер не кешував файл при редагуванні
     fetch('commands.txt?v=' + Date.now())
         .then(response => {
             if (!response.ok) throw new Error("Файл команд не знайдено");
@@ -581,32 +580,35 @@ function loadCommandsFromFile() {
             let lastCommand = null;
             const lines = text.split('\n');
             
-            // Очищуємо старі команди перед завантаженням нових
             COMMANDS = { gpon: [], epon: [], bdcom: [] };
 
             lines.forEach(line => {
                 line = line.trim();
                 
-                // Пропускаємо порожні рядки та коментарі
                 if (!line || line.startsWith('#')) return; 
 
-                // Перевіряємо, чи це заголовок розділу, наприклад [gpon]
                 const sectionMatch = line.match(/^\[(.*)\]$/);
                 if (sectionMatch) {
                     currentType = sectionMatch[1].toLowerCase();
                     if (!COMMANDS[currentType]) COMMANDS[currentType] = [];
-                    lastCommand = null; // Скидаємо останню команду при зміні розділу
+                    lastCommand = null; 
                     return;
                 }
 
-                // Якщо ми ще не в розділі, ігноруємо текст
                 if (!currentType) return;
 
-                // Перевіряємо, чи це підкоманда (починається з >)
+                // === НОВЕ: Перевірка на постійно розгорнутий список ===
                 const isSub = line.startsWith('>');
-                let actualLine = isSub ? line.substring(1).trim() : line;
+                let isAlwaysExpanded = false;
+                let actualLine = line;
 
-                // Розділяємо команду та опис по '::'
+                if (isSub) {
+                    actualLine = line.substring(1).trim();
+                } else if (line.startsWith('*')) {
+                    isAlwaysExpanded = true;
+                    actualLine = line.substring(1).trim();
+                }
+
                 let splitIndex = actualLine.indexOf('::');
                 let cmdText, cmdDesc;
                 
@@ -618,22 +620,19 @@ function loadCommandsFromFile() {
                     cmdDesc = "";
                 }
 
-                const cmdObj = { command: cmdText, description: cmdDesc };
+                // === НОВЕ: Зберігаємо статус alwaysExpanded ===
+                const cmdObj = { command: cmdText, description: cmdDesc, alwaysExpanded: isAlwaysExpanded };
 
                 if (isSub && lastCommand) {
-                    // Це підкоманда, додаємо її до попередньої головної команди
                     if (!lastCommand.subCommands) lastCommand.subCommands = [];
                     lastCommand.subCommands.push(cmdObj);
                 } else {
-                    // Це головна команда
                     cmdObj.subCommands = [];
                     COMMANDS[currentType].push(cmdObj);
-                    lastCommand = cmdObj; // Запам'ятовуємо, щоб додавати до неї підкоманди
+                    lastCommand = cmdObj; 
                 }
             });
 
-            // КОЛИ ФАЙЛ ЗАВАНТАЖЕНО: Перевіряємо, чи відкрита вкладка команд.
-            // Якщо так, одразу малюємо їх на екрані.
             const activeTab = localStorage.getItem('activeTab');
             if (activeTab === 'gpon-commands') {
                 const deviceSelect = document.getElementById('device-type');
@@ -641,6 +640,7 @@ function loadCommandsFromFile() {
             }
         })
         .catch(err => {
+            // ... (помилка залишається як була)
             console.error("Помилка завантаження команд:", err);
             document.getElementById('command-output').innerHTML = 
                 '<p style="text-align: center; color: #dc3545; padding: 20px;">Не вдалося завантажити файл commands.txt</p>';
@@ -655,15 +655,17 @@ function loadCommandsFromFile() {
     commandOutput.innerHTML = ''; 
     const commands = COMMANDS[deviceType] || [];
     
-    // --- РОЗУМНЕ РОЗШИРЕННЯ ТА КОЛОНКИ ---
     const mainContainer = document.querySelector('.container[data-content="gpon-commands"]');
-    const isExpanded = commands.length > 15; // Більше 15 команд = активуємо 2 колонки
+    const isExpanded = commands.length > 15; 
 
     if (mainContainer) {
         if (isExpanded) {
             mainContainer.classList.add('expanded-layout');
+            // Додаємо спеціальний клас для CSS-колонок
+            commandOutput.classList.add('two-columns');
         } else {
             mainContainer.classList.remove('expanded-layout');
+            commandOutput.classList.remove('two-columns');
         }
     }
 
@@ -672,20 +674,11 @@ function loadCommandsFromFile() {
         return;
     }
 
-    // 1. Створюємо дві фізичні колонки
-    const leftColumn = document.createElement('div');
-    leftColumn.className = 'command-column left-column';
-    
-    const rightColumn = document.createElement('div');
-    rightColumn.className = 'command-column right-column';
-
-    // 2. Рахуємо місткість першої колонки
-    const leftColumnLimit = Math.max(15, Math.ceil(commands.length / 2));
-
-    commands.forEach((item, index) => {
+    commands.forEach((item) => {
         if (!item.command && !item.description) return;
 
         const hasSubCommands = item.subCommands && item.subCommands.length > 0;
+        const isAlwaysExpanded = item.alwaysExpanded; // === НОВЕ ===
 
         const commandDiv = document.createElement('div');
         commandDiv.classList.add('command-item');
@@ -693,7 +686,13 @@ function loadCommandsFromFile() {
         
         if (hasSubCommands) {
             commandDiv.classList.add('has-subcommands');
-            commandDiv.title = "Натисніть на рядок, щоб розгорнути список. Натисніть на текст команди, щоб скопіювати.";
+            // === НОВЕ: Логіка підказок та класів для статичних заголовків ===
+            if (isAlwaysExpanded) {
+                commandDiv.classList.add('static-header');
+                commandDiv.title = "Натисніть на текст, щоб скопіювати його.";
+            } else {
+                commandDiv.title = "Натисніть на рядок, щоб розгорнути список. Натисніть на текст команди, щоб скопіювати.";
+            }
         }
 
         const commandTextSpan = document.createElement('span');
@@ -710,12 +709,20 @@ function loadCommandsFromFile() {
         let subListDiv = null;
 
         if (hasSubCommands) {
-            const chevron = document.createElement('i');
-            chevron.className = 'fas fa-chevron-down chevron-icon';
-            commandDiv.appendChild(chevron);
+            // === НОВЕ: Додаємо стрілочку ТІЛЬКИ якщо список згортається ===
+            if (!isAlwaysExpanded) {
+                const chevron = document.createElement('i');
+                chevron.className = 'fas fa-chevron-down chevron-icon';
+                commandDiv.appendChild(chevron);
+            }
 
             subListDiv = document.createElement('div');
             subListDiv.className = 'sub-command-list';
+            
+            // === НОВЕ: Клас для постійно відкритого списку ===
+            if (isAlwaysExpanded) {
+                subListDiv.classList.add('always-open');
+            }
 
             item.subCommands.forEach(subItem => {
                 const subDiv = document.createElement('div');
@@ -739,20 +746,23 @@ function loadCommandsFromFile() {
                 copyCommandToClipboard(item.command);
             });
 
-            commandDiv.addEventListener('click', (e) => {
-                const isExpanded = commandDiv.classList.toggle('expanded');
-                subListDiv.classList.toggle('open', isExpanded);
+            // === НОВЕ: Обробник кліку додаємо ТІЛЬКИ якщо список згортається ===
+            if (!isAlwaysExpanded) {
+                commandDiv.addEventListener('click', (e) => {
+                    const isExpandedState = commandDiv.classList.toggle('expanded');
+                    subListDiv.classList.toggle('open', isExpandedState);
 
-                if (isExpanded) {
-                    setTimeout(() => {
-                        subListDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                    }, 250);
-                } else {
-                    setTimeout(() => {
-                        commandDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                    }, 250);
-                }
-            });
+                    if (isExpandedState) {
+                        setTimeout(() => {
+                            subListDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                        }, 250);
+                    } else {
+                        setTimeout(() => {
+                            commandDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                        }, 250);
+                    }
+                });
+            }
 
         } else {
             commandDiv.addEventListener('click', () => {
@@ -760,7 +770,6 @@ function loadCommandsFromFile() {
             });
         }
 
-        // --- ОБГОРТКА ---
         const groupWrapper = document.createElement('div');
         groupWrapper.className = 'command-group-wrapper';
         
@@ -769,29 +778,8 @@ function loadCommandsFromFile() {
             groupWrapper.appendChild(subListDiv);
         }
 
-        // --- 3. СОРТУВАННЯ ПО КОЛОНКАХ ---
-        if (isExpanded) {
-            if (index < leftColumnLimit) {
-                leftColumn.appendChild(groupWrapper);
-            } else {
-                rightColumn.appendChild(groupWrapper);
-            }
-        } else {
-            leftColumn.appendChild(groupWrapper);
-        }
+        commandOutput.appendChild(groupWrapper);
     });
-
-    // 4. Додаємо колонки на екран
-    commandOutput.appendChild(leftColumn);
-    
-    if (isExpanded && rightColumn.children.length > 0) {
-        // Додаємо красивий вертикальний роздільник між колонками
-        const divider = document.createElement('div');
-        divider.className = 'command-vertical-divider';
-        commandOutput.appendChild(divider);
-        
-        commandOutput.appendChild(rightColumn);
-    }
 }
 
     // Функція копіювання залишається без змін (з попереднього кроку)

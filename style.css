@@ -1573,11 +1573,6 @@ body.dark #clear-all-templates-button:hover {
     opacity: 0.95;
 }
         
-        /* --- ПРИХОВУЄМО РУЧКУ ПЕРЕТЯГУВАННЯ --- */
-.template-drag-handle {
-    display: none !important; /* Забороняємо перетягування */
-}
-        
         .template-header {
     display: flex;
     justify-content: space-between;
@@ -1976,6 +1971,7 @@ body.dark ::placeholder {
     transition: background-color 0.2s;
     border-radius: 6px;
     margin-top: 2px;
+    margin-right: 1px;
     font-size: 0.95em; /* Трохи менший шрифт */
 }
 
@@ -2209,7 +2205,7 @@ body {
 .container[data-content="text-templates"] .content-card {
     height: 100%;
     overflow-y: auto;       /* Скрол з'являється тут */
-    padding-bottom: 16px;   /* Трохи місця знизу контенту */
+    padding-bottom: 20px;   /* Трохи місця знизу контенту */
 }
 
 /* Клас для миттєвої появи без анімації */
@@ -3122,7 +3118,7 @@ body.dark .hist-close-btn:hover { background-color: rgba(255,255,255,0.05); }
     height: auto !important;       
     display: flex !important;
     /* Гарантуємо, що він не стане меншим за контент під час фейду */
-    min-height: 612px !important; 
+    min-height: 610px !important; 
 }
 
 /* 2. КАРТКА (ВМІСТ): Базові налаштування */
@@ -3261,62 +3257,121 @@ body.dark #calc-auto-clear-btn.active {
     color: var(--success-color) !important;
 }
 
-/* 1. Головний контейнер*/
-#command-output {
-    display: flex;
-    gap: 10px;
-    width: 100%;
-    align-items: flex-start;
-}
+/* ========================================= */
+/* === РОЗУМНІ КОЛОНКИ ДЛЯ КОМАНД GPON === */
+/* ========================================= */
 
-/* 2. Самі колонки */
-.command-column {
-    flex: 1; 
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-}
-
-.command-group-wrapper {
-    width: 100%;
-    margin-bottom: 4px; /* Єдиний відступ між командами */
-}
-
-/* 4. БАЗОВИЙ СТАН КОНТЕЙНЕРА (Мало команд = вузький екран) */
+/* Базовий контейнер */
 .container.gpon-commands-container {
     width: 100% !important;
     max-width: 54% !important;
     margin: 0 auto;
-    
-    /* Плавна анімація "гармошки" */
     transition: max-width 0.4s cubic-bezier(0.25, 1, 0.5, 1),
                 opacity 0.3s ease-in-out, 
                 transform 0.3s ease-in-out !important;
 }
 
-/* 5. РОЗШИРЕНИЙ СТАН */
+/* Розширений стан контейнера (на великих моніторах) */
 .container.gpon-commands-container.expanded-layout {
     max-width: 98% !important; 
 }
 
-/* ВЕРТИКАЛЬНИЙ РОЗДІЛЬНИК МІЖ СТОВПЦЯМИ КОМАНД */
-.command-vertical-divider {
-    width: 2px;
-    background-color: var(--input-border-color);
-    align-self: stretch; /* Завжди тягнеться на висоту найвищого стовпця */
-    margin: 3px 0; /* Трохи відступаємо від верху і низу */
-    opacity: 0.7; /* Робимо лінію м'якою, щоб не різала очі */
-    border-radius: 2px;
+/* Сам список команд */
+#command-output {
+    display: block; 
+    width: 100%;
 }
 
-/* Для темної теми */
-body.dark .command-vertical-divider {
-    background-color: rgba(255, 255, 255, 0.15); /* Напівпрозора біла лінія */
+/* === НАЛАШТУВАННЯ ДЛЯ ВЕЛИКИХ ЕКРАНІВ (ПК) === */
+#command-output.two-columns {
+    column-count: 2;          
+    column-gap: 12px;         
+    column-rule: 2px solid var(--input-border-color); 
+    
+    /* "Газетна" верстка: заповнюємо ліву, потім переходимо в праву */
+    /*column-fill: auto;*/
+    
+    /* Ліміт висоти. Щойно команди досягнуть 70% висоти екрану - полетять в праву колонку */
+    /*max-height: 64vh;*/ 
 }
 
-/* Приховуємо роздільник на мобільних телефонах (якщо стовпці стануть один під одним) */
+body.dark #command-output.two-columns {
+    column-rule-color: rgba(255, 255, 255, 0.15); 
+}
+
+/* Забороняємо команді розриватись навпіл між колонками */
+.command-group-wrapper {
+    break-inside: avoid;          
+    page-break-inside: avoid;     
+    -webkit-column-break-inside: avoid; 
+    display: inline-block;        
+    width: 100%;                  
+    margin-bottom: 4px;           
+}
+
+/* ========================================= */
+/* === АДАПТИВНІСТЬ ДЛЯ МАЛИХ ЕКРАНІВ === */
+/* ========================================= */
 @media (max-width: 1366px) {
-    .command-vertical-divider {
-        display: none;
+    /* Контейнер на всю ширину екрану */
+    .container.gpon-commands-container.expanded-layout {
+        max-width: 100% !important; 
     }
+    
+    /* ПОВНІСТЮ ВИМИКАЄМО КОЛОНКИ ДЛЯ НОУТБУКІВ/ТЕЛЕФОНІВ */
+    #command-output.two-columns {
+        column-count: 1;          /* Повертаємо в одну суцільну колонку */
+        column-rule: none;        /* Прибираємо вертикальну лінію */
+        
+        /* ВАЖЛИВО: Знімаємо ліміт висоти, щоб на малих екранах 
+           команди не обрізались, а просто скролились вниз */
+        max-height: none;         
+        column-fill: balance;     /* Скидаємо логіку заповнення до стандартної */
+    }
+}
+
+/* === СТИЛІ ДЛЯ ПОСТІЙНО РОЗГОРНУТИХ СПИСКІВ === */
+
+/* 1. Робимо контейнер постійно видимим і міняємо суцільну лінію на штрихпунктир (dashed) */
+.sub-command-list.always-open {
+    max-height: 2000px; 
+    opacity: 1;
+    transform: translateY(0);
+    transition: none; 
+    
+    /* Зміна бокової лінії на штрихпунктирну */
+    border-left: 2px dashed var(--input-border-color); 
+}
+
+/* 2. Робимо плашку-заголовок візуально ідентичною до звичайної команди */
+.command-item.static-header {
+    cursor: pointer; /* Курсор-стрілка, бо плашка не згортається */
+}
+
+/* Підсвітка фону при наведенні, як у всіх інших команд */
+.command-item.static-header:hover {
+    background-color: #dbe9ff; 
+}
+body.dark .command-item.static-header:hover {
+    background-color: #333333;
+}
+
+/* 3. Текст команди: можна копіювати, АЛЕ БЕЗ ПІДКРЕСЛЕННЯ */
+.command-item.static-header .command-text {
+    cursor: pointer;
+    border-bottom: none !important; /* Примусово прибираємо лінію */
+}
+
+.command-item.static-header .command-text:hover {
+    color: var(--primary-accent-color);
+    border-bottom: none !important;
+}
+
+/* Темна тема для тексту */
+body.dark .command-item.static-header .command-text {
+    border-bottom: none !important;
+}
+body.dark .command-item.static-header .command-text:hover {
+    color: var(--secondary-accent-color);
+    border-bottom: none !important;
 }
