@@ -689,7 +689,7 @@ function loadCommandsFromFile() {
             // === НОВЕ: Логіка підказок та класів для статичних заголовків ===
             if (isAlwaysExpanded) {
                 commandDiv.classList.add('static-header');
-                commandDiv.title = "Натисніть на текст, щоб скопіювати його.";
+                commandDiv.title = "";
             } else {
                 commandDiv.title = "Натисніть на рядок, щоб розгорнути список. Натисніть на текст команди, щоб скопіювати.";
             }
@@ -746,8 +746,9 @@ function loadCommandsFromFile() {
                 copyCommandToClipboard(item.command);
             });
 
-            // === НОВЕ: Обробник кліку додаємо ТІЛЬКИ якщо список згортається ===
+            // Обробник кліку для всього рядка
             if (!isAlwaysExpanded) {
+                // Якщо це звичайний список - клік розгортає/згортає його
                 commandDiv.addEventListener('click', (e) => {
                     const isExpandedState = commandDiv.classList.toggle('expanded');
                     subListDiv.classList.toggle('open', isExpandedState);
@@ -761,6 +762,11 @@ function loadCommandsFromFile() {
                             commandDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                         }, 250);
                     }
+                });
+            } else {
+                // === ВИПРАВЛЕННЯ: Якщо це статичний заголовок, клік в БУДЬ-ЯКЕ МІСЦЕ рядка копіює команду ===
+                commandDiv.addEventListener('click', () => {
+                    copyCommandToClipboard(item.command);
                 });
             }
 
