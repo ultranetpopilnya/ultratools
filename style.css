@@ -636,7 +636,8 @@ body.dark #static-clarification-message {
     color: #20be00;
 }
 
-html, body, .container, .content-card, .command-list, .calc-history-list {
+html, body, .container, .content-card, .command-list, .calc-history-list, 
+.template-field-group textarea, .highlighter-backdrop {
     scrollbar-width: thin; 
     scrollbar-color: var(--scrollbar-thumb) transparent;
 }
