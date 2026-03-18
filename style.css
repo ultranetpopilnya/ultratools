@@ -3377,3 +3377,31 @@ body.dark .command-item.static-header .command-text:hover {
     border-bottom: none !important;
 
 }
+
+/* =========================================================
+   ІДЕАЛЬНИЙ СКРОЛ ВСЕРЕДИНІ КАРТКИ КАЛЬКУЛЯТОРІВ (ДЛЯ НОУТБУКІВ)
+   ========================================================= */
+@media (max-height: 800px), (max-width: 1400px) {
+    
+    /* 1. Зовнішній контейнер: обмежуємо його розміром екрана і забороняємо зовнішній скрол */
+    .container.date-calculator-container {
+        min-height: 0 !important; 
+        max-height: 100% !important;
+        height: 100% !important;
+        overflow: hidden !important; /* Жодних смуг прокрутки зовні! */
+    }
+
+    /* 2. Сама картка (з фоном). СКРОЛ З'ЯВИТЬСЯ САМЕ ТУТ. */
+    .container.date-calculator-container.active .content-card {
+        min-height: 0 !important;
+        height: 100% !important;
+        
+        /* Вмикаємо скрол по внутрішньому краю картки */
+        overflow-y: auto !important; 
+        overflow-x: hidden !important;
+        
+        /* Важливо: перемикаємо на block, щоб калькулятори всередині 
+           не плющилися, а спокійно прокручувалися вниз */
+        display: block !important; 
+    }
+}
