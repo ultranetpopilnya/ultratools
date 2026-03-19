@@ -69,6 +69,7 @@ write all :: Зберегти внесені зміни на OLT
 * conf :: Зайти в налаштування OLT (Далі команди, які вводяться після)
 > interface ePON 0/1:11 :: Зайти в інтерфейс ONU
 > no epon bind-onu mac abcd.efgh.1234 :: Видалення ONU з PON
+> epon onu port 1 ctc vlan mode tag 99 priority 0 :: Змінити VLAN в конфігу ONU
 
 
 
