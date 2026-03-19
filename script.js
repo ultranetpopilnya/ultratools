@@ -2125,20 +2125,20 @@ document.querySelectorAll('.container[data-content]').forEach(container => {
         // Запускаємо перевірку періодично (на випадок зміни контенту JS-ом)
         setInterval(checkScrollButtons, 1000);
 
+        // Встановлюємо тривалість анімації (800 мілісекунд = 0.8 сек). 
+        // Можеш змінити на 1000 для ще більшої плавності, або 600 для швидкості.
+        const SCROLL_DURATION = 800; 
+
         // Клік "Вгору"
         scrollUpBtn.addEventListener('click', () => {
-            templateScrollContainer.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
+            customSmoothScroll(templateScrollContainer, 0, SCROLL_DURATION);
         });
 
         // Клік "Вниз"
         scrollDownBtn.addEventListener('click', () => {
-            templateScrollContainer.scrollTo({
-                top: templateScrollContainer.scrollHeight,
-                behavior: 'smooth'
-            });
+            // Віднімаємо висоту екрану від загальної висоти, щоб отримати точну нижню точку
+            const maxScroll = templateScrollContainer.scrollHeight - templateScrollContainer.clientHeight;
+            customSmoothScroll(templateScrollContainer, maxScroll, SCROLL_DURATION);
         });
         
         // Первинна перевірка
@@ -2651,5 +2651,37 @@ document.addEventListener('keydown', (e) => {
             });
     }
 
+// === ФУНКЦІЯ ПРЕМІАЛЬНОГО ПЛАВНОГО СКРОЛУ ===
+function customSmoothScroll(element, targetPosition, duration) {
+    const startPosition = element.scrollTop;
+    const distance = targetPosition - startPosition;
+    let startTime = null;
+
+    // Математична функція (Ease-In-Out Cubic) - починається плавно, розганяється, плавно гальмує
+    function easeInOutCubic(t) {
+        return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    }
+
+    function animation(currentTime) {
+        if (startTime === null) startTime = currentTime;
+        const timeElapsed = currentTime - startTime;
+        
+        // Вираховуємо прогрес від 0 до 1
+        const progress = Math.min(timeElapsed / duration, 1);
+        
+        // Застосовуємо математичне згладжування
+        const ease = easeInOutCubic(progress);
+        
+        // Рухаємо скрол
+        element.scrollTop = startPosition + distance * ease;
+
+        // Якщо час ще не вийшов, продовжуємо анімацію
+        if (timeElapsed < duration) {
+            requestAnimationFrame(animation);
+        }
+    }
+
+    requestAnimationFrame(animation);
+}
 
     document.addEventListener('DOMContentLoaded', initChangelog);
