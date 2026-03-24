@@ -6,9 +6,10 @@
     <title>Набір інструментів для Ультранет та ISP Energy</title>
     <link rel="icon" href="imgs/tools.png" type="image/png">
     
+    <!-- Ваше підключення вже правильне для версії 6.5.1 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
-<link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body class="holiday-modee"> 
 <div class="version-pill">
@@ -18,12 +19,12 @@
     <!-- Прихований контейнер, що виїжджає при наведенні -->
     <div class="version-content">
         <div class="version-header">
-    <!-- Додали статичний напис -->
-    <span class="version-title">Історія версій</span>
-    
-    <!-- Номер версії, який підставляє JS -->
-    <span id="ver-number" class="version-number">...</span>
-</div>
+            <!-- Додали статичний напис -->
+            <span class="version-title">Історія версій</span>
+            
+            <!-- Номер версії, який підставляє JS -->
+            <span id="ver-number" class="version-number">...</span>
+        </div>
         
         <!-- Сюди JS вставить список змін (li) -->
         <ul id="ver-list" class="version-log"></ul>
@@ -33,8 +34,8 @@
     <div class="toggle-button-wrapper">
         <input type="checkbox" class="checkbox" id="dark-mode-checkbox">
         <label for="dark-mode-checkbox" class="checkbox-label">
-            <i class="fas fa-moon"></i> 
-            <i class="fas fa-sun"></i>
+            <i class="fa-solid fa-moon"></i>
+            <i class="fa-solid fa-sun"></i>
             <span class="ball"></span>
         </label>
     </div>
@@ -47,10 +48,10 @@
     
     <div class="main-content-wrapper"> 
         <div class="tabs"> 
-            <div class="tab-button active" data-tab="login-generator"><i class="fas fa-key"></i>Генератор логінів</div>
-            <div class="tab-button" data-tab="date-calculator"><i class="fas fa-calendar-alt"></i>Калькулятор</div>
-            <div class="tab-button" data-tab="gpon-commands"><i class="fas fa-terminal"></i>Команди</div>
-            <div class="tab-button" data-tab="text-templates"><i class="fas fa-file-alt"></i>Шаблони</div>
+            <div class="tab-button active" data-tab="login-generator"><i class="fa-solid fa-id-card-clip"></i>Генератор логінів</div>
+            <div class="tab-button" data-tab="date-calculator"><i class="fa-solid fa-calendar-days"></i>Калькулятор</div>
+            <div class="tab-button" data-tab="gpon-commands"><i class="fa-solid fa-network-wired"></i>Команди</div>
+            <div class="tab-button" data-tab="text-templates"><i class="fa-solid fa-file-lines"></i>Шаблони</div>
         </div>
 
         <div class="tab-content-wrapper"> 
@@ -66,13 +67,13 @@
     <div class="history-header-row">
         <button id="history-toggle-btn" class="history-toggle-btn" onclick="toggleHistory()">
             <span class="history-title">
-                <i class="fas fa-chevron-right" id="history-arrow"></i> 
+                <i class="fa-solid fa-angle-right" id="history-arrow"></i> 
                 🕒 Історія логінів (<span id="history-count">0</span>)
             </span>
         </button>
         
         <button id="clear-history-btn" class="clear-history-header-btn" title="Очистити всю історію">
-            <i class="fas fa-trash-alt"></i>
+            <i class="fa-solid fa-trash-can"></i>
         </button>
     </div>
     
@@ -92,7 +93,7 @@
         <!-- ГНУЧКА ОБГОРТКА ДЛЯ ДВОХ КОЛОНОК -->
         <div class="calc-flex-wrapper">
             
-            <!-- ЛІВА КОЛОНКА: КАЛЬКУЛЯТОР ДАТ (Ваш старий код) -->
+            <!-- ЛІВА КОЛОНКА: КАЛЬКУЛЯТОР ДАТ -->
             <div class="date-calc-column">
                 <div class="date-inputs-row">
                     <div class="date-input-group">
@@ -112,11 +113,11 @@
                     <div class="calculator-actions-block">
                         <div class="actions-floor">
                             <button id="set-start-now-btn" class="calc-action-button" title="Встановити початкову дату на сьогодні">
-                                <i class="fas fa-calendar-check"></i> <span>Поточна дата</span>
+                                <i class="fa-solid fa-calendar-check"></i> <span>Поточна дата</span>
                             </button>
                             <div class="action-divider"></div>
                             <button id="set-end-time-now-btn" class="calc-action-button" title="Встановити кінцевий час на поточний">
-                                <i class="far fa-clock"></i> <span>Поточний час</span>
+                                <i class="fa-regular fa-clock"></i> <span>Поточний час</span>
                             </button>
                         </div>
                         <div class="horizontal-divider"></div>
@@ -133,7 +134,7 @@
                                 <circle class="progress-ring-bg" cx="20" cy="20" r="18"></circle>
                                 <circle class="progress-ring-fg" cx="20" cy="20" r="18"></circle>
                             </svg>
-                            <i class="fas fa-sync-alt timer-icon"></i>
+                            <i class="fa-solid fa-stopwatch timer-icon"></i>
                         </button>
                         <span class="reset-toggle-text">Авто-скидання дати та часу</span>
                     </div>
@@ -144,7 +145,7 @@
                     <div id="result-display">Оберіть дати...</div>
                 </div>
             </div>
-<!-- ПРАВА КОЛОНКА: ЗВИЧАЙНИЙ КАЛЬКУЛЯТОР (ВИПРАВЛЕНО) -->
+<!-- ПРАВА КОЛОНКА: ЗВИЧАЙНИЙ КАЛЬКУЛЯТОР -->
 <div class="std-calc-column">
     <div class="win11-calc">
         
@@ -154,19 +155,19 @@
             
             <div class="calc-header-actions" style="display: flex; gap: 2px;">
                 <button id="calc-auto-clear-btn" class="calc-head-history-btn" title="Автоматично очистити результат обчислень через 7 сек." onclick="toggleCalcAutoClear()">
-    <i class="fas fa-eraser" id="calc-auto-clear-icon"></i>
+    <i class="fa-solid fa-eraser" id="calc-auto-clear-icon"></i>
 </button>
 
-                <!-- ІСНУЮЧА КНОПКА ІСТОРІЇ -->
+                <!-- КНОПКА ІСТОРІЇ -->
                 <button class="calc-head-history-btn" onclick="calcToggleHistory()" title="Відкрити журнал обчислень">
-                    <i class="fas fa-history"></i>
+                    <i class="fa-solid fa-clock-rotate-left"></i>
                 </button>
             </div>
         </div>
 
         <div class="calc-display-container">
             <button class="calc-copy-btn" onclick="copyCalcResult()" title="Копіювати результат">
-                <i class="fas fa-copy"></i>
+                <i class="fa-solid fa-copy"></i>
             </button>
             <div class="calc-display">
                 <div id="calc-prev-operation"></div>
@@ -174,7 +175,7 @@
             </div>
         </div>
 
-        <!-- Тіло калькулятора (Кнопки + Панель історії) -->
+        <!-- Тіло калькулятора -->
         <div class="calc-body-wrapper">
             
             <div class="calc-buttons-grid">
@@ -211,14 +212,14 @@
                 <div class="hist-header">
                     <span>Журнал</span>
                     <button class="hist-clear-btn" onclick="calcClearHistory()" title="Очистити журнал">
-                        <i class="fas fa-trash-alt"></i>
+                        <i class="fa-solid fa-trash-can"></i>
                     </button>
                 </div>
                 <div id="calc-history-list" class="calc-history-list">
                     <div class="hist-empty">Історії немає</div>
                 </div>
                 <button class="hist-close-btn" onclick="calcToggleHistory()">
-                    <i class="fas fa-chevron-down"></i> Приховати
+                    <i class="fa-solid fa-angle-down"></i> Приховати
                 </button>
             </div>
 
@@ -253,29 +254,27 @@
                         
                     </div>
                     
-                    <!-- ВАЖЛИВО: Цей блок тепер ПРАВИЛЬНО знаходиться всередині content-card -->
                     <div id="command-output" class="command-list"> </div>
                     
                 </div> <!-- Кінець content-card -->
             </div> <!-- Кінець gpon-commands-container -->
+            
             <div class="container" data-content="text-templates" data-default-width="100%">
 			<div class="content-card">
 <div class="templates-header-wrapper">
-    <!-- 1. Заголовок тепер окремо і буде по центру -->
     <h2 class="template-main-title">📝 Текстові шаблони</h2>
 
-    <!-- 2. Кнопки окремо в блоці, який піде вправо -->
     <div class="template-global-actions">
         <button id="add-template-button" title="Додати шаблон">+</button>
         <input type="file" id="import-file-input" accept=".json" style="display: none;">
         <button id="import-templates-button" title="Імпортувати шаблони з файлу">
-            <i class="fas fa-download"></i>
+            <i class="fa-solid fa-file-arrow-down"></i>
         </button>
         <button id="export-templates-button" title="Експортувати шаблони у файл">
-            <i class="fas fa-upload"></i>
+            <i class="fa-solid fa-file-arrow-up"></i>
         </button>
         <button id="clear-all-templates-button" title="Видалити всі шаблони">
-            <i class="fas fa-trash-alt"></i>
+            <i class="fa-solid fa-trash-can"></i>
         </button>
     </div>
 </div>
@@ -284,10 +283,10 @@
             </div>
              <div class="scroll-nav-buttons">
         <button id="scroll-up-btn" class="scroll-nav-btn" title="Прокрутити вгору">
-            <i class="fas fa-chevron-up"></i>
+            <i class="fa-solid fa-angle-up"></i>
         </button>
         <button id="scroll-down-btn" class="scroll-nav-btn" title="Прокрутити вниз">
-            <i class="fas fa-chevron-down"></i>
+            <i class="fa-solid fa-angle-down"></i>
         </button>
     </div>   
         </div> 
@@ -302,10 +301,3 @@
 <script src="script.js"></script>
 </body>
 </html>
-
-
-
-
-
-
-

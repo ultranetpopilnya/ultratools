@@ -292,8 +292,15 @@ body.dark .progress-ring-fg {
     transition: stroke-dashoffset 7s linear; /* Плавна анімація за 20 секунд */
 }
 
+/* Анімація "тікання" для секундоміра */
+@keyframes tickTock {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(12deg); }
+    75% { transform: rotate(-12deg); }
+}
+
 #auto-reset-button.timer-running .timer-icon {
-    transform: rotate(360deg);
+    animation: tickTock 1s infinite ease-in-out;
 }
 
 	/* === ОСНОВНА ПАЛІТРА ТА ЗМІННІ ТЕМИ === */
@@ -636,8 +643,7 @@ body.dark #static-clarification-message {
     color: #20be00;
 }
 
-html, body, .container, .content-card, .command-list, .calc-history-list, 
-.template-field-group textarea, .highlighter-backdrop {
+html, body, .container, .content-card, .command-list, .calc-history-list {
     scrollbar-width: thin; 
     scrollbar-color: var(--scrollbar-thumb) transparent;
 }
@@ -1305,7 +1311,8 @@ body.dark .tab-button.active {
         
         .fa-moon {
             color: #efead7;
-            z-index: 3; 
+            z-index: 3;
+            margin-left: 2px; 
         } 
 
         .fa-sun {
@@ -3375,33 +3382,4 @@ body.dark .command-item.static-header .command-text {
 body.dark .command-item.static-header .command-text:hover {
     color: var(--secondary-accent-color);
     border-bottom: none !important;
-
-}
-
-/* =========================================================
-   ІДЕАЛЬНИЙ СКРОЛ ВСЕРЕДИНІ КАРТКИ КАЛЬКУЛЯТОРІВ (ДЛЯ НОУТБУКІВ)
-   ========================================================= */
-@media (max-height: 800px), (max-width: 1400px) {
-    
-    /* 1. Зовнішній контейнер: обмежуємо його розміром екрана і забороняємо зовнішній скрол */
-    .container.date-calculator-container {
-        min-height: 0 !important; 
-        max-height: 100% !important;
-        height: 100% !important;
-        overflow: hidden !important; /* Жодних смуг прокрутки зовні! */
-    }
-
-    /* 2. Сама картка (з фоном). СКРОЛ З'ЯВИТЬСЯ САМЕ ТУТ. */
-    .container.date-calculator-container.active .content-card {
-        min-height: 0 !important;
-        height: 100% !important;
-        
-        /* Вмикаємо скрол по внутрішньому краю картки */
-        overflow-y: auto !important; 
-        overflow-x: hidden !important;
-        
-        /* Важливо: перемикаємо на block, щоб калькулятори всередині 
-           не плющилися, а спокійно прокручувалися вниз */
-        display: block !important; 
-    }
 }

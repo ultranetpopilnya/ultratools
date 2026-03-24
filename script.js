@@ -235,7 +235,7 @@ function generateAlternativeLogin(buttonElement) {
     const originalName = resultItem.querySelector('.original-name')?.textContent || 'Вручну';
 
     navigator.clipboard.writeText(loginText).then(() => {
-        button.innerHTML = '<i class="fas fa-check"></i>';
+        button.innerHTML = '<i class="fa-solid fa-check"></i>';
         button.classList.add('copied');
         
         showNotification(`Логін скопійовано: ${loginText}`);
@@ -1086,7 +1086,7 @@ function initDraggableAndResizable(element) {
     // --- КНОПКИ ---
     
     const copyButton = document.createElement('button');
-    copyButton.innerHTML = '<i class="fas fa-copy"></i>';
+    copyButton.innerHTML = '<i class="fa-solid fa-copy"></i>';
     copyButton.title = 'Копіювати текст';
     copyButton.className = 'copy-template-btn';
     copyButton.onclick = () => {
@@ -1101,7 +1101,7 @@ function initDraggableAndResizable(element) {
     };
     
     const pasteLoginButton = document.createElement('button');
-    pasteLoginButton.innerHTML = '<i class="fas fa-paste"></i>';
+    pasteLoginButton.innerHTML = '<i class="fa-solid fa-paste"></i>';
     pasteLoginButton.title = 'Вставити логін';
     pasteLoginButton.className = 'paste-login-btn';
     pasteLoginButton.onclick = () => {
@@ -1144,7 +1144,7 @@ function initDraggableAndResizable(element) {
 
    // === КНОПКА ПОШУКУ (НЕЗАЛЕЖНА) ===
     const searchToggleButton = document.createElement('button');
-    searchToggleButton.innerHTML = '<i class="fas fa-search"></i>';
+    searchToggleButton.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i>';
     searchToggleButton.title = 'Пошук і заміна тексту';
     searchToggleButton.style.backgroundColor = '#6f42c1'; 
     searchToggleButton.style.color = 'white';
@@ -1172,7 +1172,7 @@ function initDraggableAndResizable(element) {
     };
 
     const deleteButton = document.createElement('button');
-    deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
+    deleteButton.innerHTML = '<i class="fa-solid fa-trash-can"></i>';
     deleteButton.title = 'Видалити шаблон';
     deleteButton.className = 'delete-template-btn';
     deleteButton.onclick = () => {
@@ -1198,7 +1198,7 @@ function initDraggableAndResizable(element) {
             
             <!-- КНОПКА ОБМІНУ -->
             <button class="swap-inputs-btn" title="Поміняти місцями">
-                <i class="fas fa-exchange-alt"></i>
+                <i class="fa-solid fa-right-left"></i>
             </button>
             
             <input type="text" class="input-replace" placeholder="Замінити..." value="${savedReplace}">
@@ -2125,20 +2125,20 @@ document.querySelectorAll('.container[data-content]').forEach(container => {
         // Запускаємо перевірку періодично (на випадок зміни контенту JS-ом)
         setInterval(checkScrollButtons, 1000);
 
-        // Встановлюємо тривалість анімації (800 мілісекунд = 0.8 сек). 
-        // Можеш змінити на 1000 для ще більшої плавності, або 600 для швидкості.
-        const SCROLL_DURATION = 800; 
-
         // Клік "Вгору"
         scrollUpBtn.addEventListener('click', () => {
-            customSmoothScroll(templateScrollContainer, 0, SCROLL_DURATION);
+            templateScrollContainer.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
         });
 
         // Клік "Вниз"
         scrollDownBtn.addEventListener('click', () => {
-            // Віднімаємо висоту екрану від загальної висоти, щоб отримати точну нижню точку
-            const maxScroll = templateScrollContainer.scrollHeight - templateScrollContainer.clientHeight;
-            customSmoothScroll(templateScrollContainer, maxScroll, SCROLL_DURATION);
+            templateScrollContainer.scrollTo({
+                top: templateScrollContainer.scrollHeight,
+                behavior: 'smooth'
+            });
         });
         
         // Первинна перевірка
@@ -2651,37 +2651,5 @@ document.addEventListener('keydown', (e) => {
             });
     }
 
-// === ФУНКЦІЯ ПРЕМІАЛЬНОГО ПЛАВНОГО СКРОЛУ ===
-function customSmoothScroll(element, targetPosition, duration) {
-    const startPosition = element.scrollTop;
-    const distance = targetPosition - startPosition;
-    let startTime = null;
-
-    // Математична функція (Ease-In-Out Cubic) - починається плавно, розганяється, плавно гальмує
-    function easeInOutCubic(t) {
-        return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-    }
-
-    function animation(currentTime) {
-        if (startTime === null) startTime = currentTime;
-        const timeElapsed = currentTime - startTime;
-        
-        // Вираховуємо прогрес від 0 до 1
-        const progress = Math.min(timeElapsed / duration, 1);
-        
-        // Застосовуємо математичне згладжування
-        const ease = easeInOutCubic(progress);
-        
-        // Рухаємо скрол
-        element.scrollTop = startPosition + distance * ease;
-
-        // Якщо час ще не вийшов, продовжуємо анімацію
-        if (timeElapsed < duration) {
-            requestAnimationFrame(animation);
-        }
-    }
-
-    requestAnimationFrame(animation);
-}
 
     document.addEventListener('DOMContentLoaded', initChangelog);
