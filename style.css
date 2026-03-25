@@ -1312,7 +1312,13 @@ body.dark .tab-button.active {
         .fa-moon {
             color: #efead7;
             z-index: 3;
-            margin-left: 0px; 
+            margin-left: 0px;
+             
+            display: inline-block; /* Дозволяє застосовувати padding та line-height коректно */
+    line-height: 1.2;      /* Збільшуємо висоту контейнера тексту */
+    padding-top: 3px;      /* Даємо простір зверху */
+    padding-bottom: 2px;   /* Даємо простір знизу */
+    font-size: 16px;       /* Зафіксуйте розмір, якщо іконка стала завеликою для 26px висоти кнопки */
         } 
 
         .fa-sun {
@@ -1326,9 +1332,9 @@ body.dark .tab-button.active {
     /* --- ДОДАНО ДЛЯ ВИПРАВЛЕННЯ ОБРІЗАННЯ --- */
     display: inline-block; /* Дозволяє застосовувати padding та line-height коректно */
     line-height: 1.2;      /* Збільшуємо висоту контейнера тексту */
-    padding-top: 2px;      /* Даємо простір зверху */
+    padding-top: 3px;      /* Даємо простір зверху */
     padding-bottom: 2px;   /* Даємо простір знизу */
-    font-size: 15px;       /* Зафіксуйте розмір, якщо іконка стала завеликою для 26px висоти кнопки */
+    font-size: 16px;       /* Зафіксуйте розмір, якщо іконка стала завеликою для 26px висоти кнопки */
 }
 
         .checkbox-label .ball {
