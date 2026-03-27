@@ -27,8 +27,8 @@ show card slotno 1 :: Показати інформацію про OLT (Скіл
 > ip dhcp snooping clear pon abcd.efgh.1234 vlan 111 gpon-onu_1/1/1:1 vport 1 :: Очистка сесії
 > ip dhcp snooping clear abcd.efgh.1234 vlan 111 :: Очистка сесії
 > interface gpon-onu_1/1/1:1 :: Зайти в інтерфейс ONU
-> no onu 111 :: Видалення ONU з PON
-> onu 111 type GPON-1GE sn PTNHUYLO :: Реєстрація ONU за серійним номером на PON
+> no onu 111 :: Видалення ONU з OLT
+> onu 111 type GPON-1GE sn PTNHUYLO :: Реєстрація ONU за серійним номером на OLT
 > mac add permanent abcd.efgh.1234 gpon gpon-onu_1/1/1:1 vport 1 vlan 99 :: Привязати MAC роутера перманентно.
 > mac delete abcd.efgh.1234 :: Видалити перманентно привязану MAC адресу
 * pon-onu-mng gpon-onu_1/1/1:1 :: Перехід в режим конфігурації ONU (Далі команди, які вводяться після)
@@ -48,8 +48,8 @@ show ip dhcp snooping port epon-onu_1/1/1:1 :: Показати Mac адресу
 
 * conf t :: Зайти в налаштування OLT (Далі команди, які вводяться після)
 > interface epon-onu_1/1/1:1 :: Зайти в інтерфейс ONU
-> no onu 111 :: Видалення ONU з PON
-> onu 111 type  NTS-101 mac abcd.efgh.1234 :: Реєстрація ONU за MAC на PON
+> no onu 111 :: Видалення ONU з OLT
+> onu 111 type  NTS-101 mac abcd.efgh.1234 :: Реєстрація ONU за MAC на OLT
 > interface epon-onu_1/1/1:1 :: Зайти в інтерфейс ONU
 * pon-onu-mng epon-onu_1/1/1:1 :: Перехід в режим конфігурації ONU (Далі команди, які вводяться після)
 > interface eth eth_0/1 state lock/unlock :: Очистка сесії без відєднування ethernet кабелю.
