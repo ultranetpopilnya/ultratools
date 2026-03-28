@@ -438,9 +438,9 @@ body.dark .progress-ring-fg {
 
 --bg-color: #f8fafc;
     /* Світла тема: свіжість */
-    --bg-blob-1: #70e2ff; /* Блакитний */
-    --bg-blob-2: #70ff9a; /* Салатовий */
-    --bg-blob-3: #ffce70; /* Теплий жовтий */
+    --bg-blob-1: #E6E9F0; 
+    --bg-blob-2: #A8B7C7; 
+    --bg-blob-3: #4C6A85; 
     --noise-opacity: 0.05; /* Ледь помітний шум */
 }
 
@@ -476,9 +476,9 @@ body.dark {
     
 --bg-color: #0a0c10;
     /* Темна тема: захід сонця */
-    --bg-blob-1: #8e24aa; /* Насичений фіолет */
-    --bg-blob-2: #ff6e40; /* Яскравий помаранч */
-    --bg-blob-3: #c2185b; /* Малиновий */
+    --bg-blob-1: #0D1B2A; 
+    --bg-blob-2: #8B1E3F; 
+    --bg-blob-3: #FF7A3D;
     --noise-opacity: 0.08; /* Шум трохи помітніший */
 }
 
