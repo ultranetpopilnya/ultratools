@@ -403,7 +403,6 @@ body.dark .progress-ring-fg {
 	/* === ОСНОВНА ПАЛІТРА ТА ЗМІННІ ТЕМИ === */
 :root {
     /* Світла тема */
-    --bg-color: #f9f8f6;
     --text-color: #333;
     --header-color: #444;
     --primary-accent-color: #007bff;
@@ -436,11 +435,17 @@ body.dark .progress-ring-fg {
 --resize-handle-color: rgba(0,0,0,0.3);
 --highlight-bg-color: rgba(255, 229, 100, 0.7);
     --snow-color: #46d1ff;  /* Обов'язково 6 символів і крапка з комою */
+
+--bg-color: #f8fafc;
+    /* Світла тема: свіжість */
+    --bg-blob-1: #70e2ff; /* Блакитний */
+    --bg-blob-2: #70ff9a; /* Салатовий */
+    --bg-blob-3: #ffce70; /* Теплий жовтий */
+    --noise-opacity: 0.05; /* Ледь помітний шум */
 }
 
 body.dark {
     /* Темна тема (перевизначення) */
-    --bg-color: #1b1c1d;
     --text-color: #e0e0e0;
     --header-color: #e0e0e0;
     --description-color: #dfdfdf;
@@ -467,7 +472,158 @@ body.dark {
 --button-paste-hover-bg: #138496;
 --resize-handle-color: rgba(255,255,255,0.3);
 --highlight-bg-color: rgba(230, 162, 46, 0.5);
-    --snow-color: #ffffff; 
+    --snow-color: #ffffff;
+    
+--bg-color: #0a0c10;
+    /* Темна тема: захід сонця */
+    --bg-blob-1: #8e24aa; /* Насичений фіолет */
+    --bg-blob-2: #ff6e40; /* Яскравий помаранч */
+    --bg-blob-3: #c2185b; /* Малиновий */
+    --noise-opacity: 0.08; /* Шум трохи помітніший */
+}
+
+/* =========================================================
+   СУЧАСНИЙ АНІМОВАНИЙ ФОН (AURORA/BLOB STYLE)
+   ========================================================= */
+
+/* --- ОСНОВНИЙ КОНТЕЙНЕР --- */
+.ui-gradient-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--bg-color);
+    z-index: -1;
+    overflow: hidden;
+    transition: background-color 0.8s ease;
+}
+
+/* --- ЗАГАЛЬНИЙ СТИЛЬ ДЛЯ ПЛЯМ --- */
+.ui-gradient-background .blob {
+    position: absolute;
+    width: 45vmax; 
+    height: 45vmax;
+    /* Робимо їх не ідеальними колами, а трохи "м'ятими" для ефекту рідини */
+    border-radius: 45% 55% 60% 40% / 55% 45% 60% 40%;
+    filter: blur(60px); 
+    opacity: 0.5;
+    will-change: transform;
+    mix-blend-mode: multiply; 
+}
+
+body.dark .ui-gradient-background .blob {
+    mix-blend-mode: screen; 
+    opacity: 0.35;
+    filter: blur(80px);
+}
+
+/* --- КОНКРЕТНІ КОЛЬОРИ ТА АНІМАЦІЇ --- */
+
+.ui-gradient-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--bg-color);
+    z-index: -1;
+    overflow: hidden;
+    transition: background-color 0.8s ease;
+}
+
+/* --- ЗАГАЛЬНИЙ СТИЛЬ ДЛЯ ПЛЯМ --- */
+.ui-gradient-background .blob {
+    position: absolute;
+    width: 45vmax; 
+    height: 45vmax;
+    border-radius: 45% 55% 60% 40% / 55% 45% 60% 40%;
+    filter: blur(60px); 
+    opacity: 0.5;
+    will-change: transform;
+    mix-blend-mode: multiply; 
+}
+
+body.dark .ui-gradient-background .blob {
+    mix-blend-mode: screen; 
+    opacity: 0.35;
+    filter: blur(80px);
+}
+
+/* --- КОНКРЕТНІ КОЛЬОРИ ТА АНІМАЦІЇ --- */
+
+.blob-1 {
+    background: var(--bg-blob-1);
+    top: -15%;
+    left: -10%;
+    transform-origin: center right;
+    /* Збільшено час до 43s + ease-in-out для плавності */
+    animation: move-1 43s infinite ease-in-out; 
+}
+
+.blob-2 {
+    background: var(--bg-blob-2);
+    bottom: -15%;
+    right: -10%;
+    transform-origin: top center;
+    animation: move-2 53s infinite ease-in-out;
+}
+
+.blob-3 {
+    background: var(--bg-blob-3);
+    top: 40%;
+    left: -10%;
+    transform-origin: bottom right;
+    animation: move-3 47s infinite ease-in-out;
+}
+
+/* --- ТРАЄКТОРІЇ РУХУ ЗІ ЗМІНОЮ ШВИДКОСТІ --- */
+/* Секрет у відсотках: великий розрив (0% -> 30%) = повільно. Малий розрив (30% -> 40%) = швидко! */
+
+@keyframes move-1 {
+    0%   { transform: translate(0, 0) scale(1) rotate(0deg); }
+    /* Повільний дрейф */
+    30%  { transform: translate(15vw, 10vh) scale(1.05) rotate(90deg); }
+    /* ШВИДКИЙ ривок */
+    40%  { transform: translate(22vw, -5vh) scale(0.95) rotate(135deg); }
+    /* Доооовге зависання і повільний рух вбік */
+    75%  { transform: translate(10vw, 20vh) scale(1.1) rotate(270deg); }
+    /* Повернення додому */
+    100% { transform: translate(0, 0) scale(1) rotate(360deg); }
+}
+
+@keyframes move-2 {
+    0%   { transform: translate(0, 0) scale(1) rotate(0deg); }
+    /* Дуже довгий і повільний старт */
+    40%  { transform: translate(-15vw, -15vh) scale(1.1) rotate(120deg); }
+    /* Трохи швидше зміщення */
+    55%  { transform: translate(-25vw, -5vh) scale(0.9) rotate(180deg); }
+    /* Ривок униз */
+    65%  { transform: translate(-10vw, -25vh) scale(1.05) rotate(220deg); }
+    /* Плавне повернення */
+    100% { transform: translate(0, 0) scale(1) rotate(360deg); }
+}
+
+@keyframes move-3 {
+    0%   { transform: translate(0, 0) scale(1) rotate(0deg); }
+    /* Швидкий старт (за 20% часу) */
+    20%  { transform: translate(20vw, -10vh) scale(0.9) rotate(70deg); }
+    /* Зависання на місці майже без руху */
+    50%  { transform: translate(22vw, -12vh) scale(1.1) rotate(180deg); }
+    /* Повільне сповзання */
+    85%  { transform: translate(10vw, -20vh) scale(0.95) rotate(300deg); }
+    /* Додому */
+    100% { transform: translate(0, 0) scale(1) rotate(360deg); }
+}
+
+/* Легкий шум */
+.ui-gradient-background::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity: 0.02;
+    pointer-events: none;
 }
 
 /* === СТИЛІ ДЛЯ СНІГУ (КЕРОВАНІ) === */
@@ -3469,4 +3625,49 @@ body.dark .command-item.static-header:hover {
 body.dark .command-item.static-header .command-text:hover {
     color: var(--secondary-accent-color);
     border-bottom: none !important;
+}
+
+.theme-toggle-btn {
+    position: fixed;
+    top: var(--space-md);
+    right: var(--space-md);
+    z-index: var(--z-toast);
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--glass-border);
+    cursor: pointer;
+    font-size: var(--text-xl);
+    
+    /* Використовуємо ваші glass-ефекти */
+    background: var(--glass-white);
+    backdrop-filter: var(--blur-md);
+    box-shadow: var(--shadow-glass);
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform var(--dur-fast) var(--ease-liquid), 
+                background var(--dur-mid) var(--ease-smooth),
+                box-shadow var(--dur-fast) var(--ease-smooth);
+}
+
+.theme-toggle-btn:hover {
+    transform: scale(1.1) rotate(15deg);
+    background: var(--glass-white-md);
+    box-shadow: var(--shadow-float);
+}
+
+/* Логіка іконок */
+.theme-toggle-btn .icon-light { display: none; }
+.theme-toggle-btn .icon-dark { display: block; }
+
+body.dark .theme-toggle-btn .icon-light { display: block; }
+body.dark .theme-toggle-btn .icon-dark { display: none; }
+
+/* Налаштування для темної теми */
+body.dark .theme-toggle-btn {
+    background: var(--glass-dark);
+    border: 1px solid var(--glass-border-subtle);
+    color: var(--color-text);
 }
