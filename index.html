@@ -10,7 +10,8 @@
     
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="holiday-modee"> 
+<body class="holiday-modee">
+    <div class="side-pills-container"> 
 <div class="version-pill">
     <!-- Іконка, яка завжди видима -->
     <img src="imgs/calc.webp" alt="" class="version-emoji">
@@ -28,6 +29,40 @@
         <!-- Сюди JS вставить список змін (li) -->
         <ul id="ver-list" class="version-log"></ul>
     </div>
+</div>
+<!-- ПІГУЛКА РОЗШИРЕННЯ -->
+<div class="extension-pill">
+    <!-- Іконка розширення (можете замінити на <img> якщо є своя іконка) -->
+    <img src="imgs/extension.png" alt="" class="extension-emoji">
+    
+    <div class="extension-content">
+        <!-- Шапка: Назва -->
+        <div class="extension-header">
+            <span class="extension-title">UltraEnergy SMS Tool</span>
+        </div>
+        
+        <!-- Текст опису (опціонально) -->
+        <div class="extension-description">
+            Розширення для швидкої відправки смс-повідомлення абонентам після підключення.
+        </div>
+
+        <!-- Кнопка та Версія -->
+        <div class="extension-actions">
+    <!-- Групуємо кнопки разом зліва -->
+    <div class="extension-buttons-group">
+        <a href="https://github.com/ultranetpopilnya/UltraEnergy-SMS-Tool/archive/refs/heads/main.zip" target="_blank" class="extension-download-btn">
+            <i class="fas fa-download"></i> Завантажити
+        </a>
+        
+        <!-- Нова кнопка Інформації (Посилання на GitHub сторінку) -->
+        <a href="https://ultranetpopilnya.github.io/UltraEnergy-SMS-Tool/" target="_blank" class="extension-info-btn" title="Інструкція до розширення">
+            <i class="fa-solid fa-circle-info"></i>
+        </a>
+        <span class="extension-version-badge"></span>
+    </div>
+</div>
+    </div>
+</div>
 </div>
 <div id="snow-container"></div>	
     <div class="toggle-button-wrapper">

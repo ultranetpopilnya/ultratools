@@ -1,115 +1,161 @@
-/* === СТИЛІ ДЛЯ ДИНАМІЧНОЇ ВЕРСІЇ (JSON) === */
-.version-pill {
+/* =========================================================
+   ПЛАВАЮЧІ ОСТРОВИ (PRO GLASSMORPHISM) - ВЕРХНЄ РОЗТАШУВАННЯ
+   ========================================================= */
+
+.side-pills-container {
     position: fixed;
-    top: 18px;
-    left: 30px;
+    top: 15px;    
+    left: 20px;   
     z-index: 2000;
     
-    /* --- ПОЧАТКОВИЙ СТАН (КРУГ) --- */
-    width: 38px;
-    max-height: 38px; 
-    min-height: 38px;
+    display: flex;
+    flex-direction: column; 
+    gap: 14px; 
+    align-items: flex-start; 
     
-    background-color: var(--input-bg-color); /* Або rgba(255,255,255,0.9) для ефекту скла */
-    border: 1px solid var(--input-border-color);
-    border-radius: 16px;
+    pointer-events: none;
+}
+
+.side-pills-container > * {
+    pointer-events: auto;
+}
+
+/* 2. БАЗОВИЙ СТАН */
+.version-pill, .extension-pill {
+    width: 50px; 
+    /* ВИПРАВЛЕННЯ 1: Прибираємо фіксований height, залишаємо ТІЛЬКИ min і max для ідеальної анімації в ОБИДВА боки */
+    min-height: 50px;
+    max-height: 50px;
     
-    /* Ефект матового скла (працює в сучасних браузерах) */
-    backdrop-filter: blur(8px);
+    border-radius: 25px; /* Рівно половина від 56px - ідеальне незламне коло */
     
-    overflow: hidden;
+    background: rgba(255, 255, 255, 0.5); 
+    backdrop-filter: blur(20px) saturate(150%); 
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+    border: 1px solid rgba(255, 255, 255, 0.6);
     
-    /* Пружиниста анімація розкриття */
-    transition: 
-        width 0.5s cubic-bezier(0.34, 1.25, 0.64, 1), /* Ефект пружини */
-        max-height 0.5s cubic-bezier(0.25, 1, 0.5, 1),
-        border-radius 0.4s ease,
-        box-shadow 0.4s ease,
-        background-color 0.3s;
+    box-shadow: 
+        inset 0 1px 1px rgba(255, 255, 255, 0.9), 
+        0 4px 10px rgba(0, 0, 0, 0.05),
+        0 12px 30px rgba(0, 0, 0, 0.1);
         
-    cursor: default;
+    cursor: pointer;
+    overflow: hidden; /* Важливо для згортання, щоб текст не стирчав */
+    position: relative;
+    
+    /* ВИПРАВЛЕННЯ 2: Робимо пружинку трохи м'якшою (1.2 замість 1.56), 
+       щоб при закритті коло не стискалося до мікроскопічних розмірів */
+    transition: 
+        width 0.5s cubic-bezier(0.34, 1.2, 0.64, 1), 
+        max-height 0.5s cubic-bezier(0.34, 1.2, 0.64, 1), 
+        min-height 0.5s cubic-bezier(0.34, 1.2, 0.64, 1), 
+        border-radius 0.4s ease, 
+        background 0.3s, border-color 0.3s, box-shadow 0.3s;
+        
+    user-select: none;
     display: flex;
     flex-direction: column;
 }
 
-/* --- СТАН ПРИ НАВЕДЕННІ (КАРТКА) --- */
-.version-pill:hover {
-    width: 340px;          
-    max-height: 400px; /* Збільшив запас висоти */
-    
-    border-radius: 16px; 
+.version-pill:hover:not(.is-open), 
+.extension-pill:hover:not(.is-open) {
+    background: rgba(255, 255, 255, 0.8);
+    transform: scale(1.05); 
     border-color: var(--primary-accent-color);
-       
-    overflow-y: auto;
-	scrollbar-width: thin; 
+}
+
+/* 3. ВІДКРИТИЙ СТАН */
+.version-pill.is-open, .extension-pill.is-open {
+    width: 358px; 
+    border-radius: 16px; 
+    background: rgba(255, 255, 255, 0.85); 
+    
+    box-shadow: 
+        inset 0 1px 1px rgba(255, 255, 255, 0.9), 
+        0 15px 35px rgba(0, 0, 0, 0.1),
+        0 0 0 1px rgba(0, 123, 255, 0.1);
+}
+
+.version-pill.is-open {
+    /* Замість height: auto ми задаємо межі, в яких контент сам себе розтягне */
+    min-height: 200px;
+    max-height: 480px; 
+    
+    overflow-y: auto; 
+    overflow-x: hidden;
+    scrollbar-width: thin;
     scrollbar-color: var(--scrollbar-thumb) transparent;
 }
 
-/* Іконка (завжди на місці) */
-.version-pill .version-emoji {
+.extension-pill.is-open {
+    min-height: 165px;
+    max-height: 165px; 
+}
+
+/* 4. ІДЕАЛЬНИЙ СКРОЛ (Без стрілок) */
+.version-pill.is-open::-webkit-scrollbar { 
+    width: 6px; 
+}
+
+.version-pill.is-open::-webkit-scrollbar-track { 
+    background: transparent; 
+    margin-top: 24px; 
+    margin-bottom: 24px; 
+}
+.version-pill.is-open::-webkit-scrollbar-thumb { 
+    background-color: var(--scrollbar-thumb); 
+    border-radius: 10px; 
+}
+
+/* 5. ІКОНКИ */
+.version-emoji, .extension-emoji {
     position: absolute;
-    top: 5px;
-    left: 5px;
-    width: 26px;
-    height: 26px;
-    object-fit: contain;
-    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    flex-shrink: 0;
-    z-index: 2; /* Щоб була поверх тексту при анімації */
-}
-.version-pill:hover .version-emoji { 
-    transform: scale(1.15) rotate(15deg); 
+    top: 9px; left: 9px;
+    width: 30px; height: 30px;
+    object-fit: contain; font-size: 28px; z-index: 10;
+    transition: all 0.5s cubic-bezier(0.34, 1.2, 0.64, 1);
 }
 
-/* Контент всередині */
-.version-content {
-    margin-top: 14px;
-    margin-left: 38px; 
-    margin-right: 15px;
-    margin-bottom: 15px;
+.version-pill.is-open .version-emoji,
+.extension-pill.is-open .extension-emoji {
+    top: 9px; left: 9px;
+    transform: scale(1); 
+}
+
+/* 6. КОНТЕНТ */
+.version-content, .extension-content {
+    width: 260px; 
+    min-width: 260px;
     
-    /* Початковий стан: прозорий і зсунутий вліво */
+    /* Стан закритого вікна: текст швидко ховається (швидше, ніж згортається вікно) */
     opacity: 0;
-    transform: translateX(-20px);
+    transform: translateY(-10px) scale(0.95);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    pointer-events: none; /* Щоб не можна було клікнути по невидимому тексту */
     
-    /* Анімація появи з затримкою */
-    transition: 
-        opacity 0.3s ease 0.15s,
-        transform 0.4s cubic-bezier(0.25, 1, 0.5, 1) 0.1s;
-    
-    width: 270px; 
-    min-width: 270px;
+    margin: 14px 18px 14px 48px; 
+    user-select: text; cursor: auto;
 }
 
-/* При наведенні текст виїжджає на місце */
-.version-pill:hover .version-content { 
+.version-pill.is-open .version-content, 
+.extension-pill.is-open .extension-content {
+    /* Стан відкритого вікна: текст плавно з'являється із затримкою */
     opacity: 1; 
-    transform: translateX(0);
+    transform: translateY(0) scale(1); 
+    transition: opacity 0.4s ease 0.15s, transform 0.4s cubic-bezier(0.25, 1, 0.5, 1) 0.1s;
+    pointer-events: auto;
 }
 
-/* Шапка картки (номер версії) */
-/* === ОНОВЛЕННЯ ДЛЯ ШАПКИ (НАЗВА + ВЕРСІЯ) === */
-
-.version-header {
-    display: flex;
-    justify-content: space-between; /* Розносить текст по краях: Назва зліва, Версія справа */
-    align-items: center;
-    
-    border-bottom: 1px solid var(--input-border-color);
-    padding-bottom: 8px;
-    margin-bottom: 10px;
+/* ШАПКИ */
+.version-header, .extension-header {
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 1px solid rgba(0,0,0,0.08); 
+    padding-bottom: 10px; margin-bottom: 12px;
 }
-
-/* Стиль для нового напису "Історія змін" */
-.version-title {
-    font-weight: 700;
-    font-size: 14px;
-    text-transform: uppercase; /* Робить літери ВЕЛИКИМИ для стилю */
-    letter-spacing: 0.5px;
-    color: var(--text-color); /* Темний у світлій темі */
-	line-height: 1;
+.version-title, .extension-title {
+    font-weight: 800; font-size: 13px; text-transform: uppercase;
+    letter-spacing: 1px; color: var(--text-color);
 }
-
 /* Стиль для номера версії (справа) */
 .version-number {
     font-weight: 700;
@@ -124,17 +170,6 @@
 	line-height: 1;
 }
 
-/* === ТЕМНА ТЕМА === */
-
-/* Напис "Історія змін" стає світлим */
-body.dark .version-title {
-    color: #b0b0b0;	
-}
-
-body.dark .version-header {
-    border-bottom: 1px solid rgba(230, 162, 46, 0.3);
-}
-
 /* Номер версії стає оранжевим бейджем */
 body.dark .version-number {
     background-color: rgba(230, 162, 46, 0.15); /* Напівпрозорий оранжевий фон */
@@ -142,53 +177,114 @@ body.dark .version-number {
     box-shadow: 0 0 10px rgba(230, 162, 46, 0.1); /* Легке світіння */
 }
 
-/* Список змін (Задаємо точну висоту рядка тексту = 18px) */
+/* =========================================================
+   ІСТОРІЯ ВЕРСІЙ: ЖОДНИХ КРАПОК, ТІЛЬКИ БЕЙДЖІ
+   ========================================================= */
 .version-log { 
-    list-style: none; 
-    padding: 0; 
-    margin: 0; 
+    list-style: none !important; /* Жорстко вимикаємо маркери списку */
+    padding: 0 !important; 
+    margin: 0 !important; 
     font-size: 13px; 
-    line-height: 18px; /* Фіксована висоту рядка */
+    line-height: 18px; 
     color: var(--text-color); 
+}
+
+/* Перестраховка: вбиваємо крапки на рівні елементів списку */
+.version-log li {
+    list-style-type: none !important;
 }
 
 .log-item { 
     margin-bottom: 8px; 
     display: grid; 
-    grid-template-columns: 34px 1fr; 
+    grid-template-columns: 34px 1fr; /* 34px під бейдж, решта - текст */
     gap: 10px; 
-    align-items: start; /* Притискаємо обох до самої верхньої лінії */
+    align-items: start; 
 }
 
 /* Бейджі */
 .badge {
-    font-size: 10px; 
-    font-weight: 800; 
-    line-height: 12px; /* Висота тексту всередині значка */
-    padding: 3px 0;    /* 12px (текст) + 3px (верх) + 3px (низ) = рівно 18px! */
-    border-radius: 4px; 
-    color: #fff; 
-    
-    width: 100%; 
-    text-align: center; 
-    margin-top: 0; /* Видаляємо старий відступ, який псував вирівнювання */
+    font-size: 10px; font-weight: 800; line-height: 12px;
+    padding: 3px 0; border-radius: 4px; color: #fff; width: 100%; text-align: center;
 }
 .badge.new { background-color: var(--success-color); }
 .badge.fix { background-color: var(--danger-color); }
 .badge.upd { background-color: var(--primary-accent-color); }
 
-/* 1. Колір рамки (бордера) при наведенні */
-body.dark .version-pill:hover {
-    border-color: var(--secondary-accent-color); /* Оранжевий бордюр */
+/* Лінії-роздільники (Повернуті) */
+.history-separator {
+    margin-top: 15px; margin-bottom: 8px; padding-bottom: 4px;
+    border-bottom: 2px solid var(--input-border-color); 
+    font-weight: 800; font-family: 'Fira Code', monospace; 
+    color: var(--accent-color); font-size: 14px;
+    text-align: left; padding-left: 2px; opacity: 0.8;
+}
+.log-item:first-child .history-separator { margin-top: 0; }
+.log-sub-description { font-size: 12px; opacity: 0.8; line-height: 1.3; display: block; margin-top: -2px; }
+
+/* =========================================================
+   РОЗШИРЕННЯ: КНОПКИ ТА ОПИС
+   ========================================================= */
+.extension-description { font-size: 12px; color: var(--text-color); line-height: 1.4; margin-bottom: 15px; }
+.extension-actions { display: flex; align-items: center; justify-content: space-between; }
+.extension-buttons-group { display: flex; align-items: center; gap: 6px; }
+
+.extension-download-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    background-color: var(--primary-accent-color); color: white;
+    padding: 6px 14px; border-radius: 8px; font-size: 13px; font-weight: 600;
+    text-decoration: none; transition: all 0.2s ease-in-out;
+    box-shadow: 0 2px 4px rgba(0, 123, 255, 0.2);
+}
+.extension-download-btn:hover { background-color: #0056b3; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3); color: white; }
+.extension-download-btn:active { transform: translateY(0); }
+
+.extension-info-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 6px 10px; background-color: transparent; color: var(--tab-inactive-text);
+    border: 1px solid var(--input-border-color); border-radius: 8px;
+    text-decoration: none; transition: all 0.2s ease-in-out; font-size: 14px;
+}
+.extension-info-btn:hover { background-color: var(--input-bg-color); color: var(--primary-accent-color); border-color: var(--primary-accent-color); box-shadow: 0 2px 4px rgba(0, 123, 255, 0.1); }
+
+.extension-version-badge {
+    font-weight: 700; font-family: 'Fira Code', monospace; font-size: 13px;
+    background-color: rgba(0, 123, 255, 0.1); color: var(--primary-accent-color);
+    padding: 4px 8px; border-radius: 6px;
 }
 
-/* 3. Колір роздільників (старі версії в списку) */
-body.dark .history-separator {
-    color: var(--secondary-accent-color);       /* Текст версії оранжевий */
-    border-bottom-color: rgba(230, 162, 46, 0.3); /* Лінія під нею напівпрозора оранжева */
+
+/* =========================================================
+   ТЕМНА ТЕМА
+   ========================================================= */
+body.dark .version-pill, body.dark .extension-pill {
+    background: rgba(40, 40, 40, 0.55); 
+    border: 1px solid rgba(255, 255, 255, 0.08); 
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.15), 0 4px 10px rgba(0, 0, 0, 0.3), 0 15px 35px rgba(0, 0, 0, 0.5);
 }
 
-	/* === НОВИЙ, НАДІЙНИЙ СТИЛЬ ДЛЯ ВМІСТУ ВКЛАДОК === */
+body.dark .version-pill:hover:not(.is-open), body.dark .extension-pill:hover:not(.is-open) {
+    background: rgba(50, 50, 50, 0.8); border-color: var(--secondary-accent-color);
+}
+
+body.dark .version-pill.is-open, body.dark .extension-pill.is-open {
+    background: rgba(35, 35, 35, 0.85); border-color: rgba(230, 162, 46, 0.3); 
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1), 0 15px 40px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(230, 162, 46, 0.1); 
+}
+
+/* Темний скрол */
+body.dark .version-pill.is-open { scrollbar-color: #4a4a4a transparent; }
+body.dark .version-pill.is-open::-webkit-scrollbar-thumb { background-color: #4a4a4a; }
+
+body.dark .version-header, body.dark .extension-header { border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+body.dark .version-title, body.dark .extension-title { color: #e0e0e0; }
+body.dark .extension-description { color: var(--text-color); }
+
+body.dark .extension-download-btn { background-color: var(--secondary-accent-color); color: #1b1c1d; box-shadow: 0 2px 4px rgba(230, 162, 46, 0.2); }
+body.dark .extension-download-btn:hover { background-color: #ffb74d; color: #1b1c1d; }
+body.dark .extension-info-btn { color: #aaa; border-color: rgba(255, 255, 255, 0.2); }
+body.dark .extension-info-btn:hover { background-color: rgba(255, 255, 255, 0.05); color: var(--secondary-accent-color); border-color: var(--secondary-accent-color); }
+body.dark .extension-version-badge { background-color: rgba(230, 162, 46, 0.15); color: var(--secondary-accent-color); }
 
 .content-card {
     /* Розміри та позиціонування */
@@ -314,6 +410,7 @@ body.dark .progress-ring-fg {
     --secondary-accent-color: #E6A22E;
     --success-color: #38c172;
     --danger-color: #dc3545;
+    --description-color: #444;
     
     --input-bg-color: #fff;
     --input-border-color: #ccc;
@@ -345,6 +442,7 @@ body.dark {
     --bg-color: #1b1c1d;
     --text-color: #e0e0e0;
     --header-color: #e0e0e0;
+    --description-color: #dfdfdf;
     
     --input-bg-color: #333333;
     --input-border-color: #555555;
@@ -356,7 +454,7 @@ body.dark {
     --template-handle-bg: #4a4a4a;
     --template-handle-border: #555;
     
-    --tab-strip-bg: #2D223D;
+    --tab-strip-bg: #2b2b2b;
     --tab-inactive-text: #e0e0e0;
     
 --scrollbar-thumb: #4a4a4a;
@@ -794,14 +892,14 @@ body.dark .gpon-commands-container select {
 
         .command-description {
             font-size: 0.9em;
-            color: #888; 
+            color: var(--description-color) !important; 
             flex-grow: 1; 
             text-align: right;
             user-select: none;
         }
         
         body.dark .command-description {
-            color: #aaa;
+            color: var(--description-color);
         }
         
         .notification {
@@ -1304,7 +1402,6 @@ body.dark .tab-button.active {
 
         body.dark .checkbox-label {
             background: linear-gradient(130deg, #380b3a, #6f15f5); 
-            border: 0px solid #fff; 
             box-shadow: 
                 inset 0px 0px 1px rgba(0,0,0,0.3); 
         }
@@ -1561,7 +1658,7 @@ body.dark #clear-all-templates-button:hover {
 
     /* Розміри */
     min-height: 90px;
-    min-width: 300px;
+    min-width: 350px;
 
     /* --- ГОЛОВНЕ: АНІМАЦІЯ --- */
     /* Анімуємо transform (рух) і розміри */
@@ -2269,24 +2366,6 @@ body {
         }
     }
 	
-@media (max-width: 1366px) {
-    .container.gpon-commands-container.expanded-layout {
-        max-width: 100% !important; 
-    }
-    
-    #command-output {
-        flex-direction: column; 
-        
-        /* --- ГОЛОВНИЙ ФІКС --- */
-        align-items: stretch; 
-        gap: 0;               
-    }
-
-    .command-column {
-    width: 100% !important; 
-    }
-}
-
 /* Гарантуємо, що результати не стискаються */
 #results-container {
     flex-shrink: 0;
@@ -2597,6 +2676,7 @@ body {
             width: 90% !important;
         }
     }
+    
 	
 .calculator-actions-block {
     display: flex;
@@ -2642,13 +2722,6 @@ body.dark .calculator-actions-block {
     height: 1px;       
     background-color: var(--input-border-color);
     opacity: 0.7;      
-}
-
-/* === ОНОВЛЕНІ СТИЛІ ДЛЯ ШАБЛОНУ === */
-.template-field-group {
-    /* ЗБІЛЬШЕНО МІНІМАЛЬНУ ШИРИНУ, щоб кнопки влізли */
-    min-width: 350px !important; 
-    /* ...інші старі стилі залишаються (border, background, transition)... */
 }
 
 /* === ІДЕАЛЬНИЙ ІНТЕГРОВАНИЙ СТИЛЬ ПОШУКУ === */
@@ -3139,13 +3212,13 @@ body.dark .hist-close-btn:hover { background-color: rgba(255,255,255,0.05); }
     height: auto !important;       
     display: flex !important;
     /* Гарантуємо, що він не стане меншим за контент під час фейду */
-    min-height: 610px !important; 
+    min-height: 0px; 
 }
 
 /* 2. КАРТКА (ВМІСТ): Базові налаштування */
 .container.date-calculator-container .content-card {
-    height: auto !important;       
-    min-height: 612px !important;              
+    height: 610px !important;       
+    min-height: 0px;              
     flex-grow: 1 !important;
     display: flex !important;
     flex-direction: column;
@@ -3245,6 +3318,10 @@ body.dark .scroll-nav-btn.visible:hover {
     text-align: left;      /* Вирівнюємо вліво, як і верхню версію */
     padding-left: 2px;     /* Мікро-відступ для краси */
     opacity: 0.8;
+}
+
+body.dark .history-separator {
+    color: var(--secondary-accent-color);  
 }
 
 /* Робимо так, щоб перший роздільник (поточна версія) не мав відступу зверху */
@@ -3388,10 +3465,6 @@ body.dark .command-item.static-header:hover {
     border-bottom: none !important;
 }
 
-/* Темна тема для тексту */
-body.dark .command-item.static-header .command-text {
-    border-bottom: none !important;
-}
 body.dark .command-item.static-header .command-text:hover {
     color: var(--secondary-accent-color);
     border-bottom: none !important;

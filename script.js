@@ -2653,3 +2653,78 @@ document.addEventListener('keydown', (e) => {
 
 
     document.addEventListener('DOMContentLoaded', initChangelog);
+
+// === КЕРУВАННЯ БОКОВИМИ ПІГУЛКАМИ ===
+document.addEventListener('DOMContentLoaded', () => {
+    const allPills = document.querySelectorAll('.version-pill, .extension-pill');
+
+    document.addEventListener('click', (e) => {
+        // 1. Шукаємо, чи був клік всередині пігулки взагалі
+        const clickedPill = e.target.closest('.version-pill, .extension-pill');
+
+        if (clickedPill) {
+            // Перевіряємо, чи ця пігулка зараз відкрита
+            const isOpen = clickedPill.classList.contains('is-open');
+            
+            // Перевіряємо, чи клік припав САМЕ НА ІКОНКУ
+            const clickedIcon = e.target.closest('.version-emoji, .extension-emoji');
+
+            if (isOpen) {
+                // Якщо пігулка ВЖЕ ВІДКРИТА...
+                if (clickedIcon) {
+                    // ...і ми клікнули по іконці -> ЗАКРИВАЄМО її
+                    clickedPill.classList.remove('is-open');
+                }
+                // Якщо клікнули не по іконці (а по тексту, скролу, кнопці) -> нічого не робимо (залишається відкритою)
+                
+            } else {
+                // Якщо пігулка БУЛА ЗАКРИТА -> відкриваємо її (і закриваємо інші)
+                allPills.forEach(p => p.classList.remove('is-open'));
+                clickedPill.classList.add('is-open');
+            }
+            
+        } else {
+            // 2. Якщо клік був ЗА МЕЖАМИ пігулок (по фону сайту) -> закриваємо всі
+            allPills.forEach(p => p.classList.remove('is-open'));
+        }
+    });
+});
+
+
+// === АВТОМАТИЧНЕ ОТРИМАННЯ ВЕРСІЇ РОЗШИРЕННЯ З GITHUB (БЕЗ КЕШУ) ===
+document.addEventListener('DOMContentLoaded', () => {
+    
+    // ВСТАВТЕ СЮДИ ВАШЕ ПОСИЛАННЯ НА RAW MANIFEST.JSON
+    const MANIFEST_URL = 'https://raw.githubusercontent.com/ultranetpopilnya/UltraEnergy-SMS-Tool/refs/heads/main/manifest.json';
+    
+    const badgeElement = document.querySelector('.extension-version-badge');
+    if (!badgeElement) return;
+
+    async function fetchExtensionVersion() {
+        try {
+            // Додаємо поточний час до URL, щоб браузер точно не використовував старий кеш
+            const response = await fetch(`${MANIFEST_URL}?t=${Date.now()}`, {
+                cache: 'no-store' // Вказуємо браузеру не кешувати запит
+            });
+            
+            if (!response.ok) {
+                throw new Error('Не вдалося отримати дані з GitHub');
+            }
+
+            const manifest = await response.json();
+            
+            // Якщо у файлі є поле version, оновлюємо бейдж
+            if (manifest && manifest.version) {
+                badgeElement.textContent = `v${manifest.version}`;
+            }
+
+        } catch (error) {
+            console.error('Помилка отримання версії розширення:', error);
+            // Якщо немає інтернету або GitHub недоступний, на сайті просто 
+            // залишиться та версія, яку ви написали в HTML (наприклад, v1.0.0)
+        }
+    }
+
+    // Запускаємо функцію при кожному заході на сайт
+    fetchExtensionVersion();
+});
