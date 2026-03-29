@@ -440,7 +440,7 @@ body.dark .progress-ring-fg {
     /* Світла тема: свіжість */
     --bg-blob-1: #E6E9F0; 
     --bg-blob-2: #A8B7C7; 
-    --bg-blob-3: #4C6A85; 
+    --bg-blob-3: #4C6A85;
     --noise-opacity: 0.05; /* Ледь помітний шум */
 }
 
@@ -476,7 +476,7 @@ body.dark {
     
 --bg-color: #0a0c10;
     /* Темна тема: захід сонця */
-    --bg-blob-1: #0D1B2A; 
+    --bg-blob-1: #0e2842; 
     --bg-blob-2: #8B1E3F; 
     --bg-blob-3: #FF7A3D;
     --noise-opacity: 0.08; /* Шум трохи помітніший */
@@ -493,40 +493,7 @@ body.dark {
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: var(--bg-color);
-    z-index: -1;
-    overflow: hidden;
-    transition: background-color 0.8s ease;
-}
-
-/* --- ЗАГАЛЬНИЙ СТИЛЬ ДЛЯ ПЛЯМ --- */
-.ui-gradient-background .blob {
-    position: absolute;
-    width: 45vmax; 
-    height: 45vmax;
-    /* Робимо їх не ідеальними колами, а трохи "м'ятими" для ефекту рідини */
-    border-radius: 45% 55% 60% 40% / 55% 45% 60% 40%;
-    filter: blur(60px); 
-    opacity: 0.5;
-    will-change: transform;
-    mix-blend-mode: multiply; 
-}
-
-body.dark .ui-gradient-background .blob {
-    mix-blend-mode: screen; 
-    opacity: 0.35;
-    filter: blur(80px);
-}
-
-/* --- КОНКРЕТНІ КОЛЬОРИ ТА АНІМАЦІЇ --- */
-
-.ui-gradient-background {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: var(--bg-color);
+    background-color: var(--bg-color, #1a1a2e); /* додав фолбек колір */
     z-index: -1;
     overflow: hidden;
     transition: background-color 0.8s ease;
@@ -538,27 +505,33 @@ body.dark .ui-gradient-background .blob {
     width: 45vmax; 
     height: 45vmax;
     border-radius: 45% 55% 60% 40% / 55% 45% 60% 40%;
-    filter: blur(60px); 
+    filter: blur(70px); /* Трохи збільшив блюр для більшої "рідинності" */
     opacity: 0.5;
-    will-change: transform;
     mix-blend-mode: multiply; 
+    
+    /* Оптимізація продуктивності */
+    will-change: transform, border-radius;
+    backface-visibility: hidden;
+    perspective: 1000px;
+    transform: translate3d(0, 0, 0);
 }
 
+/* Темна тема */
 body.dark .ui-gradient-background .blob {
     mix-blend-mode: screen; 
     opacity: 0.35;
-    filter: blur(80px);
+    filter: blur(90px);
 }
 
 /* --- КОНКРЕТНІ КОЛЬОРИ ТА АНІМАЦІЇ --- */
+/* Рух (move) тепер linear для безперервності, а форма (morph) - ease-in-out */
 
 .blob-1 {
     background: var(--bg-blob-1);
     top: -15%;
     left: -10%;
     transform-origin: center right;
-    /* Збільшено час до 43s + ease-in-out для плавності */
-    animation: move-1 43s infinite ease-in-out; 
+    animation: move-1 50s infinite linear, morph 15s infinite ease-in-out alternate; 
 }
 
 .blob-2 {
@@ -566,7 +539,7 @@ body.dark .ui-gradient-background .blob {
     bottom: -15%;
     right: -10%;
     transform-origin: top center;
-    animation: move-2 53s infinite ease-in-out;
+    animation: move-2 60s infinite linear, morph 19s infinite ease-in-out alternate-reverse;
 }
 
 .blob-3 {
@@ -574,56 +547,65 @@ body.dark .ui-gradient-background .blob {
     top: 40%;
     left: -10%;
     transform-origin: bottom right;
-    animation: move-3 47s infinite ease-in-out;
+    animation: move-3 55s infinite linear, morph 12s infinite ease-in-out alternate;
 }
 
-/* --- ТРАЄКТОРІЇ РУХУ ЗІ ЗМІНОЮ ШВИДКОСТІ --- */
-/* Секрет у відсотках: великий розрив (0% -> 30%) = повільно. Малий розрив (30% -> 40%) = швидко! */
+/* --- АНІМАЦІЯ МОРФІНГУ (РІДИНИ) --- */
+@keyframes morph {
+    0% { border-radius: 45% 55% 60% 40% / 55% 45% 60% 40%; }
+    33% { border-radius: 55% 45% 40% 60% / 45% 55% 40% 60%; }
+    66% { border-radius: 60% 40% 55% 45% / 60% 40% 55% 45%; }
+    100% { border-radius: 40% 60% 45% 55% / 40% 60% 45% 55%; }
+}
+
+/* --- ТРАЄКТОРІЇ РУХУ --- */
+/* Використовуємо рівномірні кроки (0, 33, 66, 100) та translate3d */
 
 @keyframes move-1 {
-    0%   { transform: translate(0, 0) scale(1) rotate(0deg); }
-    /* Повільний дрейф */
-    30%  { transform: translate(15vw, 10vh) scale(1.05) rotate(90deg); }
-    /* ШВИДКИЙ ривок */
-    40%  { transform: translate(22vw, -5vh) scale(0.95) rotate(135deg); }
-    /* Доооовге зависання і повільний рух вбік */
-    75%  { transform: translate(10vw, 20vh) scale(1.1) rotate(270deg); }
-    /* Повернення додому */
-    100% { transform: translate(0, 0) scale(1) rotate(360deg); }
+    0%   { transform: translate3d(0, 0, 0) scale(1) rotate(0deg); }
+    33%  { transform: translate3d(15vw, 15vh, 0) scale(1.05) rotate(120deg); }
+    66%  { transform: translate3d(-10vw, 20vh, 0) scale(0.95) rotate(240deg); }
+    100% { transform: translate3d(0, 0, 0) scale(1) rotate(360deg); }
 }
 
 @keyframes move-2 {
-    0%   { transform: translate(0, 0) scale(1) rotate(0deg); }
-    /* Дуже довгий і повільний старт */
-    40%  { transform: translate(-15vw, -15vh) scale(1.1) rotate(120deg); }
-    /* Трохи швидше зміщення */
-    55%  { transform: translate(-25vw, -5vh) scale(0.9) rotate(180deg); }
-    /* Ривок униз */
-    65%  { transform: translate(-10vw, -25vh) scale(1.05) rotate(220deg); }
-    /* Плавне повернення */
-    100% { transform: translate(0, 0) scale(1) rotate(360deg); }
+    0%   { transform: translate3d(0, 0, 0) scale(1) rotate(0deg); }
+    33%  { transform: translate3d(-15vw, -15vh, 0) scale(1.1) rotate(120deg); }
+    66%  { transform: translate3d(10vw, -25vh, 0) scale(0.9) rotate(240deg); }
+    100% { transform: translate3d(0, 0, 0) scale(1) rotate(360deg); }
 }
 
 @keyframes move-3 {
-    0%   { transform: translate(0, 0) scale(1) rotate(0deg); }
-    /* Швидкий старт (за 20% часу) */
-    20%  { transform: translate(20vw, -10vh) scale(0.9) rotate(70deg); }
-    /* Зависання на місці майже без руху */
-    50%  { transform: translate(22vw, -12vh) scale(1.1) rotate(180deg); }
-    /* Повільне сповзання */
-    85%  { transform: translate(10vw, -20vh) scale(0.95) rotate(300deg); }
-    /* Додому */
-    100% { transform: translate(0, 0) scale(1) rotate(360deg); }
+    0%   { transform: translate3d(0, 0, 0) scale(1) rotate(0deg); }
+    33%  { transform: translate3d(20vw, -10vh, 0) scale(0.9) rotate(120deg); }
+    66%  { transform: translate3d(15vw, 15vh, 0) scale(1.1) rotate(240deg); }
+    100% { transform: translate3d(0, 0, 0) scale(1) rotate(360deg); }
 }
 
-/* Легкий шум */
+@keyframes move-4 {
+    0%   { transform: translate3d(0, 0, 0) scale(0.9) rotate(0deg); }
+    33%  { transform: translate3d(-20vw, 10vh, 0) scale(1.1) rotate(-120deg); }
+    66%  { transform: translate3d(-10vw, -15vh, 0) scale(0.95) rotate(-240deg); }
+    100% { transform: translate3d(0, 0, 0) scale(0.9) rotate(-360deg); }
+}
+
+/* --- ЛЕГКИЙ ШУМ --- */
 .ui-gradient-background::after {
     content: "";
     position: absolute;
-    inset: 0;
+    inset: -50%; /* Робимо шум більшим, щоб при скролі на телефонах він не обрізався */
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-    opacity: 0.02;
+    opacity: 0.04; 
+    mix-blend-mode: overlay; 
     pointer-events: none;
+    z-index: 10;
+}
+
+/* --- ДОСТУПНІСТЬ --- */
+@media (prefers-reduced-motion: reduce) {
+    .ui-gradient-background .blob {
+        animation-duration: 200s !important; /* Ще повільніше для тих, кому погано від анімацій */
+    }
 }
 
 /* === СТИЛІ ДЛЯ СНІГУ (КЕРОВАНІ) === */
