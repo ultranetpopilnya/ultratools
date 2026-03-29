@@ -12,6 +12,12 @@
 </head>
 <body class="holiday-modee">
 
+     <script>
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark');
+        }
+    </script>
+
     <div class="theme-pill-container">
     <div class="theme-pill" id="themeToggle" title="Змінити тему">
         <span class="theme-emoji sun-icon">☀️</span>
