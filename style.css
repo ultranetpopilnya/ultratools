@@ -219,17 +219,6 @@ body.dark .version-number {
 .badge.fix { background-color: var(--danger-color); }
 .badge.upd { background-color: var(--primary-accent-color); }
 
-/* Лінії-роздільники (Повернуті) */
-.history-separator {
-    margin-top: 15px; margin-bottom: 8px; padding-bottom: 4px;
-    border-bottom: 2px solid var(--input-border-color); 
-    font-weight: 800; font-family: 'Fira Code', monospace; 
-    color: var(--accent-color); font-size: 14px;
-    text-align: left; padding-left: 2px; opacity: 0.8;
-}
-.log-item:first-child .history-separator { margin-top: 0; }
-.log-sub-description { font-size: 12px; opacity: 0.8; line-height: 1.3; display: block; margin-top: -2px; }
-
 /* =========================================================
    РОЗШИРЕННЯ: КНОПКИ ТА ОПИС
    ========================================================= */
@@ -305,7 +294,6 @@ body.dark .version-pill.is-open::-webkit-scrollbar-thumb { background-color: #4a
 
 body.dark .version-header, body.dark .extension-header { border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
 body.dark .version-title, body.dark .extension-title { color: #e0e0e0; }
-body.dark .extension-description { color: var(--text-color); }
 
 body.dark .extension-download-btn { background-color: var(--secondary-accent-color); color: #1b1c1d; box-shadow: 0 2px 4px rgba(230, 162, 46, 0.2); }
 body.dark .extension-download-btn:hover { background-color: #ffb74d; color: #1b1c1d; }
@@ -514,7 +502,7 @@ body.dark {
 --highlight-bg-color: rgba(230, 162, 46, 0.5);
     --snow-color: #ffffff;
     
---bg-color: #0a0c10;
+--bg-color: #191919;
     /* Темна тема: захід сонця */
     --bg-blob-1: #0e2842; 
     --bg-blob-2: #8B1E3F; 
@@ -784,10 +772,11 @@ body.dark .login-generator-container .result-item .regenerate-login-btn {
 .template-field-group textarea {
     position: relative;
     z-index: 2;
-    background: transparent !important; /* Робимо textarea прозорим */
-    color: var(--text-color); /* Але колір тексту залишаємо видимим */
-    -webkit-text-fill-color: var(--text-color); /* Для деяких браузерів */
+    background: transparent !important; 
+    color: var(--text-color); 
+    -webkit-text-fill-color: var(--text-color);
     resize: none !important;
+    transition: border-color 0.2s;
 }
 .highlighter-backdrop mark {
     background-color: #85e07d;
@@ -849,8 +838,6 @@ body.dark .template-field-group .textarea-wrapper:focus-within {
     user-select: none;         /* Стандартний синтаксис */
 	/* ОПТИМІЗАЦІЯ: Ізолюємо шаблон від решти сторінки */
     contain: layout paint style;
-    /* ОПТИМІЗАЦІЯ: Виносимо в окремий шар для плавного перетягування */
-    will-change: transform, width, height; 
 }
 
 /* Додамо клас для активного перетягування, щоб підняти z-index та вимкнути зайве */
@@ -1159,25 +1146,49 @@ body.dark .gpon-commands-container select {
  
         }
 
-        .container {
-            background: transparent; 
-            padding-top: 1rem;
-            border-radius: 0 0 8px 8px; 
-            box-shadow: none; 
-            width: var(--local-width, 100%); 
-            min-width: var(--local-width-min, 300px); 
-            height: auto;
-            min-height: var(--local-height-min, 0px);
-            display: none; 
-            flex-direction: column;
-            resize: none; 
-            overflow: auto; 
-            margin: 0 auto; 
-        }
-        
-        .container.active {
-            display: flex; 
-        }
+        /* === БАЗОВИЙ КОНТЕЙНЕР ВКЛАДОК === */
+.container {
+    /* 1. Твої оригінальні візуальні стилі та відступи (ЯКІ Я ПРОПУСТИВ) */
+    background: transparent; 
+    padding-top: 1rem;
+    border-radius: 0 0 8px 8px; 
+    box-shadow: none; 
+    margin: 0 auto; 
+    overflow: auto; 
+    resize: none; 
+    
+    /* 2. Твої розміри */
+    width: var(--local-width, 100%); 
+    min-width: var(--local-width-min, 300px); 
+    height: var(--local-height, auto);
+    min-height: var(--local-height-min, 0px);
+    
+    /* 3. Логіка позиціонування (для накладання вкладок одна на одну) */
+    display: flex;
+    flex-direction: column;
+    position: absolute; 
+    top: 0;
+    left: 50%; 
+    
+    /* 4. Стан ЗАКРИТОЇ вкладки (Замість display: none) */
+    opacity: 0;
+    visibility: hidden; /* Важливо: вимикає кліки і фокус для невидимої вкладки */
+    transform: translateX(-50%) scale(0.97);
+    pointer-events: none; 
+    
+    /* 5. Твоя плавна анімація */
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out, visibility 0.3s;
+    transform-origin: center center;
+}
+
+/* Стан ВІДКРИТОЇ вкладки */
+.container.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) scale(1);
+    pointer-events: auto; 
+    z-index: 10; 
+}
         		
 		.login-generator-container {
     align-items: center;
@@ -1768,9 +1779,6 @@ body.dark #clear-all-templates-button:hover {
     /* Це змушує браузер малювати текст чітко навіть при GPU анімації */
     -webkit-font-smoothing: subpixel-antialiased;
     backface-visibility: hidden; 
-    
-    /* Важливо: не використовуємо will-change, бо він милить текст */
-    will-change: auto; 
 }
 
 /* Коли тягнемо руками - анімації бути не повинно */
@@ -1822,24 +1830,6 @@ body.dark .template-field-group textarea {
     border-color: var(--input-border-color);
     color: var(--text-color);
 }
-        
-        .template-field-group textarea {
-            width: 100%;
-            flex-grow: 1; 
-            padding: 10px;
-            border-radius: 6px;
-            border: 1px solid var(--input-border-color);
-            box-sizing: border-box;
-            font-size: 14px;
-            resize: none !important; 
-            transition: border-color 0.2s;
-            margin: 0 4px 4px 4px;
-			width: calc(100% - 8px);
-			white-space: pre-wrap;
-            overflow-wrap: normal;
-            word-break: normal;
-			font-family: 'Fira Code', monospace !important; 
-        }
 
         .template-actions {
             display: flex;
@@ -1992,56 +1982,12 @@ body.dark .line-marker {
     color: #E6A22E;
 }
 
-.template-field-group textarea {
-    margin: 0;
-    border: none;
-    border-radius: 0;
-    width: 100%; 
-    line-height: 1.5; 
-}
-
 /* === ФІНАЛЬНИЙ КОД: ЧИСТА АНІМАЦІЯ МАСШТАБУВАННЯ === */
 
 /* 1. Налаштовуємо батьківський контейнер */
 .tab-content-wrapper {
     position: relative;
     /* min-height буде встановлюватися динамічно через JS */
-}
-
-/* 2. Стиль для ВСІХ вкладок. Вони ЗАВЖДИ position: absolute */
-.container {
-    display: flex;
-    position: absolute; /* Це ключ до вирішення проблеми "напливу" */
-    top: 0;
-    left: 50%; /* Центруємо блок по горизонталі */
-    
-    /* Використовуємо ваші індивідуальні розміри */
-    width: var(--local-width);
-    height: var(--local-height);
-
-    /* Початковий стан: невидимі, зменшені та відцентровані */
-    opacity: 0;
-    transform: translateX(-50%) scale(0.97);
-    
-    /* Ховаємо неактивні вкладки від взаємодії */
-    pointer-events: none; 
-    
-    /* Анімуємо ТІЛЬКИ ті властивості, що не викликають "ривків" */
-    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
-    transform-origin: center center;
-}
-
-/* 3. Стиль для АКТИВНОЇ вкладки */
-.container.active {
-    /* Кінцевий стан анімації: повністю видима, нормального розміру */
-    opacity: 1;
-    transform: translateX(-50%) scale(1);
-    
-    /* Робимо вкладку інтерактивною */
-    pointer-events: auto; 
-    
-    /* Активна вкладка завжди має бути зверху */
-    z-index: 10; 
 }
 
 /* === НОВИЙ, СУЧАСНИЙ ДИЗАЙН ІНТЕРФЕЙСУ КАЛЬКУЛЯТОРА === */
@@ -3405,7 +3351,7 @@ body.dark .scroll-nav-btn.visible:hover {
     margin-bottom: 8px;    
     padding-bottom: 4px;   /* Трохи більше місця під текстом */
     
-    border-bottom: 2px solid var(--input-border-color); 
+    border-bottom: 1px solid var(--input-border-color); 
     
     font-weight: 800;      
     font-family: 'Fira Code', monospace; 
@@ -3575,13 +3521,6 @@ body.dark .command-item.static-header .command-text:hover {
     z-index: 2000;
 }
 
-.theme-pill-container {
-    position: fixed;
-    top: 15px;    
-    right: 20px; 
-    z-index: 2000;
-}
-
 .theme-pill {
     width: 50px; 
     height: 50px; /* Ідеальне коло */
@@ -3641,32 +3580,48 @@ body.dark .theme-pill:hover {
 }
 
 /* =========================================
-   АНІМАЦІЯ ЕМОДЗІ (СОНЦЕ / МІСЯЦЬ) - ПОВЕРНУТО!
+   АНІМАЦІЯ ЕМОДЗІ (СОНЦЕ / МІСЯЦЬ)
    ========================================= */
 .theme-emoji {
     position: absolute;
     font-size: 26px;
     line-height: 1;
-    /* Та сама крута пружиниста анімація обертання і вильоту */
-    transition: transform 0.5s cubic-bezier(0.34, 1.2, 0.64, 1), opacity 0.5s ease;
+    /* Сучасна анімація незалежних властивостей */
+    transition: translate 0.5s cubic-bezier(0.34, 1.2, 0.64, 1), 
+                scale 0.5s cubic-bezier(0.34, 1.2, 0.64, 1), 
+                rotate 0.5s cubic-bezier(0.34, 1.2, 0.64, 1), 
+                opacity 0.5s ease;
 }
 
-/* Світла тема: Сонце по центру, Місяць схований внизу */
-body:not(.dark) .sun-icon {
-    transform: translateY(0) scale(1) rotate(0deg);
+/* Ховер тепер крутить іконку, не збиваючи координати польоту */
+.theme-pill:hover .theme-emoji {
+    rotate: -20deg;
+}
+
+/* --- СВІТЛА ТЕМА: Показуємо МІСЯЦЬ (Сонце ховаємо зверху) --- */
+body:not(.dark) .moon-icon {
+    translate: 0 0; 
+    scale: 1; 
+    rotate: 0deg;
     opacity: 1;
 }
-body:not(.dark) .moon-icon {
-    transform: translateY(40px) scale(0.5) rotate(90deg);
+body:not(.dark) .sun-icon {
+    translate: 0 -40px; 
+    scale: 0.5; 
+    rotate: -90deg;
     opacity: 0;
 }
 
-/* Темна тема: Сонце відлітає вгору, Місяць стає по центру */
+/* --- ТЕМНА ТЕМА: Показуємо СОНЦЕ (Місяць ховаємо знизу) --- */
 body.dark .sun-icon {
-    transform: translateY(-40px) scale(0.5) rotate(-90deg);
-    opacity: 0;
+    translate: 0 0; 
+    scale: 1; 
+    rotate: 0deg;
+    opacity: 1;
 }
 body.dark .moon-icon {
-    transform: translateY(0) scale(1) rotate(0deg);
-    opacity: 1;
+    translate: 0 40px; 
+    scale: 0.5; 
+    rotate: 90deg;
+    opacity: 0;
 }
