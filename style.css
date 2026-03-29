@@ -23,65 +23,72 @@
 /* 2. БАЗОВИЙ СТАН */
 .version-pill, .extension-pill {
     width: 50px; 
-    /* ВИПРАВЛЕННЯ 1: Прибираємо фіксований height, залишаємо ТІЛЬКИ min і max для ідеальної анімації в ОБИДВА боки */
     min-height: 50px;
     max-height: 50px;
+    border-radius: 25px;
     
-    border-radius: 25px; /* Рівно половина від 56px - ідеальне незламне коло */
-    
-    background: rgba(255, 255, 255, 0.5); 
+    /* НОВЕ СКЛО: Основа + Відблиск */
+    background-color: var(--glass-white);
+    background-image: var(--reflection-top);
     backdrop-filter: blur(20px) saturate(150%); 
     -webkit-backdrop-filter: blur(20px) saturate(150%);
-    border: 1px solid rgba(255, 255, 255, 0.6);
     
+    /* НОВЕ СКЛО: Рамка + Тіні */
+    border: 1px solid var(--glass-border);
     box-shadow: 
-        inset 0 1px 1px rgba(255, 255, 255, 0.9), 
-        0 4px 10px rgba(0, 0, 0, 0.05),
-        0 12px 30px rgba(0, 0, 0, 0.1);
+        var(--shadow-glass), 
+        var(--reflection-inner);
         
     cursor: pointer;
-    overflow: hidden; /* Важливо для згортання, щоб текст не стирчав */
+    overflow: hidden; 
     position: relative;
+    display: flex;
+    flex-direction: column;
     
-    /* ВИПРАВЛЕННЯ 2: Робимо пружинку трохи м'якшою (1.2 замість 1.56), 
-       щоб при закритті коло не стискалося до мікроскопічних розмірів */
+    /* Твої оригінальні анімації збережено */
     transition: 
-                width 0.5s cubic-bezier(0.34, 1.2, 0.64, 1), 
+        width 0.5s cubic-bezier(0.34, 1.2, 0.64, 1), 
         max-height 0.5s cubic-bezier(0.34, 1.2, 0.64, 1), 
         min-height 0.5s cubic-bezier(0.34, 1.2, 0.64, 1), 
         border-radius 0.4s ease, 
         background 0.3s, border-color 0.3s, box-shadow 0.3s,
-        transform 0.4s ease; 
+        transform 0.4s cubic-bezier(0.34, 1.2, 0.64, 1); 
         
     user-select: none;
-    display: flex;
-    flex-direction: column;
 }
 
+/* Ховер для закритого стану (Піднімається і стає яскравішим) */
 .version-pill:hover:not(.is-open), 
 .extension-pill:hover:not(.is-open) {
-    background: rgba(255, 255, 255, 0.8);
-    transform: scale(1.05); 
-    border-color: var(--primary-accent-color);
+    background-color: var(--glass-white-md);
+    border-color: var(--primary-accent-color); /* Твій синій акцент */
+    transform: scale(1.05) translateY(-2px); /* Додав легке спливання як у правого перемикача */
+    box-shadow: 
+        var(--shadow-float), 
+        var(--reflection-inner);
 }
 
-/* 3. ВІДКРИТИЙ СТАН */
 .version-pill.is-open, .extension-pill.is-open {
     width: 358px; 
     border-radius: 16px; 
-    background: rgba(255, 255, 255, 0.85); 
     
+    /* ЗМІНА: Робимо фон набагато прозорішим (70% замість 90%) */
+    background-color: rgba(255, 255, 255, 0.6); 
+    
+    /* Додаємо трішки яскравішу рамку, щоб виділити межі скла на світлому фоні */
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    
+    /* Тіні та відблиски */
     box-shadow: 
-        inset 0 1px 1px rgba(255, 255, 255, 0.9), 
-        0 15px 35px rgba(0, 0, 0, 0.1),
-        0 0 0 1px rgba(0, 123, 255, 0.1);
+        var(--shadow-float), 
+        var(--reflection-inner),
+        0 0 20px rgba(0, 123, 255, 0.05); /* Дуже легке синє світіння навколо */
 }
 
+/* Розміри контенту залишаються твоїми */
 .version-pill.is-open {
-    /* Замість height: auto ми задаємо межі, в яких контент сам себе розтягне */
     min-height: 200px;
     max-height: 480px; 
-    
     overflow-y: auto; 
     overflow-x: hidden;
     scrollbar-width: thin;
@@ -258,19 +265,38 @@ body.dark .version-number {
 /* =========================================================
    ТЕМНА ТЕМА
    ========================================================= */
-body.dark .version-pill, body.dark .extension-pill {
-    background: rgba(40, 40, 40, 0.55); 
-    border: 1px solid rgba(255, 255, 255, 0.08); 
-    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.15), 0 4px 10px rgba(0, 0, 0, 0.3), 0 15px 35px rgba(0, 0, 0, 0.5);
+/* Базовий закритий стан */
+body.dark .version-pill,
+body.dark .extension-pill {
+    background-color: rgba(20, 25, 35, 0.5);
+    background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0) 50%);
+    border-color: rgba(255, 255, 255, 0.12);
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.5),
+        inset 0 1px 1px rgba(255, 255, 255, 0.15),
+        inset 0 -1px 1px rgba(0, 0, 0, 0.3);
 }
 
-body.dark .version-pill:hover:not(.is-open), body.dark .extension-pill:hover:not(.is-open) {
-    background: rgba(50, 50, 50, 0.8); border-color: var(--secondary-accent-color);
+/* Ховер у темній темі */
+body.dark .version-pill:hover:not(.is-open),
+body.dark .extension-pill:hover:not(.is-open) {
+    background-color: rgba(30, 35, 45, 0.6);
+    border-color: var(--secondary-accent-color); /* Твій оранжевий акцент */
+    box-shadow: 
+        0 20px 60px rgba(0, 0, 0, 0.6),
+        inset 0 1px 1px rgba(255, 255, 255, 0.2),
+        inset 0 -1px 1px rgba(0, 0, 0, 0.3);
 }
 
-body.dark .version-pill.is-open, body.dark .extension-pill.is-open {
-    background: rgba(35, 35, 35, 0.85); border-color: rgba(230, 162, 46, 0.3); 
-    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1), 0 15px 40px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(230, 162, 46, 0.1); 
+/* Відкритий стан у темній темі (трохи щільніший фон для тексту) */
+body.dark .version-pill.is-open,
+body.dark .extension-pill.is-open {
+    background-color: rgba(30, 35, 45, 0.85);
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 
+        0 20px 60px rgba(0, 0, 0, 0.7),
+        inset 0 1px 1px rgba(255, 255, 255, 0.15),
+        inset 0 -1px 1px rgba(0, 0, 0, 0.4);
 }
 
 /* Темний скрол */
@@ -438,10 +464,24 @@ body.dark .progress-ring-fg {
 
 --bg-color: #f8fafc;
     /* Світла тема: свіжість */
-    --bg-blob-1: #E6E9F0; 
-    --bg-blob-2: #A8B7C7; 
-    --bg-blob-3: #4C6A85;
+--bg-blob-1: #D1E9FF;
+--bg-blob-2: #D1D5FF;
+--bg-blob-3: #E2D1FF;
     --noise-opacity: 0.05; /* Ледь помітний шум */
+
+    --glass-white-lg: rgba(255, 255, 255, 0.9);
+        --glass-white: rgba(255, 255, 255, 0.62);
+    --glass-white-md: rgba(255, 255, 255, 0.78);
+    --glass-dark: rgba(0, 0, 0, 0.06);
+    
+    --glass-border: rgba(15, 23, 42, 0.14);
+    --glass-border-bright: rgba(15, 23, 42, 0.22);
+    
+    --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.1);
+    --shadow-float: 0 20px 60px rgba(0, 0, 0, 0.16), 0 4px 16px rgba(0, 0, 0, 0.08);
+    
+    --reflection-top: linear-gradient(135deg, rgba(255, 255, 255, 0.65) 0%, rgba(255, 255, 255, 0) 50%);
+    --reflection-inner: inset 0 1px 1px rgba(255, 255, 255, 0.95), inset 0 -1px 1px rgba(0, 0, 0, 0.04);
 }
 
 body.dark {
@@ -486,119 +526,117 @@ body.dark {
    СУЧАСНИЙ АНІМОВАНИЙ ФОН (AURORA/BLOB STYLE)
    ========================================================= */
 
-/* --- ОСНОВНИЙ КОНТЕЙНЕР --- */
+/* --- КОНТЕЙНЕР --- */
 .ui-gradient-background {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: var(--bg-color, #1a1a2e); /* додав фолбек колір */
+    background-color: var(--bg-color, #f8fafc);
     z-index: -1;
     overflow: hidden;
     transition: background-color 0.8s ease;
 }
 
-/* --- ЗАГАЛЬНИЙ СТИЛЬ ДЛЯ ПЛЯМ --- */
+/* --- ЗАГАЛЬНИЙ СТИЛЬ ДЛЯ ПЛЯМ (МАСЛЯНИСТА РІДИНА) --- */
 .ui-gradient-background .blob {
     position: absolute;
-    width: 45vmax; 
-    height: 45vmax;
-    border-radius: 45% 55% 60% 40% / 55% 45% 60% 40%;
-    filter: blur(70px); /* Трохи збільшив блюр для більшої "рідинності" */
-    opacity: 0.5;
+    width: 55vmax; /* Трохи збільшив, щоб вони частіше перетинались */
+    height: 55vmax;
+    
+    /* Густий блюр розмиває краї так сильно, що вони здаються рідиною */
+    filter: blur(90px); 
+    
+    /* Густота кольору для світлої теми (щоб multiply створював темніші нові кольори) */
+    opacity: 0.65;
     mix-blend-mode: multiply; 
     
-    /* Оптимізація продуктивності */
     will-change: transform, border-radius;
     backface-visibility: hidden;
     perspective: 1000px;
-    transform: translate3d(0, 0, 0);
 }
 
-/* Темна тема */
+/* Темна тема (Неонова рідина / Лава) */
 body.dark .ui-gradient-background .blob {
+    /* Screen змушує рідину світитися новими яскравими кольорами при перетині */
     mix-blend-mode: screen; 
-    opacity: 0.35;
-    filter: blur(90px);
+    opacity: 0.5; /* Густіше, ніж було в тебе, для кращого змішування */
+    filter: blur(110px); /* В темряві світло розсіюється сильніше */
 }
 
-/* --- КОНКРЕТНІ КОЛЬОРИ ТА АНІМАЦІЇ --- */
-/* Рух (move) тепер linear для безперервності, а форма (morph) - ease-in-out */
+/* --- КОНКРЕТНІ ПЛЯМИ --- */
+/* Розвів час анімацій, щоб вони "жили" своїм життям */
 
 .blob-1 {
     background: var(--bg-blob-1);
-    top: -15%;
-    left: -10%;
+    top: -10%; left: -10%;
     transform-origin: center right;
-    animation: move-1 50s infinite linear, morph 15s infinite ease-in-out alternate; 
+    animation: move-1 45s infinite linear, morph 17s infinite ease-in-out alternate; 
 }
 
 .blob-2 {
     background: var(--bg-blob-2);
-    bottom: -15%;
-    right: -10%;
+    bottom: -20%; right: -10%;
     transform-origin: top center;
-    animation: move-2 60s infinite linear, morph 19s infinite ease-in-out alternate-reverse;
+    animation: move-2 53s infinite linear, morph 13s infinite ease-in-out alternate-reverse;
 }
 
 .blob-3 {
     background: var(--bg-blob-3);
-    top: 40%;
-    left: -10%;
+    top: 30%; left: -20%;
     transform-origin: bottom right;
-    animation: move-3 55s infinite linear, morph 12s infinite ease-in-out alternate;
+    animation: move-3 41s infinite linear, morph 19s infinite ease-in-out alternate;
 }
 
-/* --- АНІМАЦІЯ МОРФІНГУ (РІДИНИ) --- */
+/* --- АНІМАЦІЯ ФОРМИ (АГРЕСИВНИЙ МОРФІНГ) --- */
+/* Ці значення створюють максимально нерівномірні краплі, що розтікаються */
 @keyframes morph {
-    0% { border-radius: 45% 55% 60% 40% / 55% 45% 60% 40%; }
-    33% { border-radius: 55% 45% 40% 60% / 45% 55% 40% 60%; }
-    66% { border-radius: 60% 40% 55% 45% / 60% 40% 55% 45%; }
-    100% { border-radius: 40% 60% 45% 55% / 40% 60% 45% 55%; }
+    0%   { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
+    25%  { border-radius: 58% 42% 24% 76% / 46% 72% 28% 54%; }
+    50%  { border-radius: 50% 50% 60% 40% / 70% 40% 60% 30%; }
+    75%  { border-radius: 25% 75% 45% 55% / 35% 25% 75% 65%; }
+    100% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
 }
 
 /* --- ТРАЄКТОРІЇ РУХУ --- */
-/* Використовуємо рівномірні кроки (0, 33, 66, 100) та translate3d */
-
 @keyframes move-1 {
     0%   { transform: translate3d(0, 0, 0) scale(1) rotate(0deg); }
-    33%  { transform: translate3d(15vw, 15vh, 0) scale(1.05) rotate(120deg); }
-    66%  { transform: translate3d(-10vw, 20vh, 0) scale(0.95) rotate(240deg); }
+    33%  { transform: translate3d(25vw, 20vh, 0) scale(1.1) rotate(120deg); } /* Запливає глибше в екран */
+    66%  { transform: translate3d(-10vw, 30vh, 0) scale(0.9) rotate(240deg); }
     100% { transform: translate3d(0, 0, 0) scale(1) rotate(360deg); }
 }
 
 @keyframes move-2 {
     0%   { transform: translate3d(0, 0, 0) scale(1) rotate(0deg); }
-    33%  { transform: translate3d(-15vw, -15vh, 0) scale(1.1) rotate(120deg); }
-    66%  { transform: translate3d(10vw, -25vh, 0) scale(0.9) rotate(240deg); }
+    33%  { transform: translate3d(-30vw, -20vh, 0) scale(1.15) rotate(120deg); }
+    66%  { transform: translate3d(15vw, -35vh, 0) scale(0.85) rotate(240deg); }
     100% { transform: translate3d(0, 0, 0) scale(1) rotate(360deg); }
 }
 
 @keyframes move-3 {
     0%   { transform: translate3d(0, 0, 0) scale(1) rotate(0deg); }
-    33%  { transform: translate3d(20vw, -10vh, 0) scale(0.9) rotate(120deg); }
-    66%  { transform: translate3d(15vw, 15vh, 0) scale(1.1) rotate(240deg); }
+    33%  { transform: translate3d(35vw, -15vh, 0) scale(0.9) rotate(120deg); }
+    66%  { transform: translate3d(20vw, 25vh, 0) scale(1.1) rotate(240deg); }
     100% { transform: translate3d(0, 0, 0) scale(1) rotate(360deg); }
 }
 
-@keyframes move-4 {
-    0%   { transform: translate3d(0, 0, 0) scale(0.9) rotate(0deg); }
-    33%  { transform: translate3d(-20vw, 10vh, 0) scale(1.1) rotate(-120deg); }
-    66%  { transform: translate3d(-10vw, -15vh, 0) scale(0.95) rotate(-240deg); }
-    100% { transform: translate3d(0, 0, 0) scale(0.9) rotate(-360deg); }
-}
-
-/* --- ЛЕГКИЙ ШУМ --- */
+/* --- ЛЕГКИЙ ШУМ (Твоя преміум-текстура) --- */
 .ui-gradient-background::after {
     content: "";
     position: absolute;
-    inset: -50%; /* Робимо шум більшим, щоб при скролі на телефонах він не обрізався */
+    inset: -50%; 
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-    opacity: 0.04; 
+    
+    /* Зробив шум трішки помітнішим для світлої теми */
+    opacity: 0.06; 
     mix-blend-mode: overlay; 
     pointer-events: none;
     z-index: 10;
+}
+
+body.dark .ui-gradient-background::after {
+    opacity: 0.08; /* В темній темі шум потрібен яскравіший */
 }
 
 /* --- ДОСТУПНІСТЬ --- */
@@ -1511,85 +1549,6 @@ body.dark .tab-button.active {
             transform: scale(0.98);
         }
         
-        .toggle-button-wrapper {
-            position: absolute; 
-            top: 25px; 
-            right: 30px; 
-            z-index: 100; 
-        }
-        
-        .checkbox {
-            opacity: 0;
-            position: absolute;
-        }
-
-        .checkbox-label {
-            background: linear-gradient(130deg, #22af6f, #4c81f0); 
-            width: 50px;
-            height: 26px;
-            border-radius: 50px;
-            position: relative;
-            padding: 5px;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 
-                inset 0px 0px 1px rgba(0,0,0,0.3); 
-            overflow: hidden; 
-        }
-
-        body.dark .checkbox-label {
-            background: linear-gradient(130deg, #380b3a, #6f15f5); 
-            box-shadow: 
-                inset 0px 0px 1px rgba(0,0,0,0.3); 
-        }
-        
-        .fa-moon {
-            color: #efead7;
-            z-index: 3;
-            margin-left: 0px;
-             
-            display: inline-block; /* Дозволяє застосовувати padding та line-height коректно */
-    line-height: 1.2;      /* Збільшуємо висоту контейнера тексту */
-    padding-top: 3px;      /* Даємо простір зверху */
-    padding-bottom: 2px;   /* Даємо простір знизу */
-    font-size: 16px;       /* Зафіксуйте розмір, якщо іконка стала завеликою для 26px висоти кнопки */
-        } 
-
-        .fa-sun {
-    margin-left: 7px;
-    color: #ffe201; 
-    background: linear-gradient(140deg, #fffc00, #ff9600);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    z-index: 3; 
-    
-    /* --- ДОДАНО ДЛЯ ВИПРАВЛЕННЯ ОБРІЗАННЯ --- */
-    display: inline-block; /* Дозволяє застосовувати padding та line-height коректно */
-    line-height: 1.2;      /* Збільшуємо висоту контейнера тексту */
-    padding-top: 3px;      /* Даємо простір зверху */
-    padding-bottom: 2px;   /* Даємо простір знизу */
-    font-size: 16px;       /* Зафіксуйте розмір, якщо іконка стала завеликою для 26px висоти кнопки */
-}
-
-        .checkbox-label .ball {
-            background-color: #fff;
-            width: 18px; 
-            height: 18px; 
-            position: absolute;
-            left: 4px; 
-            top: 4px; 
-            border-radius: 50%;
-            transition: transform 0.2s linear;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4); 
-			z-index: 4;
-        }
-
-
-        .checkbox:checked + .checkbox-label .ball {
-            transform: translateX(24px); 
-        }
 
         .login-generator-container h2 {
             margin-bottom: 0px; 
@@ -3609,47 +3568,105 @@ body.dark .command-item.static-header .command-text:hover {
     border-bottom: none !important;
 }
 
-.theme-toggle-btn {
+.theme-pill-container {
     position: fixed;
-    top: var(--space-md);
-    right: var(--space-md);
-    z-index: var(--z-toast);
-    width: 48px;
-    height: 48px;
-    border-radius: var(--radius-full);
+    top: 15px;    
+    right: 20px; 
+    z-index: 2000;
+}
+
+.theme-pill-container {
+    position: fixed;
+    top: 15px;    
+    right: 20px; 
+    z-index: 2000;
+}
+
+.theme-pill {
+    width: 50px; 
+    height: 50px; /* Ідеальне коло */
+    border-radius: 50%; 
+    
+    /* Скло + Градієнт відблиску */
+    background-color: var(--glass-white);
+    background-image: var(--reflection-top);
+    
+    /* Розмиття фону */
+    backdrop-filter: blur(20px) saturate(150%); 
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+    
+    /* Бордери та тіні */
     border: 1px solid var(--glass-border);
+    box-shadow: var(--shadow-glass), var(--reflection-inner);
+        
     cursor: pointer;
-    font-size: var(--text-xl);
-    
-    /* Використовуємо ваші glass-ефекти */
-    background: var(--glass-white);
-    backdrop-filter: var(--blur-md);
-    box-shadow: var(--shadow-glass);
-    
+    overflow: hidden; 
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: transform var(--dur-fast) var(--ease-liquid), 
-                background var(--dur-mid) var(--ease-smooth),
-                box-shadow var(--dur-fast) var(--ease-smooth);
+    
+    /* Пружиниста анімація самого острівця */
+    transition: all 0.5s cubic-bezier(0.34, 1.2, 0.64, 1); 
+    user-select: none;
 }
 
-.theme-toggle-btn:hover {
-    transform: scale(1.1) rotate(15deg);
-    background: var(--glass-white-md);
-    box-shadow: var(--shadow-float);
+/* Ховер ефект для світлої теми (Скло стає яскравішим і "спливає") */
+.theme-pill:hover {
+    background-color: var(--glass-white-md);
+    border-color: var(--glass-border-bright);
+    box-shadow: var(--shadow-float), var(--reflection-inner);
+    transform: scale(1.05) translateY(-2px);
 }
 
-/* Логіка іконок */
-.theme-toggle-btn .icon-light { display: none; }
-.theme-toggle-btn .icon-dark { display: block; }
+/* ТЕМНЕ СКЛО ДЛЯ ТЕМНОЇ ТЕМИ */
+body.dark .theme-pill {
+    background-color: rgba(20, 25, 35, 0.5);
+    background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0) 50%);
+    border-color: rgba(255, 255, 255, 0.12);
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.5),
+        inset 0 1px 1px rgba(255, 255, 255, 0.15),
+        inset 0 -1px 1px rgba(0, 0, 0, 0.3);
+}
 
-body.dark .theme-toggle-btn .icon-light { display: block; }
-body.dark .theme-toggle-btn .icon-dark { display: none; }
+body.dark .theme-pill:hover {
+    background-color: rgba(30, 35, 45, 0.6);
+    border-color: rgba(255, 255, 255, 0.25);
+    box-shadow: 
+        0 20px 60px rgba(0, 0, 0, 0.6),
+        inset 0 1px 1px rgba(255, 255, 255, 0.2),
+        inset 0 -1px 1px rgba(0, 0, 0, 0.3);
+    transform: scale(1.05) translateY(-2px);
+}
 
-/* Налаштування для темної теми */
-body.dark .theme-toggle-btn {
-    background: var(--glass-dark);
-    border: 1px solid var(--glass-border-subtle);
-    color: var(--color-text);
+/* =========================================
+   АНІМАЦІЯ ЕМОДЗІ (СОНЦЕ / МІСЯЦЬ) - ПОВЕРНУТО!
+   ========================================= */
+.theme-emoji {
+    position: absolute;
+    font-size: 26px;
+    line-height: 1;
+    /* Та сама крута пружиниста анімація обертання і вильоту */
+    transition: transform 0.5s cubic-bezier(0.34, 1.2, 0.64, 1), opacity 0.5s ease;
+}
+
+/* Світла тема: Сонце по центру, Місяць схований внизу */
+body:not(.dark) .sun-icon {
+    transform: translateY(0) scale(1) rotate(0deg);
+    opacity: 1;
+}
+body:not(.dark) .moon-icon {
+    transform: translateY(40px) scale(0.5) rotate(90deg);
+    opacity: 0;
+}
+
+/* Темна тема: Сонце відлітає вгору, Місяць стає по центру */
+body.dark .sun-icon {
+    transform: translateY(-40px) scale(0.5) rotate(-90deg);
+    opacity: 0;
+}
+body.dark .moon-icon {
+    transform: translateY(0) scale(1) rotate(0deg);
+    opacity: 1;
 }

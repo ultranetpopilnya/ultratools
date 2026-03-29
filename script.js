@@ -1671,33 +1671,6 @@ function addTemplate() {
         fileInput.value = '';
     }
 
-    const checkbox = document.getElementById("dark-mode-checkbox");
-    function applyTheme(isDark) {
-        document.body.classList.toggle("dark", isDark);
-        localStorage.setItem('theme', isDark ? 'dark' : 'light');
-    }
-	
-    function loadTheme() {
-        const savedTheme = localStorage.getItem('theme'); // Може бути 'dark', 'light' або null
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        let isDark;
-
-        if (savedTheme !== null) {
-            // Якщо користувач ВЖЕ робив вибір, ми його поважаємо.
-            // savedTheme буде або 'dark', або 'light'.
-            isDark = savedTheme === 'dark';
-        } else {
-            // Якщо вибору ще не було (перший візит або сховище очищено),
-            // тоді ми орієнтуємося на налаштування системи.
-            isDark = prefersDark;
-        }
-
-        checkbox.checked = isDark;
-        applyTheme(isDark);
-    }
-	
-    checkbox.addEventListener("change", () => applyTheme(checkbox.checked));
-
 // --- ФУНКЦІЇ ІСТОРІЇ ---
 function toggleHistory() {
     const wrapper = document.getElementById('history-content-wrapper');
@@ -1779,7 +1752,6 @@ document.getElementById('clear-history-btn').addEventListener('click', () => {
 });
 
     document.addEventListener('DOMContentLoaded', () => {
-    loadTheme();
 	// 1. Відновлення порядку при завантаженні
     function loadTabOrder() {
         const tabsContainer = document.querySelector('.tabs');
@@ -2727,4 +2699,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Запускаємо функцію при кожному заході на сайт
     fetchExtensionVersion();
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    const themeToggle = document.getElementById('themeToggle');
+    const body = document.body;
+
+    // 1. Перевіряємо, чи зберіг користувач темну тему раніше
+    if (localStorage.getItem('theme') === 'dark') {
+        body.classList.add('dark');
+    }
+
+    // 2. Логіка перемикання при кліку
+    themeToggle.addEventListener('click', () => {
+        // Перемикаємо клас .dark на body
+        body.classList.toggle('dark');
+        
+        // Зберігаємо вибір
+        if (body.classList.contains('dark')) {
+            localStorage.setItem('theme', 'dark');
+        } else {
+            localStorage.setItem('theme', 'light');
+        }
+    });
 });
