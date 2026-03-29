@@ -511,7 +511,7 @@ body.dark {
 }
 
 /* =========================================================
-   СУЧАСНИЙ АНІМОВАНИЙ ФОН (AURORA/BLOB STYLE)
+   СУЧАСНИЙ АНІМОВАНИЙ ФОН (LIQUID/AURORA STYLE)
    ========================================================= */
 
 /* --- КОНТЕЙНЕР --- */
@@ -527,16 +527,18 @@ body.dark {
     transition: background-color 0.8s ease;
 }
 
-/* --- ЗАГАЛЬНИЙ СТИЛЬ ДЛЯ ПЛЯМ (МАСЛЯНИСТА РІДИНА) --- */
+/* --- ЗАГАЛЬНИЙ СТИЛЬ ДЛЯ ПЛЯМ --- */
 .ui-gradient-background .blob {
     position: absolute;
-    width: 55vmax; /* Трохи збільшив, щоб вони частіше перетинались */
-    height: 55vmax;
+    width: 40vmax;  /* ЗМЕНШЕНИЙ РОЗМІР */
+    height: 40vmax; /* ЗМЕНШЕНИЙ РОЗМІР */
     
-    /* Густий блюр розмиває краї так сильно, що вони здаються рідиною */
-    filter: blur(90px); 
+    /* НАЙГОЛОВНІШЕ: Робимо їх круглими за замовчуванням! */
+    border-radius: 50%; 
     
-    /* Густота кольору для світлої теми (щоб multiply створював темніші нові кольори) */
+    /* Зменшений блюр, щоб бачити форму краплі */
+    filter: blur(60px); 
+    
     opacity: 0.65;
     mix-blend-mode: multiply; 
     
@@ -545,78 +547,74 @@ body.dark {
     perspective: 1000px;
 }
 
-/* Темна тема (Неонова рідина / Лава) */
+/* Темна тема */
 body.dark .ui-gradient-background .blob {
-    /* Screen змушує рідину світитися новими яскравими кольорами при перетині */
     mix-blend-mode: screen; 
-    opacity: 0.5; /* Густіше, ніж було в тебе, для кращого змішування */
-    filter: blur(110px); /* В темряві світло розсіюється сильніше */
+    opacity: 0.5; 
+    filter: blur(75px); 
 }
 
 /* --- КОНКРЕТНІ ПЛЯМИ --- */
-/* Розвів час анімацій, щоб вони "жили" своїм життям */
-
+/* Додаємо нову анімацію liquid-morph до кожної плями */
 .blob-1 {
     background: var(--bg-blob-1);
     top: -10%; left: -10%;
     transform-origin: center right;
-    animation: move-1 45s infinite linear, morph 17s infinite ease-in-out alternate; 
+    animation: move-1 45s infinite linear, liquid-morph 15s infinite ease-in-out alternate; 
 }
 
 .blob-2 {
     background: var(--bg-blob-2);
     bottom: -20%; right: -10%;
     transform-origin: top center;
-    animation: move-2 53s infinite linear, morph 13s infinite ease-in-out alternate-reverse;
+    animation: move-2 53s infinite linear, liquid-morph 18s infinite ease-in-out alternate-reverse;
 }
 
 .blob-3 {
     background: var(--bg-blob-3);
     top: 30%; left: -20%;
     transform-origin: bottom right;
-    animation: move-3 41s infinite linear, morph 19s infinite ease-in-out alternate;
+    animation: move-3 41s infinite linear, liquid-morph 21s infinite ease-in-out alternate;
 }
 
-/* --- АНІМАЦІЯ ФОРМИ (АГРЕСИВНИЙ МОРФІНГ) --- */
-/* Ці значення створюють максимально нерівномірні краплі, що розтікаються */
-@keyframes morph {
-    0%   { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
-    25%  { border-radius: 58% 42% 24% 76% / 46% 72% 28% 54%; }
-    50%  { border-radius: 50% 50% 60% 40% / 70% 40% 60% 30%; }
-    75%  { border-radius: 25% 75% 45% 55% / 35% 25% 75% 65%; }
-    100% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
+/* --- НОВА АНІМАЦІЯ ФОРМИ (ЖЕЛЕЙНА КРАПЛЯ) --- */
+/* Ці значення тримаються біля 50%, тому фігура завжди округла, як крапля */
+@keyframes liquid-morph {
+    0%   { border-radius: 40% 60% 55% 45% / 50% 45% 55% 50%; }
+    25%  { border-radius: 60% 40% 45% 55% / 55% 60% 40% 45%; }
+    50%  { border-radius: 45% 55% 60% 40% / 60% 50% 50% 40%; }
+    75%  { border-radius: 55% 45% 40% 60% / 45% 55% 45% 55%; }
+    100% { border-radius: 40% 60% 55% 45% / 50% 45% 55% 50%; }
 }
 
-/* --- ТРАЄКТОРІЇ РУХУ --- */
+/* --- ТРАЄКТОРІЇ РУХУ (З ПУЛЬСАЦІЄЮ РОЗМІРУ) --- */
 @keyframes move-1 {
     0%   { transform: translate3d(0, 0, 0) scale(1) rotate(0deg); }
-    33%  { transform: translate3d(25vw, 20vh, 0) scale(1.1) rotate(120deg); } /* Запливає глибше в екран */
-    66%  { transform: translate3d(-10vw, 30vh, 0) scale(0.9) rotate(240deg); }
+    33%  { transform: translate3d(30vw, 25vh, 0) scale(0.6) rotate(120deg); } /* Зменшується */
+    66%  { transform: translate3d(-15vw, 35vh, 0) scale(1.2) rotate(240deg); } /* Збільшується */
     100% { transform: translate3d(0, 0, 0) scale(1) rotate(360deg); }
 }
 
 @keyframes move-2 {
     0%   { transform: translate3d(0, 0, 0) scale(1) rotate(0deg); }
-    33%  { transform: translate3d(-30vw, -20vh, 0) scale(1.15) rotate(120deg); }
-    66%  { transform: translate3d(15vw, -35vh, 0) scale(0.85) rotate(240deg); }
+    33%  { transform: translate3d(-35vw, -20vh, 0) scale(1.3) rotate(120deg); }
+    66%  { transform: translate3d(20vw, -40vh, 0) scale(0.5) rotate(240deg); }
     100% { transform: translate3d(0, 0, 0) scale(1) rotate(360deg); }
 }
 
 @keyframes move-3 {
-    0%   { transform: translate3d(0, 0, 0) scale(1) rotate(0deg); }
-    33%  { transform: translate3d(35vw, -15vh, 0) scale(0.9) rotate(120deg); }
-    66%  { transform: translate3d(20vw, 25vh, 0) scale(1.1) rotate(240deg); }
-    100% { transform: translate3d(0, 0, 0) scale(1) rotate(360deg); }
+    0%   { transform: translate3d(0, 0, 0) scale(0.8) rotate(0deg); }
+    33%  { transform: translate3d(40vw, -15vh, 0) scale(0.4) rotate(120deg); }
+    66%  { transform: translate3d(25vw, 30vh, 0) scale(1.1) rotate(240deg); }
+    100% { transform: translate3d(0, 0, 0) scale(0.8) rotate(360deg); }
 }
 
-/* --- ЛЕГКИЙ ШУМ (Твоя преміум-текстура) --- */
+/* --- ЛЕГКИЙ ШУМ --- */
 .ui-gradient-background::after {
     content: "";
     position: absolute;
     inset: -50%; 
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-    
-    /* Зробив шум трішки помітнішим для світлої теми */
     opacity: 0.06; 
     mix-blend-mode: overlay; 
     pointer-events: none;
@@ -624,14 +622,7 @@ body.dark .ui-gradient-background .blob {
 }
 
 body.dark .ui-gradient-background::after {
-    opacity: 0.08; /* В темній темі шум потрібен яскравіший */
-}
-
-/* --- ДОСТУПНІСТЬ --- */
-@media (prefers-reduced-motion: reduce) {
-    .ui-gradient-background .blob {
-        animation-duration: 200s !important; /* Ще повільніше для тих, кому погано від анімацій */
-    }
+    opacity: 0.08; 
 }
 
 /* === СТИЛІ ДЛЯ СНІГУ (КЕРОВАНІ) === */
@@ -3514,14 +3505,14 @@ body.dark .command-item.static-header .command-text:hover {
     border-bottom: none !important;
 }
 
-.-pill-container {
+.theme-pill-container {
     position: fixed;
     top: 15px;    
     right: 20px; 
     z-index: 2000;
 }
 
-.-pill {
+.theme-pill {
     width: 50px; 
     height: 50px; /* Ідеальне коло */
     border-radius: 50%; 
@@ -3551,7 +3542,7 @@ body.dark .command-item.static-header .command-text:hover {
 }
 
 /* Ховер ефект для світлої теми (Скло стає яскравішим і "спливає") */
-.-pill:hover {
+.theme-pill:hover {
     background-color: var(--glass-white-md);
     border-color: var(--glass-border-bright);
     box-shadow: var(--shadow-float), var(--reflection-inner);
@@ -3559,7 +3550,7 @@ body.dark .command-item.static-header .command-text:hover {
 }
 
 /* ТЕМНЕ СКЛО ДЛЯ ТЕМНОЇ ТЕМИ */
-body.dark .-pill {
+body.dark .theme-pill {
     background-color: rgba(20, 25, 35, 0.5);
     background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0) 50%);
     border-color: rgba(255, 255, 255, 0.12);
@@ -3569,7 +3560,7 @@ body.dark .-pill {
         inset 0 -1px 1px rgba(0, 0, 0, 0.3);
 }
 
-body.dark .-pill:hover {
+body.dark .theme-pill:hover {
     background-color: rgba(30, 35, 45, 0.6);
     border-color: rgba(255, 255, 255, 0.25);
     box-shadow: 
@@ -3586,7 +3577,7 @@ body.dark .-pill:hover {
     position: absolute;
     font-size: 26px;
     line-height: 1;
-	margin-left: 1px;
+    margin-left: 1px;
     /* Сучасна анімація незалежних властивостей */
     transition: translate 0.5s cubic-bezier(0.34, 1.2, 0.64, 1), 
                 scale 0.5s cubic-bezier(0.34, 1.2, 0.64, 1), 
