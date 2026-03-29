@@ -625,6 +625,10 @@ body.dark .ui-gradient-background::after {
     opacity: 0.08; 
 }
 
+.ui-gradient-background.paused .blob {
+    animation-play-state: paused !important;
+}
+
 /* === СТИЛІ ДЛЯ СНІГУ (КЕРОВАНІ) === */
 #snow-container {
     position: fixed;
