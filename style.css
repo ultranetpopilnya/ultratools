@@ -530,101 +530,104 @@ body.dark {
 /* --- ЗАГАЛЬНИЙ СТИЛЬ ДЛЯ ПЛЯМ --- */
 .ui-gradient-background .blob {
     position: absolute;
-    width: 40vmax;  /* ЗМЕНШЕНИЙ РОЗМІР */
-    height: 40vmax; /* ЗМЕНШЕНИЙ РОЗМІР */
+    width: 45vmax;  /* Оптимальний розмір для Full HD */
+    height: 45vmax; 
     
-    /* НАЙГОЛОВНІШЕ: Робимо їх круглими за замовчуванням! */
-    border-radius: 50%; 
+    background: radial-gradient(closest-side, var(--bg-blob-color) 0%, transparent 100%);
+    opacity: 0.6; /* Базова прозорість */
     
-    /* Зменшений блюр, щоб бачити форму краплі */
-    filter: blur(60px); 
-    
-    opacity: 0.65;
-    mix-blend-mode: multiply; 
-    
-    will-change: transform, border-radius;
+    will-change: transform, opacity; /* Кажемо GPU підготувати і прозорість */
     backface-visibility: hidden;
     perspective: 1000px;
 }
 
 /* Темна тема */
 body.dark .ui-gradient-background .blob {
-    mix-blend-mode: screen; 
-    opacity: 0.5; 
-    filter: blur(75px); 
+    opacity: 0.45; /* Для темної теми трохи приглушуємо */
 }
 
 /* --- КОНКРЕТНІ ПЛЯМИ --- */
-/* Додаємо нову анімацію liquid-morph до кожної плями */
 .blob-1 {
-    background: var(--bg-blob-1);
-    top: -10%; left: -10%;
+    --bg-blob-color: var(--bg-blob-1);
+    top: -5vh; left: -5vw; /* Стоїть у кутку, але дивиться в центр */
     transform-origin: center right;
-    animation: move-1 45s infinite linear, liquid-morph 15s infinite ease-in-out alternate; 
+    animation: move-1 40s infinite linear; 
 }
 
 .blob-2 {
-    background: var(--bg-blob-2);
-    bottom: -20%; right: -10%;
+    --bg-blob-color: var(--bg-blob-2);
+    bottom: -10vh; right: -5vw;
     transform-origin: top center;
-    animation: move-2 53s infinite linear, liquid-morph 18s infinite ease-in-out alternate-reverse;
+    animation: move-2 48s infinite linear reverse;
 }
 
 .blob-3 {
-    background: var(--bg-blob-3);
-    top: 30%; left: -20%;
+    --bg-blob-color: var(--bg-blob-3);
+    top: 35vh; left: 10vw; /* Починає ближче до центру */
     transform-origin: bottom right;
-    animation: move-3 41s infinite linear, liquid-morph 21s infinite ease-in-out alternate;
+    animation: move-3 45s infinite linear;
 }
 
-/* --- НОВА АНІМАЦІЯ ФОРМИ (ЖЕЛЕЙНА КРАПЛЯ) --- */
-/* Ці значення тримаються біля 50%, тому фігура завжди округла, як крапля */
-@keyframes liquid-morph {
-    0%   { border-radius: 40% 60% 55% 45% / 50% 45% 55% 50%; }
-    25%  { border-radius: 60% 40% 45% 55% / 55% 60% 40% 45%; }
-    50%  { border-radius: 45% 55% 60% 40% / 60% 50% 50% 40%; }
-    75%  { border-radius: 55% 45% 40% 60% / 45% 55% 45% 55%; }
-    100% { border-radius: 40% 60% 55% 45% / 50% 45% 55% 50%; }
+/* ДОДАТКОВА ПЛЯМА ДЛЯ КРАСИ (Highlight) */
+.blob-4 {
+    --bg-blob-color: var(--bg-blob-4, var(--bg-blob-1)); /* Можна задати 4й колір, або взяти 1й */
+    width: 30vmax; /* Менша за інші */
+    height: 30vmax;
+    bottom: 20vh; left: 40vw; /* Десь посередині */
+    opacity: 0.8; /* Яскравіша */
+    animation: move-4 35s infinite linear;
 }
+body.dark .blob-4 { opacity: 0.6; }
 
-/* --- ТРАЄКТОРІЇ РУХУ (З ПУЛЬСАЦІЄЮ РОЗМІРУ) --- */
+/* --- АНІМАЦІЇ (РУХ ТІЛЬКИ ВСЕРЕДИНУ + ДИХАННЯ) --- */
 @keyframes move-1 {
-    0%   { transform: translate3d(0, 0, 0) scale(1) rotate(0deg); }
-    33%  { transform: translate3d(30vw, 25vh, 0) scale(0.6) rotate(120deg); } /* Зменшується */
-    66%  { transform: translate3d(-15vw, 35vh, 0) scale(1.2) rotate(240deg); } /* Збільшується */
-    100% { transform: translate3d(0, 0, 0) scale(1) rotate(360deg); }
+    /* Рухається з лівого верхнього кута вправо і вниз */
+    0%   { transform: translate3d(0, 0, 0) scale(1, 1) rotate(0deg); opacity: 0.6; }
+    33%  { transform: translate3d(25vw, 20vh, 0) scale(1.1, 0.85) rotate(120deg); opacity: 0.8; }
+    66%  { transform: translate3d(10vw, 40vh, 0) scale(0.9, 1.15) rotate(240deg); opacity: 0.5; }
+    100% { transform: translate3d(0, 0, 0) scale(1, 1) rotate(360deg); opacity: 0.6; }
 }
 
 @keyframes move-2 {
-    0%   { transform: translate3d(0, 0, 0) scale(1) rotate(0deg); }
-    33%  { transform: translate3d(-35vw, -20vh, 0) scale(1.3) rotate(120deg); }
-    66%  { transform: translate3d(20vw, -40vh, 0) scale(0.5) rotate(240deg); }
-    100% { transform: translate3d(0, 0, 0) scale(1) rotate(360deg); }
+    /* Рухається з правого нижнього кута вліво і вгору */
+    0%   { transform: translate3d(0, 0, 0) scale(1.1, 0.9) rotate(0deg); opacity: 0.7; }
+    33%  { transform: translate3d(-25vw, -35vh, 0) scale(0.85, 1.1) rotate(120deg); opacity: 0.5; }
+    66%  { transform: translate3d(-40vw, -10vh, 0) scale(1.15, 0.9) rotate(240deg); opacity: 0.8; }
+    100% { transform: translate3d(0, 0, 0) scale(1.1, 0.9) rotate(360deg); opacity: 0.7; }
 }
 
 @keyframes move-3 {
-    0%   { transform: translate3d(0, 0, 0) scale(0.8) rotate(0deg); }
-    33%  { transform: translate3d(40vw, -15vh, 0) scale(0.4) rotate(120deg); }
-    66%  { transform: translate3d(25vw, 30vh, 0) scale(1.1) rotate(240deg); }
-    100% { transform: translate3d(0, 0, 0) scale(0.8) rotate(360deg); }
+    /* Кружляє навколо центру зліва направо */
+    0%   { transform: translate3d(0, 0, 0) scale(0.9, 1.1) rotate(0deg); opacity: 0.5; }
+    33%  { transform: translate3d(35vw, -20vh, 0) scale(1.15, 0.8) rotate(120deg); opacity: 0.7; }
+    66%  { transform: translate3d(20vw, 25vh, 0) scale(0.8, 1.15) rotate(240deg); opacity: 0.4; }
+    100% { transform: translate3d(0, 0, 0) scale(0.9, 1.1) rotate(360deg); opacity: 0.5; }
 }
 
-/* --- ЛЕГКИЙ ШУМ --- */
+@keyframes move-4 {
+    /* Менша пляма, яка плаває по великій траєкторії як блік */
+    0%   { transform: translate3d(0, 0, 0) scale(1, 1) rotate(0deg); opacity: 0.8; }
+    50%  { transform: translate3d(25vw, -45vh, 0) scale(1.2, 0.7) rotate(180deg); opacity: 0.4; }
+    100% { transform: translate3d(0, 0, 0) scale(1, 1) rotate(360deg); opacity: 0.8; }
+}
+
+/* --- ТОНКИЙ ПРЕМІУМ ШУМ --- */
 .ui-gradient-background::after {
     content: "";
     position: absolute;
-    inset: -50%; 
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-    opacity: 0.06; 
-    mix-blend-mode: overlay; 
+    inset: 0; 
+    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyBAMAAADsEZWCAAAAGFBMVEUAAAAAAP////////////////////////8w3RkFAAAACHRSTlMAERIjMzRERFWlG7gAAAAJUExURQAAAAAAAP///ww8LccAAAABYktHRACIBR1IAAAAl0lEQVQ4y2NgQAX8DIxgwkDhPwgwMihAMFgNWMTAwMgIZiAVwAAOIGaBMTmA/AEMDAyMYH0gZ4AxQIDRAGIOMIAQGBgYGRhBDA4gD8A2MAgAMRCAI2AAk4BpYGCAMwAKHDAKjBxgDBCQYQABRiNQ2MACDBzAAXIAjAJYI4wBAsgKjEAuQFYAMbAIgAEE4AAHjAKkAhgAAQYAIjEc8i1N/CgAAAAASUVORK5CYII=");
+    background-repeat: repeat;
+    opacity: 0.05; 
     pointer-events: none;
     z-index: 10;
 }
 
 body.dark .ui-gradient-background::after {
-    opacity: 0.08; 
+    opacity: 0.07; 
 }
 
+/* --- ПАУЗА АНІМАЦІЇ --- */
 .ui-gradient-background.paused .blob {
     animation-play-state: paused !important;
 }
