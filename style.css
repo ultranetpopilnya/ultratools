@@ -1755,7 +1755,7 @@ body.dark #clear-all-templates-button:hover {
     border: 2px solid var(--template-border-color);
     padding: 0;
     border-radius: 12px;
-    background-color: #fff;
+    background-color: var(--input-bg-color);
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 
     display: flex;
