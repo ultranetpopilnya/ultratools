@@ -1023,7 +1023,7 @@ body.dark .gpon-commands-container select {
         }
 
         .command-item:hover {
-            background-color: #dbe9ff; 
+            background-color: #fff; 
             box-shadow: none; 
         }
         
@@ -2136,7 +2136,7 @@ body.dark ::placeholder {
 }
 
 .sub-command-item:hover {
-    background-color: #dbe9ff;
+    background-color: #fff;
 }
 
 body.dark .sub-command-item:hover {
@@ -2148,7 +2148,7 @@ body.dark .sub-command-item:hover {
 }
 
 body.dark .sub-command-item .command-text {
-    color: #4db8ff;
+    color: #72c7ff;
 }
 
 /* Іконка стрілочки (Chevron) */
@@ -3491,7 +3491,7 @@ body.dark #command-output.two-columns {
 
 /* Підсвітка фону при наведенні, як у всіх інших команд */
 .command-item.static-header:hover {
-    background-color: #dbe9ff; 
+    background-color: #fff; 
 }
 body.dark .command-item.static-header:hover {
     background-color: #333333;
@@ -3504,7 +3504,7 @@ body.dark .command-item.static-header:hover {
 }
 
 .command-item.static-header .command-text:hover {
-    color: var(--primary-accent-color);
+    color: var(--description-color);
     border-bottom: none !important;
 }
 
