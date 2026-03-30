@@ -1,7 +1,3 @@
-/* =========================================================
-   ПЛАВАЮЧІ ОСТРОВИ (PRO GLASSMORPHISM) - ВЕРХНЄ РОЗТАШУВАННЯ
-   ========================================================= */
-
 .side-pills-container {
     position: fixed;
     top: 15px;    
@@ -73,7 +69,7 @@
     border-radius: 16px; 
     
     /* ЗМІНА: Робимо фон набагато прозорішим (70% замість 90%) */
-    background-color: rgba(255, 255, 255, 0.6); 
+    background-color: rgba(255, 255, 255, 0.7); 
     
     /* Додаємо трішки яскравішу рамку, щоб виділити межі скла на світлому фоні */
     border: 1px solid rgba(255, 255, 255, 0.8);
@@ -280,7 +276,7 @@ body.dark .extension-pill:hover:not(.is-open) {
 /* Відкритий стан у темній темі (трохи щільніший фон для тексту) */
 body.dark .version-pill.is-open,
 body.dark .extension-pill.is-open {
-    background-color: rgba(30, 35, 45, 0.85);
+    background-color: rgba(30, 35, 45, 0.4);
     border-color: rgba(255, 255, 255, 0.2);
     box-shadow: 
         0 20px 60px rgba(0, 0, 0, 0.7),
@@ -449,13 +445,7 @@ body.dark .progress-ring-fg {
 --resize-handle-color: rgba(0,0,0,0.3);
 --highlight-bg-color: rgba(255, 229, 100, 0.7);
     --snow-color: #46d1ff;  /* Обов'язково 6 символів і крапка з комою */
-
 --bg-color: #f8fafc;
-    /* Світла тема: свіжість */
---bg-blob-1: #D1E9FF;
---bg-blob-2: #D1D5FF;
---bg-blob-3: #E2D1FF;
-    --noise-opacity: 0.05; /* Ледь помітний шум */
 
     --glass-white-lg: rgba(255, 255, 255, 0.9);
         --glass-white: rgba(255, 255, 255, 0.62);
@@ -470,6 +460,12 @@ body.dark .progress-ring-fg {
     
     --reflection-top: linear-gradient(135deg, rgba(255, 255, 255, 0.65) 0%, rgba(255, 255, 255, 0) 50%);
     --reflection-inner: inset 0 1px 1px rgba(255, 255, 255, 0.95), inset 0 -1px 1px rgba(0, 0, 0, 0.04);
+
+    --c1: #f8fafc; /* База — лід */
+    --c2: #cbd5e1; /* Світлий шифер */
+    --c3: #94a3b8; /* Сталевий синій */
+    --c4: #e2e8f0; /* Холодна димка */
+    --grain-opacity: 0.05;
 }
 
 body.dark {
@@ -501,137 +497,16 @@ body.dark {
 --resize-handle-color: rgba(255,255,255,0.3);
 --highlight-bg-color: rgba(230, 162, 46, 0.5);
     --snow-color: #ffffff;
+    --bg-color: #191919;
+
+--c1: #0b0909; /* База */
+        --c2: #180808; /* Темно-вишневий відлив */
+        --c3: #111111; /* Нейтральний чорний */
+        --c4: #241b0b; /* Палений шоколад */
+        --grain-opacity: 0.01;
+}
+
     
---bg-color: #191919;
-    /* Темна тема: захід сонця */
-    --bg-blob-1: #0e2842; 
-    --bg-blob-2: #8B1E3F; 
-    --bg-blob-3: #FF7A3D;
-    --noise-opacity: 0.08; /* Шум трохи помітніший */
-}
-
-/* =========================================================
-   СУЧАСНИЙ АНІМОВАНИЙ ФОН (LIQUID/AURORA STYLE)
-   ========================================================= */
-
-/* --- КОНТЕЙНЕР --- */
-.ui-gradient-background {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: var(--bg-color, #f8fafc);
-    z-index: -1;
-    overflow: hidden;
-    transition: background-color 0.8s ease;
-}
-
-/* --- ЗАГАЛЬНИЙ СТИЛЬ ДЛЯ ПЛЯМ --- */
-.ui-gradient-background .blob {
-    position: absolute;
-    width: 45vmax;  /* Оптимальний розмір для Full HD */
-    height: 45vmax; 
-    
-    background: radial-gradient(closest-side, var(--bg-blob-color) 0%, transparent 100%);
-    opacity: 0.6; /* Базова прозорість */
-    
-    will-change: transform, opacity; /* Кажемо GPU підготувати і прозорість */
-    backface-visibility: hidden;
-    perspective: 1000px;
-}
-
-/* Темна тема */
-body.dark .ui-gradient-background .blob {
-    opacity: 0.45; /* Для темної теми трохи приглушуємо */
-}
-
-/* --- КОНКРЕТНІ ПЛЯМИ --- */
-.blob-1 {
-    --bg-blob-color: var(--bg-blob-1);
-    top: -5vh; left: -5vw; /* Стоїть у кутку, але дивиться в центр */
-    transform-origin: center right;
-    animation: move-1 40s infinite linear; 
-}
-
-.blob-2 {
-    --bg-blob-color: var(--bg-blob-2);
-    bottom: -10vh; right: -5vw;
-    transform-origin: top center;
-    animation: move-2 48s infinite linear reverse;
-}
-
-.blob-3 {
-    --bg-blob-color: var(--bg-blob-3);
-    top: 35vh; left: 10vw; /* Починає ближче до центру */
-    transform-origin: bottom right;
-    animation: move-3 45s infinite linear;
-}
-
-/* ДОДАТКОВА ПЛЯМА ДЛЯ КРАСИ (Highlight) */
-.blob-4 {
-    --bg-blob-color: var(--bg-blob-4, var(--bg-blob-1)); /* Можна задати 4й колір, або взяти 1й */
-    width: 30vmax; /* Менша за інші */
-    height: 30vmax;
-    bottom: 20vh; left: 40vw; /* Десь посередині */
-    opacity: 0.8; /* Яскравіша */
-    animation: move-4 35s infinite linear;
-}
-body.dark .blob-4 { opacity: 0.6; }
-
-/* --- АНІМАЦІЇ (РУХ ТІЛЬКИ ВСЕРЕДИНУ + ДИХАННЯ) --- */
-@keyframes move-1 {
-    /* Рухається з лівого верхнього кута вправо і вниз */
-    0%   { transform: translate3d(0, 0, 0) scale(1, 1) rotate(0deg); opacity: 0.6; }
-    33%  { transform: translate3d(25vw, 20vh, 0) scale(1.1, 0.85) rotate(120deg); opacity: 0.8; }
-    66%  { transform: translate3d(10vw, 40vh, 0) scale(0.9, 1.15) rotate(240deg); opacity: 0.5; }
-    100% { transform: translate3d(0, 0, 0) scale(1, 1) rotate(360deg); opacity: 0.6; }
-}
-
-@keyframes move-2 {
-    /* Рухається з правого нижнього кута вліво і вгору */
-    0%   { transform: translate3d(0, 0, 0) scale(1.1, 0.9) rotate(0deg); opacity: 0.7; }
-    33%  { transform: translate3d(-25vw, -35vh, 0) scale(0.85, 1.1) rotate(120deg); opacity: 0.5; }
-    66%  { transform: translate3d(-40vw, -10vh, 0) scale(1.15, 0.9) rotate(240deg); opacity: 0.8; }
-    100% { transform: translate3d(0, 0, 0) scale(1.1, 0.9) rotate(360deg); opacity: 0.7; }
-}
-
-@keyframes move-3 {
-    /* Кружляє навколо центру зліва направо */
-    0%   { transform: translate3d(0, 0, 0) scale(0.9, 1.1) rotate(0deg); opacity: 0.5; }
-    33%  { transform: translate3d(35vw, -20vh, 0) scale(1.15, 0.8) rotate(120deg); opacity: 0.7; }
-    66%  { transform: translate3d(20vw, 25vh, 0) scale(0.8, 1.15) rotate(240deg); opacity: 0.4; }
-    100% { transform: translate3d(0, 0, 0) scale(0.9, 1.1) rotate(360deg); opacity: 0.5; }
-}
-
-@keyframes move-4 {
-    /* Менша пляма, яка плаває по великій траєкторії як блік */
-    0%   { transform: translate3d(0, 0, 0) scale(1, 1) rotate(0deg); opacity: 0.8; }
-    50%  { transform: translate3d(25vw, -45vh, 0) scale(1.2, 0.7) rotate(180deg); opacity: 0.4; }
-    100% { transform: translate3d(0, 0, 0) scale(1, 1) rotate(360deg); opacity: 0.8; }
-}
-
-/* --- ТОНКИЙ ПРЕМІУМ ШУМ --- */
-.ui-gradient-background::after {
-    content: "";
-    position: absolute;
-    inset: 0; 
-    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyBAMAAADsEZWCAAAAGFBMVEUAAAAAAP////////////////////////8w3RkFAAAACHRSTlMAERIjMzRERFWlG7gAAAAJUExURQAAAAAAAP///ww8LccAAAABYktHRACIBR1IAAAAl0lEQVQ4y2NgQAX8DIxgwkDhPwgwMihAMFgNWMTAwMgIZiAVwAAOIGaBMTmA/AEMDAyMYH0gZ4AxQIDRAGIOMIAQGBgYGRhBDA4gD8A2MAgAMRCAI2AAk4BpYGCAMwAKHDAKjBxgDBCQYQABRiNQ2MACDBzAAXIAjAJYI4wBAsgKjEAuQFYAMbAIgAEE4AAHjAKkAhgAAQYAIjEc8i1N/CgAAAAASUVORK5CYII=");
-    background-repeat: repeat;
-    opacity: 0.05; 
-    pointer-events: none;
-    z-index: 10;
-}
-
-body.dark .ui-gradient-background::after {
-    opacity: 0.07; 
-}
-
-/* --- ПАУЗА АНІМАЦІЇ --- */
-.ui-gradient-background.paused .blob {
-    animation-play-state: paused !important;
-}
-
 /* === СТИЛІ ДЛЯ СНІГУ (КЕРОВАНІ) === */
 #snow-container {
     position: fixed;
@@ -1338,7 +1213,7 @@ body.dark .date-calculator-container #result-section h2 {
     /* Темна тема: світло-помаранчевий фон, яскраво-помаранчевий текст */
     background-color: rgba(230, 162, 46, 0.15); /* 15% прозорості від помаранчевого */
     color: var(--secondary-accent-color);
-    border-bottom: 1px solid rgba(230, 162, 46, 0.2);
+    border-bottom: 1px solid rgba(46, 230, 153, 0.2);
 }
         .date-calculator-container #result-display {
             font-size: 1.2em;
@@ -2440,11 +2315,15 @@ body {
     text-align: left;
     display: flex;
     align-items: center;
-    color: var(--header-color);
+    color: var(--primary-accent-color);
     font-weight: 600;
     font-size: 1.1rem;
     outline: none;
     transition: color 0.2s;
+}
+
+body.dark .history-toggle-btn {
+    color: var(--secondary-accent-color);
 }
 
 .clear-history-header-btn {
@@ -3260,8 +3139,7 @@ body.dark .hist-close-btn:hover { background-color: rgba(255,255,255,0.05); }
 
 /* 2. КАРТКА (ВМІСТ): Базові налаштування */
 .container.date-calculator-container .content-card {
-    height: 610px !important;       
-    min-height: 0px;              
+    height: auto !important;                    
     flex-grow: 1 !important;
     display: flex !important;
     flex-direction: column;

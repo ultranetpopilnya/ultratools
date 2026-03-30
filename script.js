@@ -1,18 +1,3 @@
-document.addEventListener("visibilitychange", () => {
-    // Знаходимо наш контейнер з фоном
-    const bgContainer = document.querySelector('.ui-gradient-background');
-    
-    if (!bgContainer) return;
-
-    // Якщо вкладка стала невидимою (перейшли на іншу вкладку)
-    if (document.hidden) {
-        bgContainer.classList.add('paused');
-    } else {
-        // Якщо повернулися на вкладку
-        bgContainer.classList.remove('paused');
-    }
-});
-
 // Функція-обмежувач: не дає запускати важкі задачі частіше, ніж раз на 'limit' мс
 function throttle(func, limit) {
     let inThrottle;
