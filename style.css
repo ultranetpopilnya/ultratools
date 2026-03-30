@@ -3020,7 +3020,7 @@ body.dark .calc-head-history-btn:hover {
 
 /* === ЕКРАН (ЗБІЛЬШЕНО) === */
 .calc-display-container {
-    background-color: #f9f9f9;
+    background-color: #f3f3f3;
     border: 1px solid var(--input-border-color);
     border-radius: 12px;
     margin-bottom: 15px;
@@ -3095,11 +3095,11 @@ body.dark .calc-display-container {
 
 .c-btn {
     height: 46px; /* Збільшено висоту кнопок (було 42px) */
-    border: 1px solid transparent;
+    border: 1px solid var(--input-border-color);
     border-radius: 12px;
     font-size: 20px; /* Збільшено шрифт цифр (було 18px) */
     cursor: pointer;
-    background-color: #fff;
+    background-color: #f9f9f9;
     color: #333;
     box-shadow: 0 1px 2px rgba(0,0,0,0.1);
     transition: all 0.15s ease-out;
@@ -3108,7 +3108,7 @@ body.dark .calc-display-container {
 
 /* Ефекти кнопок */
 .c-btn:hover {
-    background-color: #f4f4f4;
+    background-color: #f3f3f3;
     box-shadow: 0 3px 6px rgba(0,0,0,0.15);
     transform: translateY(-2px); /* Кнопка піднімається */
     z-index: 2;
@@ -3119,8 +3119,8 @@ body.dark .calc-display-container {
 }
 
 /* Стилі типів кнопок */
-.c-btn.operator { background-color: #f8f9fa; color: var(--primary-accent-color); font-weight: bold; font-size: 22px; }
-.c-btn.func { background-color: #f8f9fa; color: #666; font-size: 16px; }
+.c-btn.operator { background-color: #f9f9f9; color: var(--primary-accent-color); font-weight: bold; font-size: 22px; }
+.c-btn.func { background-color: #f9f9f9; color: #666; font-size: 16px; }
 .c-btn.action-clear { background-color: #fff5f5; color: #dc3545; font-weight: 600; }
 .c-btn.action-back { color: #dc3545; font-size: 18px; }
 .c-btn.equal { 
@@ -3130,6 +3130,7 @@ body.dark .calc-display-container {
     font-weight: 600;
     margin-top: 2px;
     font-size: 24px;
+    border: 1px solid #2180ce;
 }
 .c-btn.equal:hover { background-color: #0069d9; color: white; }
 
