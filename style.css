@@ -118,21 +118,6 @@ body {
     max-height: 165px; 
 }
 
-/* 4. ІДЕАЛЬНИЙ СКРОЛ (Без стрілок) */
-.version-pill.is-open::-webkit-scrollbar { 
-    width: 6px; 
-}
-
-.version-pill.is-open::-webkit-scrollbar-track { 
-    background: transparent; 
-    margin-top: 24px; 
-    margin-bottom: 24px; 
-}
-.version-pill.is-open::-webkit-scrollbar-thumb { 
-    background-color: var(--scrollbar-thumb); 
-    border-radius: 10px; 
-}
-
 /* 5. ІКОНКИ */
 .version-emoji, .extension-emoji {
     position: absolute;
@@ -666,6 +651,7 @@ body.dark .login-generator-container .result-item .regenerate-login-btn {
     resize: none !important;
     transition: border-color 0.2s;
 }
+
 .highlighter-backdrop mark {
     background-color: #85e07d;
     color: transparent; /* Не змінюємо колір тексту, лише фон */
@@ -2276,7 +2262,7 @@ body {
 }
 
 /* Для ноутбуків та планшетів (ширина екрану менше 1400px) */
-    @media (max-width: 1400px) {
+    @media (max-width: 1200px) {
         /* Налаштування для GPON (залишаємо як було або міняємо на бажання) */
         .container.gpon-commands-container {
             --local-width: 90% !important; 
@@ -2417,7 +2403,7 @@ body.dark .history-toggle-btn {
 
 .container[data-content="text-templates"] {
     height: calc(100% - 5px);
-    width: calc(100% - 5px);
+    width: 1902px;
     margin-bottom: 5px !important;
     --local-height: calc(100% - 5px);
 }
@@ -2510,7 +2496,7 @@ body.dark .history-toggle-btn {
 }
 
 /* === ФІНАЛЬНИЙ ВАРІАНТ (НИЗЬКЕ РОЗШИРЕННЯ) === */
-    @media (max-height: 800px) {
+    @media (max-height: 768px) {
         
         /* 1. Компактна шапка */
         h1.page-title {
