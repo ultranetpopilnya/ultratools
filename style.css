@@ -1,3 +1,25 @@
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    
+    /* Використовуємо змінні */
+    background: var(--bg-image) no-repeat center center / cover fixed;
+    color: var(--text-color);
+    transition: background 0.3s ease, color 0.3s ease; /* Плавний перехід при зміні теми */
+}
+
+.glass-panel {
+    background: var(--overlay-color);
+    backdrop-filter: blur(var(--blur-intensity));
+    -webkit-backdrop-filter: blur(var(--blur-intensity));
+    
+    padding: 30px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: background 0.3s ease;
+}
+
 .side-pills-container {
     position: fixed;
     top: 15px;    
@@ -413,6 +435,9 @@ body.dark .progress-ring-fg {
 	/* === ОСНОВНА ПАЛІТРА ТА ЗМІННІ ТЕМИ === */
 :root {
     /* Світла тема */
+--bg-image: url('winter-light.jpg'); /* Світла картинка */
+    --blur-intensity: 10px;
+
     --text-color: #333;
     --header-color: #444;
     --primary-accent-color: #007bff;
@@ -460,16 +485,13 @@ body.dark .progress-ring-fg {
     
     --reflection-top: linear-gradient(135deg, rgba(255, 255, 255, 0.65) 0%, rgba(255, 255, 255, 0) 50%);
     --reflection-inner: inset 0 1px 1px rgba(255, 255, 255, 0.95), inset 0 -1px 1px rgba(0, 0, 0, 0.04);
-
-    --c1: #f8fafc; /* База — лід */
-    --c2: #cbd5e1; /* Світлий шифер */
-    --c3: #94a3b8; /* Сталевий синій */
-    --c4: #e2e8f0; /* Холодна димка */
-    --grain-opacity: 0.05;
 }
 
 body.dark {
     /* Темна тема (перевизначення) */
+--bg-image: url('winter-dark.jpg'); /* Темніша або та сама картинка */
+        --blur-intensity: 15px;
+
     --text-color: #e0e0e0;
     --header-color: #e0e0e0;
     --description-color: #dfdfdf;
@@ -498,15 +520,8 @@ body.dark {
 --highlight-bg-color: rgba(230, 162, 46, 0.5);
     --snow-color: #ffffff;
     --bg-color: #191919;
-
---c1: #0b0909; /* База */
-        --c2: #180808; /* Темно-вишневий відлив */
-        --c3: #111111; /* Нейтральний чорний */
-        --c4: #241b0b; /* Палений шоколад */
-        --grain-opacity: 0.01;
 }
 
-    
 /* === СТИЛІ ДЛЯ СНІГУ (КЕРОВАНІ) === */
 #snow-container {
     position: fixed;
@@ -1213,7 +1228,7 @@ body.dark .date-calculator-container #result-section h2 {
     /* Темна тема: світло-помаранчевий фон, яскраво-помаранчевий текст */
     background-color: rgba(230, 162, 46, 0.15); /* 15% прозорості від помаранчевого */
     color: var(--secondary-accent-color);
-    border-bottom: 1px solid rgba(46, 230, 153, 0.2);
+    border-bottom: 1px solid rgba(230, 162, 46, 0.2);
 }
         .date-calculator-container #result-display {
             font-size: 1.2em;
