@@ -2403,7 +2403,7 @@ body.dark .history-toggle-btn {
 
 .container[data-content="text-templates"] {
     height: calc(100% - 5px);
-    width: 1902px;
+    width: 1904px;
     margin-bottom: 5px !important;
     --local-height: calc(100% - 5px);
 }
