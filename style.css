@@ -1,3 +1,14 @@
+*, *::before, *::after {
+    transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease !important;
+    box-sizing: border-box;
+}
+
+/* Реєструємо змінні кольорів, щоб градієнт теж анімувався */
+@property --c1 { syntax: '<color>'; inherits: true; initial-value: #ffafcc; }
+@property --c2 { syntax: '<color>'; inherits: true; initial-value: #a2d2ff; }
+@property --c3 { syntax: '<color>'; inherits: true; initial-value: #ffd6a5; }
+@property --c4 { syntax: '<color>'; inherits: true; initial-value: #cdb4db; }
+
 .side-pills-container {
     position: fixed;
     top: 15px;    
@@ -397,6 +408,14 @@ body.dark .progress-ring-fg {
 
 	/* === ОСНОВНА ПАЛІТРА ТА ЗМІННІ ТЕМИ === */
 :root {
+    --bg-base: #f8fafc; 
+    
+    /* Ваші 4 кольори у звичайному HEX-форматі */
+    --c1: #dff2ff; /* Рожевий */
+    --c2: rgb(255, 233, 233); /* Блакитний */
+    --c3: #fff7ef; /* Персиковий */
+    --c4: #f8ebff; /* Бузковий */
+
     /* Світла тема */
     --text-color: #333;
     --header-color: #444;
@@ -448,6 +467,14 @@ body.dark .progress-ring-fg {
 }
 
 body.dark {
+        --bg-base: #191919; 
+        
+        /* HEX-кольори для темної теми */
+        --c1: #2e0303; /* Глибокий фіолетовий */
+        --c2: #051331; /* Темно-синій */
+        --c3: #03362a; /* Бордовий */
+        --c4: #3a1d04; /* Темно-бірюзовий */
+
     /* Темна тема (перевизначення) */
 --text-color: #e0e0e0;
     --header-color: #e0e0e0;
@@ -477,6 +504,78 @@ body.dark {
 --highlight-bg-color: rgba(230, 162, 46, 0.5);
     --snow-color: #ffffff;
     --bg-color: #191919;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    position: relative;
+    z-index: 0;
+}
+
+/* =========================================
+   3. ГРАДІЄНТИ + ОПТИЧНЕ РОЗМИТТЯ 
+   ========================================= */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0; /* Розтягуємо на весь екран (фулл хд) */
+    z-index: -2; 
+    pointer-events: none;
+    
+    background-color: var(--bg-base);
+    
+    /* 
+       Використовуємо color-mix(), щоб змішати HEX-колір із прозорістю (transparent).
+       Наприклад: color-mix(in srgb, var(--c1) 60%, transparent) = 60% непрозорості.
+    */
+    background-image: 
+        /* 1. РОЗМИТА ДУГА зверху праворуч */
+        radial-gradient(ellipse 120% 100% at 100% 0%, 
+            color-mix(in srgb, var(--c1) 60%, transparent) 15%, 
+            color-mix(in srgb, var(--c1) 20%, transparent) 35%, 
+            transparent 60%),
+        
+        /* 2. РОЗМИТА ДУГА знизу ліворуч */
+        radial-gradient(ellipse 150% 120% at 0% 100%, 
+            color-mix(in srgb, var(--c2) 50%, transparent) 20%, 
+            color-mix(in srgb, var(--c2) 15%, transparent) 45%, 
+            transparent 70%),
+        
+        /* 3. Центральна розмита форма для глибини */
+        radial-gradient(circle at 50% 120%, 
+            color-mix(in srgb, var(--c3) 35%, transparent) 40%, 
+            color-mix(in srgb, var(--c3) 10%, transparent) 60%, 
+            transparent 80%),
+
+        /* 4. М'яке світло для фону */
+        radial-gradient(circle at 10% 10%, 
+            color-mix(in srgb, var(--c4) 40%, transparent) 0%, 
+            transparent 70%);
+}
+
+/* =========================================
+   4. ШАР ІЗ ШУМОМ (Noise)
+   ========================================= */
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1; 
+    pointer-events: none;
+    
+    /* Легкий SVG-шум. Працює моментально */
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    
+    opacity: 0.03; 
+    mix-blend-mode: overlay; 
+}
+
+@media (prefers-color-scheme: dark) {
+    body::after {
+        opacity: 0.02;
+        mix-blend-mode: soft-light;
+    }
 }
 
 /* === СТИЛІ ДЛЯ СНІГУ (КЕРОВАНІ) === */
