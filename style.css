@@ -76,7 +76,7 @@
     -webkit-backdrop-filter: blur(20px) saturate(150%);
     
     /* НОВЕ СКЛО: Рамка + Тіні */
-    border: 1px solid var(--glass-border);
+    border: 1px solid var(--glass-white-lg);
     box-shadow: 
         var(--shadow-glass), 
         var(--reflection-inner);
@@ -103,7 +103,7 @@
 .version-pill:hover:not(.is-open), 
 .extension-pill:hover:not(.is-open) {
     background-color: var(--glass-white-md);
-    border-color: var(--primary-accent-color); /* Твій синій акцент */
+    border-color: var(--glass-white-lg); /* Твій синій акцент */
     transform: scale(1.05) translateY(-2px); /* Додав легке спливання як у правого перемикача */
     box-shadow: 
         var(--shadow-float), 
@@ -118,7 +118,7 @@
     background-color: rgba(255, 255, 255, 0.7); 
     
     /* Додаємо трішки яскравішу рамку, щоб виділити межі скла на світлому фоні */
-    border: 1px solid rgba(255, 255, 255, 0.8);
+    border: 1px solid var(--glass-white-lg);
     
     /* Тіні та відблиски */
     box-shadow: 
@@ -284,7 +284,7 @@ body.dark .version-pill,
 body.dark .extension-pill {
     background-color: rgba(20, 25, 35, 0.5);
     background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0) 50%);
-    border-color: rgba(255, 255, 255, 0.12);
+    border-color: var(--glass-border);
     box-shadow: 
         0 8px 32px rgba(0, 0, 0, 0.5),
         inset 0 1px 1px rgba(255, 255, 255, 0.15),
@@ -295,7 +295,7 @@ body.dark .extension-pill {
 body.dark .version-pill:hover:not(.is-open),
 body.dark .extension-pill:hover:not(.is-open) {
     background-color: rgba(30, 35, 45, 0.6);
-    border-color: var(--secondary-accent-color); /* Твій оранжевий акцент */
+    border-color: var(--glass-border-bright); /* Твій оранжевий акцент */
     box-shadow: 
         0 20px 60px rgba(0, 0, 0, 0.6),
         inset 0 1px 1px rgba(255, 255, 255, 0.2),
@@ -306,7 +306,7 @@ body.dark .extension-pill:hover:not(.is-open) {
 body.dark .version-pill.is-open,
 body.dark .extension-pill.is-open {
     background-color: rgba(30, 35, 45, 0.4);
-    border-color: rgba(255, 255, 255, 0.2);
+    border-color: var(--glass-border-bright);
     box-shadow: 
         0 20px 60px rgba(0, 0, 0, 0.7),
         inset 0 1px 1px rgba(255, 255, 255, 0.15),
@@ -482,12 +482,12 @@ body.dark .progress-ring-fg {
 --bg-color: #f8fafc;
 
     --glass-white-lg: rgba(255, 255, 255, 0.9);
-        --glass-white: rgba(255, 255, 255, 0.62);
-    --glass-white-md: rgba(255, 255, 255, 0.78);
+        --glass-white: rgba(255, 255, 255, 0.3);
+    --glass-white-md: rgba(255, 255, 255, 0.8);
     --glass-dark: rgba(0, 0, 0, 0.06);
     
-    --glass-border: rgba(15, 23, 42, 0.14);
-    --glass-border-bright: rgba(15, 23, 42, 0.22);
+    --glass-border: rgba(255, 255, 255, 0.15);
+    --glass-border-bright: rgba(255, 255, 255, 0.30);
     
     --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.1);
     --shadow-float: 0 20px 60px rgba(0, 0, 0, 0.16), 0 4px 16px rgba(0, 0, 0, 0.08);
@@ -3489,7 +3489,7 @@ body.dark .command-item.static-header .command-text:hover {
     -webkit-backdrop-filter: blur(20px) saturate(150%);
     
     /* Бордери та тіні */
-    border: 1px solid var(--glass-border);
+    border: 1px solid var(--glass-white-lg);
     box-shadow: var(--shadow-glass), var(--reflection-inner);
         
     cursor: pointer;
@@ -3507,7 +3507,7 @@ body.dark .command-item.static-header .command-text:hover {
 /* Ховер ефект для світлої теми (Скло стає яскравішим і "спливає") */
 .theme-pill:hover {
     background-color: var(--glass-white-md);
-    border-color: var(--glass-border-bright);
+    border-color: var(--glass-white-lg);
     box-shadow: var(--shadow-float), var(--reflection-inner);
     transform: scale(1.05) translateY(-2px);
 }
@@ -3516,7 +3516,7 @@ body.dark .command-item.static-header .command-text:hover {
 body.dark .theme-pill {
     background-color: rgba(20, 25, 35, 0.5);
     background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0) 50%);
-    border-color: rgba(255, 255, 255, 0.12);
+    border-color: var(--glass-border);
     box-shadow: 
         0 8px 32px rgba(0, 0, 0, 0.5),
         inset 0 1px 1px rgba(255, 255, 255, 0.15),
@@ -3525,7 +3525,7 @@ body.dark .theme-pill {
 
 body.dark .theme-pill:hover {
     background-color: rgba(30, 35, 45, 0.6);
-    border-color: rgba(255, 255, 255, 0.25);
+    border-color: var(--glass-border-bright);
     box-shadow: 
         0 20px 60px rgba(0, 0, 0, 0.6),
         inset 0 1px 1px rgba(255, 255, 255, 0.2),
