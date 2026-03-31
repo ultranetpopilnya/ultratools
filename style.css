@@ -411,10 +411,10 @@ body.dark .progress-ring-fg {
     --bg-base: #f8fafc; 
     
     /* Ваші 4 кольори у звичайному HEX-форматі */
-    --c1: #dff2ff; /* Рожевий */
-    --c2: rgb(255, 233, 233); /* Блакитний */
-    --c3: #fff7ef; /* Персиковий */
-    --c4: #f8ebff; /* Бузковий */
+    --c1: #e3f4ff; /* Рожевий */
+    --c2: rgb(211, 193, 193); /* Блакитний */
+    --c3: #ffebd8; /* Персиковий */
+    --c4: #f5e4ff; /* Бузковий */
 
     /* Світла тема */
     --text-color: #333;
@@ -851,7 +851,7 @@ body.dark #static-clarification-message {
     color: #20be00;
 }
 
-html, body, .container, .content-card, .command-list, .calc-history-list {
+html, body, .container, .content-card, .command-list, .calc-history-list, .template-field-group textarea {
     scrollbar-width: thin; 
     scrollbar-color: var(--scrollbar-thumb) transparent;
 }
