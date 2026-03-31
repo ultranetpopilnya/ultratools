@@ -9,17 +9,6 @@ body {
     transition: background 0.3s ease, color 0.3s ease; /* Плавний перехід при зміні теми */
 }
 
-.glass-panel {
-    background: var(--overlay-color);
-    backdrop-filter: blur(var(--blur-intensity));
-    -webkit-backdrop-filter: blur(var(--blur-intensity));
-    
-    padding: 30px;
-    border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: background 0.3s ease;
-}
-
 .side-pills-container {
     position: fixed;
     top: 15px;    
@@ -2402,10 +2391,9 @@ body.dark .history-toggle-btn {
 .clear-history-footer-btn:hover { background: var(--danger-color); color: white; }
 
 .container[data-content="text-templates"] {
-    height: calc(100% - 5px);
-    width: 1904px;
+    height: 738px;
+    width: 1906px;
     margin-bottom: 5px !important;
-    --local-height: calc(100% - 5px);
 }
 
 /* =========================================================
