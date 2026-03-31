@@ -1,3 +1,38 @@
+/* 1. Для Chrome, Edge, Safari (основний стиль) */
+*::-webkit-scrollbar {
+    width: 8px;  /* Ширина вертикального скролу */
+    height: 8px; /* Висота горизонтального скролу */
+}
+
+/* Доріжка (фонова частина) */
+*::-webkit-scrollbar-track {
+    background: transparent; /* Робимо прозорою, щоб було видно фон сайту/скла */
+}
+
+/* Сам повзунок (острівець) */
+*::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar-thumb); /* Колір зі змінної */
+    border-radius: 20px;                      /* Максимальне закруглення як у пігулки */
+    
+    /* Створюємо ефект відступу від країв (робить повзунок візуально тоншим і акуратнішим) */
+    border: 2px solid transparent;
+    background-clip: content-box;
+    
+    /* Плавний перехід кольору при зміні теми */
+    transition: background-color 5.5s ease; 
+}
+
+/* Ефект при наведенні або активності */
+*::-webkit-scrollbar-thumb:hover {
+    background-color: var(--accent-color, #888); /* Колір стає яскравішим */
+}
+
+/* 2. Для Firefox (підтримка стандартів) */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) transparent;
+}
+
 *, *::before, *::after {
     transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease;
     box-sizing: border-box;
@@ -98,8 +133,6 @@
     max-height: 480px; 
     overflow-y: auto; 
     overflow-x: hidden;
-    scrollbar-width: thin;
-    scrollbar-color: var(--scrollbar-thumb) transparent;
 }
 
 .extension-pill.is-open {
@@ -281,9 +314,6 @@ body.dark .extension-pill.is-open {
 }
 
 /* Темний скрол */
-body.dark .version-pill.is-open { scrollbar-color: #4a4a4a transparent; }
-body.dark .version-pill.is-open::-webkit-scrollbar-thumb { background-color: #4a4a4a; }
-
 body.dark .version-header, body.dark .extension-header { border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
 body.dark .version-title, body.dark .extension-title { color: #e0e0e0; }
 
@@ -851,31 +881,7 @@ body.dark #static-clarification-message {
     color: #20be00;
 }
 
-html, body, .container, .content-card, .command-list, .calc-history-list, .template-field-group textarea {
-    scrollbar-width: thin; 
-    scrollbar-color: var(--scrollbar-thumb) transparent;
-}
 
-::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-    background-color: var(--scrollbar-thumb);
-    border-radius: 10px;
-    border: 2px solid transparent; /* Рамка, щоб скрол "дихав" */
-    background-clip: content-box;  /* Малює колір тільки всередині рамки */
-}
-
-/* Світла тема */
-::-webkit-scrollbar-thumb:hover {
-    background-color: var(--primary-accent-color);
-}
-
-/* Темна тема */
-body.dark ::-webkit-scrollbar-thumb:hover {
-    background-color: var(--secondary-accent-color);
-}
 
         body.dark .page-title .ultranet-color {
             color: #811e71 !important; 
@@ -3150,7 +3156,6 @@ body.dark .calc-history-panel {
     flex-grow: 1;
     overflow-y: auto;
     margin-bottom: 8px;
-    scrollbar-width: thin;
     padding-right: 4px;
 }
 
