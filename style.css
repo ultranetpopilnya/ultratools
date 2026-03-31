@@ -312,7 +312,7 @@ body.dark .extension-version-badge { background-color: rgba(230, 162, 46, 0.15);
     overflow: auto;
     
     /* Плавний перехід для тіні */
-    transition: box-shadow 0.3s ease-in-out;
+    transition: box-shadow 0.5s ease-in-out, background-color 0.5s ease, color 0.5s ease;
 }
 
 /* Покращуємо тінь для темної теми */
@@ -334,7 +334,7 @@ background-color: var(--template-bg-color);
     display: flex;
     justify-content: center;
     align-items: center;
-    transition: all 0.2s ease-in-out;
+    transition: all 0.2s ease-in-out, background-color 0.5s ease, color 0.5s ease;
     padding: 0;
 }
 
@@ -573,7 +573,7 @@ body::after {
 
 @media (prefers-color-scheme: dark) {
     body::after {
-        opacity: 0.02;
+        opacity: 0.03;
         mix-blend-mode: soft-light;
     }
 }
@@ -716,11 +716,11 @@ body.dark .login-generator-container .result-item .regenerate-login-btn {
 .template-field-group textarea {
     position: relative;
     z-index: 2;
-    background: transparent !important; 
+    background: transparent; 
     color: var(--text-color); 
     -webkit-text-fill-color: var(--text-color);
     resize: none !important;
-    transition: border-color 0.2s;
+    transition: border-color 0.5s, background-color 0.5s ease, color 0.5s ease;
 }
 
 .highlighter-backdrop mark {
@@ -808,7 +808,7 @@ select,
 .date-input-group input,
 #fullNameInput {
     border: 1px solid transparent;
-    transition: border-color 0.2s, box-shadow 0.2s;
+    transition: border-color 0.5s, box-shadow 0.5s, background-color 0.5s;
 }
 
 input,
@@ -819,6 +819,7 @@ select,
     border-color: var(--input-border-color);
     background-color: var(--input-bg-color);
     color: var(--text-color);
+    transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease;
 }
 
 input:focus:not([type="button"]):not([type="submit"]),
@@ -1045,8 +1046,8 @@ body.dark .gpon-commands-container select {
             padding-top: 2rem; 
             padding-bottom: 0rem; 
             background-color: var(--bg-color);
-    color: var(--text-color);
-            transition: background-color 0.3s ease, color 0.3s ease;
+            color: var(--text-color);
+            transition: background-color 0.5s ease, color 0.5s ease;
         }
 
         h1 {
@@ -1226,7 +1227,7 @@ body.dark .date-calculator-container #result-section {
             border-radius: 12px; 
             font-size: 1em;
             cursor: pointer;
-            transition: border-color 0.3s;
+            transition: border-color 0.5s, background-color 0.5s ease, color 0.5s ease;
             width: 100%;
             margin-bottom: 5px; 
         }
@@ -1421,7 +1422,7 @@ body.dark .tabs {
 /* 3. Звичайний стан кнопки (курсор - звичайна стрілка або рука-клік) */
 .tab-button {
     cursor: pointer; /* Звичайна рука */
-    transition: background-color 0.2s, box-shadow 0.2s, transform 0.2s;
+    transition: background-color 0.5s, box-shadow 0.5s, transform 0.5s;
     /* Забороняємо виділяти текст, щоб не заважало тягнути */
     user-select: none; 
     -webkit-user-select: none;
@@ -1483,7 +1484,7 @@ body.dark .tab-button.active {
             font-size: 1.5rem;
             font-weight: bold;
             cursor: pointer;
-            transition: background-color 0.2s, transform 0.1s;
+            transition: background-color 0.5s, transform 0.1s;
             box-shadow: 0 2px 4px rgba(0,0,0,0.2); 
             line-height: 1.1; 
             min-width: 35px; 
@@ -1876,7 +1877,7 @@ body.dark .clear-template-btn {
     width: calc(100% - 8px);
      border: 1px solid var(--input-border-color);
     border-radius: 12px;
-    overflow: hidden; 
+    overflow: hidden;
 }
 
 body.dark .textarea-wrapper {
@@ -2054,7 +2055,7 @@ body.dark ::placeholder {
     overflow: hidden; /* Обрізаємо все, що виходить за max-height */
     opacity: 0; /* Приховано (прозорість) */
     transform: translateY(-5px); /* Трохи посунуто вгору для ефекту появи */
-    transition: max-height 0.4s ease-out, opacity 0.3s ease-out, transform 0.3s ease-out; /* Плавний перехід */
+    transition: max-height 0.4s ease-out, opacity 0.5s ease-out, transform 0.5s ease-out; /* Плавний перехід */
     flex-direction: column;
     margin-left: 20px; /* Відступ зліва */
     padding-left: 10px;
@@ -3052,7 +3053,7 @@ body.dark .calc-display-container {
     background-color: #f9f9f9;
     color: #333;
     box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-    transition: all 0.15s ease-out;
+    transition: all 0.15s ease-out, background-color 0.5s ease, color 0.5s ease;
     padding: 0;
 }
 
@@ -3109,7 +3110,7 @@ body.dark .c-btn.equal { background-color: var(--secondary-accent-color); color:
     
     background-color: rgba(255, 255, 255, 0.98); 
     
-    transition: bottom 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    transition: bottom 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), background-color 0.5s ease, color 0.5s ease;
     z-index: 20;
     
     display: flex;
