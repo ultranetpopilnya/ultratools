@@ -2627,7 +2627,7 @@ body.dark .history-toggle-btn {
 }
 
 .login-generator-container #results-container {
-    margin-top: -5px;
+    margin-top: 0px;
     margin-bottom: 15px;
     height: auto;
     overflow: visible !important;
