@@ -661,23 +661,112 @@ body.holiday-mode #snow-container {
     z-index: 2; 
 }
 
-/* === НОВІ СТИЛІ КНОПОК ГЕНЕРАТОРА (ідентичні стилю шаблонів) === */
+/* --- СІТКА ДЛЯ 2-х КОЛОНОК --- */
+.login-generator-container #results-container {
+    display: flex;
+    flex-direction: column;
+}
 
+.login-generator-container .result-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px 10px; /* 16px по вертикалі (щоб було місце для бейджа), 10px по горизонталі */
+    margin-top: 12px;
+    width: 100%;
+}
+
+/* Якщо варіант лише один - розтягуємо на всю ширину */
+.login-generator-container .result-group .result-item:only-child {
+    grid-column: 1 / -1;
+}
+
+/* --- САМА КАРТКА --- */
+.login-generator-container .result-item {
+    position: relative; 
+    display: flex;
+    flex-direction: row; 
+    justify-content: space-between; 
+    align-items: flex-start; /* <--- ЗМІНЕНО: Текст завжди починається зверху */
+    padding: 14px 10px 10px 12px; 
+    border: 1px solid #dee2e6; 
+    border-radius: 12px;
+    background-color: #ffffff; 
+    box-sizing: border-box;
+    min-height: 52px; 
+}
+
+/* --- ТЕМНА ТЕМА ДЛЯ КАРТКИ --- */
+body.dark .login-generator-container .result-item {
+    background-color: var(--card-bg-color);
+    border-color: #3f4145;
+}
+
+/* --- ПІДПИС (БЕЙДЖ) ВРІЗАНИЙ В РАМКУ --- */
+.login-generator-container .result-type-badge {
+    position: absolute;
+    top: -9px; /* Піднімаємо його на рамку */
+    left: 12px; /* Відступ зліва */
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 8px;
+    line-height: 1;
+    
+    /* Світла тема: кольори бейджа */
+    color: #5a32a3;
+    background: #e9e4f5;
+    border: 1px solid #d4c5f0;
+}
+
+/* --- ТЕМНА ТЕМА ДЛЯ БЕЙДЖА --- */
+body.dark .login-generator-container .result-type-badge {
+    color: #dcbdfc;
+    background: #3c2367;
+    border: 1px solid #5a32a3;
+}
+
+/* --- ЗЕЛЕНИЙ ЛОГІН --- */
+.login-generator-container .result-item span.login-text {
+    font-weight: bold;
+    color: #28a745; /* Світла тема: зелений */
+    font-size: 1.05em;
+    margin: 0;
+    padding-right: 10px; /* Відступ від кнопок */
+    text-align: left;
+    white-space: normal; 
+    word-break: break-all; /* Переносить довгий текст */
+    flex-grow: 1; /* Займає весь вільний простір зліва */
+}
+
+/* --- ТЕМНА ТЕМА ДЛЯ ТЕКСТУ (робимо яскравішим) --- */
+body.dark .login-generator-container .result-item span.login-text {
+    color: #2ecc71; /* Яскравіший зелений, щоб добре читався на чорному */
+}
+
+/* Ховаємо оригінальне ім'я */
+.login-generator-container .result-item .original-name {
+    display: none; 
+}
+
+/* --- БЛОК З КНОПКАМИ (СПРАВА) --- */
 .login-generator-container .result-item .actions-wrapper {
     display: flex;
     align-items: center;
     gap: 6px;
-    margin-left: auto;
-    flex-shrink: 0;
+    flex-shrink: 0; 
+    align-self: flex-end; /* <--- ДОДАНО: Притискає кнопки до низу */
+    margin-top: auto;     /* <--- ДОДАНО: Відштовхує кнопки вниз, якщо текст короткий */
 }
 
+/* --- ТВОЇ СТИЛІ КНОПОК --- */
 .login-generator-container .result-item .regenerate-login-btn,
 .login-generator-container .result-item .copy-login-btn {
     border: none;
     border-radius: 9999px;
     cursor: pointer;
     transition: filter 0.2s;
-    width: 50px; 
+    width: 44px; /* Зробив трохи вужчими, щоб економити місце */
     height: 28px;
     display: flex;
     justify-content: center;
@@ -693,18 +782,18 @@ body.holiday-mode #snow-container {
 }
 
 .login-generator-container .result-item .regenerate-login-btn {
-    background-color: var(--primary-accent-color);
+    background-color: var(--primary-accent-color, #6f42c1);
 }
 body.dark .login-generator-container .result-item .regenerate-login-btn {
-    background-color: var(--secondary-accent-color);
+    background-color: var(--secondary-accent-color, #8a5ad4);
 }
 
 .login-generator-container .result-item .copy-login-btn {
-    background-color: var(--success-color);
+    background-color: var(--success-color, #28a745);
 }
 
 .login-generator-container .result-item .copy-login-btn.copied {
-    background-color: var(--success-color);
+    background-color: var(--success-color, #28a745);
     filter: brightness(1.2);
 }
 
@@ -761,6 +850,16 @@ body.dark .login-generator-container .result-item .regenerate-login-btn {
 
 body.dark .highlighter-backdrop mark {
 background-color: var(--highlight-bg-color);
+color: transparent;
+z-index: 3;
+}
+
+#templates-grid-wrapper .template-field-group .highlighting-container textarea,
+#templates-grid-wrapper .template-field-group .highlighting-container .highlighter-backdrop {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    overflow-x: hidden;
 }
 
 	/* СТИЛІ ДЛЯ НОВОЇ, БІЛЬШ ТОЧНОЇ РУЧКИ ЗМІНИ РОЗМІРУ */
@@ -881,8 +980,6 @@ body.dark #static-clarification-message {
     color: #20be00;
 }
 
-
-
         body.dark .page-title .ultranet-color {
             color: #811e71 !important; 
         }
@@ -901,15 +998,6 @@ body.dark #static-clarification-message {
             box-shadow: none; 
         }
        
-        body.dark .login-generator-container .result-item {
-            background-color: #242526; 
-            border-color: #444444;
-        }
-
-        body.dark .login-generator-container .result-item span {
-            color: #38c172 !important; 
-        }
-     
         .gpon-commands-container label {
             display: inline-block; 
             margin-right: 0px;    
@@ -1146,34 +1234,7 @@ body.dark .gpon-commands-container select {
     align-items: center;
 }
        
-        .login-generator-container .result-item {
-			display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.75rem;
-            border: 1px solid var(--input-border-color);
-            border-radius: 12px; 
-            margin-top: 0.5rem;
-            background-color: #f9f9f9;
-        }
         
-        .login-generator-container .result-item span {
-            font-weight: bold;
-            color: #28a745; 
-            margin: 0 5px 0 10px; 
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap; 
-            flex-grow: 1; 
-            max-width: none;
-            flex-shrink: 1;
-            text-align: left;
-            min-width: 50px;
-        }
-
-        .login-generator-container .result-item .original-name {
-            display: none; 
-        }
         
         .date-calculator-container {
             text-align: center;
@@ -1778,7 +1839,7 @@ body.dark #clear-all-templates-button:hover {
 }
 
 body.dark .template-field-group textarea {
-    background-color: var(--input-bg-color);
+    background-color: transparent;
     border-color: var(--input-border-color);
     color: var(--text-color);
 }
