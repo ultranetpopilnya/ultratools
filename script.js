@@ -256,106 +256,71 @@ function generateAlternativeLogin(buttonElement) {
 }
 
 function generateLogins() {
-        const fullNameInput = document.getElementById('fullNameInput');
-        const fullNames = fullNameInput.value.trim();
-        const resultsContainer = document.getElementById('results-container');
-        resultsContainer.innerHTML = '';
+    const fullNameInput = document.getElementById('fullNameInput');
+    const fullNames = fullNameInput.value.trim();
+    const resultsContainer = document.getElementById('results-container');
+    resultsContainer.innerHTML = '';
+    
+    lastGeneratedLogin = '';
+
+    if (!fullNames) return;
+
+    const lines = fullNames.split('\n');
+    
+    // Ключові слова для компаній
+    const companyRegex = /(^|\s)(фоп|тов|пп|ат|кб|го|кп)(\s|$)/i;
+
+    lines.forEach(line => {
+        const fullName = line.trim();
+        if (fullName === '') return;
+
+        // Валідація на цифри
+        if (/^[\d\s]+$/.test(fullName)) {
+            const err = document.createElement('div');
+            err.innerHTML = `<span style="color: #dc3545; font-weight: bold; width:100%; text-align: center;">Дані не можуть бути лише цифрами!</span>`;
+            resultsContainer.appendChild(err);
+            return;
+        }
         
-        lastGeneratedLogin = '';
+        // Валідація на латиницю
+        if (/[a-z]/i.test(fullName)) {
+            const err = document.createElement('div');
+            err.innerHTML = `<span style="color: #dc3545; font-weight: bold; width:100%; text-align: center;">Трансліт тільки з української!</span>`;
+            resultsContainer.appendChild(err);
+            return;
+        }
 
-        if (!fullNames) return;
-
-        const lines = fullNames.split('\n');
+        const parts = fullName.split(/\s+/).filter(p => p.length > 0);
         
-        // --- ЗМІНА 1: Додано "кп" до списку ---
-        const companyRegex = /(^|\s)(фоп|тов|пп|ат|кб|го|кп)(\s|$)/i;
+        const hasKeywords = companyRegex.test(fullName.toLowerCase());
+        const hasNumbers = /\d/.test(fullName);
 
-        lines.forEach(line => {
-            const fullName = line.trim();
-            if (fullName === '') return;
+        // === СТВОРЮЄМО КОНТЕЙНЕР-РЯДОК (Сітка на 2 колонки) ===
+        const rowDiv = document.createElement('div');
+        rowDiv.style.display = 'grid';
+        rowDiv.style.gridTemplateColumns = '1fr 1fr';
+        rowDiv.style.gap = '10px';
+        rowDiv.style.width = '100%';
+        rowDiv.style.marginBottom = '10px';
 
-            // Валідація на "Тільки цифри"
-            if (/^[\d\s]+$/.test(fullName)) {
-                const errorElement = document.createElement('div');
-                errorElement.className = 'result-item';
-                errorElement.innerHTML = `<span style="color: #dc3545; font-weight: bold; font-size: 1.1em; text-align: center">Вхідні дані не можуть бути лише цифрами!</span>`;
-                resultsContainer.appendChild(errorElement);
-                return;
-            }
-			
-            // Валідація на латиницю
-            if (/[a-z]/i.test(fullName)) {
-                const errorElement = document.createElement('div');
-                errorElement.className = 'result-item';
-                errorElement.innerHTML = `<span style="color: #dc3545; font-weight: bold; font-size: 1.1em; text-align: center">Трансліт тільки з української!</span>`;
-                resultsContainer.appendChild(errorElement);
-                return;
-            }
-
-            const parts = fullName.split(/\s+/).filter(p => p.length > 0);
-            
-            const isCompany = companyRegex.test(fullName.toLowerCase()) || 
-                  parts.length > 3 || 
-                  /\d/.test(fullName) || 
-                  /["“”«»]/.test(fullName);
-            
-            let login = '';
-            
-            // Створюємо елемент результату
+        // Функція для створення одного блоку результату
+        const addResultItem = (login, label, isComp, datasetObj) => {
+            if (!login) return;
             const resultItem = document.createElement('div');
             resultItem.className = 'result-item';
-
-            if (isCompany) {
-                // === КОМПАНІЇ: Повний трансліт ===
-                login = transliterate(fullName).replace(/[^a-z0-9]/g, '');
-                
-                resultItem.dataset.isCompany = 'true';
-                resultItem.dataset.baseLogin = login;
-                resultItem.dataset.suffixCounter = '1';
-
-            } else {
-                // === ЛЮДИ / ПІБ ===
-                if (parts.length < 3) {
-                    // НОВА ЛОГІКА ДЛЯ 1 АБО 2 СЛІВ:
-                    // Робимо повну транслітерацію кожного слова і склеюємо їх
-                    login = parts.map(part => transliterate(part)).join('');
-                    login = login.replace(/[^a-z0-9]/g, '');
-                    
-                    // Позначаємо як 'company', щоб кнопка "Оновити" просто додавала цифри
-                    resultItem.dataset.isCompany = 'true'; 
-                    resultItem.dataset.baseLogin = login;
-                    resultItem.dataset.suffixCounter = '1';
-                } else {
-                    // СТАНДАРТНИЙ ПІБ (3 слова): Прізвище + ініціали
-                    let surname = transliterate(parts[0]);
-                    let nameInitial = transliterate(parts[1].charAt(0));
-                    let patronymicFull = transliterate(parts[2]);
-
-                    login = (surname + nameInitial + patronymicFull.charAt(0)).replace(/[^a-z0-9]/g, '');
-
-                    resultItem.dataset.isCompany = 'false';
-                    resultItem.dataset.surname = surname.replace(/[^a-z0-9]/g, '');
-                    resultItem.dataset.nameInitial = nameInitial.replace(/[^a-z0-9]/g, '');
-                    resultItem.dataset.patronymicFull = patronymicFull.replace(/[^a-z0-9]/g, '');
-                    resultItem.dataset.patrIndex = '1';
-                }
+            
+            resultItem.dataset.isCompany = isComp;
+            for (const key in datasetObj) {
+                resultItem.dataset[key] = datasetObj[key];
             }
 
-            if (login === '') {
-                const errorElement = document.createElement('div');
-                errorElement.className = 'result-item';
-                errorElement.innerHTML = `<span style="color: #dc3545;">"${fullName}" - Некоректний формат!</span>`;
-                resultsContainer.appendChild(errorElement);
-                return;
-            }
+            if (!lastGeneratedLogin) lastGeneratedLogin = login;
 
-            if (!lastGeneratedLogin) {
-                lastGeneratedLogin = login;
-            }
-
-            // Формуємо HTML
             resultItem.innerHTML = `
-                <span>${login}</span>
+                <div class="text-content">
+                    <div class="login-label">${label}</div>
+                    <span>${login}</span>
+                </div>
                 <div class="original-name" title="${fullName}">${fullName}</div>
                 <div class="actions-wrapper">
                     <button class="regenerate-login-btn" onclick="generateAlternativeLogin(this)" title="Згенерувати наступний варіант">
@@ -366,34 +331,77 @@ function generateLogins() {
                     </button>
                 </div>
             `;
-            resultsContainer.appendChild(resultItem);
-        });
-		// === ВСТАВ ЦЕЙ КОД СЮДИ ===
-        const scrollCard = document.querySelector('.login-generator-container .content-card');
-        if (scrollCard) scrollCard.scrollTop = 0;
-    }
+            rowDiv.appendChild(resultItem);
+        };
 
-    function getCorrectDayWord(number) {
-        if (number === 0) return "днів";
-        let lastTwoDigits = number % 100;
-        let lastDigit = number % 10;
-        if (lastTwoDigits >= 11 && lastTwoDigits <= 19) return "днів";
-        if (lastDigit === 1) return "день";
-        if (lastDigit >= 2 && lastDigit <= 4) return "дні";
-        return "днів";
-    }
+        let fullLogin = transliterate(fullName).replace(/[^a-z0-9]/g, '');
 
-    function formatDate(date) {
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
-    }
-	
-	function formatTime(date) {
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    return `${hours}:${minutes}`;
+        if (hasKeywords) {
+            // --- 1. ОФІЦІЙНІ КОМПАНІЇ (ФОП, ТОВ) ---
+            addResultItem(fullLogin, 'Повний', 'true', { baseLogin: fullLogin, suffixCounter: '1' });
+
+            if (parts.length > 1) {
+                let firstWord = transliterate(parts[0]).replace(/[^a-z0-9]/g, '');
+                let initials = parts.slice(1).map(p => {
+                    let tr = transliterate(p).replace(/[^a-z0-9]/g, '');
+                    let letters = tr.replace(/[^a-z]/g, '');
+                    let digits = tr.replace(/[^0-9]/g, '');
+                    return (letters.charAt(0) + digits);
+                }).join('');
+                
+                let shortLogin = firstWord + initials;
+                if (shortLogin !== fullLogin) {
+                    addResultItem(shortLogin, 'Скорочений', 'true', { baseLogin: shortLogin, suffixCounter: '1' });
+                }
+            }
+
+        } else if (parts.length === 3 && !hasNumbers) {
+            // --- 2. СТАНДАРТНИЙ ПІБ ---
+            let surname = transliterate(parts[0]);
+            let nameFull = transliterate(parts[1]);
+            let nameInitial = transliterate(parts[1].charAt(0));
+            let patronymicFull = transliterate(parts[2]);
+
+            let shortLogin = (surname + nameInitial + patronymicFull.charAt(0)).replace(/[^a-z0-9]/g, '');
+            addResultItem(shortLogin, 'Скорочений', 'false', {
+                surname: surname.replace(/[^a-z0-9]/g, ''),
+                nameInitial: nameInitial.replace(/[^a-z0-9]/g, ''),
+                patronymicFull: patronymicFull.replace(/[^a-z0-9]/g, ''),
+                patrIndex: '1'
+            });
+
+            addResultItem(fullLogin, 'Повний', 'true', { baseLogin: fullLogin, suffixCounter: '1' });
+
+        } else if (parts.length < 3 && !hasNumbers) {
+            // --- 3. КОРОТКІ (1-2 слова) ---
+            addResultItem(fullLogin, 'Стандарт', 'true', { baseLogin: fullLogin, suffixCounter: '1' });
+
+        } else {
+            // --- 4. СКЛАДНІ РЯДКИ (багато слів або є цифри) ---
+            addResultItem(fullLogin, 'Повний', 'true', { baseLogin: fullLogin, suffixCounter: '1' });
+
+            let shortLogin = parts.map(p => {
+                let tr = transliterate(p).replace(/[^a-z0-9]/g, '');
+                let digits = tr.replace(/[^0-9]/g, '');
+                let letters = tr.replace(/[^a-z]/g, '');
+                return (letters.charAt(0) + digits); 
+            }).join('');
+
+            if (shortLogin !== fullLogin) {
+                addResultItem(shortLogin, 'Абревіатура', 'true', { baseLogin: shortLogin, suffixCounter: '1' });
+            }
+        }
+
+        // Якщо згенерувався лише 1 варіант, розтягуємо на обидві колонки
+        if (rowDiv.children.length === 1) {
+            rowDiv.children[0].style.gridColumn = "1 / -1";
+        }
+
+        resultsContainer.appendChild(rowDiv);
+    });
+
+    const scrollCard = document.querySelector('.login-generator-container .content-card');
+    if (scrollCard) scrollCard.scrollTop = 0;
 }
 
 function areDatesInDefaultState() {
@@ -1102,13 +1110,39 @@ function initDraggableAndResizable(element) {
     
     const pasteLoginButton = document.createElement('button');
     pasteLoginButton.innerHTML = '<i class="fa-solid fa-paste"></i>';
-    pasteLoginButton.title = 'Вставити логін';
+    pasteLoginButton.title = 'Вставити текст / логін';
     pasteLoginButton.className = 'paste-login-btn';
-    pasteLoginButton.onclick = () => {
-        if (!lastGeneratedLogin) {
-            showNotification('Спочатку згенеруйте логін!');
+    
+    // Робимо функцію асинхронною (async), щоб мати змогу читати буфер обміну
+    pasteLoginButton.onclick = async () => {
+        let textToPaste = '';
+        
+        // 1. Спочатку пробуємо взяти текст з буфера обміну (те, що ви скопіювали будь-де)
+        try {
+            textToPaste = await navigator.clipboard.readText();
+        } catch (err) {
+            console.warn("Браузер не дав доступу до буфера обміну", err);
+        }
+        
+        // 2. Якщо буфер пустий, беремо поточний згенерований логін
+        if (!textToPaste) {
+            textToPaste = lastGeneratedLogin;
+        }
+        
+        // 3. Якщо і він пустий (наприклад, щойно оновили сторінку), дістаємо крайній логін з Історії
+        if (!textToPaste) {
+            const history = JSON.parse(localStorage.getItem('loginHistory') || '[]');
+            if (history.length > 0) {
+                textToPaste = history[0].login;
+            }
+        }
+        
+        // Якщо вже зовсім нічого немає
+        if (!textToPaste) {
+            showNotification('Немає тексту для вставки!');
             return;
         }
+
         const textarea = fieldGroup.querySelector('textarea');
         const highlighter = fieldGroup.querySelector('.highlighter-backdrop');
         const savedScrollTop = textarea.scrollTop;
@@ -1116,10 +1150,36 @@ function initDraggableAndResizable(element) {
         const end = textarea.selectionEnd;
         const text = textarea.value;
         
-        textarea.value = text.substring(0, start) + lastGeneratedLogin + text.substring(end);
-        textarea.focus({ preventScroll: true });
-        const newCursorPos = start + lastGeneratedLogin.length;
-        textarea.setSelectionRange(newCursorPos, newCursorPos);
+        if (start === end) {
+            // ЛОГІКА 1: Нічого не виділено - просто вставляємо там, де стоїть курсор
+            textarea.value = text.substring(0, start) + textToPaste + text.substring(end);
+            textarea.focus({ preventScroll: true });
+            const newCursorPos = start + textToPaste.length;
+            textarea.setSelectionRange(newCursorPos, newCursorPos);
+        } else {
+            // ЛОГІКА 2: Виділено текст - замінюємо ВСІ такі збіги у цьому шаблоні
+            const selectedText = text.substring(start, end);
+            
+            // Рахуємо, скільки разів слово зустрілося ДО виділеного місця
+            const textBeforeSelection = text.substring(0, start);
+            const occurrencesBefore = textBeforeSelection.split(selectedText).length - 1;
+            
+            // Екрануємо спецсимволи і робимо глобальну заміну
+            const escapedSelectedText = selectedText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const regex = new RegExp(escapedSelectedText, 'g');
+            
+            textarea.value = text.replace(regex, textToPaste);
+            
+            // Вираховуємо, куди поставити курсор після заміни
+            const lengthDiff = textToPaste.length - selectedText.length;
+            const newCursorPos = start + (occurrencesBefore * lengthDiff) + textToPaste.length;
+            
+            textarea.focus({ preventScroll: true });
+            textarea.setSelectionRange(newCursorPos, newCursorPos);
+            
+            showNotification(`Замінено всі збіги: "${selectedText}"`);
+        }
+        
         textarea.scrollTop = savedScrollTop;
         updateHighlight(textarea, highlighter); 
         updateBookmarksOnTextChange(fieldGroup);
