@@ -2664,41 +2664,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 // === АВТОМАТИЧНЕ ОТРИМАННЯ ВЕРСІЇ РОЗШИРЕННЯ З GITHUB (БЕЗ КЕШУ) ===
-document.addEventListener('DOMContentLoaded', () => {
-    
-    // ВСТАВТЕ СЮДИ ВАШЕ ПОСИЛАННЯ НА RAW MANIFEST.JSON
-    const MANIFEST_URL = 'https://raw.githubusercontent.com/ultranetpopilnya/UltraEnergy-SMS-Tool/refs/heads/main/manifest.json';
-    
+const MANIFEST_URL = 'https://raw.githubusercontent.com/ultranetpopilnya/UltraEnergy-SMS-Tool/refs/heads/main/manifest.json';
+
+async function fetchExtensionVersion() {
     const badgeElement = document.querySelector('.extension-version-badge');
     if (!badgeElement) return;
 
-    async function fetchExtensionVersion() {
-        try {
-            // Додаємо поточний час до URL, щоб браузер точно не використовував старий кеш
-            const response = await fetch(`${MANIFEST_URL}?t=${Date.now()}`, {
-                cache: 'no-store' // Вказуємо браузеру не кешувати запит
-            });
-            
-            if (!response.ok) {
-                throw new Error('Не вдалося отримати дані з GitHub');
-            }
-
-            const manifest = await response.json();
-            
-            // Якщо у файлі є поле version, оновлюємо бейдж
-            if (manifest && manifest.version) {
-                badgeElement.textContent = `v${manifest.version}`;
-            }
-
-        } catch (error) {
-            console.error('Помилка отримання версії розширення:', error);
-            // Якщо немає інтернету або GitHub недоступний, на сайті просто 
-            // залишиться та версія, яку ви написали в HTML (наприклад, v1.0.0)
+    try {
+        const response = await fetch(`${MANIFEST_URL}?t=${Date.now()}`, {
+            cache: 'no-store'
+        });
+        
+        if (!response.ok) {
+            throw new Error('Не вдалося отримати дані з GitHub');
         }
-    }
 
-    // Запускаємо функцію при кожному заході на сайт
-    fetchExtensionVersion();
+        const manifest = await response.json();
+        
+        if (manifest && manifest.version) {
+            badgeElement.textContent = `v${manifest.version}`;
+        }
+
+    } catch (error) {
+        console.error('Помилка отримання версії розширення:', error);
+    }
+}
+
+// Запускаємо версію при кліку на іконку extension-пігулки
+document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('click', (e) => {
+        const clickedIcon = e.target.closest('.extension-emoji');
+        if (clickedIcon) {
+            fetchExtensionVersion();
+        }
+    });
 });
 
 document.addEventListener('DOMContentLoaded', () => {
