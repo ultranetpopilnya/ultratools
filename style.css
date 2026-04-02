@@ -442,7 +442,7 @@ body.dark .progress-ring-fg {
     
     /* Ваші 4 кольори у звичайному HEX-форматі */
     --c1: #e3f4ff; /* Рожевий */
-    --c2: rgb(211, 193, 193); /* Блакитний */
+    --c2: rgb(249, 255, 220); /* Блакитний */
     --c3: #ffebd8; /* Персиковий */
     --c4: #f5e4ff; /* Бузковий */
 
@@ -697,7 +697,7 @@ body.holiday-mode #snow-container {
 
 /* --- ТЕМНА ТЕМА ДЛЯ КАРТКИ --- */
 body.dark .login-generator-container .result-item {
-    background-color: var(--card-bg-color);
+    background-color: #2c2c2e;
     border-color: #3f4145;
 }
 
