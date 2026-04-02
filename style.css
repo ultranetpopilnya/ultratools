@@ -671,7 +671,7 @@ body.holiday-mode #snow-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 16px 10px; /* 16px по вертикалі (щоб було місце для бейджа), 10px по горизонталі */
-    margin-top: 12px;
+    margin: 10px 0 20px 0;
     width: 100%;
 }
 
@@ -687,7 +687,7 @@ body.holiday-mode #snow-container {
     flex-direction: row; 
     justify-content: space-between; 
     align-items: flex-start; /* <--- ЗМІНЕНО: Текст завжди починається зверху */
-    padding: 14px 10px 10px 12px; 
+    padding: 10px 10px 10px 10px; 
     border: 1px solid #dee2e6; 
     border-radius: 12px;
     background-color: #ffffff; 
@@ -2432,7 +2432,7 @@ body {
 /* Сам блок історії */
 .history-section {
     width: 85%;
-    margin: 28px auto 0 auto;
+    margin: 0px auto 0 auto;
     flex-shrink: 0;
     border-top: 1px solid var(--input-border-color);
 }
@@ -2628,7 +2628,7 @@ body.dark .history-toggle-btn {
 
 .login-generator-container #results-container {
     margin-top: 0px;
-    margin-bottom: 15px;
+    margin-bottom: 6px;
     height: auto;
     overflow: visible !important;
 }
