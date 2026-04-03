@@ -63,7 +63,7 @@ show mac address-table interface ePON 0/1:11 :: Показати Mac адрес�
 show epon interface ePON 0/1:11 onu port 1 state :: Показати зєднання між ONU та роутером
 show epon onu-information | include abcd :: Пошук ONU по частині Mac
 show epon onu-information mac-address abcd.efgh.1234 :: Пошук ONU по Mac
-show epon onu-ctc-optical-transceiver-diagnosis interface ePON 0/1 :: Показати сигнал PON
+show  epon interface epoN 0/1:11 onu ctc optical-transceiver-diagnosis :: Показати сигнал ONU абонента
 write all :: Зберегти внесені зміни на OLT
 
 * conf :: Зайти в налаштування OLT (Далі команди, які вводяться після)
