@@ -1780,7 +1780,7 @@ body.dark #clear-all-templates-button:hover {
 
     /* Розміри */
     min-height: 90px;
-    min-width: 380px;
+    min-width: 360px;
 
     /* --- ГОЛОВНЕ: АНІМАЦІЯ --- */
     /* Анімуємо transform (рух) і розміри */
