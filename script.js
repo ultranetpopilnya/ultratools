@@ -1115,67 +1115,103 @@ function initDraggableAndResizable(element) {
         }).catch(err => console.error('Error:', err));
     };
     
+    // --- 1. КНОПКА ВСТАВКИ ТІЛЬКИ ЗГЕНЕРОВАНОГО ЛОГІНА ---
     const pasteLoginButton = document.createElement('button');
-    pasteLoginButton.innerHTML = '<i class="fa-solid fa-paste"></i>';
+    // Змінимо іконку, щоб відрізняти від звичайної вставки (наприклад, іконка юзера/тегу)
+    pasteLoginButton.innerHTML = '<i class="fa-solid fa-user-tag"></i>'; 
     pasteLoginButton.title = 'Вставити згенерований логін';
     pasteLoginButton.className = 'paste-login-btn';
-    pasteLoginButton.onclick = async () => {
+    pasteLoginButton.onclick = () => {
         const textarea = fieldGroup.querySelector('textarea');
         const start = textarea.selectionStart;
         const end = textarea.selectionEnd;
         const text = textarea.value;
         const selectedText = text.substring(start, end);
 
-        // 1. Визначаємо, ЩО саме вставляти (за твоїми пріоритетами)
-        let targetText = lastGeneratedLogin; 
+        let targetText = ''; 
 
-        // Якщо щойно згенерованого немає - читаємо буфер обміну
-        if (!targetText) {
-            try {
-                const clipText = await navigator.clipboard.readText();
-                if (clipText && clipText.trim() !== '') targetText = clipText.trim();
-            } catch (err) {
-                console.warn("Немає доступу до буфера обміну");
-            }
-        }
-
-        // Якщо і буфер пустий (або недоступний) - беремо найперший з історії
-        if (!targetText) {
-            const history = JSON.parse(localStorage.getItem('loginHistory') || '[]');
-            if (history.length > 0) targetText = history[0].login;
+        // 1. Пріоритет: Беремо найперший з історії (те, що користувач щойно скопіював)
+        const history = JSON.parse(localStorage.getItem('loginHistory') || '[]');
+        if (history.length > 0) {
+            targetText = history[0].login;
+        } 
+        // 2. Якщо історія пуста, але є щойно згенерований в пам'яті
+        else if (lastGeneratedLogin) {
+            targetText = lastGeneratedLogin;
         }
 
         // Якщо взагалі глухо
         if (!targetText) {
-            showNotification('Немає тексту для вставки!');
+            showNotification('Немає згенерованого логіна для вставки!');
             return;
         }
 
         const savedScrollTop = textarea.scrollTop;
 
-        // 2. ДІЯ: Масова заміна АБО звичайна вставка
+        // ДІЯ: Масова заміна АБО звичайна вставка
         if (start !== end && selectedText.length > 0) {
-            // === ЗАМІНА ВСІХ ТАКИХ СЛІВ У ШАБЛОНІ ===
-            // Екрануємо спецсимволи, щоб регулярка не зламалась
             const escapeRegExp = (string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-            const regex = new RegExp(escapeRegExp(selectedText), 'g'); // 'g' - замінити всі
-            
+            const regex = new RegExp(escapeRegExp(selectedText), 'g');
             textarea.value = text.replace(regex, targetText);
             showNotification(`Замінено всі: ${selectedText} ➔ ${targetText}`);
-            
-            // Залишаємо курсор біля першої заміни
             textarea.setSelectionRange(start, start + targetText.length);
         } else {
-            // === ЗВИЧАЙНА ВСТАВКА ТЕКСТУ ===
             textarea.value = text.substring(0, start) + targetText + text.substring(end);
             const newCursorPos = start + targetText.length;
             textarea.setSelectionRange(newCursorPos, newCursorPos);
         }
 
-        // 3. Оновлення інтерфейсу та збереження
         textarea.focus({ preventScroll: true });
         textarea.scrollTop = savedScrollTop;
-        
+        const highlighter = fieldGroup.querySelector('.highlighter-backdrop');
+        updateHighlight(textarea, highlighter); 
+        updateBookmarksOnTextChange(fieldGroup);
+        saveTemplates();
+    };
+
+    // --- 2. НОВА КНОПКА ЗВИЧАЙНОЇ ВСТАВКИ З БУФЕРА ОБМІНУ ---
+    const pasteClipboardButton = document.createElement('button');
+    pasteClipboardButton.innerHTML = '<i class="fa-solid fa-paste"></i>';
+    pasteClipboardButton.title = 'Вставити';
+    pasteClipboardButton.className = 'paste-clipboard-btn';
+    pasteClipboardButton.onclick = async () => {
+        const textarea = fieldGroup.querySelector('textarea');
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const text = textarea.value;
+        const selectedText = text.substring(start, end);
+
+        let targetText = '';
+
+        try {
+            const clipText = await navigator.clipboard.readText();
+            if (clipText && clipText.trim() !== '') targetText = clipText.trim();
+        } catch (err) {
+            console.warn("Немає доступу до буфера обміну");
+        }
+
+        if (!targetText) {
+            showNotification('Буфер обміну порожній або недоступний!');
+            return;
+        }
+
+        const savedScrollTop = textarea.scrollTop;
+
+        // ДІЯ: Масова заміна АБО звичайна вставка
+        if (start !== end && selectedText.length > 0) {
+            const escapeRegExp = (string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const regex = new RegExp(escapeRegExp(selectedText), 'g');
+            textarea.value = text.replace(regex, targetText);
+            showNotification(`Замінено всі: ${selectedText} ➔ ${targetText}`);
+            textarea.setSelectionRange(start, start + targetText.length);
+        } else {
+            textarea.value = text.substring(0, start) + targetText + text.substring(end);
+            const newCursorPos = start + targetText.length;
+            textarea.setSelectionRange(newCursorPos, newCursorPos);
+        }
+
+        textarea.focus({ preventScroll: true });
+        textarea.scrollTop = savedScrollTop;
         const highlighter = fieldGroup.querySelector('.highlighter-backdrop');
         updateHighlight(textarea, highlighter); 
         updateBookmarksOnTextChange(fieldGroup);
@@ -1200,10 +1236,9 @@ function initDraggableAndResizable(element) {
 
    // === КНОПКА ПОШУКУ (НЕЗАЛЕЖНА) ===
     const searchToggleButton = document.createElement('button');
+    searchToggleButton.className = 'search-template-btn'; // ДОДАЛИ КЛАС
     searchToggleButton.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i>';
     searchToggleButton.title = 'Пошук і заміна тексту';
-    searchToggleButton.style.backgroundColor = '#6f42c1'; 
-    searchToggleButton.style.color = 'white';
     
     searchToggleButton.onclick = (e) => {
         e.stopPropagation(); 
@@ -1467,13 +1502,35 @@ function initDraggableAndResizable(element) {
     textareaWrapper.appendChild(gutter);
     textareaWrapper.appendChild(highlightingContainer);
 
-headerDiv.appendChild(nameInput);
+// Створюємо допоміжну функцію для генерації розділювача
+    const createSeparator = () => {
+        const sep = document.createElement('div');
+        sep.className = 'action-separator';
+        return sep;
+    };
+
+    headerDiv.appendChild(nameInput);
+    
+    // Група 1: Копіювання
     actionsDiv.appendChild(copyButton);
+    actionsDiv.appendChild(pasteClipboardButton);
+    
+    actionsDiv.appendChild(createSeparator()); // --- РОЗДІЛЮВАЧ ---
+    
+    // Група 2: Вставка
     actionsDiv.appendChild(pasteLoginButton);
-    // === ПЕРЕНЕСЛИ КНОПКУ ПОШУКУ СЮДИ (Одразу після вставки логіну) ===
+    
+    actionsDiv.appendChild(createSeparator()); // --- РОЗДІЛЮВАЧ ---
+    
+    // Група 3: Інструменти
     actionsDiv.appendChild(searchToggleButton);
+    
+    actionsDiv.appendChild(createSeparator()); // --- РОЗДІЛЮВАЧ ---
+    
+    // Група 4: Небезпечні дії
     actionsDiv.appendChild(clearButton);
     actionsDiv.appendChild(deleteButton);
+    
     headerDiv.appendChild(actionsDiv);
     
     const resizeHandle = document.createElement('div');
