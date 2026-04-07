@@ -27,6 +27,8 @@ show card slotno 1 :: Показати інформацію про OLT (Скіл
 > ip dhcp snooping clear pon abcd.efgh.1234 vlan 111 gpon-onu_1/1/1:1 vport 1 :: Очистка сесії
 > ip dhcp snooping clear abcd.efgh.1234 vlan 111 :: Очистка сесії
 > interface gpon-onu_1/1/1:1 :: Зайти в інтерфейс ONU
+> interface gpon-olt_1/1/1 :: Зайти в налаштування PON
+> shutdown/no shutdown :: Перезавантаження PON
 > no onu 111 :: Видалення ONU з OLT
 > onu 111 type GPON-1GE sn PTNHUYLO :: Реєстрація ONU за серійним номером на OLT
 > mac add permanent abcd.efgh.1234 gpon gpon-onu_1/1/1:1 vport 1 vlan 99 :: Привязати MAC роутера перманентно.
