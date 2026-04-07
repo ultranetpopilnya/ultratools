@@ -338,10 +338,16 @@ function generateLogins() {
 
             let abbrLogin = '';
             parts.forEach(part => {
-                if (strictCompanyKeyword.test(part) || /\d/.test(part)) {
-                    abbrLogin += transliterate(part).replace(/[^a-z0-9]/g, '');
+                // Очищаємо слово від дужок, лапок та спецсимволів перед обробкою
+                let cleanPart = part.replace(/[^a-zA-Zа-яА-ЯіїєґІЇЄҐ0-9]/g, '');
+                
+                // Якщо після очищення нічого не залишилося (наприклад, був символ "-"), пропускаємо
+                if (!cleanPart) return; 
+
+                if (strictCompanyKeyword.test(cleanPart) || /\d/.test(cleanPart)) {
+                    abbrLogin += transliterate(cleanPart).replace(/[^a-z0-9]/g, '');
                 } else {
-                    abbrLogin += transliterate(part.charAt(0)).replace(/[^a-z0-9]/g, '');
+                    abbrLogin += transliterate(cleanPart.charAt(0)).replace(/[^a-z0-9]/g, '');
                 }
             });
             
@@ -354,7 +360,10 @@ function generateLogins() {
                 let loginFull = parts.map(part => transliterate(part)).join('').replace(/[^a-z0-9]/g, '');
                 appendResult(loginFull, 'Звичайний', { isCompany: 'true', baseLogin: loginFull, suffixCounter: '1' }, fullName);
                 
-                let loginAbbr = parts.map(part => transliterate(part.charAt(0))).join('').replace(/[^a-z0-9]/g, '');
+                let loginAbbr = parts.map(part => {
+                    let cleanPart = part.replace(/[^a-zA-Zа-яА-ЯіїєґІЇЄҐ0-9]/g, '');
+                    return cleanPart ? transliterate(cleanPart.charAt(0)) : '';
+                }).join('').replace(/[^a-z0-9]/g, '');
                 if (loginAbbr && loginAbbr !== loginFull) {
                     appendResult(loginAbbr, 'Скорочений', { isCompany: 'true', baseLogin: loginAbbr, suffixCounter: '1' }, fullName);
                 }
