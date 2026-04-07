@@ -1857,7 +1857,7 @@ body.dark .template-field-group textarea {
 .template-actions {
     display: flex;
     align-items: center;
-    gap: 3px; /* Трохи зменшили проміжок, бо кнопки тепер без рамок */
+    gap: 1px; /* Трохи зменшили проміжок, бо кнопки тепер без рамок */
 }
 
 /* 1. БАЗОВИЙ (СПОКІЙНИЙ) СТАН КНОПОК */
