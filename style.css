@@ -1919,7 +1919,6 @@ body.dark .template-actions button {
 .search-template-btn:hover { background-color: #6f42c1; }
 
 .clear-template-btn:hover { background-color: var(--primary-accent-color); }
-body.dark .clear-template-btn:hover { background-color: var(--secondary-accent-color); color: var(--bg-color); }
 
 .delete-template-btn:hover { background-color: var(--danger-color); }
 
