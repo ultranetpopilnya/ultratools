@@ -2337,9 +2337,10 @@ window.addEventListener('load', () => {
 /* === ПРАВИЛЬНИЙ JS КАЛЬКУЛЯТОРА (З ПРІОРИТЕТАМИ ТА ІСТОРІЄЮ) === */
 
 let calcCurrent = '0';
-let calcExpression = []; // Масив для збереження всього математичного виразу
+let calcExpression = []; 
 let calcReset = false;
 let calcHistory = []; 
+let calcComputed = false; // НОВИЙ ПРАПОРЕЦЬ: вказує, що число на екрані отримано в результаті %, √ або x²
 
 function calcUpdateDisplay() {
     const display = document.getElementById('calc-current-result');
@@ -2352,9 +2353,12 @@ function calcUpdateDisplay() {
     if(prevDisplay) {
         let exprStr = calcExpression.join(' ').replace(/\*/g, '×').replace(/\//g, '÷');
         prevDisplay.innerText = exprStr;
+        
+        // НОВЕ: Автоматично прокручуємо довгий рядок в самий кінець (вправо),
+        // щоб завжди бачити останню дію, яку ми ввели.
+        prevDisplay.scrollLeft = prevDisplay.scrollWidth;
     }
     
-    // ОСЬ ЦЕЙ РЯДОК: Скидає 7 секунд при кожній зміні на екрані
     startCalcAutoClearTimer();
 }
 
@@ -2362,9 +2366,10 @@ function calcAppend(num) {
     if (calcCurrent === '0' || calcCurrent === 'Помилка' || calcReset) {
         calcCurrent = num === '.' ? '0.' : num;
         calcReset = false;
+        calcComputed = false; // Скидаємо прапорець, бо користувач ввів число вручну
     } else {
         if (num === '.' && calcCurrent.includes('.')) return;
-        if (calcCurrent.length > 15) return; // Захист від надто довгих чисел
+        if (calcCurrent.length > 15) return; 
         calcCurrent += num;
     }
     calcUpdateDisplay();
@@ -2373,15 +2378,15 @@ function calcAppend(num) {
 function calcAppendOperator(op) {
     if (calcCurrent === 'Помилка') return;
 
-    // Якщо ми тільки що натиснули "=", починаємо новий вираз з результату
-    if (calcExpression.length === 0 && calcReset) {
+    // Якщо ми тільки що натиснули "=" і починаємо новий вираз з результату
+    if (calcExpression.length === 0 && calcReset && !calcComputed) {
         calcExpression.push(calcCurrent);
     } 
-    // Якщо ми вводимо нове число, додаємо його до виразу
-    else if (!calcReset) {
+    // ВИПРАВЛЕНО: Якщо користувач ввів число АБО щойно обчислив %, √, x²
+    else if (!calcReset || calcComputed) {
         calcExpression.push(calcCurrent);
     } 
-    // Якщо користувач натиснув один знак, а потім інший (напр. "+" потім "*") - замінюємо знак
+    // ЗМІНА ЗНАКУ: Якщо натиснули один знак, а потім відразу інший (напр. "+" потім "*")
     else {
         if (calcExpression.length > 0 && isNaN(calcExpression[calcExpression.length - 1])) {
             calcExpression[calcExpression.length - 1] = op;
@@ -2392,54 +2397,45 @@ function calcAppendOperator(op) {
     
     calcExpression.push(op);
     calcReset = true;
+    calcComputed = false; // Після додавання знаку скидаємо прапорець
     calcUpdateDisplay();
 }
 
 function calcCalculate() {
     if (calcExpression.length === 0 || calcCurrent === 'Помилка') return;
     
-    // Якщо користувач вводив число, додаємо його до виразу
-    if (!calcReset) {
+    // ВИПРАВЛЕНО: Завжди додаємо поточне число, якщо ми його вводили або обчислили (%)
+    if (!calcReset || calcComputed) {
         calcExpression.push(calcCurrent);
     } 
 
-    // === ОСЬ ТУТ ВИПРАВЛЕННЯ ===
-    // Перевіряємо, чи останній елемент у виразі є знаком (+, -, *, /)
-    // isNaN повертає true для знаків
+    // Запобіжник: якщо вираз закінчується знаком (+, -, *), просто ігноруємо цей знак
     if (calcExpression.length > 0 && isNaN(calcExpression[calcExpression.length - 1])) {
-        // Видаляємо останній елемент (знак) з масиву
         calcExpression.pop();
     }
 
-    // Якщо після видалення знаку вираз став порожнім (наприклад, просто натиснули "=")
     if (calcExpression.length === 0) return;
 
-    // Збираємо рядок виразу для обчислення
     let evalStr = calcExpression.join(' ');
     
     try {
-        // Безпечне обчислення рядка з математичним пріоритетом
         let result = Function('"use strict";return (' + evalStr + ')')();
         
         if (!isFinite(result) || isNaN(result)) {
             calcCurrent = "Помилка";
         } else {
-            // Відкидаємо "сміття" при обчисленні дробів (наприклад 0.1+0.2 = 0.3)
             result = parseFloat(result.toFixed(10));
-            
-            // Запис в історію
             let historyExpr = evalStr.replace(/\*/g, '×').replace(/\//g, '÷') + ' =';
             addToCalcHistory(historyExpr, result.toString());
-            
             calcCurrent = result.toString();
         }
     } catch (e) {
         calcCurrent = "Помилка";
     }
 
-    // Очищаємо вираз для наступних операцій
     calcExpression = [];
     calcReset = true;
+    calcComputed = false; // Вираз завершено
     calcUpdateDisplay();
 }
 
@@ -2451,6 +2447,7 @@ function calcSquare() {
     addToCalcHistory(`sqr(${val}) =`, res.toString());
     calcCurrent = res.toString();
     calcReset = true;
+    calcComputed = true; // Це математичний результат
     calcUpdateDisplay();
 }
 
@@ -2465,6 +2462,7 @@ function calcRoot() {
         calcCurrent = res.toString();
     }
     calcReset = true;
+    calcComputed = true; // Це математичний результат
     calcUpdateDisplay();
 }
 
@@ -2473,7 +2471,7 @@ function calcPercent() {
     const current = parseFloat(calcCurrent);
     let res;
 
-    // Розумний відсоток. Якщо є "100 +", то 10% = 10 (10% від 100)
+    // Логіка відсотків: віднімання/додавання відсотків від суми (напр. 100 - 10%)
     if (calcExpression.length >= 2) {
         let lastOp = calcExpression[calcExpression.length - 1];
         if (lastOp === '+' || lastOp === '-') {
@@ -2488,7 +2486,9 @@ function calcPercent() {
     
     res = parseFloat(res.toFixed(10));
     calcCurrent = res.toString();
-    calcReset = true;
+    
+    calcReset = true; 
+    calcComputed = true; // ВАЖЛИВО! Це вказує '=' та знакам +, що це число треба використати
     calcUpdateDisplay();
 }
 
@@ -2496,6 +2496,7 @@ function calcClear() {
     calcCurrent = '0';
     calcExpression = [];
     calcReset = false;
+    calcComputed = false;
     calcUpdateDisplay();
 }
 
@@ -2521,7 +2522,7 @@ function copyCalcResult() {
     setTimeout(() => btn.innerHTML = originalHtml, 1200);
 }
 
-/* === АВТООЧИЩЕННЯ ЕКРАНУ КАЛЬКУЛЯТОРА (7 СЕКУНД БЕЗ ДІЯЛЬНОСТІ) === */
+/* === АВТООЧИЩЕННЯ ЕКРАНУ КАЛЬКУЛЯТОРА === */
 let isCalcAutoClearEnabled = false;
 let calcAutoClearTimeout = null;
 
@@ -2529,15 +2530,11 @@ function toggleCalcAutoClear() {
     const btn = document.getElementById('calc-auto-clear-btn');
     isCalcAutoClearEnabled = !isCalcAutoClearEnabled; 
     
-    // ЗБЕРІГАЄМО СТАН:
     localStorage.setItem('calcAutoClearEnabled', isCalcAutoClearEnabled);
-    
     btn.classList.toggle('active', isCalcAutoClearEnabled);
     
-    if (isCalcAutoClearEnabled) {
-        // Ваша логіка запуску таймера...
-    } else {
-        if (calcAutoClearTimeout) clearTimeout(calcAutoClearTimeout);
+    if (!isCalcAutoClearEnabled && calcAutoClearTimeout) {
+        clearTimeout(calcAutoClearTimeout);
     }
 }
 
@@ -2548,56 +2545,44 @@ function loadCalcAutoClearState() {
     if (savedState === 'true') {
         isCalcAutoClearEnabled = true;
         if (btn) btn.classList.add('active');
-        // Якщо потрібно, щоб таймер відразу почав працювати:
-        // startCalcAutoClearTimer(); 
     } else {
         isCalcAutoClearEnabled = false;
         if (btn) btn.classList.remove('active');
     }
 }
 
-// Функція, яка перезапускає таймер при кожній зміні на екрані
 function startCalcAutoClearTimer() {
     if (!isCalcAutoClearEnabled) return;
 
-    // 1. Зупиняємо старий таймер (користувач щось натиснув)
     clearTimeout(calcAutoClearTimeout);
     
-    // 2. Якщо на екрані є введені цифри (не 0), починаємо відлік 7 секунд
     if (calcCurrent !== '0' && calcCurrent !== 'Помилка') {
-        
         calcAutoClearTimeout = setTimeout(() => {
-            // Перевіряємо ще раз через 7 секунд, чи екран досі не пустий
             if (calcCurrent !== '0' && calcCurrent !== 'Помилка') {
-                calcCurrent = '0'; // Стираємо тільки поточні цифри
-                calcUpdateDisplay(); // Оновлюємо візуал
-                
-                // Показуємо галочку
+                calcCurrent = '0'; 
+                calcUpdateDisplay(); 
                 showAutoClearSuccess();
             }
         }, 7000);
     }
 }
 
-// Візуальна зміна іконки на галочку і назад
 function showAutoClearSuccess() {
     const btn = document.getElementById('calc-auto-clear-btn');
     const icon = document.getElementById('calc-auto-clear-icon');
     
     if (!btn || !icon) return;
 
-    // Міняємо іконку на галочку і додаємо зелений колір
     icon.className = 'fas fa-check';
     btn.classList.add('just-cleared');
 
-    // Через 1.5 секунди повертаємо гумку
     setTimeout(() => {
         icon.className = 'fas fa-eraser';
         btn.classList.remove('just-cleared');
     }, 1500);
 }
 
-/* === ЛОГІКА ІСТОРІЇ === */
+/* === ЛОГІКА ІСТОРІЇ КАЛЬКУЛЯТОРА === */
 function calcToggleHistory() {
     const panel = document.getElementById('calc-history-panel');
     panel.classList.toggle('open');
@@ -2605,7 +2590,7 @@ function calcToggleHistory() {
 
 function addToCalcHistory(expression, result) {
     calcHistory.unshift({ op: expression, res: result });
-    if (calcHistory.length > 20) calcHistory.pop(); // Обмежуємо 20 записами
+    if (calcHistory.length > 20) calcHistory.pop(); 
     renderCalcHistory();
 }
 
@@ -2627,10 +2612,10 @@ function renderCalcHistory() {
 function useCalcHistoryItem(index) {
     const item = calcHistory[index];
     calcCurrent = item.res;
-    calcExpression = []; // Очищаємо поточний вираз
+    calcExpression = []; 
     calcReset = true; 
     calcUpdateDisplay();
-    calcToggleHistory(); // Закриваємо панель
+    calcToggleHistory(); 
 }
 
 function calcClearHistory() {
@@ -2638,20 +2623,37 @@ function calcClearHistory() {
     renderCalcHistory();
 }
 
-// Управління калькулятором з клавіатури
+/* === РОЗШИРЕНЕ УПРАВЛІННЯ З КЛАВІАТУРИ === */
 document.addEventListener('keydown', (e) => {
-    const activeTab = document.querySelector('.container.date-calculator-container.active');
-    if (!activeTab || e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    // 1. Ігноруємо натискання, якщо користувач друкує текст у генераторі логінів чи шаблонах
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
 
+    // 2. НОВЕ: Швидке копіювання (Ctrl+C або Cmd+C на Mac)
+    // Перевіряємо як латинську 'c', так і кириличну 'с' (для української розкладки)
+    if ((e.ctrlKey || e.metaKey) && (e.key === 'c' || e.key === 'C' || e.key === 'с' || e.key === 'С')) {
+        e.preventDefault(); // Зупиняємо стандартну поведінку браузера
+        copyCalcResult();   // Викликаємо вашу існуючу функцію копіювання (з галочкою)
+        return;             // Виходимо, щоб не обробляти інші клавіші
+    }
+
+    // 3. Звичайні кнопки калькулятора
     if (e.key >= '0' && e.key <= '9') calcAppend(e.key);
     if (e.key === '.' || e.key === ',') calcAppend('.');
+    
     if (e.key === '+') calcAppendOperator('+');
     if (e.key === '-') calcAppendOperator('-');
-    if (e.key === '*') calcAppendOperator('*');
+    if (e.key === '*' || e.key === 'x' || e.key === 'X') calcAppendOperator('*');
     if (e.key === '/') calcAppendOperator('/');
-    if (e.key === 'Enter' || e.key === '=') { e.preventDefault(); calcCalculate(); }
-    if (e.key === 'Backspace') calcDelete();
-    if (e.key === 'Escape') calcClear();
+    
+    if (e.key === 'Enter' || e.key === '=') { 
+        e.preventDefault(); // Забороняє браузеру робити "Submit" сторінки
+        calcCalculate(); 
+    }
+    
+    if (e.key === '%') calcPercent(); 
+    
+    if (e.key === 'Backspace') calcDelete();      
+    if (e.key === 'Escape' || e.key === 'Delete') calcClear(); // І Esc, і Delete очищають екран
 });
 // === РОЗУМНИЙ ПАРСЕР (ЧИТАЄ ЗНИЗУ ВГОРУ) ===
     function initChangelog() {

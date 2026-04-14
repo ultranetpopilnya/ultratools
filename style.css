@@ -3060,20 +3060,46 @@ body.dark .calc-display-container {
 }
 
 #calc-prev-operation {
-    font-size: 14px; /* Збільшено */
+    font-size: 14px; 
     color: #888;
     height: 20px;
-    overflow: hidden;
     margin-bottom: 4px;
+    
+    white-space: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-behavior: smooth;
+    
+    /* ВИПРАВЛЕННЯ: margin-left замість padding. 
+       Він фізично відсуває початок текстового блоку від лівого краю екрана */
+    margin-left: 32px; 
 }
 
 #calc-current-result {
-    font-size: 36px; /* Збільшено шрифт (було 28px) */
+    font-size: 36px; 
     font-weight: 600;
     color: var(--text-color);
-    overflow: hidden;
-    white-space: nowrap;
     line-height: 1.2;
+    
+    white-space: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+/* === ПРИХОВУВАННЯ СМУГ ПРОКРУТКИ === */
+/* Щоб екран калькулятора був чистим і без потворних повзунків */
+
+/* Для Chrome, Safari, Opera */
+#calc-prev-operation::-webkit-scrollbar,
+#calc-current-result::-webkit-scrollbar {
+    display: none;
+}
+
+/* Для Firefox, IE, Edge */
+#calc-prev-operation,
+#calc-current-result {
+    -ms-overflow-style: none;  /* IE та Edge */
+    scrollbar-width: none;  /* Firefox */
 }
 
 /* Кнопка копіювання */
@@ -3081,11 +3107,12 @@ body.dark .calc-display-container {
     position: absolute;
     top: 8px;
     left: 8px;
+    z-index: 10; /* НОВЕ: Завжди поверх тексту */
     background: transparent;
     border: none;
     color: #bbb;
     cursor: pointer;
-    font-size: 16px; /* Збільшено */
+    font-size: 16px; 
     padding: 5px;
     border-radius: 6px;
     transition: all 0.2s;
