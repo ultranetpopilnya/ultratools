@@ -1293,20 +1293,43 @@ function initDraggableAndResizable(element) {
     const savedReplace = localStorage.getItem('lastReplaceTerm') || '';
 
     searchPanel.innerHTML = `
-        <div class="search-inputs-row">
-            <input type="text" class="input-find" placeholder="Знайти..." value="${savedFind}">
+        <div class="search-panel-columns">
+            <!-- Ліва колонка: Стандартний пошук -->
+            <div class="search-col-left">
+                <div class="search-inputs-row">
+                    <input type="text" class="input-find" placeholder="Знайти..." value="${savedFind}">
+                    <button class="swap-inputs-btn" title="Поміняти місцями">
+                        <i class="fa-solid fa-right-left"></i>
+                    </button>
+                    <input type="text" class="input-replace" placeholder="Замінити..." value="${savedReplace}">
+                </div>
+                <div class="search-buttons-row">
+                    <button class="search-cmd-btn btn-find">Знайти</button>
+                    <button class="search-cmd-btn btn-replace">Замінити</button>
+                    <button class="search-cmd-btn btn-replace-all">Замінити все</button>
+                </div>
+            </div>
             
-            <!-- КНОПКА ОБМІНУ -->
-            <button class="swap-inputs-btn" title="Поміняти місцями">
-                <i class="fa-solid fa-right-left"></i>
-            </button>
-            
-            <input type="text" class="input-replace" placeholder="Замінити..." value="${savedReplace}">
-        </div>
-        <div class="search-buttons-row">
-            <button class="search-cmd-btn btn-find">Знайти</button>
-            <button class="search-cmd-btn btn-replace">Замінити</button>
-            <button class="search-cmd-btn btn-replace-all">Замінити все</button>
+            <!-- Права колонка: Заміна швидкості -->
+            <div class="search-col-right">
+                <span class="speed-label">Швидкість:</span>
+                <select class="speed-select">
+                    <option value="10M">10M</option>
+                    <option value="20M">20M</option>
+                    <option value="30M">30M</option>
+                    <option value="40M">40M</option>
+                    <option value="50M">50M</option>
+                    <option value="60M">60M</option>
+                    <option value="100M" selected>100M</option>
+                    <option value="200M">200M</option>
+                    <option value="300M">300M</option>
+                    <option value="500M">500M</option>
+                    <option value="1G">1G</option>
+                </select>
+                <button class="search-cmd-btn btn-replace-speed" title="Автоматично знайти стару швидкість і замінити">
+                    <i class="fa-solid fa-bolt"></i> Замінити
+                </button>
+            </div>
         </div>
     `;
 
@@ -1316,6 +1339,40 @@ function initDraggableAndResizable(element) {
     const btnFind = searchPanel.querySelector('.btn-find');
     const btnReplace = searchPanel.querySelector('.btn-replace');
     const btnReplaceAll = searchPanel.querySelector('.btn-replace-all');
+
+    // Підтягуємо нові елементи швидкості
+    const btnReplaceSpeed = searchPanel.querySelector('.btn-replace-speed');
+    const speedSelect = searchPanel.querySelector('.speed-select');
+
+    // === РОЗУМНА ЗАМІНА ШВИДКОСТІ ===
+    btnReplaceSpeed.onclick = () => {
+        const textarea = fieldGroup.querySelector('textarea');
+        const text = textarea.value;
+        const targetSpeed = speedSelect.value;
+        
+        // Магічний Regex: шукає старі швидкості (10M, 50M, 100M, 1000M, 1G) як окремі слова
+        const speedRegex = /\b(?:10|20|30|40|50|60|100|200|300|500|1000)M\b|\b1G\b/gi;
+
+        if (!speedRegex.test(text)) {
+            showNotification("У шаблоні не знайдено швидкостей (10M-1G) для заміни.");
+            return;
+        }
+
+        // Замінюємо всі знайдені швидкості (хоч 1, хоч 3 штуки) на вибрану
+        const newText = text.replace(speedRegex, targetSpeed);
+        
+        const savedScroll = textarea.scrollTop;
+        textarea.value = newText;
+        
+        // Оновлюємо підсвітку та зберігаємо результат
+        const highlighter = fieldGroup.querySelector('.highlighter-backdrop');
+        updateHighlight(textarea, highlighter);
+        updateBookmarksOnTextChange(fieldGroup);
+        saveTemplates();
+        
+        textarea.scrollTop = savedScroll;
+        showNotification(`Всі швидкості змінено на ${targetSpeed}!`);
+    };
 
     // === ЛОГІКА КНОПКИ ОБМІНУ ===
     btnSwap.onclick = () => {

@@ -2786,21 +2786,16 @@ body.dark .calculator-actions-block {
     opacity: 0.7;      
 }
 
-/* === ІДЕАЛЬНИЙ ІНТЕГРОВАНИЙ СТИЛЬ ПОШУКУ === */
+/* === ІДЕАЛЬНИЙ ІНТЕГРОВАНИЙ СТИЛЬ ПОШУКУ (ДВОКОЛОНКОВИЙ) === */
+/* 1. Головний контейнер */
 .template-search-bar {
     position: relative; 
     width: 100%; 
     z-index: 5; 
-    
-    /* ГОЛОВНА ЗМІНА: Фон тепер прозорий (або колір картки), 
-       щоб зливатися з заголовком */
     background-color: transparent; 
-    
-    /* Ніяких рамок, щоб не різати очі */
     border: none !important;
     box-shadow: none !important;
     
-    /* Анімація */
     max-height: 0;
     min-height: 0;
     opacity: 0;
@@ -2810,56 +2805,101 @@ body.dark .calculator-actions-block {
     
     display: flex;
     flex-direction: column;
-    align-items: center; 
-    gap: 6px; 
+    align-items: center; /* Центрує внутрішній блок */
     
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     box-sizing: border-box;
 }
 
-/* Стан "ВІДКРИТО" */
 .template-search-bar.active {
-    /* Висота підлаштовується під контент */
-    max-height: 80px; 
+    max-height: 90px; 
     min-height: 65px;
     opacity: 1;
-	margin-top: 3px;
+    margin-top: 5px; 
+    padding-bottom: 12px; 
 }
 
-/* Обгортка полів вводу */
-.search-inputs-row {
+/* 2. Обгортка - ПОВЕРТАЄМО МАГІЮ ІДЕАЛЬНОГО ЦЕНТРУВАННЯ */
+.search-panel-columns {
     display: flex;
-    align-items: center;
+    width: fit-content; /* ОСЬ ЦЕЙ РЯДОК РОБИВ ІДЕАЛЬНЕ ЦЕНТРУВАННЯ! */
+    max-width: calc(100% - 20px); /* Захист: якщо звузити шаблон, блок не вилізе за краї */
+    margin: 0 auto; /* Ставить блок чітко посередині */
+    gap: 15px;
+    align-items: flex-end; 
+}
+
+/* 3. Ліва колонка (Пошук) */
+.search-col-left {
+    width: 330px; /* БУЛО 250px. Тепер 300px — кнопки і поля будуть широкими! */
+    display: flex;
+    flex-direction: column;
+    gap: 6px; 
+}
+
+/* 4. Права колонка (Швидкість) */
+.search-col-right {
+    flex: 0 0 110px; /* Залізно тримає 95px ширини */
+    display: flex;
+    flex-direction: column;
     gap: 4px;
-    width: 96%;
-    max-width: 340px; /* Компактна ширина */
-    justify-content: center;
+    padding-left: 15px;
+    border-left: 1px dashed var(--input-border-color); 
+}
+
+/* Обгортки всередині лівої колонки */
+.search-inputs-row,
+.search-buttons-row {
+    display: flex;
+    width: 100%;
+    gap: 6px;
+}
+
+/* ІНПУТИ ТА СЕЛЕКТ (однаковий стиль) */
+.search-inputs-row input,
+.speed-select {
+    padding: 3px 8px;
+    height: 28px; 
+    border-radius: 8px; 
+    border: 1px solid var(--input-border-color);
+    background-color: var(--input-bg-color); 
+    color: var(--text-color);
+    font-size: 13px;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.03);
+    outline: none;
+    font-family: inherit;
+    box-sizing: border-box;
 }
 
 .search-inputs-row input {
-    flex: 1; 
-    padding: 3px 8px;
-    height: 28px; /* Трохи вищі, щоб пасували до інпуту заголовка */
-    
-    /* Стиль такий самий, як у інпуту назви шаблону */
-    border-radius: 8px; /* Більш округлі */
-    border: 1px solid var(--input-border-color);
-    background-color: var(--input-bg-color); /* Білий фон, як у сусідів */
-    color: var(--text-color);
-    font-size: 13px;
-    min-width: 80px;
-    
-    /* Тінь як у основних полів */
-    box-shadow: inset 0 1px 2px rgba(0,0,0,0.03);
+    flex: 1; /* Робить поля широкими */
+    min-width: 60px;
 }
 
-.search-inputs-row input:focus {
+.speed-select {
+    width: 100%;
+    cursor: pointer;
+    padding: 0 4px; 
+}
+
+.search-inputs-row input:focus,
+.speed-select:focus {
     border-color: var(--primary-accent-color);
     box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.15);
-    outline: none;
 }
 
-/* Кнопка SWAP */
+/* Маленький напис "Швидкість:" */
+.speed-label {
+    font-size: 10px;
+    color: var(--tab-inactive-text);
+    font-weight: 700;
+    text-transform: uppercase;
+    line-height: 1;
+    margin-bottom: 0px;
+    margin-left: 2px;
+}
+
+/* Кнопка SWAP (стрілочки) */
 .swap-inputs-btn {
     flex: 0 0 auto;
     width: 28px;
@@ -2880,31 +2920,31 @@ body.dark .calculator-actions-block {
     color: var(--primary-accent-color);
 }
 
-/* Обгортка кнопок */
-.search-buttons-row {
-    display: flex;
-    gap: 6px; 
-    width: 96%;
-    max-width: 340px;
-}
-
+/* ВСІ КНОПКИ ДІЙ */
 .search-cmd-btn {
-    flex: 1; 
-    height: 24px;
+    flex: 1; /* Робить кнопки Знайти/Замінити широкими */
+    height: 24px; 
     padding: 0;
     border: none;
     border-radius: 6px; 
     font-size: 12px;
-    font-weight: 600; /* Жирніший текст */
+    font-weight: 600; 
     cursor: pointer;
     color: white;
     transition: filter 0.2s, transform 0.1s;
     display: flex;
     align-items: center;
     justify-content: center;
-    
-    /* Легка тінь, щоб кнопки виділялися на фоні */
     box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.btn-replace-speed {
+    flex: none; /* Ця кнопка не повинна тягнутися, бо в неї свій блок */
+    width: 100%;
+}
+.btn-replace-speed i {
+    color: #ffde00; /* Жовта блискавка */
+    margin-right: 4px;
 }
 
 .search-cmd-btn:hover { 
@@ -2919,26 +2959,27 @@ body.dark .calculator-actions-block {
 .btn-find { background-color: var(--primary-accent-color); }
 .btn-replace { background-color: var(--secondary-accent-color); }
 .btn-replace-all { background-color: var(--success-color); }
+.btn-replace-speed { background-color: #3b4252; } 
 
 /* --- ТЕМНА ТЕМА --- */
-body.dark .template-search-bar {
-    background-color: transparent; /* Прозорий і в темній */
-}
-body.dark .template-search-bar.active {
-    /* Жодних бордерів */
-    border: none !important;
-}
-body.dark .search-inputs-row input {
-    background-color: var(--input-bg-color); /* Темний фон інпутів */
+body.dark .template-search-bar { background-color: transparent; }
+body.dark .template-search-bar.active { border: none !important; }
+
+body.dark .search-inputs-row input,
+body.dark .speed-select {
+    background-color: var(--input-bg-color); 
     border-color: var(--input-border-color);
 }
-body.dark .swap-inputs-btn {
-    color: #888;
+body.dark .speed-select option {
+    background-color: var(--content-bg-color);
+    color: var(--text-color);
 }
+body.dark .swap-inputs-btn { color: #888; }
 body.dark .swap-inputs-btn:hover {
     background-color: rgba(255,255,255,0.1);
     color: var(--secondary-accent-color);
 }
+body.dark .btn-replace-speed { background-color: #4c566a; }
 
 /* === ІНТЕГРАЦІЯ КАЛЬКУЛЯТОРА === */
 .calc-flex-wrapper {
