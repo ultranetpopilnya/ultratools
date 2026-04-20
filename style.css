@@ -259,7 +259,6 @@ body.dark .version-number {
     box-shadow: 0 2px 4px rgba(0, 123, 255, 0.2);
 }
 .extension-download-btn:hover { background-color: #0056b3; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3); color: white; }
-.extension-download-btn:active { transform: translateY(0); }
 
 .extension-info-btn {
     display: inline-flex; align-items: center; justify-content: center;
@@ -1539,44 +1538,9 @@ body.dark .tab-button.active {
     box-shadow: 0 2px 5px rgba(0,0,0,0.4); /* Тінь для відриву від дна */
 }
         
-        #add-template-button {
-            position: static; 
-            margin-top: 0; 
-            margin-left: 0; 
-            padding: 5px 15px; 
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 50%; 
-            font-size: 1.5rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.5s, transform 0.1s;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2); 
-            line-height: 1.1; 
-            min-width: 35px; 
-            width: 35px; 
-            height: 35px; 
-            text-align: center;
-            z-index: 10; 
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-shrink: 0;
-        }
-        
-        #add-template-button:hover {
-            background-color: #0056b3;
-        }
-        
-        #add-template-button:active {
-            transform: scale(0.98);
-        }
-        
-
-        .login-generator-container h2 {
-            margin-bottom: 0px; 
-        }
+.login-generator-container h2 {
+    margin-bottom: 0px; 
+}
 
 /* === СТИЛЬ КОНТЕЙНЕРА (TETRIS ENGINE) === */
 #templates-grid-wrapper {
@@ -1656,6 +1620,7 @@ body.dark .tab-button.active {
 
 /* 1. ГОЛОВНА КНОПКА (ДОДАТИ) */
 #add-template-button {
+    font-weight: bold;
     width: 50px;
     background-color: var(--primary-accent-color);
     color: white;
@@ -1670,8 +1635,10 @@ body.dark .tab-button.active {
     box-shadow: 0 4px 8px rgba(0, 123, 255, 0.4);
 }
 #add-template-button:active {
-    transform: translateY(0);
-    box-shadow: none;
+    transform: translateY(1px) scale(0.94) !important;
+    box-shadow: inset 0 3px 6px rgba(0,0,0,0.3) !important;
+    filter: brightness(0.9);
+    transition: all 0.05s ease-out;
 }
 
 /* ================= СВІТЛА ТЕМА (ПОКРАЩЕНО) ================= */
@@ -2390,18 +2357,6 @@ body {
     transition: none !important;
 }
 
-/* Основний клас (анімацію залишаємо для ресайзу) */
-.template-field-group {
-    position: absolute;
-    /* ... ваші інші стилі ... */
-   transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
-    
-    /* Фікс розмитості тексту */
-    backface-visibility: hidden;
-    transform: translateZ(0);
-    -webkit-font-smoothing: antialiased;
-}
-
 /* Для ноутбуків та планшетів (ширина екрану менше 1400px) */
     @media (max-width: 1200px) {
         /* Налаштування для GPON (залишаємо як було або міняємо на бажання) */
@@ -2534,6 +2489,7 @@ body.dark .history-toggle-btn {
     display: flex; justify-content: center; align-items: center; transition: all 0.2s;
 }
 .history-copy-btn:hover { background: var(--primary-accent-color); color: white; border-color: var(--primary-accent-color); }
+body.dark .history-copy-btn:hover { background: var(--secondary-accent-color); color: white; border-color: var(--secondary-accent-color); }
 
 .clear-history-footer-btn {
     width: 100%; margin-top: 10px; padding: 8px; background: transparent;
@@ -2950,9 +2906,6 @@ body.dark .calculator-actions-block {
 .search-cmd-btn:hover { 
     filter: brightness(0.92); 
     transform: translateY(-1px);
-}
-.search-cmd-btn:active {
-    transform: translateY(0);
 }
 
 /* Кольори кнопок */
@@ -3710,4 +3663,62 @@ body.dark .moon-icon {
     scale: 0.5; 
     rotate: 90deg;
     opacity: 0;
+}
+
+/* === 1. Кнопки з кольоровим фоном (з тінню) === */
+.login-generator-container .result-item .regenerate-login-btn:active,
+.login-generator-container .result-item .copy-login-btn:active,
+.scroll-nav-btn.visible:active,
+.login-generator-container .result-item .regenerate-login-btn:hover:active,
+.login-generator-container .result-item .copy-login-btn:hover:active,
+.scroll-nav-btn.visible:hover:active {
+    transform: translateY(1px) scale(0.92);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+    filter: brightness(0.9);
+    transition: all 0.05s ease-out;
+}
+
+/* === 2. Прозорі кнопки-іконки (БЕЗ ТІНІ, щоб не було квадрата) === */
+.swap-inputs-btn:active,
+.history-copy-btn:active,
+.clear-history-header-btn:active,
+.calc-head-history-btn:active,
+.hist-clear-btn:active,
+.swap-inputs-btn:hover:active,
+.history-copy-btn:hover:active,
+.clear-history-header-btn:hover:active,
+.calc-head-history-btn:hover:active,
+.hist-clear-btn:hover:active {
+    transform: translateY(1px) scale(0.92);
+    box-shadow: none; /* ВИМИКАЄМО ТІНЬ-КВАДРАТ */
+    filter: brightness(0.9);
+    transition: all 0.05s ease-out;
+}
+
+/* === ЕФЕКТ ФІЗИЧНОГО НАТИСКАННЯ ДЛЯ ШИРОКИХ КНОПОК === */
+.extension-download-btn:active,
+.extension-info-btn:active,
+#import-templates-button:active,
+#export-templates-button:active,
+#clear-all-templates-button:active,
+.search-cmd-btn:active,
+.calc-action-button:active,
+.clear-history-footer-btn:active,
+.hist-close-btn:active {
+    transform: translateY(1px) scale(0.96);
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.15);
+    filter: brightness(0.9);
+    transition: all 0.05s ease-out;
+}
+
+.extension-download-btn:hover:active,
+.extension-info-btn:hover:active,
+#import-templates-button:hover:active,
+#export-templates-button:hover:active,
+#clear-all-templates-button:hover:active,
+.search-cmd-btn:hover:active,
+.calc-action-button:hover:active,
+.clear-history-footer-btn:hover:active,
+.hist-close-btn:hover:active {
+    transform: translateY(1px) scale(0.96);
 }
