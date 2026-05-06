@@ -1,0 +1,97 @@
+# ==========================================
+# 1. ШАБЛОНИ КОНФІГУРАЦІЙ (Пишемо один раз)
+# ==========================================
+
+[TEMPLATE: ZTE C300 GPON]
+  description {LOGIN}
+  tcont 1 name gpon-home profile {SPEED}
+  gemport 1 tcont 1
+  gemport 1 traffic-limit upstream {SPEED} downstream {SPEED} 
+  service-port 1 vport 1 user-vlan untag vlan {VLAN} 
+  ip dhcp snooping quota 1 vport 1
+  ip dhcp snooping enable vport 1
+  port-identification format DSL-FORUM-PON vport 1
+  port-identification sub-option remote-id enable vport 1
+  port-identification sub-option remote-id name {LOGIN} vport 1
+  dhcpv4-l2-relay-agent enable vport 1
+  dhcpv4-l2-relay-agent trust true replace vport 1
+exit
+pon-onu-mng gpon-onu_{PORT}
+loop-detect ethuni eth_0/1 enable
+gemport 1 flow 1
+vlan gemport 1 mode transparent
+end
+
+[TEMPLATE:  ZTE C320 GPON]
+  description {LOGIN}
+  tcont 1 name gpon-home profile {SPEED}
+  gemport 1 unicast tcont 1 dir both
+  gemport 1 traffic-limit upstream {SPEED} downstream {SPEED} 
+  security storm-control broadcast rate 3 direction ingress vport 1
+  security storm-control unknowncast rate 3 direction ingress vport 1
+  switchport mode hybrid vport 1
+  service-port 1 vport 1 user-vlan untag vlan {VLAN} 
+  port-location format ti vport 1 
+  port-location sub-option remote-id enable vport 1 
+  port-location sub-option remote-id name {LOGIN} vport 1 
+  dhcp-option82 enable vport 1 
+  dhcp-option82 trust true replace vport 1 
+  ip dhcp snooping quota 1 vport 1
+  ip dhcp snooping enable vport 1
+exit
+pon-onu-mng gpon-onu_{PORT}
+loop-detect ethuni eth_0/1 enable
+gemport 1 flow 1
+vlan gemport 1 mode transparent
+end
+
+[TEMPLATE: ZTE C320 EPON]
+  admin enable
+  property user-info {LOGIN}
+  ems-autocfg-request disable
+  sla-profile {SPEED} vport 1
+  encrypt direction downstream  enable  vport 1
+  security storm-control broadcast rate 3 direction ingress vport 1
+  security storm-control unknowncast rate 3 direction ingress vport 1
+  switchport mode hybrid vport 1
+  service-port 1 vport 1 user-vlan untag vlan {VLAN} 
+  port-location format ti vport 1 
+  port-location sub-option remote-id enable vport 1 
+  port-location sub-option remote-id name {LOGIN} vport 1 
+  dhcp-option82 enable vport 1 
+  dhcp-option82 trust true replace vport 1 
+  ip dhcp snooping quota 1 vport 1
+  ip dhcp snooping enable vport 1
+exit
+pon-onu-mng epon-onu_{PORT}
+auto-config
+compatibility enable mode CTC
+vlan port eth_0/1 mode transparent
+interface-loopdetect eth_0/1 activate
+end
+
+
+# ==========================================
+# 2. СПИСКИ ОЛТІВ (Прив'язуємо ОЛТ до Шаблону)
+# ==========================================
+
+[Ultranet]
+2 - 10.11.0.21 OLT - 1 (Пашини-Шатрище) = ZTE C320 EPON 103
+4 - 10.11.0.23 OLT - 3 (Бровар) = ZTE C320 GPON 27
+5 - 10.11.0.24 OLT - 4 (Подол-Чигирі) = ZTE C320 EPON 24
+
+
+
+
+
+
+
+
+
+
+
+138 - 10.11.0.130 (Попільня) = ZTE C300 GPON | 999
+
+
+[ISP Energy]
+Energy OLT 1 (ZTE) = ZTE GPON

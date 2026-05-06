@@ -245,6 +245,10 @@ function generateAlternativeLogin(buttonElement) {
 
         document.getElementById('fullNameInput').value = '';
 
+        document.querySelectorAll('.config-login-input').forEach(input => {
+            input.value = loginText;
+        });
+
         setTimeout(() => {
             button.innerHTML = '<i class="fas fa-copy"></i>';
             button.classList.remove('copied');
@@ -1271,6 +1275,177 @@ function initDraggableAndResizable(element) {
         }
     };
 
+    // === КНОПКА ГЕНЕРАТОРА КОНФІГІВ ===
+    const configToggleButton = document.createElement('button');
+    configToggleButton.className = 'config-template-btn';
+    configToggleButton.innerHTML = '<i class="fa-solid fa-server"></i>';
+    configToggleButton.title = 'Генератор конфігурацій ОЛТ';
+
+// === ПАНЕЛЬ ГЕНЕРАТОРА КОНФІГІВ (ОДИН РЯДОК) ===
+    const configPanel = document.createElement('div');
+    configPanel.className = 'template-config-bar'; 
+
+    // Використовуємо іконку для кнопки, щоб зекономити місце
+    configPanel.innerHTML = `
+        <div class="config-single-row">
+            <select class="config-olt-select" title="Оберіть ОЛТ">
+                <option value="">-- ОЛТ --</option>
+                <optgroup label="Ultranet"></optgroup>
+                <optgroup label="ISP Energy"></optgroup>
+            </select>
+            <input type="text" class="config-login-input" placeholder="Логін" title="Логін">
+            <select class="config-speed-select" title="Швидкість">
+                <option value="10M">10M</option>
+                <option value="50M">50M</option>
+                <option value="100M" selected>100M</option>
+                <option value="200M">200M</option>
+                <option value="300M">300M</option>
+                <option value="500M">500M</option>
+                <option value="1G">1G</option>
+            </select>
+            <input type="text" class="config-port-input" placeholder="Порт" title="Порт (напр. 1/2/5:101)">
+            <input type="text" class="config-vlan-input" placeholder="VLAN" title="VLAN (Залиште порожнім, щоб не міняти)">
+            <button class="config-generate-btn" title="Згенерувати конфіг">
+                <i class="fa-solid fa-bolt"></i>
+            </button>
+        </div>
+    `;
+
+    configPanel.addEventListener('mousedown', (e) => e.stopPropagation());
+
+    // === ЗАБОРОНА КИРИЛИЦІ В ПОЛІ ЛОГІНУ ===
+    const loginInputBox = configPanel.querySelector('.config-login-input');
+    loginInputBox.addEventListener('input', (e) => {
+        // Регулярний вираз, що шукає всі українські та російські літери
+        const cyrillicRegex = /[а-яА-ЯіїєґІЇЄҐёЁ]/g;
+        
+        if (cyrillicRegex.test(e.target.value)) {
+            // Видаляємо всі знайдені літери кирилиці
+            e.target.value = e.target.value.replace(cyrillicRegex, '');
+            // Показуємо підказку
+            showNotification("Логін має бути лише латиницею!");
+        }
+    });
+
+    // === ЛОГІКА ВІДКРИТТЯ/ЗАКРИТТЯ ===
+    configToggleButton.onclick = (e) => {
+        e.stopPropagation();
+        
+        const isActive = configPanel.classList.contains('active');
+        
+        if (isActive) {
+            configPanel.classList.remove('active');
+        } else {
+            const searchBar = fieldGroup.querySelector('.template-search-bar');
+            if (searchBar) searchBar.classList.remove('active');
+            
+            configPanel.classList.add('active');
+            
+            const select = configPanel.querySelector('.config-olt-select');
+            const grpUltranet = select.querySelector('optgroup[label="Ultranet"]');
+            const grpEnergy = select.querySelector('optgroup[label="ISP Energy"]');
+            
+            grpUltranet.innerHTML = '';
+            grpEnergy.innerHTML = '';
+            
+            OLT_CONFIGS.ultranet.forEach((olt, index) => {
+                grpUltranet.innerHTML += `<option value="ultranet-${index}">${olt.name}</option>`;
+            });
+            OLT_CONFIGS.energy.forEach((olt, index) => {
+                grpEnergy.innerHTML += `<option value="energy-${index}">${olt.name}</option>`;
+            });
+
+            const loginInput = configPanel.querySelector('.config-login-input');
+            if (!loginInput.value && lastGeneratedLogin) {
+                loginInput.value = lastGeneratedLogin;
+            }
+
+            setTimeout(() => packTemplates(), 260);
+        }
+    };
+
+    // === ДИНАМІЧНА ПІДКАЗКА VLAN ===
+    const oltSelectNode = configPanel.querySelector('.config-olt-select');
+    const vlanInputNode = configPanel.querySelector('.config-vlan-input');
+
+    oltSelectNode.addEventListener('change', (e) => {
+        if (!e.target.value) {
+            vlanInputNode.placeholder = "VLAN";
+            return;
+        }
+        const [type, index] = e.target.value.split('-');
+        const oltObj = OLT_CONFIGS[type][index];
+        
+        // Показуємо дефолтний VLAN як сіру підказку
+        if (oltObj && oltObj.defaultVlan) {
+            vlanInputNode.placeholder = `VLAN (${oltObj.defaultVlan})`;
+        } else {
+            vlanInputNode.placeholder = "VLAN";
+        }
+    });
+
+    // === ЛОГІКА ГЕНЕРАЦІЇ З РОЗУМНИМ VLAN ===
+    const btnGenerate = configPanel.querySelector('.config-generate-btn');
+    btnGenerate.onclick = () => {
+        const select = configPanel.querySelector('.config-olt-select');
+        const loginVal = configPanel.querySelector('.config-login-input').value.trim();
+        const speedVal = configPanel.querySelector('.config-speed-select').value;
+        const portVal = configPanel.querySelector('.config-port-input').value.trim();
+        const vlanVal = configPanel.querySelector('.config-vlan-input').value.trim();
+
+        if (/[а-яА-ЯіїєґІЇЄҐёЁ]/.test(loginVal)) {
+            showNotification("Помилка! Логін містить кирилицю.");
+            return;
+        }
+
+        if (!select.value) {
+            showNotification("Будь ласка, оберіть ОЛТ!");
+            return;
+        }
+
+        const [type, index] = select.value.split('-');
+        const oltObj = OLT_CONFIGS[type][index];
+        if (!oltObj) return;
+
+        const rawTemplate = OLT_TEMPLATES[oltObj.templateName];
+        if (!rawTemplate) {
+            showNotification(`Помилка: Шаблон "${oltObj.templateName}" не знайдено!`);
+            return;
+        }
+
+        // Визначаємо фінальний VLAN (Те що ввів юзер АБО дефолтний від ОЛТа)
+        const finalVlan = vlanVal !== '' ? vlanVal : (oltObj.defaultVlan || '1');
+
+        // Робимо всі заміни
+        let finalConfig = rawTemplate
+            .replace(/{LOGIN}/g, loginVal || 'UNKNOWN_LOGIN')
+            .replace(/{SPEED}/g, speedVal)
+            .replace(/{PORT}/g, portVal || 'UNKNOWN_PORT')
+            .replace(/{VLAN}/g, finalVlan); // Замінюємо мітку {VLAN}
+
+        const textarea = fieldGroup.querySelector('textarea');
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const text = textarea.value;
+
+        const insertText = finalConfig + '\n';
+        const newText = text.substring(0, start) + insertText + text.substring(end);
+        
+        const savedScroll = textarea.scrollTop;
+        textarea.value = newText;
+        
+        const highlighter = fieldGroup.querySelector('.highlighter-backdrop');
+        updateHighlight(textarea, highlighter);
+        updateBookmarksOnTextChange(fieldGroup);
+        saveTemplates();
+        
+        textarea.scrollTop = savedScroll;
+        textarea.focus();
+        textarea.setSelectionRange(start + insertText.length, start + insertText.length);
+        
+        showNotification("Конфіг успішно згенеровано!");
+    };
+
     const deleteButton = document.createElement('button');
     deleteButton.innerHTML = '<i class="fa-solid fa-trash-can"></i>';
     deleteButton.title = 'Видалити шаблон';
@@ -1576,6 +1751,9 @@ function initDraggableAndResizable(element) {
     };
 
     headerDiv.appendChild(nameInput);
+
+    actionsDiv.appendChild(configToggleButton);
+    actionsDiv.appendChild(createSeparator());
     
     // Група 1: Копіювання
     actionsDiv.appendChild(copyButton);
@@ -1606,6 +1784,8 @@ function initDraggableAndResizable(element) {
     
     // Вставляємо панель пошуку ВІДРАЗУ після заголовка,
     // перед обгорткою тексту. Це забезпечить правильне "витіснення".
+    fieldGroup.appendChild(configPanel);
+
     fieldGroup.appendChild(searchPanel); 
     
     fieldGroup.appendChild(textareaWrapper);
@@ -1930,6 +2110,69 @@ document.getElementById('clear-history-btn').addEventListener('click', () => {
     }
 });
 
+// === ЗМІННІ ДЛЯ ГЕНЕРАТОРА КОНФІГІВ ===
+let OLT_CONFIGS = { ultranet: [], energy: [] };
+let OLT_TEMPLATES = {}; 
+
+function loadOltConfigs() {
+    fetch('olt_configs.txt?v=' + Date.now())
+        .then(res => {
+            if (!res.ok) throw new Error("Файл olt_configs.txt не знайдено");
+            return res.text();
+        })
+        .then(text => {
+            OLT_CONFIGS = { ultranet: [], energy: [] };
+            OLT_TEMPLATES = {};
+            
+            let currentSection = null; 
+            let currentTemplateName = null;
+
+            const lines = text.split('\n');
+            lines.forEach(line => {
+                const trimmed = line.trim();
+                if (!trimmed || trimmed.startsWith('#')) return; 
+
+                const templateMatch = trimmed.match(/^\[TEMPLATE:\s*(.+)\]$/i);
+                if (templateMatch) {
+                    currentSection = 'template';
+                    currentTemplateName = templateMatch[1].trim();
+                    OLT_TEMPLATES[currentTemplateName] = ''; 
+                    return;
+                }
+
+                if (trimmed === '[Ultranet]') { currentSection = 'ultranet'; return; } 
+                else if (trimmed === '[ISP Energy]') { currentSection = 'energy'; return; }
+
+                if (currentSection === 'template' && currentTemplateName) {
+                    OLT_TEMPLATES[currentTemplateName] += line + '\n';
+                } else if (currentSection === 'ultranet' || currentSection === 'energy') {
+                    const splitIndex = trimmed.indexOf('=');
+                    if (splitIndex !== -1) {
+                        const oltName = trimmed.substring(0, splitIndex).trim();
+                        const rest = trimmed.substring(splitIndex + 1).trim();
+                        
+                        let tplName = rest;
+                        let defVlan = "";
+                        
+                        // РОЗУМНИЙ ПАРСЕР: Шукаємо пробіл і ЦИФРИ в самому кінці рядка
+                        const vlanMatch = rest.match(/(.*?)\s+(\d+)$/);
+                        if (vlanMatch) {
+                            tplName = vlanMatch[1].trim(); // Наприклад: "ZTE GPON"
+                            defVlan = vlanMatch[2].trim(); // Наприклад: "125"
+                        }
+                        
+                        OLT_CONFIGS[currentSection].push({ 
+                            name: oltName, 
+                            templateName: tplName, 
+                            defaultVlan: defVlan 
+                        });
+                    }
+                }
+            });
+        })
+        .catch(err => console.log("Помилка завантаження конфігів ОЛТ:", err));
+}
+
     document.addEventListener('DOMContentLoaded', () => {
 	// 1. Відновлення порядку при завантаженні
     function loadTabOrder() {
@@ -2040,6 +2283,7 @@ document.getElementById('clear-history-btn').addEventListener('click', () => {
 	loadHistory();
     loadCommandsFromFile();
     loadCalcAutoClearState();
+    loadOltConfigs();
 
 // Обробник для кнопки "Поточна дата"
 document.getElementById('set-start-now-btn').addEventListener('click', () => {

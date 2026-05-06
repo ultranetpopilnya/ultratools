@@ -1880,6 +1880,7 @@ body.dark .template-actions button {
 }
 
 /* Призначаємо конкретні кольори фону при наведенні */
+.config-template-btn:hover { background-color: #17a2b8; }
 .copy-template-btn:hover { background-color: var(--success-color); }
 .paste-login-btn:hover { background-color: var(--button-paste-bg); }
 .paste-clipboard-btn:hover { background-color: #fd7e14; }
@@ -2743,7 +2744,7 @@ body.dark .calculator-actions-block {
 }
 
 /* === ІДЕАЛЬНИЙ ІНТЕГРОВАНИЙ СТИЛЬ ПОШУКУ (ДВОКОЛОНКОВИЙ) === */
-/* 1. Головний контейнер */
+/* 1. Головний контейнер (Додано template-config-bar) */
 .template-search-bar {
     position: relative; 
     width: 100%; 
@@ -2761,7 +2762,7 @@ body.dark .calculator-actions-block {
     
     display: flex;
     flex-direction: column;
-    align-items: center; /* Центрує внутрішній блок */
+    align-items: center; 
     
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     box-sizing: border-box;
@@ -2787,7 +2788,7 @@ body.dark .calculator-actions-block {
 
 /* 3. Ліва колонка (Пошук) */
 .search-col-left {
-    width: 330px; /* БУЛО 250px. Тепер 300px — кнопки і поля будуть широкими! */
+    width: 380px; /* БУЛО 250px. Тепер 300px — кнопки і поля будуть широкими! */
     display: flex;
     flex-direction: column;
     gap: 6px; 
@@ -2813,6 +2814,7 @@ body.dark .calculator-actions-block {
 
 /* ІНПУТИ ТА СЕЛЕКТ (однаковий стиль) */
 .search-inputs-row input,
+.search-inputs-row select,
 .speed-select {
     padding: 3px 8px;
     height: 28px; 
@@ -2827,9 +2829,15 @@ body.dark .calculator-actions-block {
     box-sizing: border-box;
 }
 
+/* Налаштування ширини */
 .search-inputs-row input {
-    flex: 1; /* Робить поля широкими */
+    flex: 1; 
     min-width: 60px;
+}
+
+.search-inputs-row select {
+    cursor: pointer;
+    flex: 1;
 }
 
 .speed-select {
@@ -2839,6 +2847,7 @@ body.dark .calculator-actions-block {
 }
 
 .search-inputs-row input:focus,
+.search-inputs-row select:focus,
 .speed-select:focus {
     border-color: var(--primary-accent-color);
     box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.15);
@@ -2908,31 +2917,157 @@ body.dark .calculator-actions-block {
     transform: translateY(-1px);
 }
 
+/* =========================================================
+   ГЕНЕРАТОР КОНФІГІВ (ОДИН РЯДОК)
+   ========================================================= */
+
+.template-config-bar {
+    position: relative;
+    width: calc(100% - 8px);
+    margin: 0 4px;
+    
+    /* Анімація розгортання */
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    /* Дизайн тулбару */
+    background-color: var(--tab-strip-bg); /* Легкий фон, як у вкладок */
+    border-radius: 12px;
+    box-sizing: border-box;
+}
+
+body.dark .template-config-bar {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.template-config-bar.active {
+    max-height: 40px;
+    opacity: 1;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    padding: 4px;
+    border: 1px solid var(--input-border-color);
+}
+
+/* Flex-контейнер для одного рядка */
+.config-single-row {
+    display: flex;
+    flex-direction: row;
+    gap: 4px; /* Мінімальні відступи між полями */
+    width: 100%;
+    height: 30px;
+}
+
+/* Загальний стиль для всіх полів вводу в цьому тулбарі */
+.config-single-row input,
+.config-single-row select {
+    height: 100%;
+    padding: 0 6px;
+    font-size: 12px;
+    font-family: inherit;
+    
+    border: 1px solid var(--input-border-color);
+    border-radius: 6px;
+    background-color: var(--input-bg-color);
+    color: var(--text-color);
+    
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.02);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    min-width: 0; /* ВАЖЛИВО: дозволяє flex-елементам стискатись */
+}
+
+.config-single-row input:focus,
+.config-single-row select:focus {
+    border-color: var(--primary-accent-color);
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.15);
+}
+
+/* --- РОЗПОДІЛ ШИРИНИ (Магія Flexbox) --- */
+
+/* ОЛТ: Фіксована ширина (трохи збільшили, щоб назви влазили) */
+.config-olt-select { flex: 0 0 300px; cursor: pointer; }
+
+/* Логін: Зробили вужчим (однакова гнучкість з портом) */
+.config-login-input { flex: 1; min-width: 100px; }
+
+/* Швидкість: Фіксована ширина */
+.config-speed-select { flex: 0 0 65px; cursor: pointer; }
+
+/* Порт: Зробили вужчим (однакова гнучкість з логіном) */
+.config-port-input { flex: 0 0 70px; }
+
+/* VLAN: Маленька фіксована ширина */
+.config-vlan-input { flex: 0 0 70px; }
+
+/* --- КНОПКА ГЕНЕРАЦІЇ --- */
+.config-generate-btn {
+    flex: 0 0 80px; /* Зробили кнопку значно ширшою (було 32px) */
+    height: 100%;
+    padding: 0;
+    
+    background-color: var(--success-color);
+    color: white;
+    
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 15px; /* Трохи збільшили іконку */
+    
+    box-shadow: 0 2px 4px rgba(40, 167, 69, 0.2);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.config-generate-btn:hover {
+    filter: brightness(0.9);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(40, 167, 69, 0.3);
+}
+
+.config-generate-btn:active {
+    transform: translateY(1px) scale(0.95);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* Темна тема для кнопки */
+body.dark .config-generate-btn {
+    background-color: var(--secondary-accent-color);
+    color: #1b1c1d;
+    box-shadow: 0 2px 4px rgba(230, 162, 46, 0.2);
+}
+body.dark .config-generate-btn:hover {
+    box-shadow: 0 4px 6px rgba(230, 162, 46, 0.3);
+}
+
 /* Кольори кнопок */
 .btn-find { background-color: var(--primary-accent-color); }
 .btn-replace { background-color: var(--secondary-accent-color); }
 .btn-replace-all { background-color: var(--success-color); }
 .btn-replace-speed { background-color: #3b4252; } 
 
-/* --- ТЕМНА ТЕМА --- */
+/* --- ТЕМНА ТЕМА ДЛЯ ПАНЕЛЕЙ --- */
 body.dark .template-search-bar { background-color: transparent; }
+
 body.dark .template-search-bar.active { border: none !important; }
 
 body.dark .search-inputs-row input,
+body.dark .search-inputs-row select,
 body.dark .speed-select {
     background-color: var(--input-bg-color); 
     border-color: var(--input-border-color);
+    color: var(--text-color);
 }
+body.dark .search-inputs-row select option,
 body.dark .speed-select option {
     background-color: var(--content-bg-color);
     color: var(--text-color);
 }
-body.dark .swap-inputs-btn { color: #888; }
-body.dark .swap-inputs-btn:hover {
-    background-color: rgba(255,255,255,0.1);
-    color: var(--secondary-accent-color);
-}
-body.dark .btn-replace-speed { background-color: #4c566a; }
 
 /* === ІНТЕГРАЦІЯ КАЛЬКУЛЯТОРА === */
 .calc-flex-wrapper {
