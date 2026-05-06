@@ -1747,7 +1747,7 @@ body.dark #clear-all-templates-button:hover {
 
     /* Розміри */
     min-height: 90px;
-    min-width: 360px;
+    min-width: 380px;
 
     /* --- ГОЛОВНЕ: АНІМАЦІЯ --- */
     /* Анімуємо transform (рух) і розміри */
@@ -2994,13 +2994,13 @@ body.dark .template-config-bar {
 .config-login-input { flex: 1; min-width: 100px; }
 
 /* Швидкість: Фіксована ширина */
-.config-speed-select { flex: 0 0 65px; cursor: pointer; }
+.config-speed-select { flex: 0 0 70px; cursor: pointer; }
 
 /* Порт: Зробили вужчим (однакова гнучкість з логіном) */
-.config-port-input { flex: 0 0 70px; }
+.config-port-input { flex: 0 0 80px; }
 
 /* VLAN: Маленька фіксована ширина */
-.config-vlan-input { flex: 0 0 70px; }
+.config-vlan-input { flex: 0 0 80px; }
 
 /* --- КНОПКА ГЕНЕРАЦІЇ --- */
 .config-generate-btn {
@@ -3033,6 +3033,51 @@ body.dark .template-config-bar {
 .config-generate-btn:active {
     transform: translateY(1px) scale(0.95);
     box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* --- НОВІ КНОПКИ: Замінити та PON-ONU --- */
+.config-replace-mode-btn,
+.config-pon-onu-btn {
+    flex: 0 0 32px; /* Квадратні кнопки 32х32px */
+    height: 100%;
+    padding: 0;
+    
+    border: 1px solid var(--input-border-color);
+    border-radius: 6px;
+    background-color: var(--input-bg-color);
+    color: var(--tab-inactive-text);
+    
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
+    
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.02);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.config-replace-mode-btn:hover,
+.config-pon-onu-btn:hover {
+    border-color: var(--primary-accent-color);
+    color: var(--primary-accent-color);
+    box-shadow: 0 2px 4px rgba(0, 123, 255, 0.15);
+    z-index: 2;
+}
+
+/* Активний стан кнопок-тумблерів (Світяться синім) */
+.config-replace-mode-btn.active,
+.config-pon-onu-btn.active {
+    background-color: rgba(0, 123, 255, 0.1);
+    color: var(--primary-accent-color);
+    border-color: var(--primary-accent-color);
+}
+
+body.dark .config-replace-mode-btn.active,
+body.dark .config-pon-onu-btn.active {
+    background-color: rgba(230, 162, 46, 0.15);
+    color: var(--secondary-accent-color);
+    border-color: var(--secondary-accent-color);
 }
 
 /* Темна тема для кнопки */
@@ -3831,6 +3876,8 @@ body.dark .moon-icon {
 }
 
 /* === ЕФЕКТ ФІЗИЧНОГО НАТИСКАННЯ ДЛЯ ШИРОКИХ КНОПОК === */
+.config-replace-mode-btn:active,
+.config-pon-onu-btn:active, 
 .extension-download-btn:active,
 .extension-info-btn:active,
 #import-templates-button:active,
@@ -3846,6 +3893,8 @@ body.dark .moon-icon {
     transition: all 0.05s ease-out;
 }
 
+.config-replace-mode-btn:hover:active,
+.config-pon-onu-btn:hover:active,   
 .extension-download-btn:hover:active,
 .extension-info-btn:hover:active,
 #import-templates-button:hover:active,

@@ -1281,11 +1281,17 @@ function initDraggableAndResizable(element) {
     configToggleButton.innerHTML = '<i class="fa-solid fa-server"></i>';
     configToggleButton.title = 'Генератор конфігурацій ОЛТ';
 
-// === ПАНЕЛЬ ГЕНЕРАТОРА КОНФІГІВ (ОДИН РЯДОК) ===
+// ========================================================
+    // === ПАНЕЛЬ ГЕНЕРАТОРА КОНФІГІВ (ПОЧАТОК БЛОКУ) ===
+    // ========================================================
     const configPanel = document.createElement('div');
     configPanel.className = 'template-config-bar'; 
+    
+    // Стани кнопок (Зберігаються для кожного шаблону окремо)
+    let isReplaceMode = true; 
+    let isPonOnuMode = false; 
 
-    // Використовуємо іконку для кнопки, щоб зекономити місце
+    // Додано type="button" щоб кнопки не "ламали" форму
     configPanel.innerHTML = `
         <div class="config-single-row">
             <select class="config-olt-select" title="Оберіть ОЛТ">
@@ -1295,17 +1301,29 @@ function initDraggableAndResizable(element) {
             </select>
             <input type="text" class="config-login-input" placeholder="Логін" title="Логін">
             <select class="config-speed-select" title="Швидкість">
-                <option value="10M">10M</option>
-                <option value="50M">50M</option>
-                <option value="100M" selected>100M</option>
-                <option value="200M">200M</option>
-                <option value="300M">300M</option>
-                <option value="500M">500M</option>
-                <option value="1G">1G</option>
+                    <option value="10M">10M</option>
+                    <option value="20M">20M</option>
+                    <option value="30M">30M</option>
+                    <option value="40M">40M</option>
+                    <option value="50M">50M</option>
+                    <option value="60M">60M</option>
+                    <option value="100M" selected>100M</option>
+                    <option value="200M">200M</option>
+                    <option value="300M">300M</option>
+                    <option value="500M">500M</option>
+                    <option value="1G">1G</option>
             </select>
             <input type="text" class="config-port-input" placeholder="Порт" title="Порт (напр. 1/2/5:101)">
             <input type="text" class="config-vlan-input" placeholder="VLAN" title="VLAN (Залиште порожнім, щоб не міняти)">
-            <button class="config-generate-btn" title="Згенерувати конфіг">
+            
+            <button type="button" class="config-replace-mode-btn active" title="Замінити попередній конфіг">
+                <i class="fa-solid fa-arrows-rotate"></i>
+            </button>
+            <button type="button" class="config-pon-onu-btn" title="Додавати PON-ONU конфіг при генерації">
+                <i class="fa-solid fa-wave-square"></i>
+            </button>
+
+            <button type="button" class="config-generate-btn" title="Згенерувати конфіг">
                 <i class="fa-solid fa-bolt"></i>
             </button>
         </div>
@@ -1313,26 +1331,50 @@ function initDraggableAndResizable(element) {
 
     configPanel.addEventListener('mousedown', (e) => e.stopPropagation());
 
-    // === ЗАБОРОНА КИРИЛИЦІ В ПОЛІ ЛОГІНУ ===
+    // === ЗАБОРОНА КИРИЛИЦІ ===
     const loginInputBox = configPanel.querySelector('.config-login-input');
     loginInputBox.addEventListener('input', (e) => {
-        // Регулярний вираз, що шукає всі українські та російські літери
         const cyrillicRegex = /[а-яА-ЯіїєґІЇЄҐёЁ]/g;
-        
         if (cyrillicRegex.test(e.target.value)) {
-            // Видаляємо всі знайдені літери кирилиці
             e.target.value = e.target.value.replace(cyrillicRegex, '');
-            // Показуємо підказку
             showNotification("Логін має бути лише латиницею!");
         }
     });
 
-    // === ЛОГІКА ВІДКРИТТЯ/ЗАКРИТТЯ ===
+    // === РОЗУМНЕ АВТОФОРМАТУВАННЯ ПОРТУ ===
+    const portInputBox = configPanel.querySelector('.config-port-input');
+    portInputBox.addEventListener('input', (e) => {
+        let val = e.target.value;
+
+        // 1. Швидкі замінники: пробіл, крапка, кома, тире, бекслеш -> стають слешем
+        val = val.replace(/[ .,\-\\]/g, '/');
+
+        // 2. Видаляємо всі літери і спецсимволи, залишаємо ТІЛЬКИ цифри, слеш (/) та двокрапку (:)
+        val = val.replace(/[^0-9/:]/g, '');
+
+        // 3. Забороняємо підряд два і більше слешів (якщо користувач випадково натиснув / сам)
+        val = val.replace(/\/+/g, '/');
+
+        // 4. Логіка автододавання (працює ТІЛЬКИ коли вводимо текст, а не стираємо Backspace-ом)
+        if (e.inputType !== 'deleteContentBackward') {
+            // Якщо ввели рівно 1 цифру (Frame) -> додаємо /
+            if (/^\d$/.test(val)) {
+                val += '/';
+            }
+            // Якщо ввели Frame/Slot (де Slot = рівно 2 цифри, напр. "1/02" або "1/15") -> додаємо /
+            else if (/^\d\/\d{2}$/.test(val)) {
+                val += '/';
+            }
+        }
+
+        // Записуємо оброблене значення назад у поле
+        e.target.value = val;
+    });
+
+    // === ЛОГІКА ВІДКРИТТЯ/ЗАКРИТТЯ ПАНЕЛІ ===
     configToggleButton.onclick = (e) => {
         e.stopPropagation();
-        
         const isActive = configPanel.classList.contains('active');
-        
         if (isActive) {
             configPanel.classList.remove('active');
         } else {
@@ -1375,8 +1417,6 @@ function initDraggableAndResizable(element) {
         }
         const [type, index] = e.target.value.split('-');
         const oltObj = OLT_CONFIGS[type][index];
-        
-        // Показуємо дефолтний VLAN як сіру підказку
         if (oltObj && oltObj.defaultVlan) {
             vlanInputNode.placeholder = `VLAN (${oltObj.defaultVlan})`;
         } else {
@@ -1384,9 +1424,28 @@ function initDraggableAndResizable(element) {
         }
     });
 
-    // === ЛОГІКА ГЕНЕРАЦІЇ З РОЗУМНИМ VLAN ===
+    // === ТУМБЛЕР: ЗАМІНА КОНФІГУ ===
+    const btnReplaceMode = configPanel.querySelector('.config-replace-mode-btn');
+    btnReplaceMode.addEventListener('click', (e) => {
+        e.preventDefault();
+        isReplaceMode = !isReplaceMode;
+        btnReplaceMode.classList.toggle('active', isReplaceMode);
+        showNotification(isReplaceMode ? "Режим ЗАМІНИ увімкнено" : "Режим ДОДАВАННЯ увімкнено");
+    });
+
+    // === ТУМБЛЕР: PON-ONU ===
+    const btnPonOnu = configPanel.querySelector('.config-pon-onu-btn');
+    btnPonOnu.addEventListener('click', (e) => {
+        e.preventDefault();
+        isPonOnuMode = !isPonOnuMode;
+        btnPonOnu.classList.toggle('active', isPonOnuMode);
+        showNotification(isPonOnuMode ? "Команди PON-ONU УВІМКНЕНО" : "Команди PON-ONU ВИМКНЕНО");
+    });
+
+    // === ГОЛОВНА ЛОГІКА ГЕНЕРАЦІЇ ===
     const btnGenerate = configPanel.querySelector('.config-generate-btn');
-    btnGenerate.onclick = () => {
+    btnGenerate.addEventListener('click', (e) => {
+        e.preventDefault();
         const select = configPanel.querySelector('.config-olt-select');
         const loginVal = configPanel.querySelector('.config-login-input').value.trim();
         const speedVal = configPanel.querySelector('.config-speed-select').value;
@@ -1407,44 +1466,98 @@ function initDraggableAndResizable(element) {
         const oltObj = OLT_CONFIGS[type][index];
         if (!oltObj) return;
 
-        const rawTemplate = OLT_TEMPLATES[oltObj.templateName];
+        let currentTemplateName = oltObj.templateName; 
+
+        // =========================================================
+        // === РОЗУМНИЙ ПОРТ ТІЛЬКИ ДЛЯ ОЛТІВ ІЗ ПОЗНАЧКОЮ (MIX) ===
+        // =========================================================
+        // Перевіряємо, чи є в назві ОЛТа слово (MIX)
+        if (oltObj.name.includes('(MIX)')) {
+            // Якщо так, і порт починається з "1/2/" -> це GPON
+            if (portVal.startsWith('1/02/')) {
+                currentTemplateName = currentTemplateName.replace(/EPON/i, 'GPON');
+            } 
+            // Якщо порт починається з "1/1/" -> це EPON
+            else if (portVal.startsWith('1/01/')) {
+                currentTemplateName = currentTemplateName.replace(/GPON/i, 'EPON');
+            }
+        }
+        // =========================================================
+
+        const rawTemplate = OLT_TEMPLATES[currentTemplateName];
         if (!rawTemplate) {
-            showNotification(`Помилка: Шаблон "${oltObj.templateName}" не знайдено!`);
+            showNotification(`Помилка: Шаблон "${currentTemplateName}" не знайдено! Перевірте olt_configs.txt`);
             return;
         }
 
-        // Визначаємо фінальний VLAN (Те що ввів юзер АБО дефолтний від ОЛТа)
         const finalVlan = vlanVal !== '' ? vlanVal : (oltObj.defaultVlan || '1');
 
-        // Робимо всі заміни
+        // 1. Створюємо базовий конфіг (з TRIM)
         let finalConfig = rawTemplate
             .replace(/{LOGIN}/g, loginVal || 'UNKNOWN_LOGIN')
             .replace(/{SPEED}/g, speedVal)
             .replace(/{PORT}/g, portVal || 'UNKNOWN_PORT')
-            .replace(/{VLAN}/g, finalVlan); // Замінюємо мітку {VLAN}
+            .replace(/{VLAN}/g, finalVlan)
+            .trim(); 
 
+        // 2. Додаємо PON-ONU, якщо тумблер увімкнений
+        if (isPonOnuMode) {
+            if (!portVal) {
+                showNotification("Вкажіть Порт для команд PON-ONU!");
+                return;
+            }
+            
+            let ponType = '';
+            // Перевіряємо вже ОНОВЛЕНУ назву шаблону, щоб правильно додати GPON або EPON команди
+            if (currentTemplateName.toLowerCase().includes('gpon')) ponType = 'gpon';
+            else if (currentTemplateName.toLowerCase().includes('epon')) ponType = 'epon';
+            
+            if (ponType && PON_ONU_TEMPLATES[ponType]) {
+                const extraTemplate = PON_ONU_TEMPLATES[ponType];
+                
+                const finalExtraConfig = extraTemplate
+                    .replace(/{PORT}/g, portVal)
+                    .replace(/{VLAN}/g, finalVlan)
+                    .replace(/{LOGIN}/g, loginVal || 'UNKNOWN_LOGIN')
+                    .replace(/{SPEED}/g, speedVal)
+                    .trim(); 
+                
+                // Додаємо конфіг (без зайвих пробілів)
+                finalConfig += '\n' + finalExtraConfig;
+            } else {
+                showNotification(`Шаблон PON-ONU для ${ponType.toUpperCase()} не знайдено у файлі!`);
+            }
+        }
+
+        // 3. НАДІЙНА ЛОГІКА ЗАМІНИ ТЕКСТУ
         const textarea = fieldGroup.querySelector('textarea');
         const start = textarea.selectionStart;
         const end = textarea.selectionEnd;
-        const text = textarea.value;
+        
+        let currentText = textarea.value.replace(/\r\n/g, '\n');
+        let oldConfig = (fieldGroup.dataset.lastGeneratedConfig || "").replace(/\r\n/g, '\n');
 
-        const insertText = finalConfig + '\n';
-        const newText = text.substring(0, start) + insertText + text.substring(end);
-        
+        if (isReplaceMode && oldConfig && currentText.includes(oldConfig)) {
+            currentText = currentText.replace(oldConfig, finalConfig);
+            textarea.value = currentText;
+        } else {
+            textarea.value = currentText.substring(0, start) + finalConfig + '\n' + currentText.substring(end);
+        }
+
+        fieldGroup.dataset.lastGeneratedConfig = finalConfig;
+
         const savedScroll = textarea.scrollTop;
-        textarea.value = newText;
-        
         const highlighter = fieldGroup.querySelector('.highlighter-backdrop');
         updateHighlight(textarea, highlighter);
         updateBookmarksOnTextChange(fieldGroup);
         saveTemplates();
         
         textarea.scrollTop = savedScroll;
-        textarea.focus();
-        textarea.setSelectionRange(start + insertText.length, start + insertText.length);
-        
-        showNotification("Конфіг успішно згенеровано!");
-    };
+        showNotification("Конфіг згенеровано!");
+    });
+    // ========================================================
+    // === ПАНЕЛЬ ГЕНЕРАТОРА КОНФІГІВ (КІНЕЦЬ БЛОКУ) ===
+    // ========================================================
 
     const deleteButton = document.createElement('button');
     deleteButton.innerHTML = '<i class="fa-solid fa-trash-can"></i>';
@@ -2113,6 +2226,7 @@ document.getElementById('clear-history-btn').addEventListener('click', () => {
 // === ЗМІННІ ДЛЯ ГЕНЕРАТОРА КОНФІГІВ ===
 let OLT_CONFIGS = { ultranet: [], energy: [] };
 let OLT_TEMPLATES = {}; 
+let PON_ONU_TEMPLATES = { gpon: "", epon: "" }; // <--- НОВЕ: Зберігаємо PON-ONU тут
 
 function loadOltConfigs() {
     fetch('olt_configs.txt?v=' + Date.now())
@@ -2123,6 +2237,7 @@ function loadOltConfigs() {
         .then(text => {
             OLT_CONFIGS = { ultranet: [], energy: [] };
             OLT_TEMPLATES = {};
+            PON_ONU_TEMPLATES = { gpon: "", epon: "" }; // Очищаємо перед новим завантаженням
             
             let currentSection = null; 
             let currentTemplateName = null;
@@ -2132,6 +2247,7 @@ function loadOltConfigs() {
                 const trimmed = line.trim();
                 if (!trimmed || trimmed.startsWith('#')) return; 
 
+                // 1. Шукаємо шаблони базових конфігів
                 const templateMatch = trimmed.match(/^\[TEMPLATE:\s*(.+)\]$/i);
                 if (templateMatch) {
                     currentSection = 'template';
@@ -2140,11 +2256,21 @@ function loadOltConfigs() {
                     return;
                 }
 
+                // 2. Шукаємо секції PON-ONU
+                if (trimmed.toUpperCase() === '[GPON PON-ONU]') { currentSection = 'gpon_pon_onu'; return; }
+                if (trimmed.toUpperCase() === '[EPON PON-ONU]') { currentSection = 'epon_pon_onu'; return; }
+
+                // 3. Шукаємо списки комутаторів
                 if (trimmed === '[Ultranet]') { currentSection = 'ultranet'; return; } 
                 else if (trimmed === '[ISP Energy]') { currentSection = 'energy'; return; }
 
+                // Записуємо дані у відповідні місця
                 if (currentSection === 'template' && currentTemplateName) {
                     OLT_TEMPLATES[currentTemplateName] += line + '\n';
+                } else if (currentSection === 'gpon_pon_onu') {
+                    PON_ONU_TEMPLATES.gpon += line + '\n';
+                } else if (currentSection === 'epon_pon_onu') {
+                    PON_ONU_TEMPLATES.epon += line + '\n';
                 } else if (currentSection === 'ultranet' || currentSection === 'energy') {
                     const splitIndex = trimmed.indexOf('=');
                     if (splitIndex !== -1) {
@@ -2154,11 +2280,10 @@ function loadOltConfigs() {
                         let tplName = rest;
                         let defVlan = "";
                         
-                        // РОЗУМНИЙ ПАРСЕР: Шукаємо пробіл і ЦИФРИ в самому кінці рядка
                         const vlanMatch = rest.match(/(.*?)\s+(\d+)$/);
                         if (vlanMatch) {
-                            tplName = vlanMatch[1].trim(); // Наприклад: "ZTE GPON"
-                            defVlan = vlanMatch[2].trim(); // Наприклад: "125"
+                            tplName = vlanMatch[1].trim(); 
+                            defVlan = vlanMatch[2].trim(); 
                         }
                         
                         OLT_CONFIGS[currentSection].push({ 
@@ -2172,6 +2297,9 @@ function loadOltConfigs() {
         })
         .catch(err => console.log("Помилка завантаження конфігів ОЛТ:", err));
 }
+
+// === ЗМІННІ ДЛЯ ДОДАТКОВИХ КОНФІГІВ (PON-ONU) ===
+let EXTRA_CONFIG_TEMPLATES = { gpon: "", epon: "" };
 
     document.addEventListener('DOMContentLoaded', () => {
 	// 1. Відновлення порядку при завантаженні
