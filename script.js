@@ -1340,12 +1340,17 @@ function initDraggableAndResizable(element) {
         }
     });
 
-    // === РОЗУМНЕ АВТОФОРМАТУВАННЯ ПОРТУ (1/01/11:11) ===
+    // === РОЗУМНЕ АВТОФОРМАТУВАННЯ ПОРТУ ===
     const portInputBox = configPanel.querySelector('.config-port-input');
     portInputBox.addEventListener('input', (e) => {
-        let val = e.target.value;
+        const input = e.target;
+        let val = input.value;
+        
+        // 1. ЗАПАМ'ЯТОВУЄМО ПОЗИЦІЮ КУРСОРУ ТА ДОВЖИНУ ТЕКСТУ
+        let cursorPosition = input.selectionStart;
+        let oldLength = val.length;
 
-        // Рахуємо скільки вже є слешів
+        // 2. ФОРМАТУЄМО ТЕКСТ
         let slashCount = (val.match(/\//g) || []).length;
 
         // Швидка заміна (пробіл, крапка, кома -> стають або /, або :)
@@ -1369,13 +1374,25 @@ function initDraggableAndResizable(element) {
         // Автододавання (тільки якщо вводимо, а не стираємо)
         if (e.inputType !== 'deleteContentBackward') {
             if (/^\d$/.test(val)) {
-                val += '/'; // Після першої цифри ставимо / (напр. 1 -> 1/)
+                val += '/'; // Після першої цифри -> / (напр. 1 -> 1/)
             }
-            // Ми прибрали жорстке додавання / далі, бо слот може бути '1', а може бути '13'.
-            // Користувач може просто натиснути пробіл або крапку, і скрипт сам перетворить їх на / та :
+            // Жорстке додавання слeшів для плат і портів прибрано, 
+            // щоб дозволити вільне редагування 1/1, 1/13 тощо.
         }
 
-        e.target.value = val;
+        // 3. ОНОВЛЮЄМО ЗНАЧЕННЯ В ПОЛІ ВВОДУ
+        input.value = val;
+
+        // 4. ПОВЕРТАЄМО КУРСОР НА ПРАВИЛЬНЕ МІСЦЕ
+        let newLength = val.length;
+        // Рахуємо зсув (якщо скрипт додав або видалив символ, курсор має посунутись)
+        let newCursorPos = cursorPosition + (newLength - oldLength);
+        
+        // Захист від від'ємних значень
+        newCursorPos = Math.max(0, newCursorPos);
+        
+        // Встановлюємо курсор
+        input.setSelectionRange(newCursorPos, newCursorPos);
     });
 
     // === ЛОГІКА ВІДКРИТТЯ/ЗАКРИТТЯ ПАНЕЛІ ===
