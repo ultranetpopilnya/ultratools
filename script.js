@@ -1279,7 +1279,7 @@ function initDraggableAndResizable(element) {
     const configToggleButton = document.createElement('button');
     configToggleButton.className = 'config-template-btn';
     configToggleButton.innerHTML = '<i class="fa-solid fa-server"></i>';
-    configToggleButton.title = 'Генератор конфігурацій ОЛТ';
+    configToggleButton.title = 'Генератор конфігурацій ОНУ';
 
 // ========================================================
     // === ПАНЕЛЬ ГЕНЕРАТОРА КОНФІГІВ (ПОЧАТОК БЛОКУ) ===
@@ -1287,18 +1287,17 @@ function initDraggableAndResizable(element) {
     const configPanel = document.createElement('div');
     configPanel.className = 'template-config-bar'; 
     
-    // Стани кнопок (Зберігаються для кожного шаблону окремо)
     let isReplaceMode = true; 
     let isPonOnuMode = false; 
 
-    // Додано type="button" щоб кнопки не "ламали" форму
+    // Генеруємо унікальний ID для списку, щоб шаблони не конфліктували
+    const datalistId = 'olt-list-' + Math.random().toString(36).substring(2, 10);
+
     configPanel.innerHTML = `
         <div class="config-single-row">
-            <select class="config-olt-select" title="Оберіть ОЛТ">
-                <option value="">-- ОЛТ --</option>
-                <optgroup label="Ultranet"></optgroup>
-                <optgroup label="ISP Energy"></optgroup>
-            </select>
+            <input type="text" list="${datalistId}" class="config-olt-select" placeholder="🔍 Пошук ОЛТ..." title="Почніть вводити назву ОЛТ">
+            <datalist id="${datalistId}"></datalist>
+            
             <input type="text" class="config-login-input" placeholder="Логін" title="Логін">
             <select class="config-speed-select" title="Швидкість">
                     <option value="10M">10M</option>
@@ -1313,13 +1312,13 @@ function initDraggableAndResizable(element) {
                     <option value="500M">500M</option>
                     <option value="1G">1G</option>
             </select>
-            <input type="text" class="config-port-input" placeholder="Порт" title="Порт (напр. 1/2/5:101)">
+            <input type="text" class="config-port-input" placeholder="Порт" title="Порт (напр. 1/2/5:10)">
             <input type="text" class="config-vlan-input" placeholder="VLAN" title="VLAN (Залиште порожнім, щоб не міняти)">
             
-            <button type="button" class="config-replace-mode-btn active" title="Замінювати попередньо згенерований конфіг">
+            <button type="button" class="config-replace-mode-btn active" title="Замінити попередній конфіг">
                 <i class="fa-solid fa-arrows-rotate"></i>
             </button>
-            <button type="button" class="config-pon-onu-btn" title="Додавати PON-ONU, Show pon power та Write">
+            <button type="button" class="config-pon-onu-btn" title="Додавати PON-ONU конфіг при генерації">
                 <i class="fa-solid fa-wave-square"></i>
             </button>
 
@@ -1341,33 +1340,41 @@ function initDraggableAndResizable(element) {
         }
     });
 
-    // === РОЗУМНЕ АВТОФОРМАТУВАННЯ ПОРТУ ===
+    // === РОЗУМНЕ АВТОФОРМАТУВАННЯ ПОРТУ (1/01/11:11) ===
     const portInputBox = configPanel.querySelector('.config-port-input');
     portInputBox.addEventListener('input', (e) => {
         let val = e.target.value;
 
-        // 1. Швидкі замінники: пробіл, крапка, кома, тире, бекслеш -> стають слешем
-        val = val.replace(/[ .,\-\\]/g, '/');
+        // Рахуємо скільки вже є слешів
+        let slashCount = (val.match(/\//g) || []).length;
 
-        // 2. Видаляємо всі літери і спецсимволи, залишаємо ТІЛЬКИ цифри, слеш (/) та двокрапку (:)
-        val = val.replace(/[^0-9/:]/g, '');
-
-        // 3. Забороняємо підряд два і більше слешів (якщо користувач випадково натиснув / сам)
-        val = val.replace(/\/+/g, '/');
-
-        // 4. Логіка автододавання (працює ТІЛЬКИ коли вводимо текст, а не стираємо Backspace-ом)
-        if (e.inputType !== 'deleteContentBackward') {
-            // Якщо ввели рівно 1 цифру (Frame) -> додаємо /
-            if (/^\d$/.test(val)) {
-                val += '/';
-            }
-            // Якщо ввели Frame/Slot (де Slot = рівно 2 цифри, напр. "1/02" або "1/15") -> додаємо /
-            else if (/^\d\/\d{2}$/.test(val)) {
-                val += '/';
+        // Швидка заміна (пробіл, крапка, кома -> стають або /, або :)
+        if (/[ .,\-\\]/.test(val)) {
+            if (slashCount < 2) {
+                val = val.replace(/[ .,\-\\]/g, '/'); // Якщо слешів < 2, ставимо /
+            } else {
+                val = val.replace(/[ .,\-\\]/g, ':'); // Якщо вже є два слеші, ставимо :
             }
         }
 
-        // Записуємо оброблене значення назад у поле
+        // Залишаємо ТІЛЬКИ цифри, слеш та двокрапку
+        val = val.replace(/[^0-9/:]/g, '');
+        val = val.replace(/\/+/g, '/'); // Видаляємо дублікати //
+        val = val.replace(/:+/g, ':');  // Видаляємо дублікати ::
+        
+        // Забороняємо більше однієї двокрапки
+        let parts = val.split(':');
+        if (parts.length > 2) val = parts[0] + ':' + parts.slice(1).join('');
+
+        // Автододавання (тільки якщо вводимо, а не стираємо)
+        if (e.inputType !== 'deleteContentBackward') {
+            if (/^\d$/.test(val)) {
+                val += '/'; // Після першої цифри ставимо / (напр. 1 -> 1/)
+            }
+            // Ми прибрали жорстке додавання / далі, бо слот може бути '1', а може бути '13'.
+            // Користувач може просто натиснути пробіл або крапку, і скрипт сам перетворить їх на / та :
+        }
+
         e.target.value = val;
     });
 
@@ -1383,18 +1390,15 @@ function initDraggableAndResizable(element) {
             
             configPanel.classList.add('active');
             
-            const select = configPanel.querySelector('.config-olt-select');
-            const grpUltranet = select.querySelector('optgroup[label="Ultranet"]');
-            const grpEnergy = select.querySelector('optgroup[label="ISP Energy"]');
+            // Наповнюємо список для пошуку
+            const datalist = configPanel.querySelector('datalist');
+            datalist.innerHTML = '';
             
-            grpUltranet.innerHTML = '';
-            grpEnergy.innerHTML = '';
-            
-            OLT_CONFIGS.ultranet.forEach((olt, index) => {
-                grpUltranet.innerHTML += `<option value="ultranet-${index}">${olt.name}</option>`;
+            OLT_CONFIGS.ultranet.forEach((olt) => {
+                datalist.innerHTML += `<option value="[Ultranet] ${olt.name}"></option>`;
             });
-            OLT_CONFIGS.energy.forEach((olt, index) => {
-                grpEnergy.innerHTML += `<option value="energy-${index}">${olt.name}</option>`;
+            OLT_CONFIGS.energy.forEach((olt) => {
+                datalist.innerHTML += `<option value="[ISP Energy] ${olt.name}"></option>`;
             });
 
             const loginInput = configPanel.querySelector('.config-login-input');
@@ -1407,18 +1411,19 @@ function initDraggableAndResizable(element) {
     };
 
     // === ДИНАМІЧНА ПІДКАЗКА VLAN ===
-    const oltSelectNode = configPanel.querySelector('.config-olt-select');
+    const oltInputNode = configPanel.querySelector('.config-olt-select');
     const vlanInputNode = configPanel.querySelector('.config-vlan-input');
 
-    oltSelectNode.addEventListener('change', (e) => {
-        if (!e.target.value) {
-            vlanInputNode.placeholder = "VLAN";
-            return;
-        }
-        const [type, index] = e.target.value.split('-');
-        const oltObj = OLT_CONFIGS[type][index];
-        if (oltObj && oltObj.defaultVlan) {
-            vlanInputNode.placeholder = `VLAN (${oltObj.defaultVlan})`;
+    oltInputNode.addEventListener('input', (e) => {
+        const val = e.target.value.trim();
+        
+        // Шукаємо ОЛТ по назві
+        const ultraMatch = OLT_CONFIGS.ultranet.find(o => `[Ultranet] ${o.name}` === val);
+        const energyMatch = OLT_CONFIGS.energy.find(o => `[ISP Energy] ${o.name}` === val);
+        const foundOlt = ultraMatch || energyMatch;
+
+        if (foundOlt && foundOlt.defaultVlan) {
+            vlanInputNode.placeholder = `VLAN (${foundOlt.defaultVlan})`;
         } else {
             vlanInputNode.placeholder = "VLAN";
         }
@@ -1462,9 +1467,21 @@ function initDraggableAndResizable(element) {
             return;
         }
 
-        const [type, index] = select.value.split('-');
-        const oltObj = OLT_CONFIGS[type][index];
-        if (!oltObj) return;
+        const selectValue = select.value.trim();
+let oltObj = null;
+
+if (selectValue.startsWith('[Ultranet]')) {
+    const name = selectValue.replace('[Ultranet] ', '');
+    oltObj = OLT_CONFIGS.ultranet.find(o => o.name === name);
+} else if (selectValue.startsWith('[ISP Energy]')) {
+    const name = selectValue.replace('[ISP Energy] ', '');
+    oltObj = OLT_CONFIGS.energy.find(o => o.name === name);
+}
+
+if (!oltObj) {
+    showNotification("ОЛТ не знайдено в базі!");
+    return;
+}
 
         let currentTemplateName = oltObj.templateName; 
 
@@ -1473,15 +1490,15 @@ function initDraggableAndResizable(element) {
         // =========================================================
         // Перевіряємо, чи є в назві ОЛТа слово (MIX)
         if (oltObj.name.includes('(MIX)')) {
-            // Якщо так, і порт починається з "1/2/" -> це GPON
-            if (portVal.startsWith('1/02/')) {
-                currentTemplateName = currentTemplateName.replace(/EPON/i, 'GPON');
-            } 
-            // Якщо порт починається з "1/1/" -> це EPON
-            else if (portVal.startsWith('1/01/')) {
-                currentTemplateName = currentTemplateName.replace(/GPON/i, 'EPON');
-            }
-        }
+    // Шукаємо 1/02/ або 1/2/
+    if (portVal.startsWith('1/02/') || portVal.startsWith('1/2/')) {
+        currentTemplateName = currentTemplateName.replace(/EPON/i, 'GPON');
+    } 
+    // Шукаємо 1/01/ або 1/1/
+    else if (portVal.startsWith('1/01/') || portVal.startsWith('1/1/')) {
+        currentTemplateName = currentTemplateName.replace(/GPON/i, 'EPON');
+    }
+}
         // =========================================================
 
         const rawTemplate = OLT_TEMPLATES[currentTemplateName];

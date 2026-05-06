@@ -3073,6 +3073,83 @@ body.dark .template-config-bar {
     border-color: var(--primary-accent-color);
 }
 
+/* === ПРОФЕСІЙНИЙ КАСТОМНИЙ SELECT ДЛЯ ОЛТ === */
+.config-custom-select {
+    position: relative;
+    width: 200px;
+}
+
+.config-olt-input {
+    width: 100%;
+    cursor: text;
+    padding-right: 25px !important;
+}
+
+.config-custom-select .select-arrow {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-color);
+    opacity: 0.5;
+    pointer-events: none;
+    transition: transform 0.2s;
+}
+
+.config-custom-select.open .select-arrow {
+    transform: translateY(-50%) rotate(180deg);
+}
+
+.config-select-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    max-height: 250px;
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    overflow-y: auto;
+    z-index: 9999;
+    display: none;
+    margin-top: 4px;
+}
+
+.config-custom-select.open .config-select-dropdown {
+    display: block;
+}
+
+.select-group-title {
+    padding: 6px 10px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    color: var(--tab-inactive-text);
+    background: rgba(0, 0, 0, 0.03);
+    text-transform: uppercase;
+}
+
+body.dark .select-group-title {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.select-item {
+    padding: 8px 10px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    color: var(--text-color);
+    transition: background 0.2s;
+}
+
+.select-item:hover {
+    background: var(--hover-bg);
+    color: var(--primary-color);
+}
+
+.select-item.hidden {
+    display: none;
+}
+
 body.dark .config-replace-mode-btn.active,
 body.dark .config-pon-onu-btn.active {
     background-color: rgba(230, 162, 46, 0.15);
