@@ -1,20 +1,4 @@
-# ===Конгфіги для Ultra===
-[TEMPLATE: ULTRA ZTE C300 GPON]
-  description {LOGIN}
-  tcont 1 name gpon-home profile {SPEED}
-  gemport 1 tcont 1
-  gemport 1 traffic-limit upstream {SPEED} downstream {SPEED} 
-  service-port 1 vport 1 user-vlan untag vlan {VLAN} 
-  ip dhcp snooping quota 1 vport 1
-  ip dhcp snooping enable vport 1
-  port-identification format DSL-FORUM-PON vport 1
-  port-identification sub-option remote-id enable vport 1
-  port-identification sub-option remote-id name {LOGIN} vport 1
-  dhcpv4-l2-relay-agent enable vport 1
-  dhcpv4-l2-relay-agent trust true replace vport 1
-# =========================================================================================  
-
-[TEMPLATE: ULTRA ZTE C320 GPON]                                                     
+[TEMPLATE: 1 ZTE C320 GPON]                                                     
   description {LOGIN}
   tcont 1 name gpon-home profile {SPEED}
   gemport 1 unicast tcont 1 dir both
@@ -32,7 +16,37 @@
   ip dhcp snooping enable vport 1
 # ==========================================
 
-[TEMPLATE: ULTRA ZTE C320 EPON]
+[TEMPLATE: 2 ZTE C320 GPON]
+  description {LOGIN}
+  tcont 1 name gpon-home profile {SPEED}
+  gemport 1 tcont 1
+  gemport 1 traffic-limit upstream {SPEED} downstream {SPEED}
+  service-port 1 vport 1 user-vlan untag vlan {VLAN}
+  ip dhcp snooping quota 1 vport 1
+  ip dhcp snooping enable vport 1
+  port-identification format DSL-FORUM-PON vport 1
+  port-identification sub-option remote-id enable vport 1
+  port-identification sub-option remote-id name {LOGIN} vport 1
+  dhcpv4-l2-relay-agent enable vport 1
+  dhcpv4-l2-relay-agent trust true replace vport 1
+  # ==========================================
+
+  [TEMPLATE: 3 ZTE C320 GPON]
+  description {LOGIN}
+  tcont 1 name gpon-home profile {SPEED}
+  gemport 1 tcont 1
+  gemport 1 traffic-limit upstream {SPEED} downstream {SPEED}
+  service-port 1 vport 1 user-vlan untag vlan {VLAN} 
+  ip dhcp snooping quota 1 vport 1
+  ip dhcp snooping enable vport 1
+  port-identification format DSL-FORUM-PON vport 1
+  port-identification sub-option remote-id enable vport 1
+  port-identification sub-option remote-id name {LOGIN} vport 1
+  dhcpv4-l2-relay-agent enable vport 1
+  security storm-control broadcast rate 3 direction ingress vport 1
+  # ==========================================
+
+[TEMPLATE: 1 ZTE C320 EPON]
   admin enable
   property user-info {LOGIN}
   ems-autocfg-request disable
@@ -51,23 +65,7 @@
   ip dhcp snooping enable vport 1
 # ==========================================
 
-# ===Конгфіги для ENERGY===
-[TEMPLATE: ENERGY ZTE C320 GPON]
-  description {LOGIN}
-  tcont 1 name gpon-home profile {SPEED}
-  gemport 1 tcont 1
-  gemport 1 traffic-limit upstream {SPEED} downstream {SPEED}
-  service-port 1 vport 1 user-vlan untag vlan {VLAN}
-  ip dhcp snooping quota 1 vport 1
-  ip dhcp snooping enable vport 1
-  port-identification format DSL-FORUM-PON vport 1
-  port-identification sub-option remote-id enable vport 1
-  port-identification sub-option remote-id name {LOGIN} vport 1
-  dhcpv4-l2-relay-agent enable vport 1
-  dhcpv4-l2-relay-agent trust true replace vport 1
-  # ==========================================
-
-[TEMPLATE: ENERGY ZTE C320 EPON]
+[TEMPLATE: 2 ZTE C320 EPON]
   admin enable
   property user-info {LOGIN}
   ems-autocfg-request disable
@@ -81,36 +79,81 @@
   port-identification sub-option remote-id name {LOGIN} vport 1
   dhcpv4-l2-relay-agent enable vport 1
   dhcpv4-l2-relay-agent trust true replace vport 1
-
-
-
-
-
+# ==========================================
 
 # ==========================================
 # СПИСКИ ОЛТІВ (Прив'язуємо ОЛТ до Шаблону)
 # ==========================================
 
 [Ultranet]
-2 - 10.11.0.21 OLT - 1 (Пашини-Шатрище) = ULTRA ZTE C320 EPON 103
-4 - 10.11.0.23 OLT - 3 (Бровар) = ULTRA ZTE C320 GPON 27
-5 - 10.11.0.24 OLT - 4 (Подол-Чигирі) = ULTRA ZTE C320 EPON 24
-6 - 10.11.0.31 (Андрушівка) = ULTRA ZTE C320 GPON 33
-7 - 10.11.0.35 (Андрушівка) = ULTRA ZTE C320 GPON 33
-8 - 10.11.0.25 (Центр-Чолівка) = ULTRA ZTE C320 GPON 28
-9 - 10.11.0.29 (Ємільчино) = ULTRA ZTE C320 GPON 34
-10 - 10.11.0.30 (Куліши-Середи) = ULTRA ZTE C320 GPON 34
-12 - 10.11.0.36 (Ружин) = ULTRA ZTE C320 GPON 35
-13 - 10.11.0.38 (Ружин) = ULTRA ZTE C320 GPON 35
-16 - 10.11.0.26 (Тайки) = ULTRA ZTE C320 EPON 44
-17 - 10.11.0.27 (Поліське) = ULTRA ZTE C320 GPON 38
-18 - 10.11.0.39 (Чижівка) = ULTRA ZTE C320 GPON 39
-
-138 - 10.11.0.130 (Попільня) = ZTE C300 GPON 125
+2 - 10.11.0.21 OLT - 1 (Пашини-Шатрище) = 1 ZTE C320 EPON 103
+4 - 10.11.0.23 OLT - 3 (Бровар) = 1 ZTE C320 GPON 27
+5 - 10.11.0.24 OLT - 4 (Подол-Чигирі) = 1 ZTE C320 EPON 24
+6 - 10.11.0.31 (Андрушівка) = 1 ZTE C320 GPON 33
+7 - 10.11.0.35 (Андрушівка) = 1 ZTE C320 GPON 33
+8 - 10.11.0.25 (Центр-Чолівка) = 1 ZTE C320 GPON 28
+9 - 10.11.0.29 (Ємільчино) = 1 ZTE C320 GPON 34
+10 - 10.11.0.30 (Куліши-Середи) = 1 ZTE C320 GPON 34
+12 - 10.11.0.36 (Ружин) = 1 ZTE C320 GPON 35
+13 - 10.11.0.38 (Ружин) = 1 ZTE C320 GPON 35
+16 - 10.11.0.26 (Тайки) = 1 ZTE C320 EPON 44
+17 - 10.11.0.27 (Поліське) = 1 ZTE C320 GPON 38
+18 - 10.11.0.39 (Чижівка) = 1 ZTE C320 GPON 39
+20 - 10.11.0.28 (Бехи, Васьковичі) = 1 ZTE C320 GPON 40
+23 - 10.11.0.40 (Червоне) = 1 ZTE C320 GPON 41
+24 - 10.11.0.41 (Вчорайше) = 1 ZTE C320 GPON 42
+26 - 10.11.0.42 (Ярунь) = 1 ZTE C320 GPON 43
+29 - 10.11.0.44 (Білилівка) = 2 ZTE C320 GPON 45
+30 - 10.11.0.45 (Наталівка) = 1 ZTE C320 GPON 46
+32 - 10.11.0.46 (Новаки) = 1 ZTE C320 GPON 46
+35 - 10.11.0.48 (Зарудинці) = 1 ZTE C320 GPON 49
+37 - 10.11.0.49 (Макарівка, Андрушки) = 2 ZTE C320 GPON 50
+38 - 10.11.0.51 (Степок, Яроповичі) = 2 ZTE C320 GPON 52
+39 - 10.11.0.50 (Бровки, Павелки) = 2 ZTE C320 GPON 51
+41 - 10.11.0.52 (Любимівка) = 3 ZTE C320 GPON 53
+43 - 10.11.0.53 (Повчино) = 2 ZTE C320 GPON 54
+45 - 10.11.0.54 (Пашини VLAN55) = 2 ZTE C320 EPON 55
+47 - 10.11.0.55 (Шолом-Алейхема-49) = 2 ZTE C320 GPON 56
+49 - 10.11.0.56 (Карабчиїв) = 2 ZTE C320 GPON 62
+51 - 10.11.0.57 (Мовчанівка) = 2 ZTE C320 GPON 63
+55 - 10.11.0.58 (Шевченка 25) = 2 ZTE C320 GPON 59
+59 - 10.11.0.59 (Мелені) = 1 ZTE C320 GPON 65
+61 - 10.11.0.60 (Курчиця-Красилівка) = 2 ZTE C320 GPON 66
+63 - 10.11.0.65 (Хімаш квартири) = 2 ZTE C320 GPON 130
+65 - 10.11.0.66 (Хорошів-Крапивня) = 2 ZTE C320 GPON 68
+67 - 10.11.0.67 (Тупальці) = 2 ZTE C320 GPON 69
+69 - 10.11.0.68 (Лісівщина) = 2 ZTE C320 GPON 70
+71 - 10.11.0.69 (Роставиця) = 2 ZTE C320 GPON 71
+73 - 10.11.0.70 (Андрієвичі) = 2 ZTE C320 GPON 72
+75 - 10.11.0.71 (Білка) = 2 ZTE C320 GPON 73
+77 - 10.11.0.72 (Дашинка, Суховоля) = 2 ZTE C320 GPON 74
+79 - 10.11.0.73 (Городківка) = 1 ZTE C320 GPON 75
+81 - 10.11.0.74 (Фасова) = 2 ZTE C320 GPON 76
+83 - 10.11.0.75 (Недашки) = 2 ZTE C320 GPON 77
+85 - 10.11.0.76 (Барвинівка) = 2 ZTE C320 GPON 78
+87 - 10.11.0.83 (Мединівка) = НЕДОСТУПНО
+89 - 10.11.0.78 (Сарновичі) = НЕДОСТУПНО
+91 - 10.11.0.79 (Київська) = 2 ZTE C320 GPON 81
+99 - 10.11.0.91 (Київ) = 2 ZTE C320 GPON 92
+103 - 10.11.0.96 (Озерне) = 2 ZTE C320 GPON 96
+107 - 10.11.0.97 (Новогуйвинськ) = 2 ZTE C320 GPON 98
+109 - 10.11.0.98 (Колодянка) = 1 ZTE C320 GPON 99
+111 - 10.11.0.99 (Сосновського-2) = 1 ZTE C320 GPON 27
+115 - 10.11.0.100 (Горщик) = 2 ZTE C320 GPON 100
+121 - 10.11.0.102 (Бараші) = 2 ZTE C320 GPON 101
+123 - 10.11.0.105 (Стара Котельня) = 1 ZTE C320 GPON 102
+125 - 10.11.0.106 (Сімаківка) = 2 ZTE C320 GPON 120
+126 - 10.11.0.107 (Кодня) = 2 ZTE C320 GPON 121
+128 - 10.11.0.108 (Хорошів) = 2 ZTE C320 GPON 122
+130 - 10.11.0.109 (Звягель) = 2 ZTE C320 GPON 123
+138 - 10.11.0.130  (Попільня) = 2 ZTE C320 GPON 125
+140 - 10.11.0.132  (Звягель-2) = 2 ZTE C320 GPON 127
+144 - 10.11.0.134 (Хорошів-2) = 2 ZTE C320 GPON 128
+148 - 10.11.0.135  (Нова Борова) = 1 ZTE C320 GPON 129
 # ==========================================
 
 [ISP Energy]
-19 - 10.12.0.41 (Дивлин) (MIX) = ENERGY ZTE C320 EPON 22
+19 - 10.12.0.41 (Дивлин) (MIX) = 2 ZTE C320 EPON 22
 
 
 # ==========================================

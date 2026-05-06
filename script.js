@@ -1316,10 +1316,10 @@ function initDraggableAndResizable(element) {
             <input type="text" class="config-port-input" placeholder="Порт" title="Порт (напр. 1/2/5:101)">
             <input type="text" class="config-vlan-input" placeholder="VLAN" title="VLAN (Залиште порожнім, щоб не міняти)">
             
-            <button type="button" class="config-replace-mode-btn active" title="Замінити попередній конфіг">
+            <button type="button" class="config-replace-mode-btn active" title="Замінювати попередньо згенерований конфіг">
                 <i class="fa-solid fa-arrows-rotate"></i>
             </button>
-            <button type="button" class="config-pon-onu-btn" title="Додавати PON-ONU конфіг при генерації">
+            <button type="button" class="config-pon-onu-btn" title="Додавати PON-ONU, Show pon power та Write">
                 <i class="fa-solid fa-wave-square"></i>
             </button>
 
