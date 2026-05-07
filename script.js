@@ -1291,12 +1291,15 @@ function initDraggableAndResizable(element) {
     let isPonOnuMode = false; 
 
     // Генеруємо унікальний ID для списку, щоб шаблони не конфліктували
-    const datalistId = 'olt-list-' + Math.random().toString(36).substring(2, 10);
+    let selectedOltObj = null;
+let selectedOltSource = null;
 
     configPanel.innerHTML = `
         <div class="config-single-row">
-            <input type="text" list="${datalistId}" class="config-olt-select" placeholder="🔍 Пошук ОЛТ..." title="Почніть вводити назву ОЛТ">
-            <datalist id="${datalistId}"></datalist>
+            <div class="olt-dropdown-wrapper">
+    <input type="text" class="config-olt-select" placeholder="🔍 Пошук ОЛТ..." autocomplete="off" title="Почніть вводити назву ОЛТ">
+    <div class="olt-dropdown-list"></div>
+</div>
             
             <input type="text" class="config-login-input" placeholder="Логін" title="Логін">
             <select class="config-speed-select" title="Швидкість">
@@ -1341,59 +1344,61 @@ function initDraggableAndResizable(element) {
     });
 
     // === РОЗУМНЕ АВТОФОРМАТУВАННЯ ПОРТУ ===
-    const portInputBox = configPanel.querySelector('.config-port-input');
-    portInputBox.addEventListener('input', (e) => {
-        const input = e.target;
-        let val = input.value;
-        
-        // 1. ЗАПАМ'ЯТОВУЄМО ПОЗИЦІЮ КУРСОРУ ТА ДОВЖИНУ ТЕКСТУ
-        let cursorPosition = input.selectionStart;
-        let oldLength = val.length;
+// Формат: 1/slot(1-99)/port(1-99):onu(1-999)
+const portInputBox = configPanel.querySelector('.config-port-input');
+portInputBox.addEventListener('input', (e) => {
+    const input = e.target;
+    let val = input.value;
+    const isDeleting = e.inputType === 'deleteContentBackward' || e.inputType === 'deleteContentForward';
 
-        // 2. ФОРМАТУЄМО ТЕКСТ
-        let slashCount = (val.match(/\//g) || []).length;
+    // 1. ЗАПАМ'ЯТОВУЄМО ПОЗИЦІЮ КУРСОРУ
+    let cursorPosition = input.selectionStart;
+    let oldLength = val.length;
 
-        // Швидка заміна (пробіл, крапка, кома -> стають або /, або :)
-        if (/[ .,\-\\]/.test(val)) {
-            if (slashCount < 2) {
-                val = val.replace(/[ .,\-\\]/g, '/'); // Якщо слешів < 2, ставимо /
-            } else {
-                val = val.replace(/[ .,\-\\]/g, ':'); // Якщо вже є два слеші, ставимо :
-            }
-        }
+    // 2. КОНВЕРТУЄМО РОЗДІЛЬНИКИ (пробіл, кома, крапка, дефіс, backslash)
+    //    → "/" якщо слешів < 2, інакше → ":"
+    if (/[ .,\-\\]/.test(val)) {
+        const slashCount = (val.match(/\//g) || []).length;
+        val = val.replace(/[ .,\-\\]/g, slashCount < 2 ? '/' : ':');
+    }
 
-        // Залишаємо ТІЛЬКИ цифри, слеш та двокрапку
-        val = val.replace(/[^0-9/:]/g, '');
-        val = val.replace(/\/+/g, '/'); // Видаляємо дублікати //
-        val = val.replace(/:+/g, ':');  // Видаляємо дублікати ::
-        
-        // Забороняємо більше однієї двокрапки
-        let parts = val.split(':');
-        if (parts.length > 2) val = parts[0] + ':' + parts.slice(1).join('');
+    // 3. ЗАЛИШАЄМО ТІЛЬКИ ДОЗВОЛЕНІ СИМВОЛИ
+    val = val.replace(/[^0-9/:]/g, '');
+    val = val.replace(/\/+/g, '/');   // прибираємо подвійні //
+    val = val.replace(/:+/g, ':');    // прибираємо подвійні ::
 
-        // Автододавання (тільки якщо вводимо, а не стираємо)
-        if (e.inputType !== 'deleteContentBackward') {
-            if (/^\d$/.test(val)) {
-                val += '/'; // Після першої цифри -> / (напр. 1 -> 1/)
-            }
-            // Жорстке додавання слeшів для плат і портів прибрано, 
-            // щоб дозволити вільне редагування 1/1, 1/13 тощо.
-        }
+    // 4. ОБМЕЖУЄМО КІЛЬКІСТЬ ДВОКРАПОК (тільки одна)
+    const colonParts = val.split(':');
+    if (colonParts.length > 2) {
+        val = colonParts[0] + ':' + colonParts.slice(1).join('');
+    }
 
-        // 3. ОНОВЛЮЄМО ЗНАЧЕННЯ В ПОЛІ ВВОДУ
-        input.value = val;
+    // 5. РОЗБИВАЄМО ТА ОБМЕЖУЄМО КОЖЕН СЕГМЕНТ
+    //    shelf(1 цифра) / slot(2 цифри) / port(2 цифри) : onu(3 цифри)
+    const [beforeColon, afterColon] = val.split(':');
+    const segments = beforeColon.split('/');
 
-        // 4. ПОВЕРТАЄМО КУРСОР НА ПРАВИЛЬНЕ МІСЦЕ
-        let newLength = val.length;
-        // Рахуємо зсув (якщо скрипт додав або видалив символ, курсор має посунутись)
-        let newCursorPos = cursorPosition + (newLength - oldLength);
-        
-        // Захист від від'ємних значень
-        newCursorPos = Math.max(0, newCursorPos);
-        
-        // Встановлюємо курсор
-        input.setSelectionRange(newCursorPos, newCursorPos);
-    });
+    if (segments[0] !== undefined) segments[0] = segments[0].slice(0, 1); // shelf: макс 1
+    if (segments[1] !== undefined) segments[1] = segments[1].slice(0, 2); // slot:  макс 2
+    if (segments[2] !== undefined) segments[2] = segments[2].slice(0, 2); // port:  макс 2
+    if (segments.length > 3) segments.splice(3); // не більше 3 частин до ":"
+
+    val = segments.join('/');
+    if (afterColon !== undefined) {
+        val += ':' + afterColon.replace(/[^0-9]/g, '').slice(0, 3); // onu: макс 3
+    }
+
+    // 6. АВТО-ДОДАЄМО "/" ТІЛЬКИ ПІСЛЯ ПЕРШОЇ ЦИФРИ (shelf завжди 1 знак)
+    if (!isDeleting && /^\d$/.test(val)) {
+        val += '/';
+    }
+
+    // 7. ОНОВЛЮЄМО ПОЛЕ ТА ПОВЕРТАЄМО КУРСОР
+    input.value = val;
+    let newCursorPos = cursorPosition + (val.length - oldLength);
+    newCursorPos = Math.max(0, Math.min(newCursorPos, val.length));
+    input.setSelectionRange(newCursorPos, newCursorPos);
+});
 
     // === ЛОГІКА ВІДКРИТТЯ/ЗАКРИТТЯ ПАНЕЛІ ===
     configToggleButton.onclick = (e) => {
@@ -1407,16 +1412,6 @@ function initDraggableAndResizable(element) {
             
             configPanel.classList.add('active');
             
-            // Наповнюємо список для пошуку
-            const datalist = configPanel.querySelector('datalist');
-            datalist.innerHTML = '';
-            
-            OLT_CONFIGS.ultranet.forEach((olt) => {
-                datalist.innerHTML += `<option value="[Ultranet] ${olt.name}"></option>`;
-            });
-            OLT_CONFIGS.energy.forEach((olt) => {
-                datalist.innerHTML += `<option value="[ISP Energy] ${olt.name}"></option>`;
-            });
 
             const loginInput = configPanel.querySelector('.config-login-input');
             if (!loginInput.value && lastGeneratedLogin) {
@@ -1426,25 +1421,75 @@ function initDraggableAndResizable(element) {
             setTimeout(() => packTemplates(), 260);
         }
     };
-
-    // === ДИНАМІЧНА ПІДКАЗКА VLAN ===
+    
     const oltInputNode = configPanel.querySelector('.config-olt-select');
-    const vlanInputNode = configPanel.querySelector('.config-vlan-input');
+const vlanInputNode = configPanel.querySelector('.config-vlan-input');
+const oltDropdownList = configPanel.querySelector('.olt-dropdown-list');
 
-    oltInputNode.addEventListener('input', (e) => {
-        const val = e.target.value.trim();
-        
-        // Шукаємо ОЛТ по назві
-        const ultraMatch = OLT_CONFIGS.ultranet.find(o => `[Ultranet] ${o.name}` === val);
-        const energyMatch = OLT_CONFIGS.energy.find(o => `[ISP Energy] ${o.name}` === val);
-        const foundOlt = ultraMatch || energyMatch;
+function renderOltDropdown(filter = '') {
+    const query = filter.toLowerCase().trim();
+    oltDropdownList.innerHTML = '';
 
-        if (foundOlt && foundOlt.defaultVlan) {
-            vlanInputNode.placeholder = `VLAN (${foundOlt.defaultVlan})`;
-        } else {
-            vlanInputNode.placeholder = "VLAN";
-        }
-    });
+    const allItems = [
+        ...OLT_CONFIGS.ultranet.map(o => ({ olt: o, source: 'ultranet' })),
+        ...OLT_CONFIGS.energy.map(o => ({ olt: o, source: 'energy' }))
+    ];
+
+    const filtered = query
+        ? allItems.filter(item => item.olt.name.toLowerCase().includes(query))
+        : allItems;
+
+    if (filtered.length === 0) {
+        oltDropdownList.innerHTML = `<div class="olt-no-results">Нічого не знайдено</div>`;
+        oltDropdownList.classList.add('open');
+        return;
+    }
+
+    const ultranetItems = filtered.filter(i => i.source === 'ultranet');
+    const energyItems  = filtered.filter(i => i.source === 'energy');
+
+    function appendGroup(title, items) {
+        if (items.length === 0) return;
+        const header = document.createElement('div');
+        header.className = 'olt-group-header';
+        header.textContent = title;
+        oltDropdownList.appendChild(header);
+
+        items.forEach(({ olt, source }) => {
+            const item = document.createElement('div');
+            item.className = 'olt-dropdown-item';
+            item.textContent = olt.name;
+            item.addEventListener('mousedown', (e) => {
+                e.preventDefault();
+                oltInputNode.value = olt.name;
+                selectedOltObj = olt;
+                selectedOltSource = source;
+                oltDropdownList.classList.remove('open');
+                vlanInputNode.placeholder = olt.defaultVlan ? `VLAN (${olt.defaultVlan})` : 'VLAN';
+            });
+            oltDropdownList.appendChild(item);
+        });
+    }
+
+    appendGroup('Ultranet', ultranetItems);
+    appendGroup('ISP Energy', energyItems);
+    oltDropdownList.classList.add('open');
+}
+
+oltInputNode.addEventListener('input', (e) => {
+    selectedOltObj = null;
+    selectedOltSource = null;
+    vlanInputNode.placeholder = 'VLAN';
+    renderOltDropdown(e.target.value);
+});
+
+oltInputNode.addEventListener('click', () => {
+    renderOltDropdown(oltInputNode.value);
+});
+
+oltInputNode.addEventListener('blur', () => {
+    setTimeout(() => oltDropdownList.classList.remove('open'), 150);
+});
 
     // === ТУМБЛЕР: ЗАМІНА КОНФІГУ ===
     const btnReplaceMode = configPanel.querySelector('.config-replace-mode-btn');
@@ -1479,21 +1524,12 @@ function initDraggableAndResizable(element) {
             return;
         }
 
-        if (!select.value) {
-            showNotification("Будь ласка, оберіть ОЛТ!");
-            return;
-        }
-
-        const selectValue = select.value.trim();
-let oltObj = null;
-
-if (selectValue.startsWith('[Ultranet]')) {
-    const name = selectValue.replace('[Ultranet] ', '');
-    oltObj = OLT_CONFIGS.ultranet.find(o => o.name === name);
-} else if (selectValue.startsWith('[ISP Energy]')) {
-    const name = selectValue.replace('[ISP Energy] ', '');
-    oltObj = OLT_CONFIGS.energy.find(o => o.name === name);
+        if (!selectedOltObj) {
+    showNotification("Будь ласка, оберіть ОЛТ зі списку!");
+    return;
 }
+
+let oltObj = selectedOltObj;
 
 if (!oltObj) {
     showNotification("ОЛТ не знайдено в базі!");

@@ -2949,6 +2949,7 @@ body.dark .template-config-bar {
     margin-bottom: 4px;
     padding: 4px;
     border: 1px solid var(--input-border-color);
+    overflow: visible; /* ← дозволяє дропдауну виходити за межі панелі */
 }
 
 /* Flex-контейнер для одного рядка */
@@ -2985,10 +2986,19 @@ body.dark .template-config-bar {
     box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.15);
 }
 
-/* --- РОЗПОДІЛ ШИРИНИ (Магія Flexbox) --- */
+/* Обгортка займає місце колишнього input */
+.olt-dropdown-wrapper {
+    flex: 1;
+    width: 260px;
+    position: relative;
+}
 
-/* ОЛТ: Фіксована ширина (трохи збільшили, щоб назви влазили) */
-.config-olt-select { flex: 1; width: 260px; cursor: pointer; }
+/* Поле вводу всередині обгортки */
+.olt-dropdown-wrapper .config-olt-select {
+    width: 100%;
+    box-sizing: border-box;
+    cursor: text;
+}
 
 /* Логін: Зробили вужчим (однакова гнучкість з портом) */
 .config-login-input { flex: 0 0 130px; }
@@ -3098,6 +3108,103 @@ body.dark .template-config-bar {
 
 .config-custom-select.open .select-arrow {
     transform: translateY(-50%) rotate(180deg);
+}
+
+/* =============================================
+   НОВИЙ КАСТОМНИЙ ДРОПДАУН ОЛТ
+   ============================================= */
+.olt-dropdown-list {
+    display: none;
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    right: 0;
+    min-width: 220px;
+
+    background: var(--input-bg-color);
+    border: 1px solid var(--input-border-color);
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.08);
+
+    max-height: 300px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    z-index: 9999;
+
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) transparent;
+}
+
+body.dark .olt-dropdown-list {
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45), 0 2px 8px rgba(0, 0, 0, 0.3);
+    border-color: #4a4a4a;
+}
+
+.olt-dropdown-list.open {
+    display: block;
+    animation: oltDropdownFade 0.15s ease;
+}
+
+@keyframes oltDropdownFade {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Заголовок групи (Ultranet / ISP Energy) */
+.olt-group-header {
+    padding: 7px 12px 4px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--primary-accent-color);
+    opacity: 0.7;
+    user-select: none;
+    pointer-events: none;
+}
+
+body.dark .olt-group-header {
+    color: var(--secondary-accent-color);
+}
+
+/* Роздільник між групами */
+.olt-group-header:not(:first-child) {
+    border-top: 1px solid var(--input-border-color);
+    margin-top: 4px;
+    padding-top: 10px;
+}
+
+/* Рядок з назвою ОЛТ */
+.olt-dropdown-item {
+    padding: 7px 14px;
+    font-size: 12.5px;
+    cursor: pointer;
+    color: var(--text-color);
+    border-radius: 5px;
+    margin: 1px 4px;
+    transition: background 0.12s, color 0.12s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.olt-dropdown-item:hover {
+    background: rgba(0, 123, 255, 0.08);
+    color: var(--primary-accent-color);
+}
+
+body.dark .olt-dropdown-item:hover {
+    background: rgba(230, 162, 46, 0.12);
+    color: var(--secondary-accent-color);
+}
+
+/* Повідомлення "нічого не знайдено" */
+.olt-no-results {
+    padding: 14px 12px;
+    font-size: 12px;
+    color: var(--tab-inactive-text);
+    text-align: center;
+    font-style: italic;
 }
 
 .config-select-dropdown {
