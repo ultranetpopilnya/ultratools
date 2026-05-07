@@ -1600,21 +1600,59 @@ if (!oltObj) {
         }
 
         // 3. НАДІЙНА ЛОГІКА ЗАМІНИ ТЕКСТУ
-        const textarea = fieldGroup.querySelector('textarea');
-        const start = textarea.selectionStart;
-        const end = textarea.selectionEnd;
-        
-        let currentText = textarea.value.replace(/\r\n/g, '\n');
-        let oldConfig = (fieldGroup.dataset.lastGeneratedConfig || "").replace(/\r\n/g, '\n');
+const textarea  = fieldGroup.querySelector('textarea');
+const cursorStart = textarea.selectionStart;
+const cursorEnd   = textarea.selectionEnd;
 
-        if (isReplaceMode && oldConfig && currentText.includes(oldConfig)) {
-            currentText = currentText.replace(oldConfig, finalConfig);
-            textarea.value = currentText;
-        } else {
-            textarea.value = currentText.substring(0, start) + finalConfig + '\n' + currentText.substring(end);
+let currentText = textarea.value.replace(/\r\n/g, '\n');
+let oldConfig   = (fieldGroup.dataset.lastGeneratedConfig || '').replace(/\r\n/g, '\n');
+let inserted    = false;
+
+if (isReplaceMode && oldConfig) {
+
+    // Спосіб 1: Перевіряємо точну збережену позицію
+    // Після кожної генерації ми запам'ятовуємо де саме стоїть конфіг.
+    // Якщо текст на тій позиції досі збігається — замінюємо точково.
+    const savedStart = fieldGroup._lastConfigStart ?? -1;
+    const savedEnd   = fieldGroup._lastConfigEnd   ?? -1;
+
+    if (savedStart >= 0 && savedEnd > savedStart && savedEnd <= currentText.length) {
+        if (currentText.substring(savedStart, savedEnd) === oldConfig) {
+            textarea.value = currentText.substring(0, savedStart)
+                           + finalConfig
+                           + currentText.substring(savedEnd);
+            fieldGroup._lastConfigStart = savedStart;
+            fieldGroup._lastConfigEnd   = savedStart + finalConfig.length;
+            inserted = true;
         }
+    }
 
-        fieldGroup.dataset.lastGeneratedConfig = finalConfig;
+    // Спосіб 2: Позиція не спрацювала — шукаємо текст по всьому полю
+    if (!inserted) {
+        const idx = currentText.indexOf(oldConfig);
+        if (idx !== -1) {
+            textarea.value = currentText.substring(0, idx)
+                           + finalConfig
+                           + currentText.substring(idx + oldConfig.length);
+            fieldGroup._lastConfigStart = idx;
+            fieldGroup._lastConfigEnd   = idx + finalConfig.length;
+            inserted = true;
+        }
+    }
+}
+
+// Спосіб 3: Нічого не знайшли — вставляємо на місце курсору
+if (!inserted) {
+    const before    = currentText.substring(0, cursorStart);
+    const after     = currentText.substring(cursorEnd);
+    const separator = (before.length > 0 && !before.endsWith('\n')) ? '\n' : '';
+    textarea.value  = before + separator + finalConfig + '\n' + after;
+    fieldGroup._lastConfigStart = cursorStart + separator.length;
+    fieldGroup._lastConfigEnd   = cursorStart + separator.length + finalConfig.length;
+}
+
+// Зберігаємо поточний конфіг і позицію для наступної заміни
+fieldGroup.dataset.lastGeneratedConfig = finalConfig;
 
         const savedScroll = textarea.scrollTop;
         const highlighter = fieldGroup.querySelector('.highlighter-backdrop');
