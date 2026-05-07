@@ -1074,7 +1074,11 @@ function initDraggableAndResizable(element) {
 	
     function createTemplateField(data = {}) {
     // Встановлюємо дефолтну ширину 350px, якщо це новий шаблон
-    const { name = '', content = '', width = '350px', height = '90px', bookmarks = [] } = data;
+    const {
+    name = '', content = '', width = '350px', height = '90px', bookmarks = [],
+    lastGeneratedConfig = '', lastConfigStart = -1, lastConfigEnd = -1,
+    ponOnuMode = false, replaceMode = true
+} = data;
     const container = document.getElementById('templates-grid-wrapper'); 
     const fieldGroup = document.createElement('div');
     fieldGroup.className = 'template-field-group';
@@ -1094,6 +1098,12 @@ function initDraggableAndResizable(element) {
         }
     }
     fieldGroup.dataset.bookmarks = JSON.stringify(modernBookmarks);
+
+    fieldGroup.dataset.lastGeneratedConfig = lastGeneratedConfig;
+fieldGroup.dataset.lastConfigStart     = lastConfigStart;
+fieldGroup.dataset.lastConfigEnd       = lastConfigEnd;
+fieldGroup.dataset.ponOnuMode          = ponOnuMode;
+fieldGroup.dataset.replaceMode         = replaceMode;
     
     fieldGroup.style.width = width;
     fieldGroup.style.height = height;
@@ -1287,8 +1297,8 @@ function initDraggableAndResizable(element) {
     const configPanel = document.createElement('div');
     configPanel.className = 'template-config-bar'; 
     
-    let isReplaceMode = true; 
-    let isPonOnuMode = false; 
+    let isReplaceMode = (fieldGroup.dataset.replaceMode !== 'false');
+let isPonOnuMode  = (fieldGroup.dataset.ponOnuMode === 'true');
 
     // Генеруємо унікальний ID для списку, щоб шаблони не конфліктували
     let selectedOltObj = null;
@@ -1388,10 +1398,23 @@ portInputBox.addEventListener('input', (e) => {
         val += ':' + afterColon.replace(/[^0-9]/g, '').slice(0, 3); // onu: макс 3
     }
 
-    // 6. АВТО-ДОДАЄМО "/" ТІЛЬКИ ПІСЛЯ ПЕРШОЇ ЦИФРИ (shelf завжди 1 знак)
-    if (!isDeleting && /^\d$/.test(val)) {
+    // 6. АВТО-ДОДАЄМО РОЗДІЛЬНИКИ ПО СЕГМЕНТАХ
+if (!isDeleting) {
+    const seg = val.split(':')[0].split('/');
+
+    // Shelf: 1 цифра → авто "/"   (напр. "1" → "1/")
+    if (seg.length === 1 && seg[0].length === 1) {
         val += '/';
     }
+    // Slot: 2 цифри → авто "/"   (напр. "1/13" → "1/13/")
+    else if (seg.length === 2 && seg[1].length === 2) {
+        val += '/';
+    }
+    // Port: 2 цифри → авто ":"   (напр. "1/1/13" → "1/1/13:")
+    else if (seg.length === 3 && seg[2].length === 2 && !val.includes(':')) {
+        val += ':';
+    }
+}
 
     // 7. ОНОВЛЮЄМО ПОЛЕ ТА ПОВЕРТАЄМО КУРСОР
     input.value = val;
@@ -1494,20 +1517,28 @@ oltInputNode.addEventListener('blur', () => {
     // === ТУМБЛЕР: ЗАМІНА КОНФІГУ ===
     const btnReplaceMode = configPanel.querySelector('.config-replace-mode-btn');
     btnReplaceMode.addEventListener('click', (e) => {
-        e.preventDefault();
-        isReplaceMode = !isReplaceMode;
-        btnReplaceMode.classList.toggle('active', isReplaceMode);
-        showNotification(isReplaceMode ? "Режим ЗАМІНИ увімкнено" : "Режим ДОДАВАННЯ увімкнено");
-    });
+    e.preventDefault();
+    isReplaceMode = !isReplaceMode;
+    btnReplaceMode.classList.toggle('active', isReplaceMode);
+    fieldGroup.dataset.replaceMode = isReplaceMode;
+    saveTemplates();
+    showNotification(isReplaceMode ? "Режим ЗАМІНИ увімкнено" : "Режим ДОДАВАННЯ увімкнено");
+});
 
-    // === ТУМБЛЕР: PON-ONU ===
-    const btnPonOnu = configPanel.querySelector('.config-pon-onu-btn');
-    btnPonOnu.addEventListener('click', (e) => {
-        e.preventDefault();
-        isPonOnuMode = !isPonOnuMode;
-        btnPonOnu.classList.toggle('active', isPonOnuMode);
-        showNotification(isPonOnuMode ? "Команди PON-ONU УВІМКНЕНО" : "Команди PON-ONU ВИМКНЕНО");
-    });
+// === ТУМБЛЕР: PON-ONU ===
+const btnPonOnu = configPanel.querySelector('.config-pon-onu-btn');
+btnPonOnu.addEventListener('click', (e) => {
+    e.preventDefault();
+    isPonOnuMode = !isPonOnuMode;
+    btnPonOnu.classList.toggle('active', isPonOnuMode);
+    fieldGroup.dataset.ponOnuMode = isPonOnuMode;
+    saveTemplates();
+    showNotification(isPonOnuMode ? "Команди PON-ONU УВІМКНЕНО" : "Команди PON-ONU ВИМКНЕНО");
+});
+
+// Відновлюємо стан кнопок після перезавантаження сторінки
+btnReplaceMode.classList.toggle('active', isReplaceMode);
+btnPonOnu.classList.toggle('active', isPonOnuMode);
 
     // === ГОЛОВНА ЛОГІКА ГЕНЕРАЦІЇ ===
     const btnGenerate = configPanel.querySelector('.config-generate-btn');
@@ -1599,8 +1630,8 @@ if (!oltObj) {
             }
         }
 
-        // 3. НАДІЙНА ЛОГІКА ЗАМІНИ ТЕКСТУ
-const textarea  = fieldGroup.querySelector('textarea');
+        // 3. НАДІЙНА ЛОГІКА ЗАМІНИ ТЕКСТУ (позиція + текстовий пошук + курсор)
+const textarea   = fieldGroup.querySelector('textarea');
 const cursorStart = textarea.selectionStart;
 const cursorEnd   = textarea.selectionEnd;
 
@@ -1610,48 +1641,45 @@ let inserted    = false;
 
 if (isReplaceMode && oldConfig) {
 
-    // Спосіб 1: Перевіряємо точну збережену позицію
-    // Після кожної генерації ми запам'ятовуємо де саме стоїть конфіг.
-    // Якщо текст на тій позиції досі збігається — замінюємо точково.
-    const savedStart = fieldGroup._lastConfigStart ?? -1;
-    const savedEnd   = fieldGroup._lastConfigEnd   ?? -1;
+    // Спосіб 1: позиція збережена і текст на ній збігається
+    const savedStart = parseInt(fieldGroup.dataset.lastConfigStart ?? '-1', 10);
+    const savedEnd   = parseInt(fieldGroup.dataset.lastConfigEnd   ?? '-1', 10);
 
     if (savedStart >= 0 && savedEnd > savedStart && savedEnd <= currentText.length) {
         if (currentText.substring(savedStart, savedEnd) === oldConfig) {
             textarea.value = currentText.substring(0, savedStart)
                            + finalConfig
                            + currentText.substring(savedEnd);
-            fieldGroup._lastConfigStart = savedStart;
-            fieldGroup._lastConfigEnd   = savedStart + finalConfig.length;
+            fieldGroup.dataset.lastConfigStart = savedStart;
+            fieldGroup.dataset.lastConfigEnd   = savedStart + finalConfig.length;
             inserted = true;
         }
     }
 
-    // Спосіб 2: Позиція не спрацювала — шукаємо текст по всьому полю
+    // Спосіб 2: шукаємо старий конфіг по всьому тексту
     if (!inserted) {
         const idx = currentText.indexOf(oldConfig);
         if (idx !== -1) {
             textarea.value = currentText.substring(0, idx)
                            + finalConfig
                            + currentText.substring(idx + oldConfig.length);
-            fieldGroup._lastConfigStart = idx;
-            fieldGroup._lastConfigEnd   = idx + finalConfig.length;
+            fieldGroup.dataset.lastConfigStart = idx;
+            fieldGroup.dataset.lastConfigEnd   = idx + finalConfig.length;
             inserted = true;
         }
     }
 }
 
-// Спосіб 3: Нічого не знайшли — вставляємо на місце курсору
+// Спосіб 3: вставляємо на позицію курсору (fallback)
 if (!inserted) {
     const before    = currentText.substring(0, cursorStart);
     const after     = currentText.substring(cursorEnd);
     const separator = (before.length > 0 && !before.endsWith('\n')) ? '\n' : '';
     textarea.value  = before + separator + finalConfig + '\n' + after;
-    fieldGroup._lastConfigStart = cursorStart + separator.length;
-    fieldGroup._lastConfigEnd   = cursorStart + separator.length + finalConfig.length;
+    fieldGroup.dataset.lastConfigStart = cursorStart + separator.length;
+    fieldGroup.dataset.lastConfigEnd   = cursorStart + separator.length + finalConfig.length;
 }
 
-// Зберігаємо поточний конфіг і позицію для наступної заміни
 fieldGroup.dataset.lastGeneratedConfig = finalConfig;
 
         const savedScroll = textarea.scrollTop;
@@ -2168,12 +2196,17 @@ function addTemplate() {
             const nameInput = group.querySelector('.template-name-input');
             const textarea = group.querySelector('textarea');
             templates.push({
-                name: nameInput ? nameInput.value : '',
-                content: textarea ? textarea.value : '',
-                width: group.style.width,
-                height: group.style.height,
-                bookmarks: JSON.parse(group.dataset.bookmarks || '[]')
-            });
+    name: nameInput ? nameInput.value : '',
+    content: textarea ? textarea.value : '',
+    width: group.style.width,
+    height: group.style.height,
+    bookmarks: JSON.parse(group.dataset.bookmarks || '[]'),
+    lastGeneratedConfig: group.dataset.lastGeneratedConfig || '',
+    lastConfigStart: parseInt(group.dataset.lastConfigStart ?? '-1', 10),
+    lastConfigEnd:   parseInt(group.dataset.lastConfigEnd   ?? '-1', 10),
+    ponOnuMode:  group.dataset.ponOnuMode  === 'true',
+    replaceMode: group.dataset.replaceMode !== 'false'
+});
         });
         localStorage.setItem('textTemplates', JSON.stringify(templates));
     }
