@@ -2988,10 +2988,10 @@ body.dark .template-config-bar {
 /* --- РОЗПОДІЛ ШИРИНИ (Магія Flexbox) --- */
 
 /* ОЛТ: Фіксована ширина (трохи збільшили, щоб назви влазили) */
-.config-olt-select { flex: 0 0 300px; cursor: pointer; }
+.config-olt-select { flex: 1; width: 260px; cursor: pointer; }
 
 /* Логін: Зробили вужчим (однакова гнучкість з портом) */
-.config-login-input { flex: 1; min-width: 100px; }
+.config-login-input { flex: 0 0 130px; }
 
 /* Швидкість: Фіксована ширина */
 .config-speed-select { flex: 0 0 70px; cursor: pointer; }
