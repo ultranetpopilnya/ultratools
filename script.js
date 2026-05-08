@@ -1333,14 +1333,14 @@ let selectedOltSource = null;
             <input type="text" class="config-port-input" placeholder="Порт" title="Порт (напр. 1/1/1:11)" autocomplete="off">
 <input type="text" class="config-vlan-input" placeholder="VLAN" title="VLAN (Залиште порожнім, щоб не міняти)" autocomplete="off">
             
-            <button type="button" class="config-replace-mode-btn active" title="Замінити попередній конфіг">
+            <button type="button" class="config-replace-mode-btn active" title="Заміняти попердньо доданий конфіг на новий">
                 <i class="fa-solid fa-arrows-rotate"></i>
             </button>
-            <button type="button" class="config-pon-onu-btn" title="Додавати PON-ONU конфіг при генерації">
+            <button type="button" class="config-pon-onu-btn" title="Додати PON-ONU до конфігу">
                 <i class="fa-solid fa-wave-square"></i>
             </button>
 
-            <button type="button" class="config-show-signal-btn" title="Зберегти та показати сигнал">
+            <button type="button" class="config-show-signal-btn" title="Зберегти та показати сигнал (додати Write та Pon-power)">
     <i class="fa-solid fa-signal"></i>
 </button>
 
