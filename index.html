@@ -336,6 +336,21 @@
         Команда скопійована!
     </div>
     
+<!-- === СПЛИВАЮЧЕ ВІКНО: ШВИДКІ НОТАТКИ === -->
+<div id="qn-popover" class="qn-popover">
+    <div class="qn-header">
+        <h3><i class="fa-solid fa-note-sticky"></i> Швидкі нотатки</h3>
+        <button class="qn-close-btn" onclick="closeQuickNotes()" title="Закрити"><i class="fa-solid fa-times"></i></button>
+    </div>
+    <div class="qn-input-area">
+        <textarea id="qn-input" placeholder="Короткий текст (Ctrl+Enter)"></textarea>
+        <button class="qn-add-btn" onclick="addQuickNote()">Додати</button>
+    </div>
+    <div class="qn-list" id="qn-list">
+        <!-- Тут будуть нотатки -->
+    </div>
+</div>
+    
     <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
 <script src="script.js"></script>
 </body>

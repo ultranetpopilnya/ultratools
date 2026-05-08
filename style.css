@@ -1885,7 +1885,7 @@ body.dark .template-actions button {
 .paste-login-btn:hover { background-color: var(--button-paste-bg); }
 .paste-clipboard-btn:hover { background-color: #fd7e14; }
 .search-template-btn:hover { background-color: #6f42c1; }
-
+.quick-notes-btn:hover { background-color: #f39c12; }
 .clear-template-btn:hover { background-color: var(--primary-accent-color); }
 
 .delete-template-btn:hover { background-color: var(--danger-color); }
@@ -4103,4 +4103,200 @@ body.dark .moon-icon {
 .clear-history-footer-btn:hover:active,
 .hist-close-btn:hover:active {
     transform: translateY(1px) scale(0.96);
+}
+
+/* =========================================
+   ШВИДКІ НОТАТКИ (ФІНАЛЬНА АДАПТОВАНА ВЕРСІЯ)
+   ========================================= */
+
+/* Основне вікно попапу */
+.qn-popover {
+    position: fixed;
+    width: 310px; /* Оптимальна компактна ширина */
+    background: var(--bg-color);
+    border: 1px solid var(--input-border-color);
+    border-radius: 14px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    z-index: 10000;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    
+    /* Анімація появи */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(12px);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.qn-popover.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* Шапка вікна */
+.qn-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    background: var(--tab-strip-bg);
+    border-bottom: 1px solid var(--input-border-color);
+}
+
+.qn-header h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-color);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.qn-close-btn {
+    background: none;
+    border: none;
+    color: var(--tab-inactive-text);
+    cursor: pointer;
+    font-size: 20px;
+    line-height: 1;
+    padding: 2px 6px;
+    transition: 0.2s;
+}
+.qn-close-btn:hover { color: var(--primary-accent-color); }
+
+/* Зона введення тексту */
+.qn-input-area {
+    padding: 12px 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: var(--bg-color);
+}
+
+#qn-input {
+    width: 100%;
+    height: 55px;
+    resize: none;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid var(--input-border-color);
+    background: var(--input-bg-color);
+    color: var(--text-color);
+    font-family: inherit;
+    font-size: 13.5px;
+    line-height: 1.4;
+    box-sizing: border-box;
+    outline: none;
+    transition: border-color 0.2s;
+}
+#qn-input:focus { border-color: var(--primary-accent-color); }
+
+.qn-add-btn {
+    align-self: flex-end;
+    padding: 6px 14px;
+    background: var(--primary-accent-color);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    transition: 0.2s;
+}
+.qn-add-btn:hover { filter: brightness(1.1); }
+
+/* Список збережених нотаток */
+.qn-list {
+    padding: 5px 15px 15px;
+    max-height: 250px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Скролбар (адаптований під ваш сайт) */
+.qn-list::-webkit-scrollbar { width: 6px; }
+.qn-list::-webkit-scrollbar-track { background: transparent; }
+.qn-list::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar-thumb);
+    border-radius: 10px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+}
+
+/* Картка однієї нотатки */
+.qn-item {
+    display: flex;
+    flex-direction: row; /* Текст і кнопки в один ряд */
+    justify-content: space-between;
+    align-items: center; /* Центрування по вертикалі */
+    gap: 12px;
+    padding: 10px 12px;
+    background: var(--input-bg-color);
+    border: 1px solid var(--input-border-color);
+    border-radius: 10px;
+    min-height: 46px; /* Стабільна висота для центрування */
+}
+
+/* Текст нотатки */
+.qn-text {
+    flex: 1;
+    min-width: 0;
+    font-size: 13.5px;
+    line-height: 1.25;
+    color: var(--text-color);
+    word-break: break-word;
+    display: flex;
+    align-items: center; /* Центрування тексту всередині свого блоку */
+}
+
+/* Блок кнопок справа */
+.qn-actions {
+    display: flex;
+    flex-direction: row; /* Кнопки в ряд */
+    align-items: center; /* Центрування іконок по вертикалі */
+    gap: 10px;
+    flex-shrink: 0; /* Щоб кнопки не стискалися */
+}
+
+/* Стиль кнопок дій */
+.qn-action-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--tab-inactive-text);
+    transition: 0.2s;
+}
+
+/* Розмір іконок всередині кнопок */
+.qn-action-btn i, 
+.qn-action-btn svg {
+    width: 17px;
+    height: 17px;
+    display: block;
+}
+
+.qn-edit-btn:hover { color: var(--primary-accent-color); }
+.qn-copy-btn { color: var(--success-color); }
+.qn-copy-btn:hover { opacity: 0.7; }
+.qn-del-btn:hover { color: #ff4d4d; }
+
+/* Повідомлення про порожній список */
+.qn-empty {
+    text-align: center;
+    color: var(--tab-inactive-text);
+    font-size: 13px;
+    padding: 20px 0;
+    font-style: italic;
 }

@@ -2065,6 +2065,19 @@ fieldGroup.dataset.lastGeneratedConfig = finalConfig;
     actionsDiv.appendChild(pasteLoginButton);
     
     actionsDiv.appendChild(createSeparator()); // --- РОЗДІЛЮВАЧ ---
+
+    // --- НОВА КНОПКА: ШВИДКІ НОТАТКИ ---
+    const quickNotesButton = document.createElement('button');
+    quickNotesButton.innerHTML = '<i class="fa-solid fa-note-sticky"></i>';
+    quickNotesButton.title = 'Швидкі нотатки';
+    quickNotesButton.className = 'quick-notes-btn'; 
+    
+    // ВАЖЛИВО: Передаємо 'event', щоб знати координати кнопки!
+    quickNotesButton.onclick = (e) => openQuickNotes(e);
+    
+    actionsDiv.appendChild(quickNotesButton);
+
+    actionsDiv.appendChild(createSeparator());
     
     // Група 3: Інструменти
     actionsDiv.appendChild(searchToggleButton);
@@ -3491,3 +3504,198 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
+/* =========================================
+   ЛОГІКА ШВИДКИХ НОТАТОК (POPOVER) + РЕДАГУВАННЯ
+   ========================================= */
+let quickNotesArray = [];
+let currentActiveQnBtn = null;
+let editingNoteIndex = -1; // -1 означає "додаємо нову", інакше - індекс нотатки, яку редагуємо
+
+// 1. Відкрити вікно під кнопкою
+function openQuickNotes(event) {
+    event.stopPropagation();
+    
+    const popover = document.getElementById('qn-popover');
+    const btn = event.currentTarget;
+
+    // Скидаємо режим редагування при кожному новому відкритті
+    resetQuickNoteForm();
+
+    if (popover.classList.contains('active') && currentActiveQnBtn === btn) {
+        closeQuickNotes();
+        return;
+    }
+
+    currentActiveQnBtn = btn;
+    
+    // --- РОЗУМНЕ ПОЗИЦІОНУВАННЯ ---
+    const rect = btn.getBoundingClientRect();
+    
+    let topPos = rect.bottom + 8;
+    let leftPos = rect.left - 150 + (rect.width / 2);
+
+    if (leftPos < 10) leftPos = 10;
+    if (leftPos + 320 > window.innerWidth) leftPos = window.innerWidth - 330;
+    
+    if (topPos + 350 > window.innerHeight) {
+        topPos = rect.top - 360; 
+    }
+
+    popover.style.top = `${topPos}px`;
+    popover.style.left = `${leftPos}px`;
+    
+    popover.classList.add('active');
+    loadQuickNotes();
+    setTimeout(() => document.getElementById('qn-input').focus(), 100);
+}
+
+// 2. Закрити вікно
+function closeQuickNotes() {
+    document.getElementById('qn-popover').classList.remove('active');
+    currentActiveQnBtn = null;
+    resetQuickNoteForm(); // Очищаємо поле при закритті
+}
+
+// 3. Закриття при кліку поза вікном
+document.addEventListener('click', (e) => {
+    const popover = document.getElementById('qn-popover');
+    if (popover.classList.contains('active') && !popover.contains(e.target) && !e.target.closest('.quick-notes-btn')) {
+        closeQuickNotes();
+    }
+});
+document.getElementById('qn-popover')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+});
+
+// 4. Робота з даними
+function loadQuickNotes() {
+    quickNotesArray = JSON.parse(localStorage.getItem('quickNotesData') || '[]');
+    renderQuickNotes();
+}
+
+// 5. ДОДАВАННЯ АБО ЗБЕРЕЖЕННЯ ВІДРЕДАГОВАНОЇ
+function addQuickNote() {
+    const input = document.getElementById('qn-input');
+    const text = input.value; // ВАЖЛИВО: Прибрали .trim()! Тепер зберігаються ВСІ пробіли і відступи.
+
+    // Перевіряємо, чи є хоч щось окрім порожнечі (щоб не додати абсолютно пусту нотатку)
+    if (text.trim() === '') {
+        showNotification("Текст не може бути порожнім!");
+        return;
+    }
+
+    if (editingNoteIndex > -1) {
+        // РЕЖИМ РЕДАГУВАННЯ
+        quickNotesArray[editingNoteIndex] = text;
+        showNotification("Нотатку оновлено!");
+        editingNoteIndex = -1; // Виходимо з режиму редагування
+    } else {
+        // РЕЖИМ ДОДАВАННЯ (НОВА)
+        quickNotesArray.unshift(text);
+    }
+
+    localStorage.setItem('quickNotesData', JSON.stringify(quickNotesArray));
+    resetQuickNoteForm();
+    renderQuickNotes();
+}
+
+// Повертає форму у стан "Додати нову"
+function resetQuickNoteForm() {
+    const input = document.getElementById('qn-input');
+    const btn = document.querySelector('.qn-add-btn');
+    
+    if (input && btn) {
+        input.value = '';
+        btn.innerHTML = 'Додати';
+        btn.style.backgroundColor = 'var(--primary-accent-color)';
+        editingNoteIndex = -1;
+    }
+}
+
+// Відправка по Ctrl+Enter
+document.getElementById('qn-input')?.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        e.preventDefault();
+        addQuickNote();
+    }
+});
+
+// 6. Скопіювати нотатку
+function copyQuickNote(index) {
+    const text = quickNotesArray[index];
+    navigator.clipboard.writeText(text).then(() => {
+        showNotification("Нотатку скопійовано!");
+        closeQuickNotes(); 
+    });
+}
+
+// 7. Почати редагування
+function editQuickNote(index) {
+    const input = document.getElementById('qn-input');
+    const btn = document.querySelector('.qn-add-btn');
+    
+    // Вставляємо текст нотатки в поле
+    input.value = quickNotesArray[index];
+    
+    // Змінюємо кнопку
+    btn.innerHTML = 'Зберегти';
+    btn.style.backgroundColor = '#f39c12'; // Робимо кнопку помаранчевою, щоб було видно режим редагування
+    
+    editingNoteIndex = index;
+    input.focus();
+}
+
+// 8. Видалити нотатку
+function deleteQuickNote(index) {
+    if (confirm("Видалити цю нотатку?")) {
+        quickNotesArray.splice(index, 1);
+        localStorage.setItem('quickNotesData', JSON.stringify(quickNotesArray));
+        
+        // Якщо ми видалили ту нотатку, яку зараз редагували — скидаємо форму
+        if (editingNoteIndex === index) {
+            resetQuickNoteForm();
+        } else if (editingNoteIndex > index) {
+            // Зсуваємо індекс, якщо видалили щось вище по списку
+            editingNoteIndex--;
+        }
+
+        renderQuickNotes();
+    }
+}
+
+// 9. Відмалювати список
+function renderQuickNotes() {
+    const list = document.getElementById('qn-list');
+    list.innerHTML = '';
+
+    if (quickNotesArray.length === 0) {
+        list.innerHTML = '<div class="qn-empty">У вас немає збережених нотаток.</div>';
+        return;
+    }
+
+    quickNotesArray.forEach((text, index) => {
+        const item = document.createElement('div');
+        item.className = 'qn-item';
+        
+        // Візуально замінюємо пробіли на спеціальні символи нерозривних пробілів (тільки для показу в HTML)
+        // Це гарантує, що пробіли в кінці чи на початку будуть видимі в браузері.
+        let displayHtml = escapeHtml(text).replace(/ /g, '&nbsp;');
+
+        item.innerHTML = `
+            <div class="qn-text">${displayHtml}</div>
+            <div class="qn-actions">
+                <button class="qn-action-btn qn-copy-btn" onclick="copyQuickNote(${index})" title="Скопіювати">
+                    <i class="fa-solid fa-copy"></i>
+                </button>
+                <button class="qn-action-btn qn-edit-btn" onclick="editQuickNote(${index})" title="Редагувати">
+                    <i class="fa-solid fa-pen"></i>
+                </button>
+                <button class="qn-action-btn qn-del-btn" onclick="deleteQuickNote(${index})" title="Видалити">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+            </div>
+        `;
+        list.appendChild(item);
+    });
+}
