@@ -44,7 +44,7 @@ function clearAllTemplates() {
         // Цей код виконається, тільки якщо користувач натисне "ОК"
         templatesGrid.innerHTML = ''; // Очищуємо контейнер з шаблонами
         saveTemplates(); // Зберігаємо порожній стан
-        showNotification("Усі шаблони було видалено.");
+        showNotification("Усі текстові шаблони було видалено.");
     }
 }
 
@@ -2323,7 +2323,7 @@ showSignalMode: group.dataset.showSignalMode === 'true',
                 // Чекаємо 50мс, щоб браузер "побачив" блоки, і розставляємо їх Тетрісом
                 setTimeout(() => {
                     packTemplates();
-                    showNotification("Шаблони успішно імпортовано!");
+                    showNotification("Текстові шаблони успішно імпортовано!");
                 }, 50);
 
             } catch (error) {
