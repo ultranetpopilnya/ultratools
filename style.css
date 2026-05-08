@@ -3865,20 +3865,28 @@ body.dark #command-output.two-columns {
 /* === АДАПТИВНІСТЬ ДЛЯ МАЛИХ ЕКРАНІВ === */
 /* ========================================= */
 @media (max-width: 1366px) {
-    /* Контейнер на всю ширину екрану */
-    .container.gpon-commands-container.expanded-layout {
-        max-width: 100% !important; 
+    /* Знаходимо всі контейнери, чий data-content містить слово "-commands" */
+    .container[data-content$="-commands"] {
+        width: 100% !important;
+        max-width: 100% !important;
+        --local-width: 100% !important;
+        left: 0 !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        transform: none !important; /* Прибираємо центрування, якщо воно заважає */
+    }
+
+    /* Виправляємо колонки всередині будь-якого з цих контейнерів */
+    #command-output.two-columns {
+        column-count: 1 !important;
+        column-rule: none !important;
+        max-height: none !important;
+        column-fill: auto !important;
     }
     
-    /* ПОВНІСТЮ ВИМИКАЄМО КОЛОНКИ ДЛЯ НОУТБУКІВ/ТЕЛЕФОНІВ */
-    #command-output.two-columns {
-        column-count: 1;          /* Повертаємо в одну суцільну колонку */
-        column-rule: none;        /* Прибираємо вертикальну лінію */
-        
-        /* ВАЖЛИВО: Знімаємо ліміт висоти, щоб на малих екранах 
-           команди не обрізались, а просто скролились вниз */
-        max-height: none;         
-        column-fill: balance;     /* Скидаємо логіку заповнення до стандартної */
+    /* Додатково: щоб картка всередині не мала відступів від країв екрану */
+    .container[data-content$="-commands"] .content-card {
+        border-radius: 0 !important; /* На мобільних виглядає краще без закруглень */
     }
 }
 
