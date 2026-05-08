@@ -674,9 +674,6 @@ function loadCommandsFromFile() {
                 '<p style="text-align: center; color: #dc3545; padding: 20px;">Не вдалося завантажити файл commands.txt</p>';
         });
 }
-
-    const commandOutput = document.getElementById('command-output');
-    const notification = document.getElementById('notification');
     
     function displayCommands(deviceType) {
     const commandOutput = document.getElementById('command-output');
@@ -832,10 +829,12 @@ function loadCommandsFromFile() {
     // оскільки логіка тепер вбудована прямо в displayCommands через copyCommandToClipboard
 
     function showNotification(message) {
-        notification.textContent = message;
-        notification.classList.add('show');
-        setTimeout(() => notification.classList.remove('show'), 2000);
-    }
+    const notification = document.getElementById('notification'); // ДОДАНО
+    if (!notification) return; // ДОДАНО (захист від помилок)
+    notification.textContent = message;
+    notification.classList.add('show');
+    setTimeout(() => notification.classList.remove('show'), 2000);
+}
     
 function initDraggableAndResizable(element) {
     interact(element).resizable({
@@ -1073,12 +1072,13 @@ function initDraggableAndResizable(element) {
     }
 	
     function createTemplateField(data = {}) {
-    // Встановлюємо дефолтну ширину 350px, якщо це новий шаблон
     const {
-    name = '', content = '', width = '350px', height = '90px', bookmarks = [],
-    lastGeneratedConfig = '', lastConfigStart = -1, lastConfigEnd = -1,
-    ponOnuMode = false, replaceMode = true
-} = data;
+        name = '', content = '', width = '350px', height = '90px', bookmarks = [],
+        lastGeneratedConfig = '', lastConfigStart = -1, lastConfigEnd = -1,
+        ponOnuMode = false, replaceMode = true,
+        // ДОДАНО ДВІ ЗМІННІ НИЖЧЕ:
+        isSearchOpen = false, isConfigOpen = false
+    } = data;
     const container = document.getElementById('templates-grid-wrapper'); 
     const fieldGroup = document.createElement('div');
     fieldGroup.className = 'template-field-group';
@@ -1269,20 +1269,23 @@ fieldGroup.dataset.replaceMode         = replaceMode;
         const panel = fieldGroup.querySelector('.template-search-bar');
         const isActive = panel.classList.contains('active');
 
-        // Просто перемикаємо стан поточної панелі (БЕЗ впливу на інші шаблони)
         if (isActive) {
             panel.classList.remove('active');
         } else {
+            // ДОДАНО: Якщо відкриваємо пошук, закриваємо генератор конфігів
+            const configPanel = fieldGroup.querySelector('.template-config-bar');
+            if (configPanel) configPanel.classList.remove('active');
+            
             panel.classList.add('active');
-            // Автоматично ставимо курсор у поле "Знайти" через мить після відкриття
+            // Автоматично ставимо курсор у поле "Знайти"
             setTimeout(() => {
                 const input = panel.querySelector('.input-find');
                 if (input) input.focus();
             }, 50);
-            
-            // Оновлюємо сітку Тетрісу, бо шаблон став трохи вищим
-            setTimeout(() => packTemplates(), 260); 
         }
+        
+        saveTemplates(); // Зберігаємо стан (якщо ти додав це з попереднього кроку)
+        setTimeout(() => packTemplates(), 260); // Оновлюємо сітку Тетрісу
     };
 
     // === КНОПКА ГЕНЕРАТОРА КОНФІГІВ ===
@@ -1311,8 +1314,8 @@ let selectedOltSource = null;
     <div class="olt-dropdown-list"></div>
 </div>
             
-            <input type="text" class="config-login-input" placeholder="Логін" title="Логін">
-            <select class="config-speed-select" title="Швидкість">
+            <input type="text" class="config-login-input" placeholder="Логін" title="Логін" autocomplete="off">
+            <select class="config-speed-select" title="Швидкість" autocomplete="off">
                     <option value="10M">10M</option>
                     <option value="20M">20M</option>
                     <option value="30M">30M</option>
@@ -1325,8 +1328,8 @@ let selectedOltSource = null;
                     <option value="500M">500M</option>
                     <option value="1G">1G</option>
             </select>
-            <input type="text" class="config-port-input" placeholder="Порт" title="Порт (напр. 1/2/5:10)">
-            <input type="text" class="config-vlan-input" placeholder="VLAN" title="VLAN (Залиште порожнім, щоб не міняти)">
+            <input type="text" class="config-port-input" placeholder="Порт" title="Порт (напр. 1/1/1:11)" autocomplete="off">
+<input type="text" class="config-vlan-input" placeholder="VLAN" title="VLAN (Залиште порожнім, щоб не міняти)" autocomplete="off">
             
             <button type="button" class="config-replace-mode-btn active" title="Замінити попередній конфіг">
                 <i class="fa-solid fa-arrows-rotate"></i>
@@ -1442,6 +1445,8 @@ if (!isDeleting) {
             }
 
             setTimeout(() => packTemplates(), 260);
+
+            saveTemplates();
         }
     };
     
@@ -1820,7 +1825,10 @@ fieldGroup.dataset.lastGeneratedConfig = finalConfig;
                 searchPanel.classList.remove('active');
                 // Після закриття пошуку повертаємо курсор назад у текст, щоб можна було відразу друкувати
                 const textarea = fieldGroup.querySelector('textarea');
-                if (textarea) textarea.focus(); 
+                if (textarea) textarea.focus();
+                
+                saveTemplates(); // ДОДАНО: зберігаємо стан
+                setTimeout(() => packTemplates(), 260); // ДОДАНО: пакуємо тетріс після закриття
             }
         }
     });
@@ -2046,6 +2054,10 @@ fieldGroup.dataset.lastGeneratedConfig = finalConfig;
     renderLineMarkers(fieldGroup);
     
     if (window.textareaObserver) window.textareaObserver.observe(textarea);
+
+    // ДОДАНО: Відкриваємо панелі, якщо вони були відкриті при збереженні
+    if (isSearchOpen) searchPanel.classList.add('active');
+    if (isConfigOpen) configPanel.classList.add('active');
     
     return fieldGroup;
 }
@@ -2190,26 +2202,34 @@ function addTemplate() {
 }
     
     function saveTemplates() {
-        const templates = [];
-        // Зберігаємо в тому порядку, в якому вони йдуть в HTML (зліва направо, зверху вниз)
-        document.querySelectorAll('#templates-grid-wrapper .template-field-group').forEach(group => {
-            const nameInput = group.querySelector('.template-name-input');
-            const textarea = group.querySelector('textarea');
-            templates.push({
-    name: nameInput ? nameInput.value : '',
-    content: textarea ? textarea.value : '',
-    width: group.style.width,
-    height: group.style.height,
-    bookmarks: JSON.parse(group.dataset.bookmarks || '[]'),
-    lastGeneratedConfig: group.dataset.lastGeneratedConfig || '',
-    lastConfigStart: parseInt(group.dataset.lastConfigStart ?? '-1', 10),
-    lastConfigEnd:   parseInt(group.dataset.lastConfigEnd   ?? '-1', 10),
-    ponOnuMode:  group.dataset.ponOnuMode  === 'true',
-    replaceMode: group.dataset.replaceMode !== 'false'
-});
+    const templates = [];
+    document.querySelectorAll('#templates-grid-wrapper .template-field-group').forEach(group => {
+        const nameInput = group.querySelector('.template-name-input');
+        const textarea = group.querySelector('textarea');
+        
+        // Зчитуємо стани панелей для поточного шаблону
+        const searchPanel = group.querySelector('.template-search-bar');
+        const configPanel = group.querySelector('.template-config-bar');
+
+        templates.push({
+            name: nameInput ? nameInput.value : '',
+            content: textarea ? textarea.value : '',
+            width: group.style.width,
+            height: group.style.height,
+            bookmarks: JSON.parse(group.dataset.bookmarks || '[]'),
+            lastGeneratedConfig: group.dataset.lastGeneratedConfig || '',
+            lastConfigStart: parseInt(group.dataset.lastConfigStart ?? '-1', 10),
+            lastConfigEnd:   parseInt(group.dataset.lastConfigEnd   ?? '-1', 10),
+            ponOnuMode:  group.dataset.ponOnuMode  === 'true',
+            replaceMode: group.dataset.replaceMode !== 'false',
+            
+            // ДОДАНО: Зберігаємо стани відкритих панелей
+            isSearchOpen: searchPanel ? searchPanel.classList.contains('active') : false,
+            isConfigOpen: configPanel ? configPanel.classList.contains('active') : false
         });
-        localStorage.setItem('textTemplates', JSON.stringify(templates));
-    }
+    });
+    localStorage.setItem('textTemplates', JSON.stringify(templates));
+}
 
     function loadTemplates() {
         const templatesJson = localStorage.getItem('textTemplates');
