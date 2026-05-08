@@ -3542,10 +3542,20 @@ function openQuickNotes(event) {
         topPos = rect.top - 360; 
     }
 
+    // 1. Тимчасово вимикаємо будь-які анімації
+    popover.style.transition = 'none';
+
+    // 2. Миттєво переміщуємо вікно на нові координати
     popover.style.top = `${topPos}px`;
     popover.style.left = `${leftPos}px`;
     
+    // 3. Змушуємо браузер застосувати координати прямо зараз (трюк з reflow)
+    void popover.offsetWidth; 
+    
+    // 4. Повертаємо анімацію назад (вона підтягнеться з CSS) і показуємо вікно
+    popover.style.transition = '';
     popover.classList.add('active');
+    
     loadQuickNotes();
     setTimeout(() => document.getElementById('qn-input').focus(), 100);
 }
