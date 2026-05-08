@@ -3821,8 +3821,8 @@ body.dark #calc-auto-clear-btn.active {
 
 /* Базовий контейнер */
 .container.gpon-commands-container {
-    width: 100% !important;
-    max-width: 54% !important;
+    width: 98% !important;
+    max-width: 54%;
     margin: 0 auto;
     transition: max-width 0.4s cubic-bezier(0.25, 1, 0.5, 1),
                 opacity 0.3s ease-in-out, 
@@ -3831,7 +3831,7 @@ body.dark #calc-auto-clear-btn.active {
 
 /* Розширений стан контейнера (на великих моніторах) */
 .container.gpon-commands-container.expanded-layout {
-    max-width: 98% !important; 
+    max-width: 98%; 
 }
 
 /* Сам список команд */
