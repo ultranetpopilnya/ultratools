@@ -3051,7 +3051,8 @@ body.dark .template-config-bar {
 
 /* --- НОВІ КНОПКИ: Замінити та PON-ONU --- */
 .config-replace-mode-btn,
-.config-pon-onu-btn {
+.config-pon-onu-btn,
+.config-show-signal-btn {
     flex: 0 0 32px; /* Квадратні кнопки 32х32px */
     height: 100%;
     padding: 0;
@@ -3072,7 +3073,8 @@ body.dark .template-config-bar {
 }
 
 .config-replace-mode-btn:hover,
-.config-pon-onu-btn:hover {
+.config-pon-onu-btn:hover,
+.config-show-signal-btn:hover {
     border-color: var(--primary-accent-color);
     color: var(--primary-accent-color);
     box-shadow: 0 2px 4px rgba(0, 123, 255, 0.15);
@@ -3081,7 +3083,8 @@ body.dark .template-config-bar {
 
 /* Активний стан кнопок-тумблерів (Світяться синім) */
 .config-replace-mode-btn.active,
-.config-pon-onu-btn.active {
+.config-pon-onu-btn.active,
+.config-show-signal-btn.active {
     background-color: rgba(0, 123, 255, 0.1);
     color: var(--primary-accent-color);
     border-color: var(--primary-accent-color);
@@ -3262,7 +3265,8 @@ body.dark .select-group-title {
 }
 
 body.dark .config-replace-mode-btn.active,
-body.dark .config-pon-onu-btn.active {
+body.dark .config-pon-onu-btn.active,
+body.dark .config-show-signal-btn.active {
     background-color: rgba(230, 162, 46, 0.15);
     color: var(--secondary-accent-color);
     border-color: var(--secondary-accent-color);

@@ -1076,7 +1076,7 @@ function initDraggableAndResizable(element) {
         name = '', content = '', width = '350px', height = '90px', bookmarks = [],
         lastGeneratedConfig = '', lastConfigStart = -1, lastConfigEnd = -1,
         ponOnuMode = false, replaceMode = true,
-        // ДОДАНО ДВІ ЗМІННІ НИЖЧЕ:
+        showSignalMode = false,
         isSearchOpen = false, isConfigOpen = false
     } = data;
     const container = document.getElementById('templates-grid-wrapper'); 
@@ -1104,6 +1104,7 @@ fieldGroup.dataset.lastConfigStart     = lastConfigStart;
 fieldGroup.dataset.lastConfigEnd       = lastConfigEnd;
 fieldGroup.dataset.ponOnuMode          = ponOnuMode;
 fieldGroup.dataset.replaceMode         = replaceMode;
+fieldGroup.dataset.showSignalMode      = showSignalMode;
     
     fieldGroup.style.width = width;
     fieldGroup.style.height = height;
@@ -1302,6 +1303,7 @@ fieldGroup.dataset.replaceMode         = replaceMode;
     
     let isReplaceMode = (fieldGroup.dataset.replaceMode !== 'false');
 let isPonOnuMode  = (fieldGroup.dataset.ponOnuMode === 'true');
+let isShowSignalMode = (fieldGroup.dataset.showSignalMode === 'true');
 
     // Генеруємо унікальний ID для списку, щоб шаблони не конфліктували
     let selectedOltObj = null;
@@ -1337,6 +1339,10 @@ let selectedOltSource = null;
             <button type="button" class="config-pon-onu-btn" title="Додавати PON-ONU конфіг при генерації">
                 <i class="fa-solid fa-wave-square"></i>
             </button>
+
+            <button type="button" class="config-show-signal-btn" title="Зберегти та показати сигнал">
+    <i class="fa-solid fa-signal"></i>
+</button>
 
             <button type="button" class="config-generate-btn" title="Згенерувати конфіг">
                 <i class="fa-solid fa-bolt"></i>
@@ -1545,6 +1551,22 @@ btnPonOnu.addEventListener('click', (e) => {
 btnReplaceMode.classList.toggle('active', isReplaceMode);
 btnPonOnu.classList.toggle('active', isPonOnuMode);
 
+// === ТУМБЛЕР: СИГНАЛ ===
+const btnShowSignal = configPanel.querySelector('.config-show-signal-btn');
+btnShowSignal.addEventListener('click', (e) => {
+    e.preventDefault();
+    isShowSignalMode = !isShowSignalMode;
+    btnShowSignal.classList.toggle('active', isShowSignalMode);
+    fieldGroup.dataset.showSignalMode = isShowSignalMode;
+    saveTemplates();
+    showNotification(isShowSignalMode ? "Сигнал УВІМКНЕНО" : "Сигнал ВИМКНЕНО");
+});
+
+// Відновлюємо стан після перезавантаження сторінки
+btnReplaceMode.classList.toggle('active', isReplaceMode);
+btnPonOnu.classList.toggle('active', isPonOnuMode);
+btnShowSignal.classList.toggle('active', isShowSignalMode); // ДОДАНО
+
     // === ГОЛОВНА ЛОГІКА ГЕНЕРАЦІЇ ===
     const btnGenerate = configPanel.querySelector('.config-generate-btn');
     btnGenerate.addEventListener('click', (e) => {
@@ -1632,6 +1654,27 @@ if (!oltObj) {
                 finalConfig += '\n' + finalExtraConfig;
             } else {
                 showNotification(`Шаблон PON-ONU для ${ponType.toUpperCase()} не знайдено у файлі!`);
+            }
+        }
+
+        // 2.5 Додаємо Сигнал, якщо тумблер увімкнений
+        if (isShowSignalMode) {
+            if (!portVal) {
+                showNotification("Вкажіть Порт для команди сигналу!");
+                return;
+            }
+            let ponType = '';
+            if (currentTemplateName.toLowerCase().includes('gpon')) ponType = 'gpon';
+            else if (currentTemplateName.toLowerCase().includes('epon')) ponType = 'epon';
+            
+            if (ponType && SIGNAL_TEMPLATES[ponType]) {
+                const signalConfig = SIGNAL_TEMPLATES[ponType]
+                    .replace(/{PORT}/g, portVal)
+                    .trim();
+                
+                finalConfig += '\n' + signalConfig; // Дописуємо в кінець
+            } else {
+                showNotification(`Шаблон сигналу для ${ponType.toUpperCase()} не знайдено!`);
             }
         }
 
@@ -2221,7 +2264,8 @@ function addTemplate() {
             lastConfigStart: parseInt(group.dataset.lastConfigStart ?? '-1', 10),
             lastConfigEnd:   parseInt(group.dataset.lastConfigEnd   ?? '-1', 10),
             ponOnuMode:  group.dataset.ponOnuMode  === 'true',
-            replaceMode: group.dataset.replaceMode !== 'false',
+replaceMode: group.dataset.replaceMode !== 'false',
+showSignalMode: group.dataset.showSignalMode === 'true',
             
             // ДОДАНО: Зберігаємо стани відкритих панелей
             isSearchOpen: searchPanel ? searchPanel.classList.contains('active') : false,
@@ -2388,6 +2432,7 @@ document.getElementById('clear-history-btn').addEventListener('click', () => {
 let OLT_CONFIGS = { ultranet: [], energy: [] };
 let OLT_TEMPLATES = {}; 
 let PON_ONU_TEMPLATES = { gpon: "", epon: "" }; // <--- НОВЕ: Зберігаємо PON-ONU тут
+let SIGNAL_TEMPLATES = { gpon: "", epon: "" };
 
 function loadOltConfigs() {
     fetch('olt_configs.txt?v=' + Date.now())
@@ -2398,7 +2443,8 @@ function loadOltConfigs() {
         .then(text => {
             OLT_CONFIGS = { ultranet: [], energy: [] };
             OLT_TEMPLATES = {};
-            PON_ONU_TEMPLATES = { gpon: "", epon: "" }; // Очищаємо перед новим завантаженням
+            PON_ONU_TEMPLATES = { gpon: "", epon: "" }; 
+SIGNAL_TEMPLATES = { gpon: "", epon: "" }; // ДОДАНО
             
             let currentSection = null; 
             let currentTemplateName = null;
@@ -2421,6 +2467,9 @@ function loadOltConfigs() {
                 if (trimmed.toUpperCase() === '[GPON PON-ONU]') { currentSection = 'gpon_pon_onu'; return; }
                 if (trimmed.toUpperCase() === '[EPON PON-ONU]') { currentSection = 'epon_pon_onu'; return; }
 
+                if (trimmed.toUpperCase() === '[WRITE-SHOW-PON-POWER GPON]') { currentSection = 'gpon_signal'; return; }
+if (trimmed.toUpperCase() === '[WRITE-SHOW-PON-POWER EPON]') { currentSection = 'epon_signal'; return; }
+
                 // 3. Шукаємо списки комутаторів
                 if (trimmed === '[Ultranet]') { currentSection = 'ultranet'; return; } 
                 else if (trimmed === '[ISP Energy]') { currentSection = 'energy'; return; }
@@ -2432,7 +2481,12 @@ function loadOltConfigs() {
                     PON_ONU_TEMPLATES.gpon += line + '\n';
                 } else if (currentSection === 'epon_pon_onu') {
                     PON_ONU_TEMPLATES.epon += line + '\n';
-                } else if (currentSection === 'ultranet' || currentSection === 'energy') {
+                } else if (currentSection === 'gpon_signal') {
+    SIGNAL_TEMPLATES.gpon += line + '\n';
+} else if (currentSection === 'epon_signal') {
+    SIGNAL_TEMPLATES.epon += line + '\n';
+}           
+                else if (currentSection === 'ultranet' || currentSection === 'energy') {
                     const splitIndex = trimmed.indexOf('=');
                     if (splitIndex !== -1) {
                         const oltName = trimmed.substring(0, splitIndex).trim();

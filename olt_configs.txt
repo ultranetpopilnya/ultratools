@@ -164,8 +164,6 @@ loop-detect ethuni eth_0/1 enable
 gemport 1 flow 1
 vlan gemport 1 mode transparent
 end
-show pon power attenuation gpon-onu_{PORT}
-write
 
 # ==========================================
 [EPON PON-ONU]
@@ -176,8 +174,14 @@ compatibility enable mode CTC
 vlan port eth_0/1 mode transparent
 interface-loopdetect eth_0/1 activate
 end
-show pon power attenuation epon-onu_{PORT}
-write
 
 # ==========================================
+
+[WRITE-SHOW-PON-POWER GPON]
+show pon power attenuation gpon-onu_{PORT}
+write
+
+[WRITE-SHOW-PON-POWER EPON]
+show pon power attenuation epon-onu_{PORT}
+write
 
