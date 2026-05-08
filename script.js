@@ -1340,7 +1340,7 @@ let selectedOltSource = null;
                 <i class="fa-solid fa-wave-square"></i>
             </button>
 
-            <button type="button" class="config-show-signal-btn" title="Зберегти та показати сигнал (додати Write та Pon-power)">
+            <button type="button" class="config-show-signal-btn" title="Показати сигнал та зберегти (додати Pon-power та Write)">
     <i class="fa-solid fa-signal"></i>
 </button>
 
