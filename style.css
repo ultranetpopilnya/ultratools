@@ -4181,8 +4181,6 @@ body.dark .qn-header { border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
 }
 .qn-close-btn:hover { 
     color: var(--danger-color); 
-    background-color: rgba(220, 53, 69, 0.1);
-    transform: rotate(90deg); /* Мила анімація закриття */
 }
 
 /* Зона введення тексту */
