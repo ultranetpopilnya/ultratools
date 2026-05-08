@@ -1,3 +1,14 @@
+body, 
+.content-card, 
+.win11-calc, 
+.calc-display-container, 
+.history-item,
+input, 
+textarea, 
+select {
+    transition: var(--theme-transition);
+}
+
 /* 1. Для Chrome, Edge, Safari (основний стиль) */
 *::-webkit-scrollbar {
     width: 8px;  /* Ширина вертикального скролу */
@@ -34,7 +45,6 @@
 }
 
 *, *::before, *::after {
-    transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease;
     box-sizing: border-box;
 }
 
@@ -339,9 +349,6 @@ body.dark .extension-version-badge { background-color: rgba(230, 162, 46, 0.15);
     
     /* Дозволяємо скролінг всередині картки */
     overflow: auto;
-    
-    /* Плавний перехід для тіні */
-    transition: box-shadow 0.5s ease-in-out, background-color 0.5s ease, color 0.5s ease;
 }
 
 /* Покращуємо тінь для темної теми */
@@ -363,7 +370,7 @@ background-color: var(--template-bg-color);
     display: flex;
     justify-content: center;
     align-items: center;
-    transition: all 0.2s ease-in-out, background-color 0.5s ease, color 0.5s ease;
+    transition: all 0.2s ease-in-out;
     padding: 0;
 }
 
@@ -437,6 +444,8 @@ body.dark .progress-ring-fg {
 
 	/* === ОСНОВНА ПАЛІТРА ТА ЗМІННІ ТЕМИ === */
 :root {
+    --theme-transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease;
+
     --bg-base: #f8fafc; 
     
     /* Ваші 4 кольори у звичайному HEX-форматі */
@@ -496,6 +505,8 @@ body.dark .progress-ring-fg {
 }
 
 body.dark {
+    color-scheme: dark;
+
         --bg-base: #191919; 
         
         /* HEX-кольори для темної теми */
@@ -838,7 +849,6 @@ body.dark .login-generator-container .result-item .regenerate-login-btn {
     color: var(--text-color); 
     -webkit-text-fill-color: var(--text-color);
     resize: none !important;
-    transition: border-color 0.5s, background-color 0.5s ease, color 0.5s ease;
 }
 
 .highlighter-backdrop mark {
@@ -928,26 +938,16 @@ body.dark .template-field-group .textarea-wrapper:focus-within {
     user-select: text;         /* Стандартний синтаксис */
 }
 
-/* === БАЗОВИЙ ПРОЗОРИЙ БОРДЕР ДЛЯ ВСІХ ВВІДНИХ ЕЛЕМЕНТІВ === */
-input,
-textarea,
-select,
-.template-field-group,
-.date-input-group input,
-#fullNameInput {
-    border: 1px solid transparent;
-    transition: border-color 0.5s, box-shadow 0.5s, background-color 0.5s;
-}
-
-input,
-textarea,
-select,
-.date-input-group input,
-#fullNameInput {
-    border-color: var(--input-border-color);
+/* Базові інпути */
+input, textarea, select, .date-input-group input, #fullNameInput {
+    border: 1px solid var(--input-border-color);
     background-color: var(--input-bg-color);
     color: var(--text-color);
-    transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease;
+}
+
+/* Окремо для групи шаблонів, бо їй потрібен transparent */
+.template-field-group {
+    border: 1px solid transparent;
 }
 
 input:focus:not([type="button"]):not([type="submit"]),
@@ -1140,7 +1140,6 @@ body.dark .gpon-commands-container select {
             padding-bottom: 0rem; 
             background-color: var(--bg-color);
             color: var(--text-color);
-            transition: background-color 0.5s ease, color 0.5s ease;
         }
 
         h1 {
@@ -1278,7 +1277,6 @@ body.dark .date-calculator-container .date-input-group input[type="time"] {
     background-color: var(--input-bg-color);
     border-color: var(--input-border-color);
     color: var(--text-color);
-    color-scheme: dark; /* Це найважливіший рядок, він робить іконки світлими */
 }
 
 body.dark .date-calculator-container #result-section {
@@ -1293,7 +1291,6 @@ body.dark .date-calculator-container #result-section {
             border-radius: 12px; 
             font-size: 1em;
             cursor: pointer;
-            transition: border-color 0.5s, background-color 0.5s ease, color 0.5s ease;
             width: 100%;
             margin-bottom: 5px; 
         }
@@ -1488,7 +1485,6 @@ body.dark .tabs {
 /* 3. Звичайний стан кнопки (курсор - звичайна стрілка або рука-клік) */
 .tab-button {
     cursor: pointer; /* Звичайна рука */
-    transition: background-color 0.5s, box-shadow 0.5s, transform 0.5s;
     /* Забороняємо виділяти текст, щоб не заважало тягнути */
     user-select: none; 
     -webkit-user-select: none;
@@ -1561,8 +1557,8 @@ body.dark .tab-button.active {
     align-items: center;
     justify-content: flex-end; /* Притискає вміст (кнопки) вправо */
     position: relative;        /* Створює "якір" для позиціонування заголовка */
-    margin-top: 0 !important;   /* Прибираємо відступ зверху */
-    padding-top: 0 !important;  /* Гарантуємо відсутність внутрішнього відступу */
+    margin-top: 0;   /* Прибираємо відступ зверху */
+    padding-top: 0;  /* Гарантуємо відсутність внутрішнього відступу */
     min-height: 32px;           /* Висота рівно під розмір кнопок/тексту */
     margin-bottom: 14px;        /* Відступ знизу (як було раніше) */
     
@@ -2073,7 +2069,7 @@ overflow-x: hidden;
     /* --- ЗМІНА 3: Фікс графічного багу (курсора/артефактів) --- */
     /* Цей рядок змушує браузер краще обробляти краї при скролі */
     transform: translate3d(0,0,0); 
-    will-change: scroll-position;
+    will-change: transform;
 }
 
 	::placeholder {
@@ -2508,7 +2504,6 @@ body.dark .history-copy-btn:hover { background: var(--secondary-accent-color); c
 /* =========================================================
    ФІНАЛЬНІ СТИЛІ: ДИНАМІЧНА ВИСОТА (GPON + ГЕНЕРАТОР)
    ========================================================= */
-/* 1. КОНТЕЙНЕР: Розміри зафіксовані завжди (навіть без .active) */
 .container.gpon-commands-container {
     /* Висота "авто" (по контенту), але не більше екрана */
     height: auto !important; 
@@ -3294,10 +3289,8 @@ body.dark .template-search-bar {
 }
 
 body.dark .template-search-bar.active {
-    border: 1px solid rgba(255, 255, 255, 0.15) !important; /* Чітка видима рамка для темної теми */
+    border: 1px solid rgba(255, 255, 255, 0.15); /* Чітка видима рамка для темної теми */
 }
-
-body.dark .template-search-bar.active { border: none; }
 
 body.dark .search-inputs-row input,
 body.dark .search-inputs-row select,
@@ -3521,7 +3514,7 @@ body.dark .calc-display-container {
     background-color: #f9f9f9;
     color: #333;
     box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-    transition: all 0.15s ease-out, background-color 0.5s ease, color 0.5s ease;
+    transition: all 0.15s ease-out;
     padding: 0;
 }
 
@@ -3578,7 +3571,7 @@ body.dark .c-btn.equal { background-color: var(--secondary-accent-color); color:
     
     background-color: rgba(255, 255, 255, 0.98); 
     
-    transition: bottom 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), background-color 0.5s ease, color 0.5s ease;
+    transition: bottom 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
     z-index: 20;
     
     display: flex;
@@ -3844,13 +3837,7 @@ body.dark #calc-auto-clear-btn.active {
 #command-output.two-columns {
     column-count: 2;          
     column-gap: 12px;         
-    column-rule: 2px solid var(--input-border-color); 
-    
-    /* "Газетна" верстка: заповнюємо ліву, потім переходимо в праву */
-    /*column-fill: auto;*/
-    
-    /* Ліміт висоти. Щойно команди досягнуть 70% висоти екрану - полетять в праву колонку */
-    /*max-height: 64vh;*/ 
+    column-rule: 2px solid var(--input-border-color);
 }
 
 body.dark #command-output.two-columns {
