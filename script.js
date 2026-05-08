@@ -1139,36 +1139,13 @@ fieldGroup.dataset.showSignalMode      = showSignalMode;
         }).catch(err => console.error('Error:', err));
     };
     
-    // --- 1. КНОПКА ВСТАВКИ ТІЛЬКИ ЗГЕНЕРОВАНОГО ЛОГІНА ---
-    const pasteLoginButton = document.createElement('button');
-    // Змінимо іконку, щоб відрізняти від звичайної вставки (наприклад, іконка юзера/тегу)
-    pasteLoginButton.innerHTML = '<i class="fa-solid fa-user-tag"></i>'; 
-    pasteLoginButton.title = 'Вставити згенерований логін';
-    pasteLoginButton.className = 'paste-login-btn';
-    pasteLoginButton.onclick = () => {
+    // --- СПІЛЬНА ФУНКЦІЯ ДЛЯ ВСТАВКИ (Щоб не дублювати код) ---
+    const insertTextIntoTextarea = (targetText) => {
         const textarea = fieldGroup.querySelector('textarea');
         const start = textarea.selectionStart;
         const end = textarea.selectionEnd;
         const text = textarea.value;
         const selectedText = text.substring(start, end);
-
-        let targetText = ''; 
-
-        // 1. Пріоритет: Беремо найперший з історії (те, що користувач щойно скопіював)
-        const history = JSON.parse(localStorage.getItem('loginHistory') || '[]');
-        if (history.length > 0) {
-            targetText = history[0].login;
-        } 
-        // 2. Якщо історія пуста, але є щойно згенерований в пам'яті
-        else if (lastGeneratedLogin) {
-            targetText = lastGeneratedLogin;
-        }
-
-        // Якщо взагалі глухо
-        if (!targetText) {
-            showNotification('Немає згенерованого логіна для вставки!');
-            return;
-        }
 
         const savedScrollTop = textarea.scrollTop;
 
@@ -1193,18 +1170,35 @@ fieldGroup.dataset.showSignalMode      = showSignalMode;
         saveTemplates();
     };
 
-    // --- 2. НОВА КНОПКА ЗВИЧАЙНОЇ ВСТАВКИ З БУФЕРА ОБМІНУ ---
+    // --- 1. КНОПКА ВСТАВКИ ТІЛЬКИ ЗГЕНЕРОВАНОГО ЛОГІНА ---
+    const pasteLoginButton = document.createElement('button');
+    pasteLoginButton.innerHTML = '<i class="fa-solid fa-user-tag"></i>'; 
+    pasteLoginButton.title = 'Вставити згенерований логін';
+    pasteLoginButton.className = 'paste-login-btn';
+    pasteLoginButton.onclick = () => {
+        let targetText = ''; 
+
+        const history = JSON.parse(localStorage.getItem('loginHistory') || '[]');
+        if (history.length > 0) {
+            targetText = history[0].login;
+        } else if (lastGeneratedLogin) {
+            targetText = lastGeneratedLogin;
+        }
+
+        if (!targetText) {
+            showNotification('Немає згенерованого логіна для вставки!');
+            return;
+        }
+        
+        insertTextIntoTextarea(targetText); // Викликаємо спільну функцію
+    };
+
+    // --- 2. КНОПКА ЗВИЧАЙНОЇ ВСТАВКИ З БУФЕРА ОБМІНУ ---
     const pasteClipboardButton = document.createElement('button');
     pasteClipboardButton.innerHTML = '<i class="fa-solid fa-paste"></i>';
     pasteClipboardButton.title = 'Вставити';
     pasteClipboardButton.className = 'paste-clipboard-btn';
     pasteClipboardButton.onclick = async () => {
-        const textarea = fieldGroup.querySelector('textarea');
-        const start = textarea.selectionStart;
-        const end = textarea.selectionEnd;
-        const text = textarea.value;
-        const selectedText = text.substring(start, end);
-
         let targetText = '';
 
         try {
@@ -1219,27 +1213,7 @@ fieldGroup.dataset.showSignalMode      = showSignalMode;
             return;
         }
 
-        const savedScrollTop = textarea.scrollTop;
-
-        // ДІЯ: Масова заміна АБО звичайна вставка
-        if (start !== end && selectedText.length > 0) {
-            const escapeRegExp = (string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-            const regex = new RegExp(escapeRegExp(selectedText), 'g');
-            textarea.value = text.replace(regex, targetText);
-            showNotification(`Замінено всі: ${selectedText} ➔ ${targetText}`);
-            textarea.setSelectionRange(start, start + targetText.length);
-        } else {
-            textarea.value = text.substring(0, start) + targetText + text.substring(end);
-            const newCursorPos = start + targetText.length;
-            textarea.setSelectionRange(newCursorPos, newCursorPos);
-        }
-
-        textarea.focus({ preventScroll: true });
-        textarea.scrollTop = savedScrollTop;
-        const highlighter = fieldGroup.querySelector('.highlighter-backdrop');
-        updateHighlight(textarea, highlighter); 
-        updateBookmarksOnTextChange(fieldGroup);
-        saveTemplates();
+        insertTextIntoTextarea(targetText); // Викликаємо спільну функцію
     };
     
     const clearButton = document.createElement('button');
@@ -3618,7 +3592,7 @@ function resetQuickNoteForm() {
     if (input && btn) {
         input.value = '';
         btn.innerHTML = 'Додати';
-        btn.style.backgroundColor = 'var(--primary-accent-color)';
+        btn.style.backgroundColor = ''; // Очищаємо інлайн-стиль!
         editingNoteIndex = -1;
     }
 }
