@@ -1445,10 +1445,10 @@ body.dark .tabs {
 .tab-button {
     /* 1. РОЗМІРИ: Задаємо чітку висоту замість вертикальних відступів */
     height: 40px; 
-    padding: 0 40px 0 18px; /* Тільки бокові відступи (0 зверху/знизу) */
+    padding: 0 42px 0 19px; /* Тільки бокові відступи (0 зверху/знизу) */
     
     width: max-content;
-    max-width: 250px;
+    max-width: 400px;
     margin: 0 4px;
     
     /* 2. ІДЕАЛЬНЕ ЦЕНТРУВАННЯ ВМІСТУ */
@@ -1580,26 +1580,59 @@ body.dark .tab-button.active {
 .close-tab-btn {
     position: absolute;
     right: 15px; 
-    
-    /* --- ІДЕАЛЬНЕ ВЕРТИКАЛЬНЕ ЦЕНТРУВАННЯ --- */
     top: 0;
     bottom: 0;
     margin: auto; 
-    
-    display: flex;
-    justify-content: center;
-    align-items: center;
     
     width: 22px;
     height: 22px;
     border-radius: 50%;
     
-    font-size: 13px; 
-    line-height: 1;
+    box-sizing: border-box !important;
+    
+    /* Прибираємо flex, бо малюватимемо через CSS */
+    display: block; 
     
     opacity: 0;
     color: var(--tab-inactive-text);
     transition: opacity 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+    
+    /* Видаляємо рамку та фон за замовчуванням (якщо є) */
+    border: none;
+    background: transparent;
+    cursor: pointer;
+}
+
+/* Якщо у вашому HTML всередині кнопки є <i> або <span> з текстом хрестика - ховаємо його */
+.close-tab-btn i, 
+.close-tab-btn span {
+    display: none !important;
+}
+
+/* Створюємо дві лінії хрестика */
+.close-tab-btn::before,
+.close-tab-btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    
+    /* РОЗМІРИ ХРЕСТИКА */
+    width: 16px;        /* Довжина ліній хрестика */
+    height: 1.5px;      /* Товщина ліній (1.5px виглядає дуже акуратно) */
+    
+    /* Колір автоматично береться з властивості 'color' самої кнопки */
+    background-color: currentColor; 
+}
+
+/* Повертаємо першу лінію на 45 градусів (/) */
+.close-tab-btn::before {
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+
+/* Повертаємо другу лінію на -45 градусів (\) */
+.close-tab-btn::after {
+    transform: translate(-50%, -50%) rotate(-45deg);
 }
 
 /* Показуємо напівпрозорим */
