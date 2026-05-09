@@ -1383,16 +1383,22 @@ body.dark .date-calculator-container #result-section h2 {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #e4e6eb; /* Трохи темніший/насиченіший за фон */
-    padding: 4px; /* Трохи менший відступ для компактності */
+    background-color: #e4e6eb;
+    padding: 4px; 
     border-radius: 9999px;
     margin: -11px auto 0 auto;
-    width: 840px; /* Ширина по контенту, щоб не розтягувалось */
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.06), inset 0 1px 2px rgba(0,0,0,0.04); /* Глибша тінь */
+    
+    /* === ОСЬ ГОЛОВНІ ЗМІНИ === */
+    width: fit-content;          /* Панель обтягує кнопки */
+    min-width: 60px;             /* Мінімальний розмір */
+    transition: all 0.4s cubic-bezier(0.34, 1.2, 0.64, 1); /* Плавне звуження/розширення */
+    /* ========================= */
+    
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.06), inset 0 1px 2px rgba(0,0,0,0.04);
     position: relative;
     z-index: 50;
-    border: 1px solid rgba(0,0,0,0.03); /* Ледь помітний контур */
-	overflow: visible !important; /* Дозволяє декору виходити за межі панелі */
+    border: 1px solid rgba(0,0,0,0.03);
+    overflow: visible !important; 
 }
 
 /* 1. ШАПКА САНТИ (Правий верхній кут) - Тільки в режимі свята */
@@ -1437,23 +1443,36 @@ body.dark .tabs {
 
 /* Стиль для кожної кнопки-вкладки */
 .tab-button {
-    padding: 10px 25px;
-    cursor: pointer;
+    /* 1. РОЗМІРИ: Задаємо чітку висоту замість вертикальних відступів */
+    height: 40px; 
+    padding: 0 40px 0 18px; /* Тільки бокові відступи (0 зверху/знизу) */
+    
+    width: max-content;
+    max-width: 250px;
+    margin: 0 4px;
+    
+    /* 2. ІДЕАЛЬНЕ ЦЕНТРУВАННЯ ВМІСТУ */
     display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 8px; /* Відступ між іконкою та текстом */
-    background-color: transparent; /* За замовчуванням прозорі */
+    align-items: center; /* Рівняє іконку і текст СУВОРО по центру висоти 40px */
+    justify-content: flex-start;
+    gap: 8px;
+    
+    /* 3. ОБРІЗКА ТЕКСТУ */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    
+    /* 4. БАЗОВИЙ ДИЗАЙН */
+    position: relative;
+    background-color: transparent;
     color: var(--tab-inactive-text);
     border: none;
-    border-radius: 9999px; /* Заокруглення для ефекту пігулки */
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* Плавна анімація */
+    border-radius: 9999px;
     font-size: 16px;
-    font-weight: 600; /* Напівжирний шрифт */
+    font-weight: 600;
     user-select: none;
-    margin: 0 4px; /* Невеликий відступ між кнопками */
-    position: relative;
-    /* Повністю прибираємо старі властивості top, border-bottom і т.д. */
+    
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 /* === СТИЛІ ДЛЯ DRAG & DROP (ВИПРАВЛЕНО) === */
@@ -1539,6 +1558,256 @@ body.dark .tab-button.active {
     background-color: #3a3b3c; /* Світліше за канавку, щоб виділялось */
     color: var(--secondary-accent-color);
     box-shadow: 0 2px 5px rgba(0,0,0,0.4); /* Тінь для відриву від дна */
+}
+
+/* =========================================
+   КЕРУВАННЯ ВКЛАДКАМИ (ЗАКРИТТЯ ТА ДОДАВАННЯ)
+   ========================================= */
+
+/* --- 1. БАЗОВА ПОВЕДІНКА ВКЛАДКИ --- */
+.tab-button.is-closed {
+    max-width: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    opacity: 0 !important;
+    border: none !important;
+    pointer-events: none;
+}
+
+/* --- 2. КНОПКА ЗАКРИТТЯ (ХРЕСТИК) --- */
+.close-tab-btn {
+    position: absolute;
+    right: 15px; 
+    
+    /* --- ІДЕАЛЬНЕ ВЕРТИКАЛЬНЕ ЦЕНТРУВАННЯ --- */
+    top: 0;
+    bottom: 0;
+    margin: auto; 
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    
+    font-size: 13px; 
+    line-height: 1;
+    
+    opacity: 0;
+    color: var(--tab-inactive-text);
+    transition: opacity 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Показуємо напівпрозорим */
+.tab-button:hover .close-tab-btn,
+.tab-button.active .close-tab-btn {
+    opacity: 0.5;
+}
+
+/* ХОВЕР: Нейтральний фон, темна іконка */
+.close-tab-btn:hover {
+    opacity: 1 !important;
+    background-color: rgba(0, 0, 0, 0.08);
+    color: var(--text-color);
+}
+
+/* АКТИВНИЙ СТАН: Миттєво червоний і стискається */
+.close-tab-btn:active {
+    /* Залишаємо ТІЛЬКИ scale для стискання */
+    transform: scale(0.85); 
+    background-color: var(--danger-color) !important;
+    color: white !important;
+    transition: transform 0.05s ease-out, background-color 0s; 
+}
+
+/* Темна тема для хрестика */
+body.dark .close-tab-btn:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+}
+body.dark .close-tab-btn:active {
+    background-color: #ff4d4d !important; 
+}
+
+
+/* --- 3. КНОПКА ДОДАТИ ВКЛАДКУ (ПЛЮС) --- */
+.add-tab-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin-left: 2px;
+    order: 999; 
+}
+
+.add-tab-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    color: var(--tab-inactive-text);
+    cursor: pointer;
+    display: none; 
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    margin: 0 2px;
+    
+    /* Проста, рівна анімація без ефекту "желе" */
+    transition: all 0.2s ease-out;
+}
+
+/* Наведення: ТІЛЬКИ крутиться (БЕЗ збільшення, щоб не деформувати іконку) */
+.add-tab-btn:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    color: var(--text-color);
+    transform: rotate(90deg); 
+}
+
+/* Меню відкрито: Кнопка стає хрестиком */
+.add-tab-btn.menu-open {
+    background-color: var(--primary-accent-color);
+    color: white;
+    transform: rotate(135deg); 
+    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+}
+
+/* Ефект кліку: Ледь помітне втискання */
+.add-tab-btn:active {
+    transform: rotate(90deg) scale(0.95);
+    background-color: rgba(0, 0, 0, 0.1);
+    transition: all 0.05s ease-out;
+}
+.add-tab-btn.menu-open:active {
+    transform: rotate(135deg) scale(0.95);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Темна тема для Плюса */
+body.dark .add-tab-btn:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: var(--text-color);
+}
+body.dark .add-tab-btn.menu-open {
+    background-color: var(--secondary-accent-color);
+    color: #1b1c1d;
+    box-shadow: 0 4px 14px rgba(230, 162, 46, 0.35);
+}
+body.dark .add-tab-btn.menu-open:active {
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.4);
+}
+
+/* --- 4. ЕЛЕГАНТНЕ МЕНЮ ВКЛАДОК (В СТИЛІ ДОДАТКУ) --- */
+.add-tab-menu {
+    position: absolute;
+    top: calc(100% + 12px);
+    right: 0;
+    min-width: 210px;
+    
+    /* Використовуємо рідні кольори додатку замість "скла" */
+    background-color: var(--input-bg-color); 
+    border: 1px solid var(--input-border-color);
+    border-radius: 12px;
+    
+    /* М'яка, глибока тінь для відриву від фону */
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.05);
+    
+    padding: 6px;
+    z-index: 2000;
+    
+    /* Анімація появи */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px) scale(0.96);
+    transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+    transform-origin: top right;
+}
+
+/* Відкритий стан */
+.add-tab-wrapper.open .add-tab-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+}
+
+/* Стрілочка меню (Хвостик) */
+.add-tab-menu::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    right: 16px; 
+    width: 10px;
+    height: 10px;
+    
+    /* Кольори точно як у самого меню */
+    background-color: var(--input-bg-color);
+    border-left: 1px solid var(--input-border-color);
+    border-top: 1px solid var(--input-border-color);
+    
+    transform: rotate(45deg);
+    z-index: -1;
+}
+
+/* --- Пункти меню --- */
+.add-tab-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 8px;
+    color: var(--text-color);
+    font-size: 13.5px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    margin-bottom: 2px;
+    background-color: transparent;
+}
+
+/* Іконки всередині меню */
+.add-tab-item i {
+    font-size: 14px;
+    color: var(--tab-inactive-text);
+    transition: color 0.2s ease;
+}
+
+/* --- СУЧАСНИЙ ХОВЕР (Без різкої заливки) --- */
+.add-tab-item:hover {
+    /* Легкий акцентний фон замість суцільного кольору */
+    background-color: rgba(0, 123, 255, 0.1);
+    color: var(--primary-accent-color);
+}
+.add-tab-item:hover i {
+    color: var(--primary-accent-color);
+}
+
+/* Ефект фізичного кліку */
+.add-tab-item:active {
+    transform: scale(0.97);
+    background-color: rgba(0, 123, 255, 0.15);
+    transition: all 0.05s ease-out;
+}
+
+/* --- ТЕМНА ТЕМА ДЛЯ МЕНЮ --- */
+body.dark .add-tab-menu {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+/* В темній темі кольори підтягнуться автоматично з var(--input-bg-color),
+   нам треба налаштувати лише кольори при наведенні (Оранжевий акцент) */
+
+body.dark .add-tab-item:hover {
+    background-color: rgba(230, 162, 46, 0.15);
+    color: var(--secondary-accent-color);
+}
+body.dark .add-tab-item:hover i {
+    color: var(--secondary-accent-color);
+}
+body.dark .add-tab-item:active {
+    background-color: rgba(230, 162, 46, 0.25);
 }
         
 .login-generator-container h2 {

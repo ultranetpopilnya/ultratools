@@ -2500,6 +2500,137 @@ if (trimmed.toUpperCase() === '[WRITE-SHOW-PON-POWER EPON]') { currentSection = 
         .catch(err => console.log("Помилка завантаження конфігів ОЛТ:", err));
 }
 
+// === ЛОГІКА ПРИХОВУВАННЯ ТА ВІДНОВЛЕННЯ ВКЛАДОК (НАДІЙНА ВЕРСІЯ) ===
+function initTabManagement() {
+    const tabsContainer = document.querySelector('.tabs');
+    const tabs = document.querySelectorAll('.tab-button');
+    const addTabBtn = document.getElementById('add-tab-btn');
+    const addTabMenu = document.getElementById('add-tab-menu');
+    const wrapper = document.querySelector('.add-tab-wrapper');
+
+    // 1. Завантажуємо стан (які вкладки закриті)
+    let closedTabs = JSON.parse(localStorage.getItem('closedTabsData') || '[]');
+
+    closedTabs.forEach(tabId => {
+        const tab = document.querySelector(`.tab-button[data-tab="${tabId}"]`);
+        if (tab) tab.classList.add('is-closed');
+    });
+
+    // 2. Генерація меню ПЛЮС
+    function updateAddMenu() {
+        addTabMenu.innerHTML = '';
+        const hiddenTabs = Array.from(document.querySelectorAll('.tab-button.is-closed'));
+
+        if (hiddenTabs.length === 0) {
+            addTabBtn.style.display = 'none';
+            wrapper.classList.remove('open');
+            addTabBtn.classList.remove('menu-open');
+            return;
+        }
+
+        addTabBtn.style.display = 'flex';
+
+        hiddenTabs.forEach(tab => {
+            const iconHTML = tab.querySelector('i:not(.fa-xmark)').outerHTML;
+            // Витягуємо текст вкладки, ігноруючи текст хрестика
+            let title = '';
+            tab.childNodes.forEach(node => {
+                if (node.nodeType === 3) title += node.textContent; // Текстові вузли
+            });
+            title = title.trim();
+
+            const tabId = tab.dataset.tab;
+
+            const item = document.createElement('div');
+            item.className = 'add-tab-item';
+            item.innerHTML = `${iconHTML} <span>${title}</span>`;
+            
+            item.onclick = (e) => {
+                e.stopPropagation();
+                tab.classList.remove('is-closed');
+                
+                closedTabs = closedTabs.filter(id => id !== tabId);
+                localStorage.setItem('closedTabsData', JSON.stringify(closedTabs));
+                
+                updateAddMenu();
+                switchTab(tabId);
+                
+                wrapper.classList.remove('open');
+                addTabBtn.classList.remove('menu-open');
+            };
+            
+            addTabMenu.appendChild(item);
+        });
+    }
+
+    // 3. БРОНЕБІЙНИЙ КЛІК ПО ХРЕСТИКУ (Делегування подій)
+    tabsContainer.addEventListener('click', (e) => {
+        // Перевіряємо, чи клікнули саме по хрестику (або по іконці всередині нього)
+        const closeBtn = e.target.closest('.close-tab-btn');
+        if (!closeBtn) return; // Якщо ні - ігноруємо
+
+        e.stopPropagation(); // Зупиняємо подію
+        
+        const tab = closeBtn.closest('.tab-button');
+        if (!tab) return;
+        
+        // === НОВЕ: ПЕРЕВІРКА НА ОСТАННЮ ВКЛАДКУ ===
+        // Рахуємо всі вкладки, які зараз НЕ закриті
+        const allTabs = document.querySelectorAll('.tab-button');
+        const openTabs = Array.from(allTabs).filter(t => !t.classList.contains('is-closed'));
+        
+        // Якщо відкрита лише 1 вкладка і це саме та, яку ми намагаємось закрити
+        if (openTabs.length === 1 && openTabs[0] === tab) {
+            showNotification("Не можна закрити останню вкладку!");
+            return; // Зупиняємо функцію, вкладка не закриється
+        }
+        // ==========================================
+
+        const tabId = tab.dataset.tab;
+        
+        // Якщо закриваємо активну вкладку
+        if (tab.classList.contains('active')) {
+            const nextAvailableTab = Array.from(tabs).find(t => 
+                t !== tab && !t.classList.contains('is-closed')
+            );
+            
+            if (nextAvailableTab) {
+                switchTab(nextAvailableTab.dataset.tab);
+            } else {
+                document.querySelectorAll('.container[data-content]').forEach(c => c.classList.remove('active'));
+                localStorage.removeItem('activeTab');
+            }
+        }
+
+        // Візуально ховаємо вкладку
+        tab.classList.add('is-closed');
+        
+        // Зберігаємо в пам'ять
+        if (!closedTabs.includes(tabId)) {
+            closedTabs.push(tabId);
+            localStorage.setItem('closedTabsData', JSON.stringify(closedTabs));
+        }
+        
+        updateAddMenu();
+    });
+
+    // 4. Відкриття/Закриття меню ПЛЮС
+    addTabBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        wrapper.classList.toggle('open');
+        addTabBtn.classList.toggle('menu-open');
+    });
+
+    document.addEventListener('click', (e) => {
+        if (wrapper && !wrapper.contains(e.target)) {
+            wrapper.classList.remove('open');
+            addTabBtn.classList.remove('menu-open');
+        }
+    });
+
+    updateAddMenu();
+}
+
 // === ЗМІННІ ДЛЯ ДОДАТКОВИХ КОНФІГІВ (PON-ONU) ===
 let EXTRA_CONFIG_TEMPLATES = { gpon: "", epon: "" };
 
@@ -2609,6 +2740,7 @@ let EXTRA_CONFIG_TEMPLATES = { gpon: "", epon: "" };
     // ЗАПУСК
     loadTabOrder();
     initTabDragging();
+    initTabManagement();
     setupTabs();
 	loadHistory();
     loadCommandsFromFile();
@@ -3683,3 +3815,4 @@ function renderQuickNotes() {
         list.appendChild(item);
     });
 }
+
