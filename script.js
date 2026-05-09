@@ -3517,6 +3517,17 @@ document.addEventListener('keydown', (e) => {
 document.addEventListener('DOMContentLoaded', () => {
     const allPills = document.querySelectorAll('.version-pill, .extension-pill');
 
+    // Створюємо зручну функцію для закриття пігулки + скидання скролу
+    const closePill = (pill) => {
+        if (pill.classList.contains('is-open')) {
+            pill.classList.remove('is-open');
+            // Чекаємо 400мс (поки вікно плавно згортається) і повертаємо скрол на нуль
+            setTimeout(() => {
+                pill.scrollTop = 0;
+            }, 160);
+        }
+    };
+
     document.addEventListener('click', (e) => {
         // 1. Шукаємо, чи був клік всередині пігулки взагалі
         const clickedPill = e.target.closest('.version-pill, .extension-pill');
@@ -3532,19 +3543,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Якщо пігулка ВЖЕ ВІДКРИТА...
                 if (clickedIcon) {
                     // ...і ми клікнули по іконці -> ЗАКРИВАЄМО її
-                    clickedPill.classList.remove('is-open');
+                    closePill(clickedPill);
                 }
                 // Якщо клікнули не по іконці (а по тексту, скролу, кнопці) -> нічого не робимо (залишається відкритою)
                 
             } else {
-                // Якщо пігулка БУЛА ЗАКРИТА -> відкриваємо її (і закриваємо інші)
-                allPills.forEach(p => p.classList.remove('is-open'));
+                // Якщо пігулка БУЛА ЗАКРИТА -> закриваємо всі інші
+                allPills.forEach(p => closePill(p));
+                // Відкриваємо натиснуту
                 clickedPill.classList.add('is-open');
             }
             
         } else {
             // 2. Якщо клік був ЗА МЕЖАМИ пігулок (по фону сайту) -> закриваємо всі
-            allPills.forEach(p => p.classList.remove('is-open'));
+            allPills.forEach(p => closePill(p));
         }
     });
 });
