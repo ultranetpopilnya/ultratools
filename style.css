@@ -1587,77 +1587,62 @@ body.dark .tab-button.active {
     width: 22px;
     height: 22px;
     border-radius: 50%;
-    
     box-sizing: border-box !important;
+    flex-shrink: 0;
     
-    /* Прибираємо flex, бо малюватимемо через CSS */
-    display: block; 
-    
-    opacity: 0;
-    color: var(--tab-inactive-text);
-    transition: opacity 0.2s ease, background-color 0.2s ease, color 0.2s ease;
-    
-    /* Видаляємо рамку та фон за замовчуванням (якщо є) */
     border: none;
     background: transparent;
     cursor: pointer;
+    padding: 0;
+    
+    opacity: 0;
+    color: var(--tab-inactive-text);
+    transition: transform 0.2s ease, opacity 0.2s ease, background-color 0.2s ease, color 0.2s ease;
 }
 
-/* Якщо у вашому HTML всередині кнопки є <i> або <span> з текстом хрестика - ховаємо його */
+/* Приховуємо стандартні іконки/текст (якщо є в HTML) */
 .close-tab-btn i, 
 .close-tab-btn span {
     display: none !important;
 }
 
-/* Створюємо дві лінії хрестика */
+/* Малюємо хрестик через CSS */
 .close-tab-btn::before,
 .close-tab-btn::after {
     content: '';
     position: absolute;
     top: 50%;
     left: 50%;
-    
-    /* РОЗМІРИ ХРЕСТИКА */
-    width: 16px;        /* Довжина ліній хрестика */
-    height: 1.5px;      /* Товщина ліній (1.5px виглядає дуже акуратно) */
-    
-    /* Колір автоматично береться з властивості 'color' самої кнопки */
+    width: 14px;
+    height: 1.5px;
     background-color: currentColor; 
+    border-radius: 1px;
 }
+.close-tab-btn::before { transform: translate(-50%, -50%) rotate(45deg); }
+.close-tab-btn::after { transform: translate(-50%, -50%) rotate(-45deg); }
 
-/* Повертаємо першу лінію на 45 градусів (/) */
-.close-tab-btn::before {
-    transform: translate(-50%, -50%) rotate(45deg);
-}
-
-/* Повертаємо другу лінію на -45 градусів (\) */
-.close-tab-btn::after {
-    transform: translate(-50%, -50%) rotate(-45deg);
-}
-
-/* Показуємо напівпрозорим */
+/* Показуємо при наведенні на саму вкладку */
 .tab-button:hover .close-tab-btn,
 .tab-button.active .close-tab-btn {
-    opacity: 0.5;
+    opacity: 0.6;
 }
 
-/* ХОВЕР: Нейтральний фон, темна іконка */
+/* Ховер на самій кнопці (сірий кружечок) */
 .close-tab-btn:hover {
     opacity: 1 !important;
     background-color: rgba(0, 0, 0, 0.08);
     color: var(--text-color);
 }
 
-/* АКТИВНИЙ СТАН: Миттєво червоний і стискається */
+/* Активний стан (клік) - стискається і стає червоним */
 .close-tab-btn:active {
-    /* Залишаємо ТІЛЬКИ scale для стискання */
     transform: scale(0.85); 
     background-color: var(--danger-color) !important;
     color: white !important;
     transition: transform 0.05s ease-out, background-color 0s; 
 }
 
-/* Темна тема для хрестика */
+/* Темна тема */
 body.dark .close-tab-btn:hover {
     background-color: rgba(255, 255, 255, 0.15);
     color: #ffffff;
@@ -4482,18 +4467,67 @@ body.dark .qn-header { border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
 }
 
 .qn-close-btn {
-    background: none;
-    border: none;
-    color: var(--tab-inactive-text);
-    cursor: pointer;
-    font-size: 20px;
-    line-height: 1;
-    padding: 4px;
+    position: relative; /* Обов'язково для хрестика всередині */
+    
+    width: 22px;
+    height: 22px;
     border-radius: 50%;
-    transition: all 0.2s ease;
+    box-sizing: border-box !important;
+    flex-shrink: 0;
+    
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+    
+    opacity: 0.6; /* Завжди видно, але напівпрозоро */
+    color: var(--tab-inactive-text);
+    transition: transform 0.2s ease, opacity 0.2s ease, background-color 0.2s ease, color 0.2s ease;
 }
-.qn-close-btn:hover { 
-    color: var(--danger-color); 
+
+/* Приховуємо стандартні іконки/текст (якщо є в HTML) */
+.qn-close-btn i, 
+.qn-close-btn span {
+    display: none !important;
+}
+
+/* Малюємо хрестик через CSS */
+.qn-close-btn::before,
+.qn-close-btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 14px;
+    height: 1.5px;
+    background-color: currentColor; 
+    border-radius: 1px;
+}
+.qn-close-btn::before { transform: translate(-50%, -50%) rotate(45deg); }
+.qn-close-btn::after { transform: translate(-50%, -50%) rotate(-45deg); }
+
+/* Ховер на самій кнопці (сірий кружечок) */
+.qn-close-btn:hover {
+    opacity: 1 !important;
+    background-color: rgba(0, 0, 0, 0.08);
+    color: var(--text-color);
+}
+
+/* Активний стан (клік) - стискається і стає червоним */
+.qn-close-btn:active {
+    transform: scale(0.85); 
+    background-color: var(--danger-color) !important;
+    color: white !important;
+    transition: transform 0.05s ease-out, background-color 0s; 
+}
+
+/* Темна тема */
+body.dark .qn-close-btn:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+}
+body.dark .qn-close-btn:active {
+    background-color: #ff4d4d !important; 
 }
 
 /* Зона введення тексту */
