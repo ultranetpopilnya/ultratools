@@ -1248,15 +1248,25 @@ body.dark .gpon-commands-container select {
             text-align: center;
         }
 
-        .date-inputs-row {
-            display: flex;
-            justify-content: center;
-            gap: 24px;
-            margin-bottom: 20px;
-            width: 100%;
-			max-width: 700px;
-			margin: 0 auto 20px auto;
-        }
+        /* Нова рамка для дат (однакова з іншими панелями) */
+.date-inputs-row {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    width: 100%;
+    box-sizing: border-box;
+    
+    /* Дизайн панелі */
+    background-color: #FCFCFC; 
+    border: 1px solid var(--input-border-color);
+    border-radius: 12px;
+    padding: 15px 20px;
+    margin: 0 0 15px 0; /* Відступ до наступної панелі */
+}
+
+body.dark .date-inputs-row {
+    background-color: #2c2c2e;
+}
 
         .date-calculator-container .date-input-group {
     display: flex;
@@ -2261,12 +2271,6 @@ body.dark .line-marker {
 }
 
 /* === НОВИЙ, СУЧАСНИЙ ДИЗАЙН ІНТЕРФЕЙСУ КАЛЬКУЛЯТОРА === */
-
-/* Збільшуємо відступи для "повітря" */
-.date-inputs-row {
-    margin-bottom: 20px;
-}
-
 /* Робимо групи полів вводу гнучкими та рівними */
 .date-calculator-container .date-input-group {
     flex: 1;
@@ -2278,8 +2282,12 @@ body.dark .line-marker {
     flex-direction: column;
     align-items: center;
     gap: 10px;
-    width: fit-content;
-    margin: 0 auto 25px auto;
+    
+    /* Робимо на всю ширину колонки для симетрії */
+    width: 100%;
+    box-sizing: border-box;
+    
+    margin: 0 0 15px 0; /* Одинаковий відступ з іншими панелями */
     padding: 15px;
     background-color: #FCFCFC; 
     border: 1px solid var(--input-border-color);
@@ -2302,7 +2310,7 @@ body.dark .calculator-panel {
     display: inline-flex;
     align-items: center;
     gap: 10px;
-    padding: 6px 15px;
+    padding: 6px 12px;
     border: none;
     border-radius: 9999px;
     background-color: transparent;
@@ -2345,6 +2353,52 @@ body.dark .calc-action-button:hover {
     font-weight: 600;
     color: var(--text-color);
     user-select: none; /* Щоб текст не виділявся випадково */
+}
+
+.calculator-actions-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
+    /* 1. Зменшуємо проміжок між поверхами (було 8px) */
+    gap: 6px; 
+    
+    /* 2. Зменшуємо відступи зверху/знизу (було 10px) */
+    padding: 10px 10px; 
+    
+    border-radius: 12px; 
+    
+    background-color: #ffffff; 
+    border: 1px solid var(--input-border-color);
+    
+    /* 3. Чітка ширина */
+    width: 378px;
+    box-sizing: border-box; 
+    
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05); 
+}
+
+/* Стилі для темної теми та роздільника залишаються ті самі */
+
+/* Темна тема */
+body.dark .calculator-actions-block {
+    background-color: var(--template-handle-bg);
+    border-color: var(--input-border-color);
+}
+
+.actions-floor {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px; 
+    width: 100%;
+}
+
+.horizontal-divider {
+    width: 100%;       
+    height: 1px;       
+    background-color: var(--input-border-color);
+    opacity: 0.7;      
 }
 
 /* Об'єднаний та чистий стиль */
@@ -2981,53 +3035,6 @@ body.dark .history-copy-btn:hover { background: var(--secondary-accent-color); c
             width: 90% !important;
         }
     }
-    
-	
-.calculator-actions-block {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    
-    /* 1. Зменшуємо проміжок між поверхами (було 8px) */
-    gap: 6px; 
-    
-    /* 2. Зменшуємо відступи зверху/знизу (було 10px) */
-    padding: 10px 10px; 
-    
-    border-radius: 12px; 
-    
-    background-color: #ffffff; 
-    border: 1px solid var(--input-border-color);
-    
-    /* 3. Чітка ширина */
-    width: 388px;
-    box-sizing: border-box; 
-    
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05); 
-}
-
-/* Стилі для темної теми та роздільника залишаються ті самі */
-
-/* Темна тема */
-body.dark .calculator-actions-block {
-    background-color: var(--template-handle-bg);
-    border-color: var(--input-border-color);
-}
-
-.actions-floor {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 12px; 
-    width: 100%;
-}
-
-.horizontal-divider {
-    width: 100%;       
-    height: 1px;       
-    background-color: var(--input-border-color);
-    opacity: 0.7;      
-}
 
 /* === ІДЕАЛЬНИЙ ІНТЕГРОВАНИЙ СТИЛЬ ПОШУКУ (ДВОКОЛОНКОВИЙ) === */
 /* 1. Головний контейнер (Стиль ідентичний до template-config-bar) */
@@ -3672,9 +3679,9 @@ body.dark .speed-select option {
 /* === ІНТЕГРАЦІЯ КАЛЬКУЛЯТОРА === */
 .calc-flex-wrapper {
     display: flex;
-    justify-content: center; /* Центруємо обидва блоки по горизонталі */
-    align-items: flex-start; /* Вирівнюємо по верхньому краю (або center для середини) */
-    gap: 24px;               /* Відступ між калькуляторами */
+    justify-content: center; 
+    align-items: flex-start; /* <--- Вирівнює обидві колонки по верхньому краю */
+    gap: 16px;               
     flex-wrap: wrap;
     width: 100%;
 }
@@ -3695,9 +3702,6 @@ body.dark .speed-select option {
 /* Права колонка залишається без змін, але для певності: */
 .std-calc-column {
     flex: 0 0 auto;
-    /* Якщо хочете вирівняти їх візуально по верху, можна додати відступ, 
-       бо у лівого блоку є написи над полями */
-    margin-top: 5px; 
 }
 
 /* Основний блок калькулятора (ЗБІЛЬШЕНО ШИРИНУ) */
