@@ -1077,6 +1077,7 @@ function initDraggableAndResizable(element) {
         lastGeneratedConfig = '', lastConfigStart = -1, lastConfigEnd = -1,
         ponOnuMode = false, replaceMode = true,
         showSignalMode = false,
+        regMode = false, switchMode = false, /* ДОДАНО СЮДИ */
         isSearchOpen = false, isConfigOpen = false
     } = data;
     const container = document.getElementById('templates-grid-wrapper'); 
@@ -1105,6 +1106,8 @@ fieldGroup.dataset.lastConfigEnd       = lastConfigEnd;
 fieldGroup.dataset.ponOnuMode          = ponOnuMode;
 fieldGroup.dataset.replaceMode         = replaceMode;
 fieldGroup.dataset.showSignalMode      = showSignalMode;
+fieldGroup.dataset.regMode             = regMode;      /* ДОДАНО */
+    fieldGroup.dataset.switchMode          = switchMode;   /* ДОДАНО */
     
     fieldGroup.style.width = width;
     fieldGroup.style.height = height;
