@@ -1462,7 +1462,7 @@ body.dark .tabs {
     
     width: max-content;
     max-width: 400px;
-    margin: 0 4px 0 2px;
+    margin: 0 2px 0 4px;
     
     /* 2. ІДЕАЛЬНЕ ЦЕНТРУВАННЯ ВМІСТУ */
     display: flex;
@@ -1686,7 +1686,7 @@ body.dark .close-tab-btn:active {
     justify-content: center;
     align-items: center;
     font-size: 18px;
-    margin: 0 2px;
+    margin: 0 4px 0 2px;
     
     /* Проста, рівна анімація без ефекту "желе" */
     transition: all 0.2s ease-out;
