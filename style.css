@@ -814,6 +814,9 @@ body.dark .login-generator-container .result-item .regenerate-login-btn {
     filter: brightness(1.2);
 }
 
+.login-generator-container .result-item .regenerate-login-btn:hover { box-shadow: 0 2px 8px rgba(230, 162, 46, 0.25); }
+.login-generator-container .result-item .copy-login-btn:hover { box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3); }
+
 /* === СТИЛІ ДЛЯ НОВОЇ ФУНКЦІЇ ПІДСВІТКИ СЛІВ === */
 .highlighting-container {
     position: relative;
@@ -3358,8 +3361,18 @@ body.dark .template-config-bar {
 .config-replace-mode-btn:hover,
 .config-pon-onu-btn:hover,
 .config-show-signal-btn:hover {
+    transform: translateY(-1px);
     border-color: var(--primary-accent-color);
     color: var(--primary-accent-color);
+    box-shadow: 0 2px 4px rgba(0, 123, 255, 0.15);
+    z-index: 2;
+}
+
+body.dark .config-replace-mode-btn:hover,
+body.dark .config-pon-onu-btn:hover,
+body.dark .config-show-signal-btn:hover {
+    border-color: var(--secondary-accent-color);
+    color: var(--secondary-accent-color);
     box-shadow: 0 2px 4px rgba(0, 123, 255, 0.15);
     z-index: 2;
 }
@@ -4324,6 +4337,20 @@ body.dark .moon-icon {
     scale: 0.5; 
     rotate: 90deg;
     opacity: 0;
+}
+
+/* 1. ДОДАЄМО ЕФЕКТ ПІДНЯТТЯ ПРИ НАВЕДЕННІ (-2px) */
+.login-generator-container .result-item .regenerate-login-btn:hover,
+.login-generator-container .result-item .copy-login-btn:hover,
+.extension-info-btn:hover,
+#import-templates-button:hover,
+#export-templates-button:hover,
+#clear-all-templates-button:hover,
+.config-replace-mode-btn:hover,
+.config-pon-onu-btn:hover,
+.config-show-signal-btn:hover {
+    transform: translateY(-2px);
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.2s, box-shadow 0.2s;
 }
 
 /* === 1. Кнопки з кольоровим фоном (з тінню) === */
