@@ -1,4 +1,5 @@
-[TEMPLATE: 1 ZTE C320 GPON]                                                     
+# ==========================================ГОЛІ КОНФІГИ ОНУ==========================================
+[TEMPLATE: 1 ZTE C320 GPON]                                                    
   description {LOGIN}
   tcont 1 name gpon-home profile {SPEED}
   gemport 1 unicast tcont 1 dir both
@@ -15,7 +16,6 @@
   ip dhcp snooping quota 1 vport 1
   ip dhcp snooping enable vport 1
 # ==========================================
-
 [TEMPLATE: 2 ZTE C320 GPON]
   description {LOGIN}
   tcont 1 name gpon-home profile {SPEED}
@@ -30,7 +30,6 @@
   dhcpv4-l2-relay-agent enable vport 1
   dhcpv4-l2-relay-agent trust true replace vport 1
   # ==========================================
-
   [TEMPLATE: 3 ZTE C320 GPON]
   description {LOGIN}
   tcont 1 name gpon-home profile {SPEED}
@@ -45,7 +44,6 @@
   dhcpv4-l2-relay-agent enable vport 1
   security storm-control broadcast rate 3 direction ingress vport 1
   # ==========================================
-
 [TEMPLATE: 1 ZTE C320 EPON]
   admin enable
   property user-info {LOGIN}
@@ -64,7 +62,6 @@
   ip dhcp snooping quota 1 vport 1
   ip dhcp snooping enable vport 1
 # ==========================================
-
 [TEMPLATE: 2 ZTE C320 EPON]
   admin enable
   property user-info {LOGIN}
@@ -79,12 +76,7 @@
   port-identification sub-option remote-id name {LOGIN} vport 1
   dhcpv4-l2-relay-agent enable vport 1
   dhcpv4-l2-relay-agent trust true replace vport 1
-# ==========================================
-
-# ==========================================
-# СПИСКИ ОЛТІВ (Прив'язуємо ОЛТ до Шаблону)
-# ==========================================
-
+# ==========================================СПИСОК ОЛТІВ==========================================
 [Ultranet]
 2 - 10.11.0.21 OLT - 1 (Пашини-Шатрище) = 1 ZTE C320 EPON 103
 4 - 10.11.0.23 OLT - 3 (Бровар) = 1 ZTE C320 GPON 27
@@ -151,12 +143,39 @@
 144 - 10.11.0.134 (Хорошів-2) = 2 ZTE C320 GPON 128
 148 - 10.11.0.135  (Нова Борова) = 1 ZTE C320 GPON 129
 # ==========================================
-
 [ISP Energy]
 19 - 10.12.0.41 (Дивлин) (MIX) = 2 ZTE C320 EPON 22
+# ==========================================КОД РЕЄСТРАЦІЇ ОНУ НА ОЛТУ==========================================
+[GPON ONU REG]
+conf t
+interface gpon-olt_{PORT_BASE} 
+onu {ONU_ID} type GPON-1GE {SN}
+exit
+interface gpon-onu_{PORT} 
 
+[EPON ONU REG]
+conf t
+interface epon-olt_{PORT_BASE}
+onu {ONU_ID} type NTS-101 mac {MAC}
+exit
+interface epon-onu_{PORT}
+# ==========================================КОД ЗАМІНИ ОНУ==========================================
+[GPON ONU SWITCH]
+conf t
+interface gpon-olt_{PORT_BASE} 
+no onu {ONU_ID}
+onu {ONU_ID} type GPON-1GE {SN}
+exit
+interface gpon-onu_{PORT} 
 
-# ==========================================
+[EPON ONU SWITCH]
+conf t
+interface epon-olt_{PORT_BASE}
+no onu {ONU_ID}
+onu {ONU_ID} type NTS-101 mac {MAC}
+exit
+interface epon-onu_{PORT}
+# ==========================================КОД PON ONU==========================================
 [GPON PON-ONU]
 exit
 pon-onu-mng gpon-onu_{PORT}
@@ -165,7 +184,6 @@ gemport 1 flow 1
 vlan gemport 1 mode transparent
 end
 
-# ==========================================
 [EPON PON-ONU]
 exit
 pon-onu-mng epon-onu_{PORT}
@@ -174,9 +192,7 @@ compatibility enable mode CTC
 vlan port eth_0/1 mode transparent
 interface-loopdetect eth_0/1 activate
 end
-
-# ==========================================
-
+# ==========================================ПОКАЗАТИ СИГНАЛ І ЗАПИСАТИ==========================================
 [WRITE-SHOW-PON-POWER GPON]
 show pon power attenuation gpon-onu_{PORT}
 write
@@ -184,4 +200,3 @@ write
 [WRITE-SHOW-PON-POWER EPON]
 show pon power attenuation epon-onu_{PORT}
 write
-

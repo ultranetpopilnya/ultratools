@@ -1278,46 +1278,66 @@ fieldGroup.dataset.showSignalMode      = showSignalMode;
     let isReplaceMode = (fieldGroup.dataset.replaceMode !== 'false');
 let isPonOnuMode  = (fieldGroup.dataset.ponOnuMode === 'true');
 let isShowSignalMode = (fieldGroup.dataset.showSignalMode === 'true');
+let isRegMode = (fieldGroup.dataset.regMode === 'true');       // ДОДАНО
+let isSwitchMode = (fieldGroup.dataset.switchMode === 'true'); // ДОДАНО
 
     // Генеруємо унікальний ID для списку, щоб шаблони не конфліктували
     let selectedOltObj = null;
 let selectedOltSource = null;
 
     configPanel.innerHTML = `
-        <div class="config-single-row">
-            <div class="olt-dropdown-wrapper">
-    <input type="text" class="config-olt-select" placeholder="🔍 Пошук ОЛТ..." autocomplete="off" title="Почніть вводити назву ОЛТ">
-    <div class="olt-dropdown-list"></div>
-</div>
-            
-            <input type="text" class="config-login-input" placeholder="Логін" title="Логін" autocomplete="off">
-            <select class="config-speed-select" title="Швидкість" autocomplete="off">
-                    <option value="10M">10M</option>
-                    <option value="20M">20M</option>
-                    <option value="30M">30M</option>
-                    <option value="40M">40M</option>
-                    <option value="50M">50M</option>
-                    <option value="60M">60M</option>
-                    <option value="100M" selected>100M</option>
-                    <option value="200M">200M</option>
-                    <option value="300M">300M</option>
-                    <option value="500M">500M</option>
-                    <option value="1G">1G</option>
-            </select>
-            <input type="text" class="config-port-input" placeholder="Порт" title="Порт (напр. 1/1/1:11)" autocomplete="off">
-<input type="text" class="config-vlan-input" placeholder="VLAN" title="VLAN (Залиште порожнім, щоб не міняти)" autocomplete="off">
-            
-            <button type="button" class="config-replace-mode-btn active" title="Заміняти попердньо доданий конфіг на новий">
-                <i class="fa-solid fa-arrows-rotate"></i>
-            </button>
-            <button type="button" class="config-pon-onu-btn" title="Додати PON-ONU до конфігу">
-                <i class="fa-solid fa-wave-square"></i>
-            </button>
+        <div class="config-two-rows-wrapper">
+            <div class="config-inputs-col">
+                <!-- ВЕРХНІЙ РЯДОК -->
+                <div class="config-row">
+                    <div class="olt-dropdown-wrapper">
+                        <input type="text" class="config-olt-select" placeholder="🔍 Пошук ОЛТ..." autocomplete="off" title="Почніть вводити назву ОЛТ">
+                        <div class="olt-dropdown-list"></div>
+                    </div>
+                    <input type="text" class="config-sn-input" placeholder="SN / MAC" title="Серійний номер або MAC" autocomplete="off">
+                    <input type="text" class="config-port-input" placeholder="Порт" title="Порт (напр. 1/1/1:11)" autocomplete="off">
+                    <select class="config-speed-select" title="Швидкість" autocomplete="off">
+                        <option value="10M">10M</option>
+                        <option value="20M">20M</option>
+                        <option value="30M">30M</option>
+                        <option value="40M">40M</option>
+                        <option value="50M">50M</option>
+                        <option value="60M">60M</option>
+                        <option value="100M" selected>100M</option>
+                        <option value="200M">200M</option>
+                        <option value="300M">300M</option>
+                        <option value="500M">500M</option>
+                        <option value="1G">1G</option>
+                    </select>
+                </div>
 
-            <button type="button" class="config-show-signal-btn" title="Показати сигнал та зберегти (додати Pon-power та Write)">
-    <i class="fa-solid fa-signal"></i>
-</button>
+                <!-- НИЖНІЙ РЯДОК -->
+                <div class="config-row">
+                    <input type="text" class="config-login-input" placeholder="Логін" title="Логін" autocomplete="off">
+                    <input type="text" class="config-vlan-input" placeholder="VLAN" title="VLAN (Залиште порожнім, щоб не міняти)" autocomplete="off">
 
+                    
+                    <button type="button" class="config-replace-mode-btn active" title="Заміняти попердньо доданий конфіг на новий">
+                        <i class="fa-solid fa-arrows-rotate"></i>
+                    </button>
+                    
+                    <button type="button" class="config-reg-btn" title="Режим реєстрації ОНУ">
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
+                    <button type="button" class="config-switch-btn" title="Режим заміни ОНУ">
+                        <i class="fa-solid fa-right-left"></i>
+                    </button>
+
+                    <button type="button" class="config-pon-onu-btn" title="Додати PON-ONU до конфігу">
+                        <i class="fa-solid fa-wave-square"></i>
+                    </button>
+                    <button type="button" class="config-show-signal-btn" title="Показати сигнал та зберегти (додати Pon-power та Write)">
+                        <i class="fa-solid fa-signal"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- КНОПКА ЗГЕНЕРУВАТИ (Двоповерхова) -->
             <button type="button" class="config-generate-btn" title="Згенерувати конфіг">
                 <i class="fa-solid fa-bolt"></i>
             </button>
@@ -1434,6 +1454,15 @@ if (!isDeleting) {
 const vlanInputNode = configPanel.querySelector('.config-vlan-input');
 const oltDropdownList = configPanel.querySelector('.olt-dropdown-list');
 
+// === РОЗУМНЕ ФОРМАТУВАННЯ SN / MAC ===
+    const snInputBox = configPanel.querySelector('.config-sn-input');
+    snInputBox.addEventListener('input', (e) => {
+        // Дозволяємо англійські літери, цифри, крапки, двокрапки та дефіси
+        // Не примушуємо до великих літер, щоб MAC міг бути маленькими (abcd.efgh.1234)
+        let val = e.target.value.replace(/[^a-zA-Z0-9.:-]/g, '');
+        e.target.value = val;
+    });
+
 function renderOltDropdown(filter = '') {
     const query = filter.toLowerCase().trim();
     oltDropdownList.innerHTML = '';
@@ -1499,6 +1528,43 @@ oltInputNode.addEventListener('blur', () => {
     setTimeout(() => oltDropdownList.classList.remove('open'), 150);
 });
 
+// === ТУМБЛЕР: РЕЄСТРАЦІЯ ОНУ ===
+const btnReg = configPanel.querySelector('.config-reg-btn');
+const btnSwitch = configPanel.querySelector('.config-switch-btn');
+
+btnReg.addEventListener('click', (e) => {
+    e.preventDefault();
+    isRegMode = !isRegMode;
+    if (isRegMode) {
+        isSwitchMode = false; // Вимикаємо заміну
+        btnSwitch.classList.remove('active');
+        fieldGroup.dataset.switchMode = 'false';
+    }
+    btnReg.classList.toggle('active', isRegMode);
+    fieldGroup.dataset.regMode = isRegMode;
+    saveTemplates();
+    showNotification(isRegMode ? "Режим: РЕЄСТРАЦІЯ" : "Реєстрацію вимкнено");
+});
+
+// === ТУМБЛЕР: ЗАМІНА ОНУ ===
+btnSwitch.addEventListener('click', (e) => {
+    e.preventDefault();
+    isSwitchMode = !isSwitchMode;
+    if (isSwitchMode) {
+        isRegMode = false; // Вимикаємо реєстрацію
+        btnReg.classList.remove('active');
+        fieldGroup.dataset.regMode = 'false';
+    }
+    btnSwitch.classList.toggle('active', isSwitchMode);
+    fieldGroup.dataset.switchMode = isSwitchMode;
+    saveTemplates();
+    showNotification(isSwitchMode ? "Режим: ЗАМІНА" : "Заміну вимкнено");
+});
+
+// Відновлюємо стан після перезавантаження
+btnReg.classList.toggle('active', isRegMode);
+btnSwitch.classList.toggle('active', isSwitchMode);
+
     // === ТУМБЛЕР: ЗАМІНА КОНФІГУ ===
     const btnReplaceMode = configPanel.querySelector('.config-replace-mode-btn');
     btnReplaceMode.addEventListener('click', (e) => {
@@ -1549,6 +1615,7 @@ btnShowSignal.classList.toggle('active', isShowSignalMode); // ДОДАНО
         const loginVal = configPanel.querySelector('.config-login-input').value.trim();
         const speedVal = configPanel.querySelector('.config-speed-select').value;
         const portVal = configPanel.querySelector('.config-port-input').value.trim();
+        const snVal = configPanel.querySelector('.config-sn-input').value.trim(); // ДОДАНО ЗЧИТУВАННЯ SN
         const vlanVal = configPanel.querySelector('.config-vlan-input').value.trim();
 
         if (/[а-яА-ЯіїєґІЇЄҐёЁ]/.test(loginVal)) {
@@ -1594,61 +1661,84 @@ if (!oltObj) {
 
         const finalVlan = vlanVal !== '' ? vlanVal : (oltObj.defaultVlan || '1');
 
-        // 1. Створюємо базовий конфіг (з TRIM)
-        let finalConfig = rawTemplate
+        // Розраховуємо базовий порт і номер ОНУ
+        const portBase = portVal.split(':')[0] || 'UNKNOWN_PORT';
+        const onuId = portVal.split(':')[1] || 'UNKNOWN_ONU';
+        const snMacVal = configPanel.querySelector('.config-sn-input').value.trim() || 'UNKNOWN_SN_MAC';
+
+        // Визначаємо тип технології заздалегідь
+        let ponType = '';
+        if (currentTemplateName.toLowerCase().includes('gpon')) ponType = 'gpon';
+        else if (currentTemplateName.toLowerCase().includes('epon')) ponType = 'epon';
+
+        // 1. Створюємо префікс (Реєстрація або Заміна)
+        let prependConfig = '';
+        if (isRegMode && ponType && REG_TEMPLATES[ponType]) {
+            prependConfig = REG_TEMPLATES[ponType]
+                .replace(/{PORT}/g, portVal)
+                .replace(/{PORT_BASE}/g, portBase)
+                .replace(/{ONU_ID}/g, onuId)
+                .replace(/{SN}/g, snMacVal)
+                .replace(/{MAC}/g, snMacVal)
+                .trim() + '\n';
+        } else if (isSwitchMode && ponType && SWITCH_TEMPLATES[ponType]) {
+            prependConfig = SWITCH_TEMPLATES[ponType]
+                .replace(/{PORT}/g, portVal)
+                .replace(/{PORT_BASE}/g, portBase)
+                .replace(/{ONU_ID}/g, onuId)
+                .replace(/{SN}/g, snMacVal)
+                .replace(/{MAC}/g, snMacVal)
+                .trim() + '\n';
+        }
+
+        // 2. Створюємо базовий конфіг (додаємо префікс на початок)
+        let finalConfig = prependConfig + rawTemplate
             .replace(/{LOGIN}/g, loginVal || 'UNKNOWN_LOGIN')
             .replace(/{SPEED}/g, speedVal)
             .replace(/{PORT}/g, portVal || 'UNKNOWN_PORT')
+            .replace(/{PORT_BASE}/g, portBase)       
+            .replace(/{ONU_ID}/g, onuId)
+            .replace(/{SN}/g, snMacVal) 
+            .replace(/{MAC}/g, snMacVal) 
             .replace(/{VLAN}/g, finalVlan)
             .trim(); 
 
-        // 2. Додаємо PON-ONU, якщо тумблер увімкнений
+        // 3. Додаємо PON-ONU, якщо тумблер увімкнений
         if (isPonOnuMode) {
             if (!portVal) {
                 showNotification("Вкажіть Порт для команд PON-ONU!");
                 return;
             }
-            
-            let ponType = '';
-            // Перевіряємо вже ОНОВЛЕНУ назву шаблону, щоб правильно додати GPON або EPON команди
-            if (currentTemplateName.toLowerCase().includes('gpon')) ponType = 'gpon';
-            else if (currentTemplateName.toLowerCase().includes('epon')) ponType = 'epon';
-            
             if (ponType && PON_ONU_TEMPLATES[ponType]) {
-                const extraTemplate = PON_ONU_TEMPLATES[ponType];
-                
-                const finalExtraConfig = extraTemplate
+                const finalExtraConfig = PON_ONU_TEMPLATES[ponType]
                     .replace(/{PORT}/g, portVal)
+                    .replace(/{PORT_BASE}/g, portBase) 
+                    .replace(/{ONU_ID}/g, onuId)
                     .replace(/{VLAN}/g, finalVlan)
                     .replace(/{LOGIN}/g, loginVal || 'UNKNOWN_LOGIN')
                     .replace(/{SPEED}/g, speedVal)
+                    .replace(/{SN}/g, snMacVal) 
+                    .replace(/{MAC}/g, snMacVal) 
                     .trim(); 
-                
-                // Додаємо конфіг (без зайвих пробілів)
                 finalConfig += '\n' + finalExtraConfig;
-            } else {
-                showNotification(`Шаблон PON-ONU для ${ponType.toUpperCase()} не знайдено у файлі!`);
             }
         }
 
-        // 2.5 Додаємо Сигнал, якщо тумблер увімкнений
+        // 4. Додаємо Сигнал, якщо тумблер увімкнений
         if (isShowSignalMode) {
             if (!portVal) {
                 showNotification("Вкажіть Порт для команди сигналу!");
                 return;
             }
-            let ponType = '';
-            if (currentTemplateName.toLowerCase().includes('gpon')) ponType = 'gpon';
-            else if (currentTemplateName.toLowerCase().includes('epon')) ponType = 'epon';
-            
             if (ponType && SIGNAL_TEMPLATES[ponType]) {
                 const signalConfig = SIGNAL_TEMPLATES[ponType]
                     .replace(/{PORT}/g, portVal)
+                    .replace(/{PORT_BASE}/g, portBase) 
+                    .replace(/{ONU_ID}/g, onuId)
+                    .replace(/{SN}/g, snMacVal) 
+                    .replace(/{MAC}/g, snMacVal) 
                     .trim();
-                
-                finalConfig += '\n' + signalConfig; // Дописуємо в кінець
-            } else {
-                showNotification(`Шаблон сигналу для ${ponType.toUpperCase()} не знайдено!`);
+                finalConfig += '\n' + signalConfig; 
             }
         }
 
@@ -2253,6 +2343,8 @@ function addTemplate() {
             ponOnuMode:  group.dataset.ponOnuMode  === 'true',
 replaceMode: group.dataset.replaceMode !== 'false',
 showSignalMode: group.dataset.showSignalMode === 'true',
+regMode: group.dataset.regMode === 'true',       // ДОДАНО
+            switchMode: group.dataset.switchMode === 'true', // ДОДАНО
             
             // ДОДАНО: Зберігаємо стани відкритих панелей
             isSearchOpen: searchPanel ? searchPanel.classList.contains('active') : false,
@@ -2420,6 +2512,8 @@ let OLT_CONFIGS = { ultranet: [], energy: [] };
 let OLT_TEMPLATES = {}; 
 let PON_ONU_TEMPLATES = { gpon: "", epon: "" }; // <--- НОВЕ: Зберігаємо PON-ONU тут
 let SIGNAL_TEMPLATES = { gpon: "", epon: "" };
+let REG_TEMPLATES = { gpon: "", epon: "" };    // ДОДАНО
+let SWITCH_TEMPLATES = { gpon: "", epon: "" }; // ДОДАНО
 
 function loadOltConfigs() {
     fetch('olt_configs.txt?v=' + Date.now())
@@ -2431,7 +2525,9 @@ function loadOltConfigs() {
             OLT_CONFIGS = { ultranet: [], energy: [] };
             OLT_TEMPLATES = {};
             PON_ONU_TEMPLATES = { gpon: "", epon: "" }; 
-SIGNAL_TEMPLATES = { gpon: "", epon: "" }; // ДОДАНО
+            SIGNAL_TEMPLATES = { gpon: "", epon: "" };
+            REG_TEMPLATES = { gpon: "", epon: "" };    // ДОДАНО
+            SWITCH_TEMPLATES = { gpon: "", epon: "" }; // ДОДАНО
             
             let currentSection = null; 
             let currentTemplateName = null;
@@ -2457,6 +2553,11 @@ SIGNAL_TEMPLATES = { gpon: "", epon: "" }; // ДОДАНО
                 if (trimmed.toUpperCase() === '[WRITE-SHOW-PON-POWER GPON]') { currentSection = 'gpon_signal'; return; }
 if (trimmed.toUpperCase() === '[WRITE-SHOW-PON-POWER EPON]') { currentSection = 'epon_signal'; return; }
 
+                if (trimmed.toUpperCase() === '[GPON ONU REG]') { currentSection = 'gpon_reg'; return; }
+                if (trimmed.toUpperCase() === '[EPON ONU REG]') { currentSection = 'epon_reg'; return; }
+                if (trimmed.toUpperCase() === '[GPON ONU SWITCH]') { currentSection = 'gpon_switch'; return; }
+                if (trimmed.toUpperCase() === '[EPON ONU SWITCH]') { currentSection = 'epon_switch'; return; }
+
                 // 3. Шукаємо списки комутаторів
                 if (trimmed === '[Ultranet]') { currentSection = 'ultranet'; return; } 
                 else if (trimmed === '[ISP Energy]') { currentSection = 'energy'; return; }
@@ -2469,11 +2570,19 @@ if (trimmed.toUpperCase() === '[WRITE-SHOW-PON-POWER EPON]') { currentSection = 
                 } else if (currentSection === 'epon_pon_onu') {
                     PON_ONU_TEMPLATES.epon += line + '\n';
                 } else if (currentSection === 'gpon_signal') {
-    SIGNAL_TEMPLATES.gpon += line + '\n';
-} else if (currentSection === 'epon_signal') {
-    SIGNAL_TEMPLATES.epon += line + '\n';
-}           
-                else if (currentSection === 'ultranet' || currentSection === 'energy') {
+                    SIGNAL_TEMPLATES.gpon += line + '\n';
+                } else if (currentSection === 'epon_signal') {
+                    SIGNAL_TEMPLATES.epon += line + '\n';
+                } else if (currentSection === 'gpon_reg') {
+                    REG_TEMPLATES.gpon += line + '\n';
+                } else if (currentSection === 'epon_reg') {
+                    REG_TEMPLATES.epon += line + '\n';
+                } else if (currentSection === 'gpon_switch') {
+                    SWITCH_TEMPLATES.gpon += line + '\n';
+                } else if (currentSection === 'epon_switch') {
+                    SWITCH_TEMPLATES.epon += line + '\n';
+                } else if (currentSection === 'ultranet' || currentSection === 'energy') {
+                    
                     const splitIndex = trimmed.indexOf('=');
                     if (splitIndex !== -1) {
                         const oltName = trimmed.substring(0, splitIndex).trim();
