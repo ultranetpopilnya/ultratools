@@ -3094,7 +3094,14 @@ document.querySelectorAll('.container[data-content]').forEach(container => {
         // Запускаємо перевірку періодично (на випадок зміни контенту JS-ом)
         setInterval(checkScrollButtons, 1000);
 
+        let scrollAnimationId = null;
+
         function customSmoothScroll(container, targetY, duration) {
+            if (scrollAnimationId) {
+                cancelAnimationFrame(scrollAnimationId);
+                scrollAnimationId = null;
+            }
+
             const startY = container.scrollTop;
             const difference = targetY - startY;
             const startTime = performance.now();
@@ -3108,11 +3115,20 @@ document.querySelectorAll('.container[data-content]').forEach(container => {
                 container.scrollTop = startY + difference * ease;
 
                 if (progress < 1) {
-                    window.requestAnimationFrame(step);
+                    scrollAnimationId = window.requestAnimationFrame(step);
+                } else {
+                    scrollAnimationId = null;
                 }
             }
-            window.requestAnimationFrame(step);
+            scrollAnimationId = window.requestAnimationFrame(step);
         }
+
+        templateScrollContainer.addEventListener('wheel', () => {
+            if (scrollAnimationId) {
+                cancelAnimationFrame(scrollAnimationId);
+                scrollAnimationId = null;
+            }
+        }, { passive: true });
 
         // Клік "Вгору"
         scrollUpBtn.addEventListener('click', () => {

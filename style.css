@@ -2413,12 +2413,6 @@ overflow-x: hidden;
     /* --- ЗМІНА 3: Фікс графічного багу (курсора/артефактів) --- */
     /* Цей рядок змушує браузер краще обробляти краї при скролі */
     transform: translate3d(0,0,0); 
-        /* 1. Примусово вмикаємо плавність на рівні CSS */
-    scroll-behavior: smooth !important;
-    
-    /* 2. Вимикаємо апаратне прискорення, яке ламало скрол у Chrome */
-    will-change: auto !important;
-    transform: none !important;
 }
 
 	::placeholder {
