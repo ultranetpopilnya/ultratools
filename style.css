@@ -2402,7 +2402,7 @@ body.dark .calculator-actions-block {
 
 /* Об'єднаний та чистий стиль */
 .container[data-content="text-templates"] .content-card {
-    padding: 16px 7px 7px 7px; 
+    padding: 16px 4px 4px 4px; 
     
     /* --- ЗМІНА 2: Вмикаємо скрол саме тут --- */
     overflow-y: auto;

@@ -3130,7 +3130,7 @@ function packTemplates() {
     }
 
     const containerWidth = Math.floor(container.offsetWidth);
-    const GAP = 8; 
+    const GAP = 4; 
 
     const placedRects = [];
     let maxContentHeight = 0;
