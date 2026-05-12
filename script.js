@@ -3094,20 +3094,35 @@ document.querySelectorAll('.container[data-content]').forEach(container => {
         // Запускаємо перевірку періодично (на випадок зміни контенту JS-ом)
         setInterval(checkScrollButtons, 1000);
 
+        function customSmoothScroll(container, targetY, duration) {
+            const startY = container.scrollTop;
+            const difference = targetY - startY;
+            const startTime = performance.now();
+
+            function step(currentTime) {
+                let progress = (currentTime - startTime) / duration;
+                if (progress > 1) progress = 1;
+
+                // Формула для плавного гальмування в кінці
+                const ease = 1 - Math.pow(1 - progress, 3);
+                container.scrollTop = startY + difference * ease;
+
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            }
+            window.requestAnimationFrame(step);
+        }
+
         // Клік "Вгору"
         scrollUpBtn.addEventListener('click', () => {
-            templateScrollContainer.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
+            // 600 - це швидкість прокрутки (мілісекунди). Можна міняти!
+            customSmoothScroll(templateScrollContainer, 0, 800); 
         });
 
         // Клік "Вниз"
         scrollDownBtn.addEventListener('click', () => {
-            templateScrollContainer.scrollTo({
-                top: templateScrollContainer.scrollHeight,
-                behavior: 'smooth'
-            });
+            customSmoothScroll(templateScrollContainer, templateScrollContainer.scrollHeight, 800);
         });
         
         // Первинна перевірка
