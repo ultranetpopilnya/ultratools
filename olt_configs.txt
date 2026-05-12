@@ -44,6 +44,22 @@
   dhcpv4-l2-relay-agent enable vport 1
   security storm-control broadcast rate 3 direction ingress vport 1
   # ==========================================
+  [TEMPLATE: 4 ZTE C320 GPON]
+  description {LOGIN}
+  tcont 1 name gpon-home profile {SPEED}
+  gemport 1 unicast tcont 1 dir both
+  gemport 1 traffic-limit upstream {SPEED} downstream {SPEED} 
+  security storm-control broadcast rate 5 direction ingress vport 1
+  switchport mode hybrid vport 1
+  service-port 1 vport 1 user-vlan untag vlan {VLAN} 
+  port-location format ti vport 1 
+  port-location sub-option remote-id enable vport 1 
+  port-location sub-option remote-id name {LOGIN} vport 1 
+  dhcp-option82 enable vport 1 
+  dhcp-option82 trust true replace vport 1 
+  ip dhcp snooping quota 1 vport 1
+  ip dhcp snooping enable vport 1
+  # ==========================================
 [TEMPLATE: 1 ZTE C320 EPON]
   admin enable
   property user-info {LOGIN}
@@ -123,8 +139,8 @@
 81 - 10.11.0.74 (Фасова) = 2 ZTE C320 GPON 76
 83 - 10.11.0.75 (Недашки) = 2 ZTE C320 GPON 77
 85 - 10.11.0.76 (Барвинівка) = 2 ZTE C320 GPON 78
-87 - 10.11.0.83 (Мединівка) = НЕДОСТУПНО
-89 - 10.11.0.78 (Сарновичі) = НЕДОСТУПНО
+87 - 10.11.0.83 (Мединівка) = Не підтримується
+89 - 10.11.0.78 (Сарновичі) = Не підтримується
 91 - 10.11.0.79 (Київська) = 2 ZTE C320 GPON 81
 99 - 10.11.0.91 (Київ) = 2 ZTE C320 GPON 92
 103 - 10.11.0.96 (Озерне) = 2 ZTE C320 GPON 96
@@ -144,7 +160,33 @@
 148 - 10.11.0.135  (Нова Борова) = 1 ZTE C320 GPON 129
 # ==========================================
 [ISP Energy]
+3 - 10.12.0.21 (Білокоровичі) EPON = 1 ZTE C320 EPON 22
+7 - 10.12.0.25 (Жубровичі) = 1 ZTE C320 EPON 21
+9 - 10.12.0.27 (Кишин) = 1 ZTE C320 GPON 27
+12 - 10.12.0.29 (Рудня-Іванівська) = 4 ZTE C320 GPON 110
+15 - 10.12.0.30 (Лопатичі) = 2 ZTE C320 GPON 30
+16 - 10.12.0.28 (Будо-Літки) = Не підтримується
+18 - 10.12.0.31 (Путиловичі) = 1 ZTE C320 GPON 31
 19 - 10.12.0.41 (Дивлин) (MIX) = 2 ZTE C320 EPON 22
+20 - 10.12.0.43 (Бондарі) = 2 ZTE C320 GPON 33
+21 - 10.12.0.44 (Нові Веледники) 
+22 - 10.12.0.45 (Словечно) 
+23 - 10.12.0.46  (Топільня) 
+25 - 10.12.0.47 (Покалів) 
+26 - 10.12.0.48 (Хочино) 
+31 - 10.12.0.50 (Джерело-Калинівка) 
+33 - 10.12.0.51 (Б. Гута) 
+35 - 10.12.0.52 (Повч) 
+39 - 10.12.0.53 (Прилуки) 
+41 - 10.12.0.54 (Кованка) 
+43 - 10.12.0.55 (Ясенець) 
+45 - 10.12.0.58 (Покровське) 
+49 - 10.12.0.59 (Осівка) 
+51 - 10.12.0.61 (Тепениця) 
+55 - 10.12.0.60 (Олевськ 300) 
+57 - 10.12.0.62 (Фосня) 
+59 - 10.12.0.63 (Лугини 300) 
+65 - 10.12.0.66 (Радовель) 
 # ==========================================КОД РЕЄСТРАЦІЇ ОНУ НА ОЛТУ==========================================
 [GPON ONU REG]
 conf t
