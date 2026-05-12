@@ -2085,9 +2085,8 @@ body.dark #clear-all-templates-button:hover {
     justify-content: space-between;
     align-items: center;
     gap: 4px;
-    margin-bottom: 0px; 
     flex-shrink: 0; 
-    padding: 4px;
+    padding: 4px 4px 0px 4px;
     user-select: none;
 }
 
@@ -2207,7 +2206,7 @@ body.dark .action-separator {
     position: relative;
     display: flex;
     flex-grow: 1; 
-    margin: 0 4px 4px 4px;
+    margin: 0px 4px 4px 4px;
     width: calc(100% - 8px);
      border: 1px solid var(--input-border-color);
     border-radius: 12px;
@@ -3284,11 +3283,13 @@ body.dark .template-config-bar {
     opacity: 1;
     transform: translateY(0) scale(1); /* Падає на своє місце */
     pointer-events: auto; /* Вмикаємо кліки */
-    
+    z-index: 2000;
+
     margin-top: 4px;
     margin-bottom: 4px;
     padding: 6px;
     border-color: var(--input-border-color); /* Плавно проявляємо рамку */
+    
     
     /* Важливо для випадаючого списку ОЛТ */
     overflow: visible; 
