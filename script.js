@@ -1602,7 +1602,7 @@ btnShowSignal.addEventListener('click', (e) => {
     btnShowSignal.classList.toggle('active', isShowSignalMode);
     fieldGroup.dataset.showSignalMode = isShowSignalMode;
     saveTemplates();
-    showNotification(isShowSignalMode ? "Сигнал УВІМКНЕНО" : "Сигнал ВИМКНЕНО");
+    showNotification(isShowSignalMode ? "Команди Pon-power та Write додаються" : "Команди Pon-power та Write не додаються");
 });
 
 // Відновлюємо стан після перезавантаження сторінки
