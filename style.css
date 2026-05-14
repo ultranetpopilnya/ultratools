@@ -1934,7 +1934,7 @@ body.dark .add-tab-item:active {
 #add-template-button:hover {
     background-color: #0056b3;
     border-color: #0056b3;
-    transform: translateY(-1px);
+    transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0, 123, 255, 0.4);
 }
 #add-template-button:active {
