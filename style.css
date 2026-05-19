@@ -3401,6 +3401,7 @@ body.dark .template-config-bar {
 .config-reg-btn,
 .config-switch-btn,
 .config-pon-onu-btn,
+.config-mix-toggle-btn,
 .config-show-signal-btn {
     flex: 0 0 40px;
     height: 100%;
@@ -3425,6 +3426,7 @@ body.dark .template-config-bar {
 .config-reg-btn:hover,
 .config-switch-btn:hover,
 .config-pon-onu-btn:hover,
+.config-mix-toggle-btn:hover,
 .config-show-signal-btn:hover {
     transform: translateY(-1px);
     border-color: var(--primary-accent-color);
@@ -3437,6 +3439,7 @@ body.dark .config-replace-mode-btn:hover,
 body.dark .config-reg-btn:hover,
 body.dark .config-switch-btn:hover,
 body.dark .config-pon-onu-btn:hover,
+body.dark .config-mix-toggle-btn:hover,
 body.dark .config-show-signal-btn:hover {
     border-color: var(--secondary-accent-color);
     color: var(--secondary-accent-color);
@@ -3452,6 +3455,34 @@ body.dark .config-show-signal-btn:hover {
     background-color: rgba(0, 123, 255, 0.1);
     color: var(--primary-accent-color);
     border-color: var(--primary-accent-color);
+}
+
+/* === НОВІ СТИЛІ САМЕ ДЛЯ КНОПКИ MIX === */
+.config-mix-toggle-btn {
+    flex: 0 0 auto !important; /* Щоб кнопка могла розтягуватись під текст */
+    padding: 0 10px !important;
+    font-weight: 600;
+}
+
+/* Стан 1: ОЛТ вибрано, але технологію ще не обрано (Горить червоним) */
+.config-mix-toggle-btn.needs-selection {
+    border-color: #dc3545;
+    color: #dc3545;
+    background-color: rgba(220, 53, 69, 0.05);
+}
+
+/* Стан 2: Вибрано GPON */
+.config-mix-toggle-btn.is-gpon {
+    background-color: rgba(0, 123, 255, 0.1);
+    color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+/* Стан 3: Вибрано EPON (зеленуватий колір для відмінності) */
+.config-mix-toggle-btn.is-epon {
+    background-color: rgba(40, 167, 69, 0.1);
+    color: #198754;
+    border-color: #198754;
 }
 
 /* === ПРОФЕСІЙНИЙ КАСТОМНИЙ SELECT ДЛЯ ОЛТ === */
@@ -3632,6 +3663,7 @@ body.dark .config-replace-mode-btn.active,
 body.dark .config-reg-btn.active,
 body.dark .config-switch-btn.active,
 body.dark .config-pon-onu-btn.active,
+body.dark .config-mix-toggle-btn,
 body.dark .config-show-signal-btn.active {
     background-color: rgba(230, 162, 46, 0.15);
     color: var(--secondary-accent-color);
