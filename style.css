@@ -3388,7 +3388,7 @@ body.dark .config-mix-toggle-btn:hover,
 body.dark .config-show-signal-btn:hover {
     border-color: var(--secondary-accent-color);
     color: var(--secondary-accent-color);
-    box-shadow: 0 2px 4px rgba(0, 123, 255, 0.15);
+    box-shadow: 0 2px 4px rgba(255, 196, 0, 0.15);
     z-index: 2;
 }
 
@@ -3416,18 +3416,64 @@ body.dark .config-show-signal-btn:hover {
     background-color: rgba(220, 53, 69, 0.05);
 }
 
+.config-mix-toggle-btn.needs-selection:hover {
+    box-shadow: 0 2px 4px rgba(220, 53, 69, 0.15);
+}
+
+body.dark .config-mix-toggle-btn.needs-selection {
+    border-color: #e35d6a; /* трохи світліший червоний для кращої контрастності в темній темі */
+    color: #e35d6a;
+    background-color: rgba(225, 93, 106, 0.15);
+}
+
+body.dark .config-mix-toggle-btn.needs-selection:hover {
+    box-shadow: 0 2px 4px rgba(225, 93, 106, 0.20);
+}
+
+
 /* Стан 2: Вибрано GPON */
 .config-mix-toggle-btn.is-gpon {
-    background-color: rgba(0, 123, 255, 0.1);
-    color: #0d6efd;
-    border-color: #0d6efd;
+    border-color: #2563eb; /* насиченіший синій для чіткого контуру на світлому фоні */
+    color: #1d4ed8;        /* глибокий синій для ідеальної читабельності тексту */
+    background-color: rgba(37, 99, 235, 0.06); /* легке тонування в колір бренду */
 }
+
+.config-mix-toggle-btn.is-gpon:hover {
+    background-color: rgba(37, 99, 235, 0.12);
+    box-shadow: 0 2px 6px rgba(37, 99, 235, 0.2);
+}
+
+body.dark .config-mix-toggle-btn.is-gpon {
+    /* Зверніть увагу: у вашому коді тут були помаранчеві відтінки, залишив їх за вашим шаблоном */
+    background-color: rgba(255, 140, 66, 0.10);
+    color: #ffad66;
+    border-color: rgba(255, 173, 102, 0.35);
+}
+
+body.dark .config-mix-toggle-btn.is-gpon:hover {
+    box-shadow: 0 2px 4px rgba(255, 140, 66, 0.20);
+}
+
 
 /* Стан 3: Вибрано EPON (зеленуватий колір для відмінності) */
 .config-mix-toggle-btn.is-epon {
-    background-color: rgba(40, 167, 69, 0.1);
+    background-color: rgba(25, 135, 84, 0.1);
     color: #198754;
     border-color: #198754;
+}
+
+.config-mix-toggle-btn.is-epon:hover {
+    box-shadow: 0 2px 4px rgba(25, 135, 84, 0.15);
+}
+
+body.dark .config-mix-toggle-btn.is-epon {
+    background-color: rgba(46, 204, 113, 0.10);
+    color: #57e389;
+    border-color: rgba(87, 227, 137, 0.35);
+}
+
+body.dark .config-mix-toggle-btn.is-epon:hover {
+    box-shadow: 0 2px 4px rgba(46, 204, 113, 0.20);
 }
 
 /* === ПРОФЕСІЙНИЙ КАСТОМНИЙ SELECT ДЛЯ ОЛТ === */
