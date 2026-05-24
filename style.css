@@ -3663,12 +3663,13 @@ body.dark .config-show-signal-btn.active {
 
 /* Темна тема для кнопки */
 body.dark .config-generate-btn {
-    background-color: var(--secondary-accent-color);
-    color: #1b1c1d;
-    box-shadow: 0 2px 4px rgba(230, 162, 46, 0.2);
+    background-color: #3f8f6b;
+    color: #eefbf4;
+    box-shadow: 0 2px 4px rgba(63, 143, 107, 0.25);
 }
+
 body.dark .config-generate-btn:hover {
-    box-shadow: 0 4px 6px rgba(230, 162, 46, 0.3);
+    box-shadow: 0 4px 8px rgba(63, 143, 107, 0.35);
 }
 
 /* Кольори кнопок */
