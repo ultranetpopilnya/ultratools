@@ -4222,8 +4222,6 @@ body.dark #calc-auto-clear-btn.active {
 #command-output {
     display: block; 
     width: 100%;
-    margin: 0px;
-    padding: 0px;
 }
 
 #command-output.two-columns {
@@ -4234,7 +4232,7 @@ body.dark #calc-auto-clear-btn.active {
 
 /* Роздільник через box-shadow на обгортці — стабільно в Chrome */
 #command-output.two-columns .command-group-wrapper {
-    padding: 0 8px;
+    padding: 0;
 }
 
 /* Псевдоелемент на самому контейнері — лінія точно посередині */
