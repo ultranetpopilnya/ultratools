@@ -66,6 +66,7 @@ show epon interface ePON 0/1:11 onu port 1 state :: Показати зєдна�
 show epon onu-information | include abcd :: Пошук ONU по частині Mac
 show epon onu-information mac-address abcd.efgh.1234 :: Пошук ONU по Mac
 show running-config interface epoN 0/1:11 :: Переглянути конфіг абонента
+show mac address-table vlan 99 :: Показати таблиці MAC-адрес для VLAN 99
 write all :: Зберегти внесені зміни на OLT
 
 * conf :: Зайти в налаштування OLT (Далі команди, які вводяться після)
