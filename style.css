@@ -4225,15 +4225,32 @@ body.dark #calc-auto-clear-btn.active {
     width: 100%;
 }
 
-/* === НАЛАШТУВАННЯ ДЛЯ ВЕЛИКИХ ЕКРАНІВ (ПК) === */
 #command-output.two-columns {
-    column-count: 2;          
-    column-gap: 12px;         
-    column-rule: 2px solid var(--input-border-color);
+    column-count: 2;
+    column-gap: 0;
+    position: relative;
 }
 
-body.dark #command-output.two-columns {
-    column-rule-color: rgba(255, 255, 255, 0.15); 
+/* Роздільник через box-shadow на обгортці — стабільно в Chrome */
+#command-output.two-columns .command-group-wrapper {
+    padding: 0 8px;
+}
+
+/* Псевдоелемент на самому контейнері — лінія точно посередині */
+#command-output.two-columns::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 100%;
+    background-color: var(--input-border-color);
+    pointer-events: none;
+}
+
+body.dark #command-output.two-columns::after {
+    background-color: rgba(255, 255, 255, 0.15);
 }
 
 /* Забороняємо команді розриватись навпіл між колонками */
@@ -4241,7 +4258,8 @@ body.dark #command-output.two-columns {
     break-inside: avoid;          
     page-break-inside: avoid;     
     -webkit-column-break-inside: avoid; 
-    display: inline-block;        
+    display: block;               /* ← виправлено: block замість inline-block */
+    overflow: hidden;             /* ← це замінює inline-block у ролі "не розривай" */
     width: 100%;                  
     margin-bottom: 4px;           
 }
@@ -4267,6 +4285,10 @@ body.dark #command-output.two-columns {
         column-rule: none !important;
         max-height: none !important;
         column-fill: auto !important;
+    }
+
+    #command-output.two-columns::after {
+        display: none;
     }
     
     /* Додатково: щоб картка всередині не мала відступів від країв екрану */
