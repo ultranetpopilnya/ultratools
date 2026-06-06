@@ -2445,10 +2445,16 @@ regMode: group.dataset.regMode === 'true',       // ДОДАНО
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
         
-        // Генеруємо назву з поточною датою (використовуємо існуючу функцію formatDate)
-        const today = new Date();
-        const dateString = formatDate(today); 
-        a.download = `templates-backup-${dateString}.json`;
+        // --- ГЕНЕРАЦІЯ НАЗВИ ФАЙЛУ (Час і Дата) ---
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const month = String(now.getMonth() + 1).padStart(2, '0'); // Місяці починаються з 0
+        const year = now.getFullYear();
+
+        // Формуємо рядок: templates-ГОДИНИ-ХВИЛИНИ_ДЕНЬ-МІСЯЦЬ-РІК
+        a.download = `templates-${hours}-${minutes}-(${day}-${month}-${year}).json`;
         
         document.body.appendChild(a);
         a.click();
