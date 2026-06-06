@@ -2423,14 +2423,33 @@ regMode: group.dataset.regMode === 'true',       // ДОДАНО
     
     function exportToFile() {
         const templatesJson = localStorage.getItem('textTemplates');
-        if (!templatesJson || templatesJson === '[]') {
-            alert('Немає шаблонів для експорту!');
+        const quickNotesJson = localStorage.getItem('quickNotesData');
+
+        // Перевіряємо, чи є хоч якісь дані
+        const hasTemplates = templatesJson && templatesJson !== '[]';
+        const hasNotes = quickNotesJson && quickNotesJson !== '[]';
+
+        if (!hasTemplates && !hasNotes) {
+            alert('Немає даних (шаблонів або нотаток) для експорту!');
             return;
         }
-        const blob = new Blob([templatesJson], { type: 'application/json' });
+
+        // Об'єднуємо дані в один об'єкт
+        const exportData = {
+            isUltraBackup: true, // Мітка нового формату файлу
+            templates: hasTemplates ? JSON.parse(templatesJson) : [],
+            quickNotes: hasNotes ? JSON.parse(quickNotesJson) : []
+        };
+
+        const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
-        a.download = 'templates-backup.json';
+        
+        // Генеруємо назву з поточною датою (використовуємо існуючу функцію formatDate)
+        const today = new Date();
+        const dateString = formatDate(today); 
+        a.download = `templates-backup-${dateString}.json`;
+        
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -2445,27 +2464,52 @@ regMode: group.dataset.regMode === 'true',       // ДОДАНО
         const reader = new FileReader();
         reader.onload = (e) => {
             try {
-                const templates = JSON.parse(e.target.result);
-                if (!Array.isArray(templates)) throw new Error("Некоректний формат");
+                const parsedData = JSON.parse(e.target.result);
+                let templatesToImport = [];
+                let notesToImport = [];
+
+                // Зворотна сумісність: перевіряємо, це старий бекап чи новий
+                if (Array.isArray(parsedData)) {
+                    // Це старий бекап (тільки масив шаблонів)
+                    templatesToImport = parsedData;
+                } else if (parsedData && parsedData.isUltraBackup) {
+                    // Це новий бекап (шаблони + нотатки)
+                    templatesToImport = parsedData.templates || [];
+                    notesToImport = parsedData.quickNotes || [];
+                } else {
+                    throw new Error("Некоректний формат файлу");
+                }
                 
+                // --- ІМПОРТ ШАБЛОНІВ ---
                 const templatesGrid = document.getElementById('templates-grid-wrapper');
                 templatesGrid.innerHTML = ''; // Очищуємо екран перед імпортом
                 
-                templates.forEach(template => {
+                templatesToImport.forEach(template => {
                     createTemplateField(template); // Створюємо шаблони
                 });
                 
-                saveTemplates(); // Зберігаємо в браузер
+                saveTemplates(); // Зберігаємо шаблони в браузер
                 
-                // Чекаємо 50мс, щоб браузер "побачив" блоки, і розставляємо їх Тетрісом
+                // --- ІМПОРТ НОТАТОК ---
+                if (notesToImport.length > 0) {
+                    localStorage.setItem('quickNotesData', JSON.stringify(notesToImport));
+                    // Оновлюємо масив у пам'яті, якщо вікно нотаток було відкрите
+                    if (typeof quickNotesArray !== 'undefined') {
+                        quickNotesArray = notesToImport;
+                    }
+                }
+                
+                // Візуальне оновлення
                 setTimeout(() => {
                     packTemplates();
-                    showNotification("Текстові шаблони успішно імпортовано!");
+                    showNotification(notesToImport.length > 0 
+                        ? "Шаблони та нотатки успішно імпортовано!" 
+                        : "Текстові шаблони успішно імпортовано!");
                 }, 50);
 
             } catch (error) {
                 console.error("Помилка імпорту:", error);
-                alert('Помилка! Не вдалося прочитати файл.');
+                alert('Помилка! Не вдалося прочитати файл. Можливо, він пошкоджений.');
             }
         };
         reader.readAsText(file);
