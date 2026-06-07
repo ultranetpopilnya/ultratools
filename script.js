@@ -2459,63 +2459,78 @@ regMode: group.dataset.regMode === 'true',       // ДОДАНО
     }
 
     function handleFileImport(event) {
-        const fileInput = event.target;
-        if (!fileInput.files.length) return;
-        const file = fileInput.files[0];
+    const fileInput = event.target;
+    if (!fileInput.files.length) return;
+    const file = fileInput.files[0];
 
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            try {
-                const parsedData = JSON.parse(e.target.result);
-                let templatesToImport = [];
-                let notesToImport = [];
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        try {
+            const parsedData = JSON.parse(e.target.result);
+            let templatesToImport = [];
+            let notesToImport = [];
 
-                // Зворотна сумісність: перевіряємо, це старий бекап чи новий
-                if (Array.isArray(parsedData)) {
-                    // Це старий бекап (тільки масив шаблонів)
-                    templatesToImport = parsedData;
-                } else if (parsedData && parsedData.isUltraBackup) {
-                    // Це новий бекап (шаблони + нотатки)
-                    templatesToImport = parsedData.templates || [];
-                    notesToImport = parsedData.quickNotes || [];
-                } else {
-                    throw new Error("Некоректний формат файлу");
-                }
+            // Перевіряємо формат файлу (старий чи новий UltraBackup)
+            if (Array.isArray(parsedData)) {
+                templatesToImport = parsedData;
+            } else if (parsedData && parsedData.isUltraBackup) {
+                templatesToImport = parsedData.templates || [];
+                notesToImport = parsedData.quickNotes || [];
+            } else {
+                throw new Error("Некоректний формат файлу");
+            }
+            
+            // --- 1. ІМПОРТ ШАБЛОНІВ ---
+            const templatesGrid = document.getElementById('templates-grid-wrapper');
+            if (templatesGrid) templatesGrid.innerHTML = ''; 
+            
+            templatesToImport.forEach(template => {
+                if (template) createTemplateField(template); 
+            });
+            
+            saveTemplates(); 
+            
+            // --- 2. ІМПОРТ НОТАТОК (РОЗУМНЕ ЗЛИВАННЯ) ---
+            if (parsedData.isUltraBackup && notesToImport.length > 0) {
                 
-                // --- ІМПОРТ ШАБЛОНІВ ---
-                const templatesGrid = document.getElementById('templates-grid-wrapper');
-                templatesGrid.innerHTML = ''; // Очищуємо екран перед імпортом
+                // Отримуємо поточні нотатки, які вже є на сайті
+                let existingNotes = JSON.parse(localStorage.getItem('quickNotesData') || '[]');
                 
-                templatesToImport.forEach(template => {
-                    createTemplateField(template); // Створюємо шаблони
-                });
+                // З'єднуємо поточні нотатки і ті, що прийшли з бекапу
+                let combinedNotes = [...existingNotes, ...notesToImport];
                 
-                saveTemplates(); // Зберігаємо шаблони в браузер
+                // МАГІЯ: Видаляємо точні дублікати, щоб не було однакових текстів
+                let uniqueNotes = Array.from(new Set(combinedNotes));
                 
-                // --- ІМПОРТ НОТАТОК ---
-                if (notesToImport.length > 0) {
-                    localStorage.setItem('quickNotesData', JSON.stringify(notesToImport));
-                    // Оновлюємо масив у пам'яті, якщо вікно нотаток було відкрите
-                    if (typeof quickNotesArray !== 'undefined') {
-                        quickNotesArray = notesToImport;
+                // Зберігаємо оновлений список
+                localStorage.setItem('quickNotesData', JSON.stringify(uniqueNotes));
+                
+                if (typeof quickNotesArray !== 'undefined') {
+                    quickNotesArray = uniqueNotes; // Оновлюємо змінну в пам'яті
+                    
+                    // Якщо вікно нотаток відкрите - миттєво перемальовуємо його
+                    const popover = document.getElementById('qn-popover');
+                    if (popover && popover.classList.contains('active')) {
+                        if (typeof renderQuickNotes === 'function') renderQuickNotes();
                     }
                 }
-                
-                // Візуальне оновлення
-                setTimeout(() => {
-                    showNotification(notesToImport.length > 0 
-                        ? "Шаблони та нотатки успішно імпортовано!" 
-                        : "Текстові шаблони успішно імпортовано!");
-                }, 50);
-
-            } catch (error) {
-                console.error("Помилка імпорту:", error);
-                alert('Помилка! Не вдалося прочитати файл. Можливо, він пошкоджений.');
             }
-        };
-        reader.readAsText(file);
-        fileInput.value = '';
-    }
+            
+            // Візуальне повідомлення
+            setTimeout(() => {
+                showNotification(parsedData.isUltraBackup 
+                    ? "Шаблони та нотатки успішно об'єднано!" 
+                    : "Текстові шаблони успішно імпортовано!");
+            }, 50);
+
+        } catch (error) {
+            console.error("Помилка імпорту:", error);
+            alert('Помилка! Не вдалося прочитати файл. Можливо, він пошкоджений.');
+        }
+    };
+    reader.readAsText(file);
+    fileInput.value = ''; // Скидаємо інпут
+}
 
 // --- ФУНКЦІЇ ІСТОРІЇ ---
 function toggleHistory() {
