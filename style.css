@@ -30,7 +30,7 @@ select {
     background-clip: content-box;
     
     /* Плавний перехід кольору при зміні теми */
-    transition: background-color 5.5s ease; 
+    transition: background-color 0.5s ease; 
 }
 
 /* Ефект при наведенні або активності */
