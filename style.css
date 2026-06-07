@@ -1865,12 +1865,16 @@ body.dark .add-tab-item:active {
 
 /* 1. ГОЛОВНА КНОПКА (ДОДАТИ) */
 #add-template-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     font-weight: bold;
     width: 50px;
+    padding: 0;
     background-color: var(--primary-accent-color);
     color: white;
     border: 1px solid var(--primary-accent-color);
-    font-size: 1.6rem;
+    font-size: 1.2rem;
     box-shadow: 0 2px 5px rgba(0, 123, 255, 0.3);
 }
 #add-template-button:hover {
@@ -1984,6 +1988,9 @@ body.dark #clear-all-templates-button:hover {
     box-sizing: border-box;
     max-width: 100%;
     flex-grow: 0;
+
+    touch-action: none;
+    user-select: none;
     
     min-height: 90px;
     min-width: 450px;

@@ -808,35 +808,53 @@ function loadCommandsFromFile() {
 }
     
 function initDraggableAndResizable(element) {
-    // БЕЗПЕЧНА ПЕРЕВІРКА: чи підключена бібліотека?
-    if (typeof interact === 'undefined') {
-        console.warn("Бібліотека Interact.js не знайдена! Зміна розміру карток тимчасово не працює.");
-        return; // Виходимо, щоб скрипт не впав
-    }
+    if (typeof interact === 'undefined') return;
+
+    // ВАЖЛИВО: Якщо елемент вже має ініціалізацію, знімаємо її перед новою
+    // (Це критично при імпорті шаблонів)
+    interact(element).unset();
 
     interact(element).resizable({
+        // Обираємо краї: правий, нижній та кутик
         edges: { left: false, right: true, bottom: true, top: false },
         listeners: {
             start(event) {
+                // Вимикаємо draggable на час ресайзу, щоб вони не конфліктували
+                event.target.setAttribute('draggable', 'false');
                 event.target.classList.add('is-resizing');
             },
             move(event) {
                 let target = event.target;
-                target.style.width = Math.floor(event.rect.width) + 'px';
-                target.style.height = Math.floor(event.rect.height) + 'px';
-                renderLineMarkers(target); 
+                
+                // 1. Отримуємо нові розміри
+                let newWidth = event.rect.width;
+                let newHeight = event.rect.height;
+
+                // 2. ЗАХИСТ ВІД "ПРИВИДА": якщо значення некоректне - нічого не робимо
+                if (!newWidth || isNaN(newWidth) || newWidth < 100) return;
+                if (!newHeight || isNaN(newHeight) || newHeight < 50) return;
+
+                // 3. Примусово записуємо в пікселях (цілі числа)
+                target.style.width = Math.round(newWidth) + 'px';
+                target.style.height = Math.round(newHeight) + 'px';
             },
             end(event) {
-                event.target.classList.remove('is-resizing');
+                let target = event.target;
+                target.classList.remove('is-resizing');
+                
+                // Повертаємо можливість перетягування (Drag & Drop)
+                target.setAttribute('draggable', 'false'); // повернеться в 'true' через mouseenter
+                
+                // Фінальний перерахунок маркерів
+                renderLineMarkers(target);
                 saveTemplates();
             }
         },
         modifiers: [
+            // Обмежуємо мінімальні та максимальні розміри
             interact.modifiers.restrictSize({
-                min: { width: 450, height: 90 }
-            }),
-            interact.modifiers.restrictEdges({
-                outer: 'parent' 
+                min: { width: 450, height: 90 },
+                max: { width: 2000, height: 2000 }
             })
         ],
         inertia: false
@@ -956,6 +974,7 @@ function initDraggableAndResizable(element) {
 
     fieldGroup.dataset.bookmarks = JSON.stringify(uniqueBookmarks);
     renderLineMarkers(fieldGroup);
+    saveTemplates()
 }
    
 // --- НОВІ ФУНКЦІЇ ДЛЯ ПІДСВІТКИ СЛІВ ---
@@ -1023,17 +1042,29 @@ function initDraggableAndResizable(element) {
     }
 	
     function createTemplateField(data = {}) {
+    // 1. Деструктуризація (твоя стара частина)
     const {
-        name = '', content = '', width = '350px', height = '90px', bookmarks = [],
+        name = '', content = '', 
+        width = '450px', height = '90px', // Дефолтні значення, якщо в data порожньо
+        bookmarks = [],
         lastGeneratedConfig = '', lastConfigStart = -1, lastConfigEnd = -1,
         ponOnuMode = false, replaceMode = true,
         showSignalMode = false,
-        regMode = false, switchMode = false, /* ДОДАНО СЮДИ */
+        regMode = false, switchMode = false,
         isSearchOpen = false, isConfigOpen = false
     } = data;
+
     const container = document.getElementById('templates-grid-wrapper'); 
     const fieldGroup = document.createElement('div');
     fieldGroup.className = 'template-field-group';
+    
+    // 2. ДОДАНО: ЗАХИСТ ВІД "ПРИВИДА" (Перевірка коректності розмірів)
+    // Якщо розмір прийшов без 'px' або це дивне число - ставимо стандарт
+    const safeWidth = (width && String(width).includes('px')) ? width : '450px';
+    const safeHeight = (height && String(height).includes('px')) ? height : '120px';
+
+    fieldGroup.style.width = safeWidth;
+    fieldGroup.style.height = safeHeight;
     
     // Відновлення закладок
     let modernBookmarks = [];
@@ -2220,11 +2251,12 @@ fieldGroup.dataset.lastGeneratedConfig = finalConfig;
 }
 
 function renderLineMarkers(fieldGroup) {
+    if (!fieldGroup) return;
     const markerContainer = fieldGroup.querySelector('.line-marker-container');
     const textarea = fieldGroup.querySelector('textarea');
     if (!markerContainer || !textarea) return;
 
-    // 1. Створюємо (або знаходимо) "дзеркало" для вимірювань
+    // 1. Знаходимо або створюємо "дзеркало" (mirror)
     let mirror = fieldGroup.querySelector('.textarea-mirror');
     if (!mirror) {
         mirror = document.createElement('div');
@@ -2245,10 +2277,13 @@ function renderLineMarkers(fieldGroup) {
         textarea.parentNode.insertBefore(mirror, textarea);
     }
 
-    // 2. Копіюємо стилі
+    // 2. Копіюємо стилі (дуже важливо для розрахунку переносів рядків)
     const style = window.getComputedStyle(textarea);
     
-    mirror.style.width = textarea.clientWidth + 'px';
+    // Захист: якщо ширина 0 (наприклад при видаленні або помилці), беремо поточну з об'єкта
+    const currentWidth = textarea.clientWidth || parseFloat(fieldGroup.style.width) - 20;
+    mirror.style.width = currentWidth + 'px';
+    
     mirror.style.fontFamily = style.fontFamily;
     mirror.style.fontSize = style.fontSize;
     mirror.style.fontWeight = style.fontWeight;
@@ -2258,53 +2293,54 @@ function renderLineMarkers(fieldGroup) {
     
     mirror.style.paddingLeft = style.paddingLeft;
     mirror.style.paddingRight = style.paddingRight;
+    // Скидаємо вертикальні паддінги для дзеркала, бо ми додаємо їх вручну до позиції
     mirror.style.paddingTop = '0px'; 
     mirror.style.paddingBottom = '0px';
 
+    // 3. Очищуємо контейнер маркерів
     markerContainer.innerHTML = ''; 
     const bookmarks = JSON.parse(fieldGroup.dataset.bookmarks || '[]');
     const lines = textarea.value.split('\n');
     
-    // === ВИПРАВЛЕННЯ 1: Сінхронізуємо дефолтний відступ з CSS (було || 0, стало || 10) ===
     const paddingTop = parseFloat(style.paddingTop) || 10;
-    
     const fontSize = parseFloat(style.fontSize) || 14;
     let singleLineHeight = parseFloat(style.lineHeight);
-    if (isNaN(singleLineHeight)) singleLineHeight = fontSize * 1.5;
+    if (isNaN(singleLineHeight) || singleLineHeight < 5) {
+        singleLineHeight = fontSize * 1.5;
+    }
+
+    // Створюємо фрагмент для швидкого оновлення DOM
+    const fragment = document.createDocumentFragment();
 
     bookmarks.forEach(bookmark => {
         const lineIndex = bookmark.lineNumber - 1;
-        if (lineIndex >= lines.length) return;
+        if (lineIndex < 0 || lineIndex >= lines.length) return;
 
         let measuredHeight = 0;
 
         // Вимірюємо висоту попереднього тексту
         if (lineIndex > 0) {
             const textBefore = lines.slice(0, lineIndex).join('\n');
+            // Додаємо \u200B (нульовий пробіл), щоб порожні рядки мали висоту
             mirror.textContent = textBefore + '\u200B';
             measuredHeight = mirror.clientHeight;
         }
 
-        // === ВИПРАВЛЕННЯ 2: Точне центрування без магічних чисел ===
-        // Рахуємо чистий центр рядка
+        // Твоя точна формула позиціонування
         const yPosition = measuredHeight + paddingTop + (singleLineHeight / 2) - 2; 
         
         const marker = document.createElement('div');
         marker.className = 'line-marker';
         marker.textContent = '●';
         
-        // Ставимо точку по Y
         marker.style.top = `${yPosition}px`;
-        
-        // Додаємо зсув через CSS transform, щоб центр крапки співпав з yPosition
-        // translateX(-50%) центрує по горизонталі (вже було у вас в CSS, але тут дублюємо для певності по Y)
         marker.style.transform = 'translate(-50%, -50%)'; 
-        
-        // Трохи підправляємо CSS самої крапки, щоб прибрати старий margin-top, якщо він там був
         marker.style.marginTop = '0';
 
-        markerContainer.appendChild(marker);
+        fragment.appendChild(marker);
     });
+
+    markerContainer.appendChild(fragment);
 }
 
 function addTemplate() {
