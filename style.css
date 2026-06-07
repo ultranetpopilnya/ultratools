@@ -1874,7 +1874,7 @@ body.dark .add-tab-item:active {
     background-color: var(--primary-accent-color);
     color: white;
     border: 1px solid var(--primary-accent-color);
-    font-size: 1.2rem;
+    font-size: 1.4rem;
     box-shadow: 0 2px 5px rgba(0, 123, 255, 0.3);
 }
 #add-template-button:hover {
