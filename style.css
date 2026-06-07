@@ -1999,11 +1999,24 @@ body.dark #clear-all-templates-button:hover {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.1em;
-    transition: color 0.2s ease;
+    font-size: 1.3em;
+    /* Додаємо transform та filter у transition для плавності */
+    transition: color 0.2s ease, transform 0.1s ease, filter 0.2s ease;
+    will-change: transform;
 }
-.drag-handle:hover { color: var(--accent-color); }
-.drag-handle:active { cursor: grabbing; }
+
+.drag-handle:hover { 
+    color: var(--accent-color);
+}
+
+/* Ефект при натисненні (утриманні) */
+.drag-handle:active,
+.drag-handle.is-dragging { 
+    cursor: grabbing; 
+    color: var(--accent-color);
+    transform: translateY(1px) scale(0.92);
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15)); /* М'яка тінь */
+}
 
 /* =========================================
    СТИЛІ ДЛЯ НАТИВНОГО ПЕРЕТЯГУВАННЯ

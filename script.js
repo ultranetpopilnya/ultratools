@@ -1069,7 +1069,7 @@ fieldGroup.dataset.regMode             = regMode;      /* ДОДАНО */
     // ======== ПОЧАТОК НОВОГО НАТИВНОГО ПЕРЕТЯГУВАННЯ ========
     const dragHandle = document.createElement('div');
     dragHandle.className = 'drag-handle';
-    dragHandle.innerHTML = '<i class="fa-solid fa-grip-vertical"></i>';
+    dragHandle.innerHTML = '<i class="fa-solid fa-grip"></i>';
     dragHandle.title = 'Потягніть, щоб перемістити шаблон';
     
     // Вмикаємо D&D тільки коли мишка на ручці
