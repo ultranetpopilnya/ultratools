@@ -1790,17 +1790,14 @@ body.dark .add-tab-item:active {
     margin-bottom: 0px; 
 }
 
-/* === СТИЛЬ КОНТЕЙНЕРА (TETRIS ENGINE) === */
 #templates-grid-wrapper {
-    position: relative; 
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    align-items: flex-start;
+    gap: 4px; /* Чітка відстань між шаблонами (Сітка) */
     width: 100%;
-	padding-bottom: 150px;
-    /* Висота буде задаватися скриптом */
-    height: auto; 
-    min-height: 500px;
-    display: block; /* Важливо: блок, а не flex */
-	overflow: visible; 
-	transition: min-height 0.3s ease; /* Плавна зміна висоти самого контейнера */
+    padding-bottom: 150px;
 }
 
         /* Контейнер шапки */
@@ -1975,54 +1972,62 @@ body.dark #clear-all-templates-button:hover {
     color: white;
 }
     
+/* --- СТИЛІ ШАБЛОНУ --- */
 .template-field-group {
-    /* Обов'язково absolute */
-    position: absolute;
-    top: 0;
-    left: 0;
-
-    /* Дизайн */
+    position: relative;
     border: 2px solid var(--template-border-color);
-    padding: 0;
     border-radius: 12px;
     background-color: var(--input-bg-color);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
-    overflow: hidden;
-
-    /* Розміри */
+    max-width: 100%;
+    flex-grow: 0;
+    
     min-height: 90px;
-    min-width: 410px;
-
-    /* --- ГОЛОВНЕ: АНІМАЦІЯ --- */
-    /* Анімуємо transform (рух) і розміри */
-    transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), 
-                width 0.1s linear, 
-                height 0.1s linear;
-
-    /* --- ХАК ДЛЯ ЧІТКОСТІ --- */
-    /* Це змушує браузер малювати текст чітко навіть при GPU анімації */
-    -webkit-font-smoothing: subpixel-antialiased;
-    backface-visibility: hidden; 
+    min-width: 450px;
+    /* Додаємо плавність для переміщення карток */
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 
-/* Коли тягнемо руками - анімації бути не повинно */
-.template-field-group.is-resizing,
+/* --- КНОПКА-РУЧКА --- */
+.drag-handle {
+    cursor: grab;
+    padding: 0 4px;
+    color: var(--tab-inactive-text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1em;
+    transition: color 0.2s ease;
+}
+.drag-handle:hover { color: var(--accent-color); }
+.drag-handle:active { cursor: grabbing; }
+
+/* =========================================
+   СТИЛІ ДЛЯ НАТИВНОГО ПЕРЕТЯГУВАННЯ
+========================================= */
+
+/* Стан картки, яку ми зараз ТЯГНЕМО (ховаємо її з сітки, але браузер залишає "привида" в руці) */
 .template-field-group.is-dragging {
-    transition: none !important;
-    z-index: 1000;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    display: none !important; 
 }
 
-/* АКТИВНИЙ БЛОК: Не повинен мати затримки, слідує чітко за мишкою */
-.template-field-group.is-resizing {
-    z-index: 1000 !important;
-    transition: none !important; /* Вимикаємо плавність для того, кого тягнемо */
-    box-shadow: 0 8px 20px rgba(0,0,0,0.25); /* Тінь, щоб бачити, що він активний */
-    opacity: 0.95;
+/* Порожнє місце (заглушка), куди впаде картка */
+.template-drag-placeholder {
+    border: 2px dashed var(--accent-color);
+    background-color: rgba(0, 0, 0, 0.03);
+    border-radius: 12px;
+    box-sizing: border-box;
+    pointer-events: none; /* Щоб мишка крізь нього бачила інші елементи */
+    margin: 0;
+    /* Плавна зміна розмірів, якщо картки різні */
+    transition: width 0.2s ease, height 0.2s ease; 
+}
+
+body.dark .template-drag-placeholder {
+    background-color: rgba(255, 255, 255, 0.03);
 }
         
         .template-header {
@@ -2353,7 +2358,8 @@ body.dark .calculator-actions-block {
     overflow-y: auto;
 overflow-x: hidden;	
     height: 100%;
- display: block;	
+ display: block;
+ scrollbar-gutter: stable;	
     
     /* --- ЗМІНА 3: Фікс графічного багу (курсора/артефактів) --- */
     /* Цей рядок змушує браузер краще обробляти краї при скролі */
@@ -4769,6 +4775,7 @@ body.dark .qn-item {
     line-height: 1.35;
     color: var(--text-color);
     word-break: break-word;
+    white-space: pre-wrap;
 }
 
 /* Блок кнопок справа */

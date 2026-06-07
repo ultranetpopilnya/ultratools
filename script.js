@@ -1,23 +1,3 @@
-// Функція-обмежувач: не дає запускати важкі задачі частіше, ніж раз на 'limit' мс
-function throttle(func, limit) {
-    let inThrottle;
-    return function() {
-        const args = arguments;
-        const context = this;
-        if (!inThrottle) {
-            func.apply(context, args);
-            inThrottle = true;
-            setTimeout(() => inThrottle = false, limit);
-        }
-    }
-}
-
-// Створюємо "гальмо", щоб функція не викликалась мільйон разів на секунду
-// 10мс - це дуже швидко, щоб не було візуальних затримок
-const throttledPackTemplates = throttle(() => {
-    packTemplates();
-}, 10);
-
 // 1. Спочатку оголошуємо допоміжну функцію
 function debounce(func, delay) {
     let timeout;
@@ -29,21 +9,24 @@ function debounce(func, delay) {
 // Додайте це на початку скрипту, якщо змінна ще не оголошена
 const debouncedSaveTemplates = debounce(saveTemplates, 1000);
 
-// --- ФУНКЦІОНАЛ КНОПКИ "ОЧИСТИТИ ВСІ ШАБЛОНИ" ---
 function clearAllTemplates() {
     const templatesGrid = document.getElementById('templates-grid-wrapper');
+    
+    // ДОДАНО: Безпечна перевірка
+    if (!templatesGrid) {
+        showNotification("Помилка: Контейнер шаблонів не знайдено!");
+        return;
+    }
     
     // Перевіряємо, чи є взагалі шаблони для видалення
     if (templatesGrid.children.length === 0) {
         showNotification("Немає шаблонів для видалення.");
-        return; // Виходимо з функції, якщо немає чого видаляти
+        return; 
     }
     
-    // Викликаємо стандартне вікно підтвердження браузера
     if (confirm('Ви впевнені, що хочете видалити ВСІ шаблони? Цю дію неможливо скасувати.')) {
-        // Цей код виконається, тільки якщо користувач натисне "ОК"
-        templatesGrid.innerHTML = ''; // Очищуємо контейнер з шаблонами
-        saveTemplates(); // Зберігаємо порожній стан
+        templatesGrid.innerHTML = ''; 
+        saveTemplates(); 
         showNotification("Усі текстові шаблони було видалено.");
     }
 }
@@ -87,18 +70,6 @@ let lastGeneratedLogin = ''; // Зберігатиме останній зген
                  if (deviceSelect && commandOutput && commandOutput.children.length === 0) {
                     displayCommands(deviceSelect.value);
                  }
-            }
-
-            // === ДОДАНО: Примусове перепакування шаблонів при відкритті вкладки ===
-            if (tabId === 'text-templates') {
-                // Робимо це через невелику затримку, щоб CSS встиг застосувати display: block
-                setTimeout(() => {
-                    packTemplates();
-                }, 50);
-                // І ще раз трохи пізніше для надійності (страховка від повільного рендеру)
-                setTimeout(() => {
-                    packTemplates();
-                }, 200);
             }
         }
         if (activeButton) {
@@ -837,56 +808,35 @@ function loadCommandsFromFile() {
 }
     
 function initDraggableAndResizable(element) {
+    // БЕЗПЕЧНА ПЕРЕВІРКА: чи підключена бібліотека?
+    if (typeof interact === 'undefined') {
+        console.warn("Бібліотека Interact.js не знайдена! Зміна розміру карток тимчасово не працює.");
+        return; // Виходимо, щоб скрипт не впав
+    }
+
     interact(element).resizable({
         edges: { left: false, right: true, bottom: true, top: false },
-        
         listeners: {
             start(event) {
                 event.target.classList.add('is-resizing');
-                event.target.style.zIndex = '5000';
             },
             move(event) {
                 let target = event.target;
-                const container = document.getElementById('templates-grid-wrapper');
-                
-                // 1. Отримуємо ширину контейнера
-                const containerWidth = container.clientWidth;
-
-                // 2. Отримуємо поточну позицію X елемента
-                const style = window.getComputedStyle(target);
-                const matrix = new DOMMatrix(style.transform);
-                const currentX = matrix.m41;
-
-                // 3. Рахуємо МАКСИМАЛЬНО можливу ширину для цього блоку
-                // Віднімаємо 10px, щоб він точно не впирався в край і не викликав глюк переносу
-                const maxAvailableWidth = containerWidth - currentX - 0;
-
-                // 4. Головна магія: 
-                // Беремо або ширину від мишки, або максимум. Що менше - те і беремо.
-                // Це прибирає "відскок", блок просто впирається в невидиму стіну.
-                let newWidth = Math.min(event.rect.width, maxAvailableWidth);
-                let newHeight = event.rect.height;
-
-                // 5. Застосовуємо (Math.floor прибирає дробові пікселі, що теж зменшує дрижання)
-                target.style.width = Math.floor(newWidth) + 'px';
-                target.style.height = Math.floor(newHeight) + 'px';
-				
-				renderLineMarkers(target); 
-                
-                // Оновлюємо сусідів
-                throttledPackTemplates(); 
+                target.style.width = Math.floor(event.rect.width) + 'px';
+                target.style.height = Math.floor(event.rect.height) + 'px';
+                renderLineMarkers(target); 
             },
             end(event) {
                 event.target.classList.remove('is-resizing');
-                event.target.style.zIndex = '';
-                
                 saveTemplates();
-                packTemplates();
             }
         },
         modifiers: [
             interact.modifiers.restrictSize({
-                min: { width: 350, height: 90 }
+                min: { width: 450, height: 90 }
+            }),
+            interact.modifiers.restrictEdges({
+                outer: 'parent' 
             })
         ],
         inertia: false
@@ -1011,13 +961,14 @@ function initDraggableAndResizable(element) {
 // --- НОВІ ФУНКЦІЇ ДЛЯ ПІДСВІТКИ СЛІВ ---
 
     function escapeHtml(text) {
-        return text
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;");
-    }
+    if (text == null) return ""; // Захист від null або undefined
+    return String(text)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
 
     function updateHighlight(textarea, highlighter) {
         const text = textarea.value;
@@ -1087,7 +1038,7 @@ function initDraggableAndResizable(element) {
     // Відновлення закладок
     let modernBookmarks = [];
     if (bookmarks.length > 0) {
-        const lines = content.split('\n');
+        const lines = (content || '').split('\n');
         if (typeof bookmarks[0] === 'number') { 
             bookmarks.forEach(lineNumber => {
                 if (lineNumber > 0 && lineNumber <= lines.length) {
@@ -1114,6 +1065,52 @@ fieldGroup.dataset.regMode             = regMode;      /* ДОДАНО */
           
     const headerDiv = document.createElement('div');
     headerDiv.className = 'template-header';
+    
+    // ======== ПОЧАТОК НОВОГО НАТИВНОГО ПЕРЕТЯГУВАННЯ ========
+    const dragHandle = document.createElement('div');
+    dragHandle.className = 'drag-handle';
+    dragHandle.innerHTML = '<i class="fa-solid fa-grip-vertical"></i>';
+    dragHandle.title = 'Потягніть, щоб перемістити шаблон';
+    
+    // Вмикаємо D&D тільки коли мишка на ручці
+    dragHandle.addEventListener('mouseenter', () => fieldGroup.setAttribute('draggable', 'true'));
+    dragHandle.addEventListener('mouseleave', () => fieldGroup.setAttribute('draggable', 'false'));
+
+    fieldGroup.addEventListener('dragstart', function(e) {
+        e.dataTransfer.effectAllowed = 'move';
+        window.draggedTemplate = this;
+        
+        // Створюємо порожню "заглушку"
+        window.dragPlaceholder = document.createElement('div');
+        window.dragPlaceholder.className = 'template-drag-placeholder';
+        
+        // Задаємо заглушці такі ж розміри, як у картки, яку взяли
+        const rect = this.getBoundingClientRect();
+        window.dragPlaceholder.style.width = rect.width + 'px';
+        window.dragPlaceholder.style.height = rect.height + 'px';
+
+        // Робимо невелику затримку, щоб браузер встиг зробити "фото" картки для мишки
+        setTimeout(() => {
+            this.classList.add('is-dragging');
+            // Вставляємо заглушку на місце оригінальної картки
+            this.parentNode.insertBefore(window.dragPlaceholder, this);
+        }, 0);
+    });
+
+    fieldGroup.addEventListener('dragend', function() {
+        this.classList.remove('is-dragging');
+        
+        // Ставимо справжню картку на місце заглушки
+        if (window.dragPlaceholder && window.dragPlaceholder.parentNode) {
+            window.dragPlaceholder.parentNode.replaceChild(this, window.dragPlaceholder);
+        }
+        
+        window.draggedTemplate = null;
+        window.dragPlaceholder = null;
+        
+        saveTemplates();
+    });
+    // ======== КІНЕЦЬ НОВОГО НАТИВНОГО ПЕРЕТЯГУВАННЯ ========
     
     const nameInput = document.createElement('input');
     nameInput.type = 'text';
@@ -1263,7 +1260,6 @@ fieldGroup.dataset.regMode             = regMode;      /* ДОДАНО */
         }
         
         saveTemplates(); // Зберігаємо стан (якщо ти додав це з попереднього кроку)
-        setTimeout(() => packTemplates(), 260); // Оновлюємо сітку Тетрісу
     };
 
     // === КНОПКА ГЕНЕРАТОРА КОНФІГІВ ===
@@ -1448,9 +1444,6 @@ if (!isDeleting) {
             if (!loginInput.value && lastGeneratedLogin) {
                 loginInput.value = lastGeneratedLogin;
             }
-
-            setTimeout(() => packTemplates(), 260);
-
             saveTemplates();
         }
     };
@@ -1860,7 +1853,6 @@ fieldGroup.dataset.lastGeneratedConfig = finalConfig;
         if (confirm('Видалити шаблон?')) {
             fieldGroup.remove();
             saveTemplates();
-            packTemplates();
         }
     };
 
@@ -1980,7 +1972,6 @@ fieldGroup.dataset.lastGeneratedConfig = finalConfig;
                 if (textarea) textarea.focus();
                 
                 saveTemplates(); // ДОДАНО: зберігаємо стан
-                setTimeout(() => packTemplates(), 260); // ДОДАНО: пакуємо тетріс після закриття
             }
         }
     });
@@ -2158,7 +2149,8 @@ fieldGroup.dataset.lastGeneratedConfig = finalConfig;
         sep.className = 'action-separator';
         return sep;
     };
-
+    
+    headerDiv.appendChild(dragHandle);
     headerDiv.appendChild(nameInput);
 
     actionsDiv.appendChild(configToggleButton);
@@ -2326,10 +2318,7 @@ function addTemplate() {
     
     // Тимчасово вимикаємо анімацію появи
     newField.style.transition = 'none';
-    container.appendChild(newField); 
-
-    // 2. Розкладаємо шаблони (Tetris)
-    packTemplates();
+    container.appendChild(newField);
     
     // 3. Через мить (коли тетріс відпрацював) робимо магію
     setTimeout(() => {
@@ -2400,26 +2389,33 @@ regMode: group.dataset.regMode === 'true',       // ДОДАНО
 }
 
     function loadTemplates() {
-        const templatesJson = localStorage.getItem('textTemplates');
-        const templatesGrid = document.getElementById('templates-grid-wrapper');
-        templatesGrid.innerHTML = ''; 
-        if (templatesJson) {
-            try {
-                const templates = JSON.parse(templatesJson);
-                if (Array.isArray(templates)) {
-                    templates.forEach(template => {
-    const field = createTemplateField(template);
-    templatesGrid.appendChild(field); 
-});
-                }
-            } catch (e) {
-                console.error("Помилка завантаження:", e);
+    const templatesJson = localStorage.getItem('textTemplates');
+    const templatesGrid = document.getElementById('templates-grid-wrapper');
+    
+    if (!templatesGrid) return; // Захист: якщо немає сітки, виходимо
+    templatesGrid.innerHTML = ''; 
+    
+    if (templatesJson) {
+        try {
+            const templates = JSON.parse(templatesJson);
+            if (Array.isArray(templates)) {
+                templates.forEach((template, index) => {
+                    // Захист від битих (null) збережень
+                    if (!template) return; 
+                    
+                    try {
+                        const field = createTemplateField(template);
+                        templatesGrid.appendChild(field); 
+                    } catch (err) {
+                        console.error(`Помилка малювання шаблону №${index + 1}:`, err);
+                    }
+                });
             }
+        } catch (e) {
+            console.error("Критична помилка читання збережених шаблонів:", e);
         }
-        // ВАЖЛИВО: Пакуємо все після завантаження
-        setTimeout(packTemplates, 100);
-        setTimeout(packTemplates, 500); // Контрольний постріл
     }
+}
     
     function exportToFile() {
         const templatesJson = localStorage.getItem('textTemplates');
@@ -2507,7 +2503,6 @@ regMode: group.dataset.regMode === 'true',       // ДОДАНО
                 
                 // Візуальне оновлення
                 setTimeout(() => {
-                    packTemplates();
                     showNotification(notesToImport.length > 0 
                         ? "Шаблони та нотатки успішно імпортовано!" 
                         : "Текстові шаблони успішно імпортовано!");
@@ -2942,6 +2937,8 @@ let EXTRA_CONFIG_TEMPLATES = { gpon: "", epon: "" };
     }
 
     // ЗАПУСК
+    try { loadTemplates(); } catch(e) { console.error("Помилка при loadTemplates:", e); }
+
     loadTabOrder();
     initTabDragging();
     initTabManagement();
@@ -2951,70 +2948,68 @@ let EXTRA_CONFIG_TEMPLATES = { gpon: "", epon: "" };
     loadCalcAutoClearState();
     loadOltConfigs();
 
-// Обробник для кнопки "Поточна дата"
-document.getElementById('set-start-now-btn').addEventListener('click', () => {
-    const now = new Date();
-    document.getElementById('start-date').value = formatDate(now);
-    // РЯДОК З ЧАСОМ ВИДАЛЕНО: Тепер час залишається таким, яким був (введеним вручну або 00:00)
-    handleInputAndTimer(); // Оновлюємо розрахунок
-});
-
-document.getElementById('set-end-time-now-btn').addEventListener('click', () => {
-    const now = new Date();
-    // Форматуємо час у формат HH:MM
-    const timeString = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
-    
-    // Встановлюємо у поле КІНЦЕВОГО часу (end-time)
-    document.getElementById('end-time').value = timeString;
-    handleInputAndTimer(); // Оновлюємо розрахунок
-});
-
+// === БЕЗПЕЧНА ЛОГІКА КНОПОК ДАТИ ===
 // Універсальна функція для додавання періоду до кінцевої дати
 const addDurationToEndDate = (monthsToAdd, yearsToAdd) => {
-    const startDateValue = document.getElementById('start-date').value;
-    
+    const startDateInput = document.getElementById('start-date');
+    const endDateInput = document.getElementById('end-date');
+
+    if (!startDateInput || !endDateInput) return; // Захист
+
+    const startDateValue = startDateInput.value;
     if (!startDateValue) {
         showNotification("Спочатку встановіть початкову дату!");
         return;
     }
 
-    // Безпечно розбиваємо дату, щоб уникнути зсувів через часові пояси
     const [year, month, day] = startDateValue.split('-');
     const newEndDate = new Date(year, month - 1, day);
     
-    // Розраховуємо нову дату
-    if (monthsToAdd > 0) {
-        newEndDate.setMonth(newEndDate.getMonth() + monthsToAdd);
-    }
-    if (yearsToAdd > 0) {
-        newEndDate.setFullYear(newEndDate.getFullYear() + yearsToAdd);
-    }
+    if (monthsToAdd > 0) newEndDate.setMonth(newEndDate.getMonth() + monthsToAdd);
+    if (yearsToAdd > 0) newEndDate.setFullYear(newEndDate.getFullYear() + yearsToAdd);
 
-    // Встановлюємо ТІЛЬКИ нову дату. 
-    // Ми більше не чіпаємо 'start-time' і не перезаписуємо 'end-time'.
-    document.getElementById('end-date').value = formatDate(newEndDate);
-    
-    handleInputAndTimer(); // Оновлюємо розрахунок
+    endDateInput.value = formatDate(newEndDate);
+    if (typeof handleInputAndTimer === 'function') handleInputAndTimer(); 
 };
 
-// Прив'язка до кнопок
-document.getElementById('add-6-months-btn').addEventListener('click', () => addDurationToEndDate(6, 0));
-document.getElementById('add-7-months-btn').addEventListener('click', () => addDurationToEndDate(7, 0));
-document.getElementById('add-1-year-btn').addEventListener('click', () => addDurationToEndDate(0, 1));
-    
-    document.getElementById('fullNameInput').addEventListener('input', generateLogins); 
-    document.getElementById('add-template-button').onclick = addTemplate;
-    
-    // Спочатку завантажуємо шаблони
-    loadTemplates();
-	
-	// Функція, яка пробігається по всіх шаблонах і оновлює маркери
-    function refreshAllMarkers() {
-        document.querySelectorAll('.template-field-group').forEach(group => {
-            renderLineMarkers(group);
-        });
-        packTemplates(); // Заодно і тетріс поправимо
-    }
+// Безпечна прив'язка до кнопок
+const btn6m = document.getElementById('add-6-months-btn');
+if (btn6m) btn6m.addEventListener('click', () => addDurationToEndDate(6, 0));
+
+const btn7m = document.getElementById('add-7-months-btn');
+if (btn7m) btn7m.addEventListener('click', () => addDurationToEndDate(7, 0));
+
+const btn1y = document.getElementById('add-1-year-btn');
+if (btn1y) btn1y.addEventListener('click', () => addDurationToEndDate(0, 1));
+
+const btnStartNow = document.getElementById('set-start-now-btn');
+if (btnStartNow) btnStartNow.addEventListener('click', () => {
+    const now = new Date();
+    const startInput = document.getElementById('start-date');
+    if (startInput) startInput.value = formatDate(now);
+    if (typeof handleInputAndTimer === 'function') handleInputAndTimer();
+});
+
+const btnEndNow = document.getElementById('set-end-time-now-btn');
+if (btnEndNow) btnEndNow.addEventListener('click', () => {
+    const now = new Date();
+    const timeString = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+    const endInput = document.getElementById('end-time');
+    if (endInput) endInput.value = timeString;
+    if (typeof handleInputAndTimer === 'function') handleInputAndTimer();
+});
+
+// === АКТИВАЦІЯ ГЕНЕРАТОРА ЛОГІНІВ ТА ШАБЛОНІВ ===
+const fullNameInput = document.getElementById('fullNameInput');
+if (fullNameInput) {
+    fullNameInput.addEventListener('input', generateLogins); 
+}
+
+const addTplBtn = document.getElementById('add-template-button');
+if (addTplBtn) {
+    addTplBtn.onclick = addTemplate;
+}
+
 
     // 1. Чекаємо, поки завантажаться шрифти (Fira Code)
     document.fonts.ready.then(() => {
@@ -3042,10 +3037,6 @@ document.getElementById('add-1-year-btn').addEventListener('click', () => addDur
             window.textareaObserver.observe(textarea);
         });
     }, 200);
-	
-	window.addEventListener('resize', debounce(() => {
-        packTemplates();
-    }, 200)); 
 
 // Цей код один раз при завантаженні встановлює розміри для ВСІХ вкладок
 document.querySelectorAll('.container[data-content]').forEach(container => {
@@ -3056,14 +3047,15 @@ document.querySelectorAll('.container[data-content]').forEach(container => {
 });	
     
     const importFileInput = document.getElementById('import-file-input');
-    const importButton = document.getElementById('import-templates-button');
-    const exportButton = document.getElementById('export-templates-button');
-	const clearAllButton = document.getElementById('clear-all-templates-button');
-    
-    exportButton.onclick = exportToFile;
-    importButton.onclick = () => importFileInput.click();
-    importFileInput.addEventListener('change', handleFileImport);
-	clearAllButton.onclick = clearAllTemplates;
+const importButton = document.getElementById('import-templates-button');
+const exportButton = document.getElementById('export-templates-button');
+const clearAllButton = document.getElementById('clear-all-templates-button');
+
+// Перевіряємо, чи існують кнопки на сторінці перед тим, як вішати на них події
+if (exportButton) exportButton.onclick = exportToFile;
+if (importButton && importFileInput) importButton.onclick = () => importFileInput.click();
+if (importFileInput) importFileInput.addEventListener('change', handleFileImport);
+if (clearAllButton) clearAllButton.onclick = clearAllTemplates;
 
     const initialTab = localStorage.getItem('activeTab') || 'login-generator';
     if (initialTab === 'login-generator') generateLogins(); 
@@ -3235,100 +3227,6 @@ document.querySelectorAll('.container[data-content]').forEach(container => {
         
         // Первинна перевірка
         checkScrollButtons();
-    }
-});
-
-function packTemplates() {
-    const container = document.getElementById('templates-grid-wrapper');
-	
-	if (container.offsetWidth === 0 || container.offsetParent === null) {
-        return;
-    }
-	
-    const templates = Array.from(container.querySelectorAll('.template-field-group'));
-    
-    if (templates.length === 0) {
-        container.style.minHeight = '500px';
-        return;
-    }
-
-    const containerWidth = Math.floor(container.offsetWidth);
-    const GAP = 4; 
-
-    const placedRects = [];
-    let maxContentHeight = 0;
-
-    // Перевірка на перетин
-    const checkCollision = (rect) => {
-        for (let r of placedRects) {
-            if (rect.x < r.x + r.w + GAP &&
-                rect.x + rect.w + GAP > r.x &&
-                rect.y < r.y + r.h + GAP &&
-                rect.y + rect.h + GAP > r.y) {
-                return true;
-            }
-        }
-        return false;
-    };
-
-    templates.forEach(template => {
-        const w = Math.round(template.offsetWidth);
-        const h = Math.round(template.offsetHeight);
-        
-        let found = false;
-        let bestX = 0;
-        let bestY = 0;
-
-        let candidatePoints = [{x: 0, y: 0}]; 
-        placedRects.forEach(r => {
-            candidatePoints.push({ x: r.x + r.w + GAP, y: r.y });
-            candidatePoints.push({ x: 0, y: r.y + r.h + GAP });
-            candidatePoints.push({ x: r.x, y: r.y + r.h + GAP });
-        });
-
-        candidatePoints.sort((a, b) => a.y - b.y || a.x - b.x);
-
-        for (let p of candidatePoints) {
-            if (p.x + w <= containerWidth) {
-                if (!checkCollision({ x: p.x, y: p.y, w: w, h: h })) {
-                    bestX = p.x;
-                    bestY = p.y;
-                    found = true;
-                    break;
-                }
-            }
-        }
-
-        if (!found) {
-            let maxY = 0;
-            placedRects.forEach(r => maxY = Math.max(maxY, r.y + r.h + GAP));
-            bestX = 0;
-            bestY = maxY;
-        }
-
-        // --- ВИПРАВЛЕННЯ ---
-        // 1. Скидаємо top/left, щоб вони не конфліктували
-        template.style.top = '0px';
-        template.style.left = '0px';
-
-        // 2. Використовуємо transform (це дає плавну анімацію)
-        // 3. ВАЖЛИВО: Math.round() прибирає розмиття
-        template.style.transform = `translate(${Math.round(bestX)}px, ${Math.round(bestY)}px)`;
-        
-        placedRects.push({ x: bestX, y: bestY, w: w, h: h });
-        maxContentHeight = Math.max(maxContentHeight, bestY + h);
-    });
-
-    const finalHeight = maxContentHeight + 150; 
-    container.style.height = finalHeight + 'px';    
-    container.style.minHeight = finalHeight + 'px'; 
-}
-
-// Додаткова страховка: коли ВСЕ завантажиться (включно зі шрифтами)
-window.addEventListener('load', () => {
-    // Якщо активна вкладка - шаблони, пакуємо їх
-    if (localStorage.getItem('activeTab') === 'text-templates') {
-        setTimeout(packTemplates, 100);
     }
 });
 
@@ -4043,7 +3941,7 @@ function renderQuickNotes() {
         
         // Візуально замінюємо пробіли на спеціальні символи нерозривних пробілів (тільки для показу в HTML)
         // Це гарантує, що пробіли в кінці чи на початку будуть видимі в браузері.
-        let displayHtml = escapeHtml(text).replace(/ /g, '&nbsp;');
+        let displayHtml = escapeHtml(text);
 
         item.innerHTML = `
             <div class="qn-text">${displayHtml}</div>
@@ -4063,3 +3961,67 @@ function renderQuickNotes() {
     });
 }
 
+// --- ЛОГІКА КОНТЕЙНЕРА ДЛЯ ПЕРЕТЯГУВАННЯ ШАБЛОНІВ ---
+const templatesContainer = document.getElementById('templates-grid-wrapper');
+
+if (templatesContainer) {
+    templatesContainer.addEventListener('dragover', (e) => {
+        e.preventDefault(); 
+        
+        const placeholder = window.dragPlaceholder;
+        if (!window.draggedTemplate || !placeholder) return;
+
+        const targetCard = e.target.closest('.template-field-group:not(.is-dragging)');
+        
+        // Нічого не робимо, якщо мишка над самим плейсхолдером або вікном (поза картками)
+        if (!targetCard || targetCard === placeholder) return;
+
+        const rect = targetCard.getBoundingClientRect();
+        
+        // МАГІЯ ТУТ: Визначаємо чи мишка пройшла рівно половину картки
+        const isMouseOnLeftHalf = e.clientX < rect.left + rect.width / 2;
+        const isMouseOnTopHalf = e.clientY < rect.top + rect.height / 2;
+
+        // Перевіряємо, чи картка і плейсхолдер зараз в одному ряду
+        const phRect = placeholder.getBoundingClientRect();
+        const isSameRow = Math.abs(rect.top - phRect.top) < 30;
+
+        // Логіка заміни:
+        if (isSameRow) {
+            // МИ В ОДНОМУ РЯДУ (орієнтуємось на ліво/право)
+            if (isMouseOnLeftHalf) {
+                // Мишка перетнула центр наліво -> ставимо плейсхолдер ПЕРЕД карткою
+                // (Додаткова перевірка, щоб не робити зайвих рухів, якщо він вже там)
+                if (placeholder.nextSibling !== targetCard) {
+                    templatesContainer.insertBefore(placeholder, targetCard);
+                }
+            } else {
+                // Мишка перетнула центр направо -> ставимо плейсхолдер ПІСЛЯ картки
+                if (placeholder.previousSibling !== targetCard) {
+                    templatesContainer.insertBefore(placeholder, targetCard.nextSibling);
+                }
+            }
+        } else {
+            // МИ ПЕРЕСКАКУЄМО В ІНШИЙ РЯД (орієнтуємось на верх/низ)
+            if (isMouseOnTopHalf) {
+                // Мишка у верхній половині -> ставимо ПЕРЕД
+                if (placeholder.nextSibling !== targetCard) {
+                    templatesContainer.insertBefore(placeholder, targetCard);
+                }
+            } else {
+                // Мишка у нижній половині -> ставимо ПІСЛЯ
+                if (placeholder.previousSibling !== targetCard) {
+                    templatesContainer.insertBefore(placeholder, targetCard.nextSibling);
+                }
+            }
+        }
+    });
+
+    document.addEventListener('dragend', () => {
+        if (window.dragPlaceholder && window.dragPlaceholder.parentNode) {
+            window.dragPlaceholder.remove();
+        }
+        window.draggedTemplate = null;
+        window.dragPlaceholder = null;
+    });
+}
