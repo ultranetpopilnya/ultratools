@@ -2142,9 +2142,15 @@ fieldGroup.dataset.lastGeneratedConfig = finalConfig;
         }
     };
 
+    let bookmarksTimeout;
     textarea.addEventListener('input', () => {
         updateHighlight(textarea, highlighter);
-        updateBookmarksOnTextChange(fieldGroup);
+        
+        clearTimeout(bookmarksTimeout);
+        bookmarksTimeout = setTimeout(() => {
+            updateBookmarksOnTextChange(fieldGroup);
+        }, 500);
+
         debouncedSaveTemplates();
     });
     textarea.addEventListener('scroll', syncScroll);
@@ -2295,7 +2301,13 @@ function renderLineMarkers(fieldGroup) {
     const style = window.getComputedStyle(textarea);
     
     // Захист: якщо ширина 0 (наприклад при видаленні або помилці), беремо поточну з об'єкта
-    const currentWidth = textarea.clientWidth || parseFloat(fieldGroup.style.width) - 20;
+    let currentWidth = textarea.clientWidth;
+    if (!currentWidth || currentWidth <= 0) {
+        currentWidth = parseFloat(fieldGroup.style.width) - 20;
+    }
+    // Захист від критичної помилки розміру
+    if (isNaN(currentWidth) || currentWidth < 100) currentWidth = 430; 
+    
     mirror.style.width = currentWidth + 'px';
     
     mirror.style.fontFamily = style.fontFamily;
@@ -2579,7 +2591,11 @@ regMode: group.dataset.regMode === 'true',       // ДОДАНО
         }
     };
     reader.readAsText(file);
-    fileInput.value = ''; // Скидаємо інпут
+    
+    // Скидаємо інпут ТІЛЬКИ після завершення читання файлу
+    reader.onloadend = () => {
+        fileInput.value = ''; 
+    };
 }
 
 // --- ФУНКЦІЇ ІСТОРІЇ ---
@@ -3584,10 +3600,11 @@ function calcClearHistory() {
     renderCalcHistory();
 }
 
-/* === РОЗШИРЕНЕ УПРАВЛІННЯ З КЛАВІАТУРИ === */
+//* === РОЗШИРЕНЕ УПРАВЛІННЯ З КЛАВІАТУРИ === */
 document.addEventListener('keydown', (e) => {
-    // 1. Ігноруємо натискання, якщо користувач друкує текст у генераторі логінів чи шаблонах
-    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    // 1. Ігноруємо натискання, якщо користувач взаємодіє з елементами вводу
+    const activeTag = e.target.tagName;
+    if (['INPUT', 'TEXTAREA', 'SELECT'].includes(activeTag) || e.target.isContentEditable) return;
 
     // 2. НОВЕ: Швидке копіювання (Ctrl+C або Cmd+C на Mac)
     // Перевіряємо як латинську 'c', так і кириличну 'с' (для української розкладки)
