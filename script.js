@@ -834,6 +834,16 @@ function initDraggableAndResizable(element) {
                 if (!newWidth || isNaN(newWidth) || newWidth < 100) return;
                 if (!newHeight || isNaN(newHeight) || newHeight < 50) return;
 
+                // === ДОДАНО: ЗАХИСТ ВІД РОЗТЯГУВАННЯ ЗА ЕКРАН ===
+                const parent = target.parentElement;
+                if (parent) {
+                    const maxAllowedWidth = parent.clientWidth - 20; // 20px - безпечний відступ
+                    if (newWidth > maxAllowedWidth) {
+                        newWidth = maxAllowedWidth;
+                    }
+                }
+                // ==============================================
+
                 // 3. Примусово записуємо в пікселях (цілі числа)
                 target.style.width = Math.round(newWidth) + 'px';
                 target.style.height = Math.round(newHeight) + 'px';
@@ -855,6 +865,10 @@ function initDraggableAndResizable(element) {
             interact.modifiers.restrictSize({
                 min: { width: 450, height: 90 },
                 max: { width: 2000, height: 2000 }
+            }),
+            // === ДОДАНО: Обмеження для мишки (курсору) ===
+            interact.modifiers.restrictEdges({
+                outer: 'parent'
             })
         ],
         inertia: false
