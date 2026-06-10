@@ -1740,7 +1740,6 @@ body.dark .add-tab-btn.menu-open:active {
     font-size: 13.5px;
     font-weight: 500;
     transition: all 0.2s ease;
-    margin-bottom: 2px;
     background-color: transparent;
 }
 
