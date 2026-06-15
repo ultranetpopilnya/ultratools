@@ -275,7 +275,7 @@ body.dark .version-number {
 .extension-version-badge {
     font-weight: 700; font-family: 'Fira Code', monospace; font-size: 13px;
     background-color: rgba(0, 123, 255, 0.1); color: var(--primary-accent-color);
-    padding: 4px 8px; border-radius: 6px;
+    padding: 4px 10px; border-radius: 6px;
 }
 
 
