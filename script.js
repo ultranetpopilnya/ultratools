@@ -242,8 +242,8 @@ function generateLogins() {
 
     const lines = fullNames.split('\n');
     
-    const companyRegex = /(^|\s)(фоп|тов|пп|ат|кб|го|кп)(\s|$)/i;
-    const strictCompanyKeyword = /^(фоп|тов|пп|ат|кб|го|кп)$/i;
+    const companyRegex = /(^|\s)(фоп|тов|тзов|пп|ат|прат|пат|ват|зат|тдв|кб|го|гс|кп|дп|фг|сфг|осбб|жбк|бф|нвп|зош|нвк|днз|црл)(\s|$)/i;
+    const strictCompanyKeyword = /^(фоп|тов|тзов|пп|ат|прат|пат|ват|зат|тдв|кб|го|гс|кп|дп|фг|сфг|осбб|жбк|бф|нвп|зош|нвк|днз|црл)$/i;
 
     lines.forEach(line => {
         const fullName = line.trim();
@@ -309,7 +309,7 @@ function generateLogins() {
         
         if (isCompany) {
             let loginFull = transliterate(fullName).replace(/[^a-z0-9]/g, '');
-            appendResult(loginFull, 'Звичайний', { isCompany: 'true', baseLogin: loginFull, suffixCounter: '1' }, fullName);
+            appendResult(loginFull, 'Повний', { isCompany: 'true', baseLogin: loginFull, suffixCounter: '1' }, fullName);
 
             let abbrLogin = '';
             parts.forEach(part => {
@@ -351,7 +351,7 @@ function generateLogins() {
                 let patronymicInitial = patronymicFull.charAt(0);
 
                 let loginStandard = surname + nameInitial + patronymicInitial;
-                appendResult(loginStandard, 'Звичайний', { 
+                appendResult(loginStandard, 'Прізвище + ініціали', { 
                     isCompany: 'false', surname: surname, nameInitial: nameInitial, patronymicFull: patronymicFull, patrIndex: '1' 
                 }, fullName);
 
@@ -1693,8 +1693,31 @@ btnShowSignal.classList.toggle('active', isShowSignalMode); // ДОДАНО
         const loginVal = configPanel.querySelector('.config-login-input').value.trim();
         const speedVal = configPanel.querySelector('.config-speed-select').value;
         const portVal = configPanel.querySelector('.config-port-input').value.trim();
-        const snVal = configPanel.querySelector('.config-sn-input').value.trim(); // ДОДАНО ЗЧИТУВАННЯ SN
+        const snVal = configPanel.querySelector('.config-sn-input').value.trim(); 
         const vlanVal = configPanel.querySelector('.config-vlan-input').value.trim();
+
+        // === ДОДАНО: ОБОВ'ЯЗКОВІ ПОЛЯ ===
+        if (!loginVal) {
+            showNotification("Помилка: Введіть логін!");
+            return;
+        }
+
+        if (!snVal) {
+            showNotification("Помилка: Введіть SN або MAC!");
+            return;
+        }
+
+        // Перевіряємо, чи введено порт і чи відповідає він формату "цифра/цифра/цифра:цифра"
+        const portRegex = /^\d{1,2}\/\d{1,2}\/\d{1,2}:\d{1,3}$/;
+        
+        if (!portVal) {
+            showNotification("Помилка: Введіть Порт!");
+            return;
+        } else if (!portRegex.test(portVal)) {
+            showNotification("Помилка: Неповний формат порту! Потрібно (X/X/X:X)");
+            return;
+        }
+        // ================================
 
         if (/[а-яА-ЯіїєґІЇЄҐёЁ]/.test(loginVal)) {
             showNotification("Помилка! Логін містить кирилицю.");
@@ -1702,9 +1725,9 @@ btnShowSignal.classList.toggle('active', isShowSignalMode); // ДОДАНО
         }
 
         if (!selectedOltObj) {
-    showNotification("Будь ласка, оберіть ОЛТ зі списку!");
-    return;
-}
+            showNotification("Будь ласка, оберіть ОЛТ зі списку!");
+            return;
+        }
 
 let oltObj = selectedOltObj;
 
