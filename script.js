@@ -333,7 +333,7 @@ function generateLogins() {
         } else {
             if (parts.length < 3) {
                 let loginFull = parts.map(part => transliterate(part)).join('').replace(/[^a-z0-9]/g, '');
-                appendResult(loginFull, 'Звичайний', { isCompany: 'true', baseLogin: loginFull, suffixCounter: '1' }, fullName);
+                appendResult(loginFull, 'Повний', { isCompany: 'true', baseLogin: loginFull, suffixCounter: '1' }, fullName);
                 
                 let loginAbbr = parts.map(part => {
                     let cleanPart = part.replace(/[^a-zA-Zа-яА-ЯіїєґІЇЄҐ0-9]/g, '');
