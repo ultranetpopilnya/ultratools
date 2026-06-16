@@ -1444,6 +1444,15 @@ body.dark .tabs {
     font-weight: 600;
     user-select: none;
     
+    /* --- ФІКС "КВАДРАТНОГО ФОНУ" (СМІТТЯ) ПРИ ПЕРЕТЯГУВАННІ --- */
+    /* Ізолюємо кнопку у власний графічний шар, щоб браузер 
+       робив знімок лише пігулки з ідеально прозорими кутами */
+    isolation: isolate;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    will-change: transform, opacity;
+    /* -------------------------------------------------------- */
+    
     transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
@@ -1470,8 +1479,9 @@ body.dark .tabs {
        Замість цього робимо текст прозорим, але він тримає форму */
     color: transparent !important;
     
-    /* Вимикаємо будь-які трансформації, які можуть сплющити кнопку */
-    transform: none !important;
+    /* Зберігаємо ізоляцію графічного шару */
+    transform: translateZ(0) !important; 
+    -webkit-transform: translateZ(0) !important;
 }
 
 /* 2. Ховаємо іконку всередині, але вона продовжує займати місце (visibility: hidden) */
@@ -1521,7 +1531,11 @@ body.dark .tab-button:hover:not(.active) {
     -webkit-text-stroke: 0;
     /* Решта стилів залишається як була */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(0, 0, 0, 0.05);
-    transform: translateY(0);
+    
+    /* Змінено з translateY(0) для підтримки ізоляції під час drag & drop */
+    transform: translateZ(0); 
+    -webkit-transform: translateZ(0);
+    
     border-radius: 9999px;
 }
 

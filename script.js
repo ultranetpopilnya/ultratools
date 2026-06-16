@@ -2984,15 +2984,12 @@ let EXTRA_CONFIG_TEMPLATES = { gpon: "", epon: "" };
         let draggedTab = null;
 
         tabs.forEach(tab => {
-            // Робимо елемент перетягуваним
             tab.setAttribute('draggable', 'true');
 
             // ПОЧАТОК: Коли почали тягнути
             tab.addEventListener('dragstart', (e) => {
                 draggedTab = tab;
                 e.dataTransfer.effectAllowed = 'move';
-                
-                // Додаємо клас з затримкою, щоб він не застосувався до "привида", якого малює браузер
                 setTimeout(() => tab.classList.add('dragging'), 0);
             });
 
@@ -3003,41 +3000,45 @@ let EXTRA_CONFIG_TEMPLATES = { gpon: "", epon: "" };
                 saveTabOrder(); // Зберігаємо новий порядок
             });
 
-            // Забороняємо події на дочірніх елементах (іконках), щоб не збивати drag
+            // Забороняємо події на дочірніх елементах (іконках)
             tab.addEventListener('dragover', (e) => e.preventDefault());
+        });
+
+        // === НОВЕ: Забороняємо браузеру показувати "перекреслений круг" при вході в зону
+        tabsContainer.addEventListener('dragenter', (e) => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
         });
 
         // ЛОГІКА СОРТУВАННЯ (коли тягнемо НАД контейнером)
         tabsContainer.addEventListener('dragover', (e) => {
             e.preventDefault(); // Дозволяємо дроп
+            e.dataTransfer.dropEffect = 'move'; // ПРИМУСОВО вмикаємо курсор "переміщення"
             
             const draggingItem = document.querySelector('.dragging');
             if (!draggingItem) return;
 
-            const afterElement = getDragAfterElement(tabsContainer, e.clientX);
+            // Знаходимо вкладку, над якою зараз знаходиться мишка
+            const targetTab = e.target.closest('.tab-button:not(.dragging)');
+            if (!targetTab) return;
+
+            const rect = targetTab.getBoundingClientRect();
             
-            if (afterElement == null) {
-                tabsContainer.appendChild(draggingItem);
+            // Визначаємо напрямок руху за допомогою позиції елементів у DOM
+            const isMovingRight = draggingItem.compareDocumentPosition(targetTab) & Node.DOCUMENT_POSITION_FOLLOWING;
+
+            if (isMovingRight) {
+                // Тягнемо ЗЛІВА НАПРАВО. 
+                if (e.clientX > rect.left + (rect.width * 0.2)) {
+                    tabsContainer.insertBefore(draggingItem, targetTab.nextSibling);
+                }
             } else {
-                tabsContainer.insertBefore(draggingItem, afterElement);
+                // Тягнемо СПРАВА НАЛІВО. 
+                if (e.clientX < rect.left + (rect.width * 0.8)) {
+                    tabsContainer.insertBefore(draggingItem, targetTab);
+                }
             }
         });
-    }
-
-    // Математика: визначаємо найближчий елемент
-    function getDragAfterElement(container, x) {
-        const draggableElements = [...container.querySelectorAll('.tab-button:not(.dragging)')];
-
-        return draggableElements.reduce((closest, child) => {
-            const box = child.getBoundingClientRect();
-            const offset = x - (box.left + box.width / 2);
-            
-            if (offset < 0 && offset > closest.offset) {
-                return { offset: offset, element: child };
-            } else {
-                return closest;
-            }
-        }, { offset: Number.NEGATIVE_INFINITY }).element;
     }
 
     // ЗАПУСК
