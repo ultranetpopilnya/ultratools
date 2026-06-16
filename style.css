@@ -1003,7 +1003,7 @@ body.dark .gpon-commands-container select {
         .command-item {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start;
             padding: 5px 7px; 
             background-color: transparent; 
             cursor: pointer;
@@ -1035,25 +1035,39 @@ body.dark .gpon-commands-container select {
         }
 
         .command-text {
-            font-family: 'Fira Code', monospace;
-            font-weight: 600;
-            color: var(--text-color); 
-            user-select: none; 
-            flex-shrink: 0;
-            margin-right: 15px;
-        }
+    font-family: 'Fira Code', monospace;
+    font-weight: 600;
+    color: var(--text-color); 
+    user-select: none; 
+    
+    /* === ЗМІНЕНО === */
+    flex-shrink: 1;         /* Було 0, тепер дозволяємо трохи стискатись */
+    max-width: 65%;         /* Команда не забере більше 65% місця */
+    word-break: break-word; /* Дозволяємо перенос тексту на новий рядок */
+    white-space: pre-wrap;  /* Зберігаємо переноси */
+    /* ================ */
+    
+    margin-right: 15px;
+}
 		
 		body.dark .command-text {
     color: var(--secondary-accent-color);
 }
 
         .command-description {
-            font-size: 0.9em;
-            color: var(--description-color) !important; 
-            flex-grow: 1; 
-            text-align: right;
-            user-select: none;
-        }
+    font-size: 0.9em;
+    color: var(--description-color) !important; 
+    flex-grow: 1; 
+    
+    /* === ЗМІНЕНО === */
+    flex-shrink: 0;       /* Забороняємо опису стискатися і пропадати */
+    min-width: 100px;     /* Гарантована мінімальна ширина для опису */
+    line-height: 1.4;     /* Трохи міжрядкового інтервалу для краси */
+    /* ================ */
+    
+    text-align: right;
+    user-select: none;
+}
         
         body.dark .command-description {
             color: var(--description-color);
@@ -2665,29 +2679,6 @@ body {
 .no-transition {
     transition: none !important;
 }
-
-/* Для ноутбуків та планшетів (ширина екрану менше 1400px) */
-    @media (max-width: 1700px) {
-        /* Налаштування для GPON (залишаємо як було або міняємо на бажання) */
-        .container.gpon-commands-container {
-            --local-width: 90% !important; 
-            width: 90% !important;
-        }
-
-        /* === НОВЕ: Налаштування для Шаблонів === */
-        .container[data-content="text-templates"] {
-            /* Займаємо всю ширину */
-            --local-width: 100% !important; 
-            width: 100% !important;
-            
-            /* Прибираємо заокруглення знизу, щоб виглядало як суцільний екран */
-            border-radius: 0 !important; 
-            
-            /* Трохи зменшуємо внутрішні відступи, щоб влізло більше тексту */
-            padding-left: 5px !important;
-            padding-right: 5px !important;
-        }
-    }
 	
 /* Гарантуємо, що результати не стискаються */
 #results-container {
@@ -2898,110 +2889,6 @@ body.dark .history-copy-btn:hover { background: var(--secondary-accent-color); c
     height: auto;
     overflow: visible !important;
 }
-
-/* === ФІНАЛЬНИЙ ВАРІАНТ (НИЗЬКЕ РОЗШИРЕННЯ) === */
-    @media (max-height: 768px) {
-        
-        /* 1. Компактна шапка */
-        h1.page-title {
-            font-size: 1.4rem !important;
-            margin: 5px 0 !important;
-        }
-        
-        .tabs {
-            margin: 0 auto 0 auto !important;
-            transform: scale(0.9);
-        }
-
-        /* 2. Обгортка контенту */
-        .tab-content-wrapper {
-            height: 100% !important;
-            min-height: 0 !important;
-            display: flex;
-            justify-content: center;
-            margin: 0 !important;
-            padding: 0 !important;
-        }
-
-        /* 3. ЗАГАЛЬНІ НАЛАШТУВАННЯ ДЛЯ ВСІХ КОНТЕЙНЕРІВ 
-           (Прибираємо відступи знизу, але НЕ чіпаємо ширину) */
-        .container.active {
-            height: 100% !important;
-            max-height: 100% !important;
-            min-height: 0 !important;
-            
-            /* ВІДСТУПИ: Прибираємо будь-які зазори знизу */
-            margin-bottom: 0 !important;
-            padding-bottom: 0 !important;
-            
-            /* СТИЛЬ: Прибираємо заокруглення знизу */
-            border-bottom-left-radius: 0 !important;
-            border-bottom-right-radius: 0 !important;
-            border-bottom: none !important;
-            
-            /* ПОЗИЦІЯ: Центрування для звичайних контейнерів */
-            position: relative !important;
-            top: auto !important; left: auto !important;
-            transform: none !important;
-            margin-left: auto !important; margin-right: auto !important;
-            
-            overflow: hidden !important;
-            display: flex !important;
-            flex-direction: column;
-        }
-
-        /* 4. СПЕЦИФІЧНИЙ ФІКС ДЛЯ ШАБЛОНІВ 
-           (Тільки вони розтягуються на 100% ширини і гарантовано вбивають 5px) */
-        .container[data-content="text-templates"] {
-            width: 100% !important;       /* На всю ширину */
-            height: 100% !important;      /* На всю висоту */
-            max-height: 100% !important;  /* Перебиваємо старий calc */
-            margin: 0 !important;         /* Перебиваємо старий margin */
-            border-radius: 0 !important;  /* Гострі кути всюди */
-        }
-
-        /* 5. ВНУТРІШНЯ КАРТКА */
-        .container .content-card {
-            flex-grow: 1;
-            height: 100% !important;
-            max-height: 100% !important;
-            
-            border-bottom-left-radius: 0 !important;
-            border-bottom-right-radius: 0 !important;
-            border-bottom: none !important;
-            
-            display: block !important;
-            overflow-y: auto !important;
-            overflow-x: hidden !important;
-            
-            padding: 10px !important;
-            padding-bottom: 20px !important;
-            
-            box-sizing: border-box !important;
-        }
-
-        /* Для Шаблонів прибираємо зайві паддінги всередині картки */
-        .container[data-content="text-templates"] .content-card {
-            padding: 5px !important;
-        }
-
-        /* 6. ЦЕНТРУВАННЯ ВМІСТУ ІНШИХ ВКЛАДОК */
-        .date-calculator-container .date-inputs-row,
-        .date-calculator-container .calculator-panel,
-        .date-calculator-container #result-section {
-            margin-left: auto !important;
-            margin-right: auto !important;
-            width: fit-content !important;
-            max-width: 100% !important;
-        }
-
-        .login-generator-container textarea,
-        .login-generator-container #results-container {
-            margin-left: auto !important;
-            margin-right: auto !important;
-            width: 90% !important;
-        }
-    }
 
 /* === ІДЕАЛЬНИЙ ІНТЕГРОВАНИЙ СТИЛЬ ПОШУКУ (ДВОКОЛОНКОВИЙ) === */
 /* 1. Головний контейнер (Стиль ідентичний до template-config-bar) */
@@ -4230,7 +4117,7 @@ body.dark #calc-auto-clear-btn.active {
 
 /* Базовий контейнер */
 .container.gpon-commands-container {
-    width: 94% !important;
+    width: 94%;
     max-width: 54%;
     margin: 0 auto;
     transition: max-width 0.4s cubic-bezier(0.25, 1, 0.5, 1),
@@ -4286,39 +4173,6 @@ body.dark #command-output.two-columns::after {
     overflow: hidden;             /* ← це замінює inline-block у ролі "не розривай" */
     width: 100%;                  
     margin-bottom: 4px;           
-}
-
-/* ========================================= */
-/* === АДАПТИВНІСТЬ ДЛЯ МАЛИХ ЕКРАНІВ === */
-/* ========================================= */
-@media (max-width: 1700px) {
-    /* Знаходимо всі контейнери, чий data-content містить слово "-commands" */
-    .container[data-content$="-commands"] {
-        width: 100% !important;
-        max-width: 100% !important;
-        --local-width: 100% !important;
-        left: 0 !important;
-        margin-left: 0 !important;
-        margin-right: 0 !important;
-        transform: none !important; /* Прибираємо центрування, якщо воно заважає */
-    }
-
-    /* Виправляємо колонки всередині будь-якого з цих контейнерів */
-    #command-output.two-columns {
-        column-count: 1 !important;
-        column-rule: none !important;
-        max-height: none !important;
-        column-fill: auto !important;
-    }
-
-    #command-output.two-columns::after {
-        display: none;
-    }
-    
-    /* Додатково: щоб картка всередині не мала відступів від країв екрану */
-    .container[data-content$="-commands"] .content-card {
-        border-radius: 0 !important; /* На мобільних виглядає краще без закруглень */
-    }
 }
 
 /* === СТИЛІ ДЛЯ ПОСТІЙНО РОЗГОРНУТИХ СПИСКІВ === */
@@ -4842,3 +4696,166 @@ body.dark .qn-edit-btn:hover { color: var(--secondary-accent-color); background-
     font-style: italic;
     opacity: 0.7;
 }
+
+/* ========================================= */
+/* === АДАПТИВНІСТЬ ДЛЯ МАЛИХ ЕКРАНІВ === */
+/* ========================================= */
+@media (max-width: 1366px) {
+    /* Знаходимо всі контейнери, чий data-content містить слово "-commands" */
+    .container[data-content$="-commands"] {
+        width: 100% !important;
+        max-width: 100% !important;
+        --local-width: 100% !important;
+        left: 0 !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        transform: none !important; /* Прибираємо центрування, якщо воно заважає */
+    }
+
+    /* Виправляємо колонки всередині будь-якого з цих контейнерів */
+    #command-output.two-columns {
+        column-count: 1 !important;
+        column-rule: none !important;
+        max-height: none !important;
+        column-fill: auto !important;
+    }
+
+    #command-output.two-columns::after {
+        display: none;
+    }
+    
+    /* Додатково: щоб картка всередині не мала відступів від країв екрану */
+    .container[data-content$="-commands"] .content-card {
+        border-radius: 0 !important; /* На мобільних виглядає краще без закруглень */
+    }
+}
+
+/* Для ноутбуків та планшетів (ширина екрану менше 1400px) */
+    @media (max-width: 1700px) {
+        /* Налаштування для GPON (залишаємо як було або міняємо на бажання) */
+        .container.gpon-commands-container {
+            --local-width: 100% !important; 
+            width: 100% !important;
+            min-width: 100% !important;
+        }
+
+        /* === НОВЕ: Налаштування для Шаблонів === */
+        .container[data-content="text-templates"] {
+            /* Займаємо всю ширину */
+            --local-width: 100% !important; 
+            width: 100% !important;
+            
+            
+            /* Прибираємо заокруглення знизу, щоб виглядало як суцільний екран */
+            border-radius: 0 !important;
+            
+        }
+    }
+
+    /* === ФІНАЛЬНИЙ ВАРІАНТ (НИЗЬКЕ РОЗШИРЕННЯ) === */
+    @media (max-height: 768px) {
+        
+        /* 1. Компактна шапка */
+        h1.page-title {
+            font-size: 1.4rem !important;
+            margin-top: -30px !important;
+            margin-bottom: 0 !important;
+            padding: 0 !important;
+        }
+        
+        .tabs {
+            margin: 0 auto 0 auto !important;
+            transform: scale(0.9);
+            margin: 0 !important;
+        }
+
+        /* 2. Обгортка контенту */
+        .tab-content-wrapper {
+            height: 100% !important;
+            min-height: 0 !important;
+            display: flex;
+            justify-content: center;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        /* 3. ЗАГАЛЬНІ НАЛАШТУВАННЯ ДЛЯ ВСІХ КОНТЕЙНЕРІВ 
+           (Прибираємо відступи знизу, але НЕ чіпаємо ширину) */
+        .container.active {
+            height: 100% !important;
+            max-height: 100% !important;
+            min-height: 0 !important;
+            
+            /* ВІДСТУПИ: Прибираємо будь-які зазори знизу */
+            margin: 0 !important;
+            padding: 0 !important;
+            
+            /* СТИЛЬ: Прибираємо заокруглення знизу */
+            border-bottom-left-radius: 0 !important;
+            border-bottom-right-radius: 0 !important;
+            border-bottom: none !important;
+            
+            /* ПОЗИЦІЯ: Центрування для звичайних контейнерів */
+            position: relative !important;
+            top: auto !important; left: auto !important;
+            transform: none !important;
+            margin-left: auto !important; margin-right: auto !important;
+            
+            overflow: hidden !important;
+            display: flex !important;
+            flex-direction: column;
+        }
+
+        /* 4. СПЕЦИФІЧНИЙ ФІКС ДЛЯ ШАБЛОНІВ 
+           (Тільки вони розтягуються на 100% ширини і гарантовано вбивають 5px) */
+        .container[data-content="text-templates"] {
+            width: 100% !important;       /* На всю ширину */
+            height: 100% !important;      /* На всю висоту */
+            max-height: 100% !important;  /* Перебиваємо старий calc */
+            margin: 0 !important;         /* Перебиваємо старий margin */
+            border-radius: 0 !important;  /* Гострі кути всюди */
+        }
+
+        /* 5. ВНУТРІШНЯ КАРТКА */
+        .container .content-card {
+            flex-grow: 1;
+            height: 100% !important;
+            max-height: 100% !important;
+            
+            border-bottom-left-radius: 0 !important;
+            border-bottom-right-radius: 0 !important;
+            border-bottom: none !important;
+            
+            display: block !important;
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            
+            padding: 10px !important;
+            padding-bottom: 20px !important;
+            
+            box-sizing: border-box !important;
+        }
+
+        /* Для Шаблонів прибираємо зайві паддінги всередині картки */
+        .container[data-content="text-templates"] .content-card {
+            padding: 5px !important;
+        }
+
+        /* 6. ЦЕНТРУВАННЯ ВМІСТУ ІНШИХ ВКЛАДОК */
+        .date-calculator-container .date-inputs-row,
+        .date-calculator-container .calculator-panel,
+        .date-calculator-container #result-section {
+            margin-left: auto !important;
+            margin-right: auto !important;
+            width: fit-content !important;
+            max-width: 100% !important;
+        }
+
+        .login-generator-container textarea,
+        .login-generator-container #results-container {
+            margin-left: auto !important;
+            margin-right: auto !important;
+            width: 90% !important;
+        }
+    }
+    
