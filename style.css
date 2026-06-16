@@ -2667,7 +2667,7 @@ body {
 }
 
 /* Для ноутбуків та планшетів (ширина екрану менше 1400px) */
-    @media (max-width: 1200px) {
+    @media (max-width: 1700px) {
         /* Налаштування для GPON (залишаємо як було або міняємо на бажання) */
         .container.gpon-commands-container {
             --local-width: 90% !important; 
@@ -2909,7 +2909,7 @@ body.dark .history-copy-btn:hover { background: var(--secondary-accent-color); c
         }
         
         .tabs {
-            margin: 0 auto 5px auto !important;
+            margin: 0 auto 0 auto !important;
             transform: scale(0.9);
         }
 
@@ -4291,7 +4291,7 @@ body.dark #command-output.two-columns::after {
 /* ========================================= */
 /* === АДАПТИВНІСТЬ ДЛЯ МАЛИХ ЕКРАНІВ === */
 /* ========================================= */
-@media (max-width: 1366px) {
+@media (max-width: 1700px) {
     /* Знаходимо всі контейнери, чий data-content містить слово "-commands" */
     .container[data-content$="-commands"] {
         width: 100% !important;
