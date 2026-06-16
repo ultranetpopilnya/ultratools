@@ -3116,6 +3116,13 @@ if (addTplBtn) {
 }
 
 
+    // Додаємо відсутню функцію для перемальовування маркерів
+    function refreshAllMarkers() {
+        document.querySelectorAll('.template-field-group').forEach(fieldGroup => {
+            renderLineMarkers(fieldGroup);
+        });
+    }
+
     // 1. Чекаємо, поки завантажаться шрифти (Fira Code)
     document.fonts.ready.then(() => {
         refreshAllMarkers();
