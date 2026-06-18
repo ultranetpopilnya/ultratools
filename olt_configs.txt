@@ -237,9 +237,9 @@ interface-loopdetect eth_0/1 activate
 end
 # ==========================================ПОКАЗАТИ СИГНАЛ І ЗАПИСАТИ==========================================
 [WRITE-SHOW-PON-POWER GPON]
-show pon power attenuation gpon-onu_{PORT}
 write
+show pon power attenuation gpon-onu_{PORT}
 
 [WRITE-SHOW-PON-POWER EPON]
-show pon power attenuation epon-onu_{PORT}
 write
+show pon power attenuation epon-onu_{PORT}
