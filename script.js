@@ -2997,7 +2997,7 @@ let EXTRA_CONFIG_TEMPLATES = { gpon: "", epon: "" };
         const order = Array.from(tabs).map(tab => tab.dataset.tab);
         localStorage.setItem('tabOrder', JSON.stringify(order));
     }
-
+    
     // 3. Ініціалізація перетягування
     function initTabDragging() {
         const tabs = document.querySelectorAll('.tab-button');

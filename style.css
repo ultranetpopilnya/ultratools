@@ -1456,6 +1456,7 @@ body.dark .tabs {
     transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
+
 /* === СТИЛІ ДЛЯ DRAG & DROP (ВИПРАВЛЕНО) === */
 
 /* 1. Елемент, який ми зараз тягнемо (залишається на місці як "місце під посадку") */
@@ -1482,6 +1483,9 @@ body.dark .tabs {
     /* Зберігаємо ізоляцію графічного шару */
     transform: translateZ(0) !important; 
     -webkit-transform: translateZ(0) !important;
+
+    /* ДОДАТИ ЦЕ: Миттєво перетворюємо на привид без анімації кольорів */
+    transition: none !important;
 }
 
 /* 2. Ховаємо іконку всередині, але вона продовжує займати місце (visibility: hidden) */
