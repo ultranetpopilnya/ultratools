@@ -37,7 +37,7 @@ let lastGeneratedLogin = ''; // Зберігатиме останній зген
         displayCommands(selectedValue);
     }
     
-    let isAutoResetEnabled = true; 
+    let isAutoResetEnabled = false; 
     
     function switchTab(tabId) {
         const tabs = document.querySelectorAll('.tab-button');
@@ -485,7 +485,7 @@ function areDatesInDefaultState() {
     const savedState = localStorage.getItem('autoResetEnabled');
     const button = document.getElementById('auto-reset-button');
     
-    isAutoResetEnabled = savedState !== 'false'; // За замовчуванням увімкнено
+    isAutoResetEnabled = savedState === 'true';
     
     button.classList.toggle('active', isAutoResetEnabled);
 
@@ -853,7 +853,7 @@ function initDraggableAndResizable(element) {
                 target.classList.remove('is-resizing');
                 
                 // Повертаємо можливість перетягування (Drag & Drop)
-                target.setAttribute('draggable', 'false'); // повернеться в 'true' через mouseenter
+                target.setAttribute('draggable', 'false'); 
                 
                 // Фінальний перерахунок маркерів
                 renderLineMarkers(target);
@@ -1117,35 +1117,56 @@ fieldGroup.dataset.regMode             = regMode;      /* ДОДАНО */
     dragHandle.innerHTML = '<i class="fa-solid fa-grip"></i>';
     dragHandle.title = 'Потягніть, щоб перемістити шаблон';
     
-    // Вмикаємо D&D тільки коли мишка на ручці
-    dragHandle.addEventListener('mouseenter', () => fieldGroup.setAttribute('draggable', 'true'));
-    dragHandle.addEventListener('mouseleave', () => fieldGroup.setAttribute('draggable', 'false'));
+    // 1. ЗА ЗАМОВЧУВАННЯМ ПЕРЕТЯГУВАННЯ ВИМКНЕНО
+    // Це гарантує, що текст всередині textarea перетягуватиметься стандартно
+    fieldGroup.setAttribute('draggable', 'false');
+
+    // 2. Вмикаємо перетягування ТІЛЬКИ коли затисли ЛІВУ кнопку миші на ручці
+    dragHandle.addEventListener('mousedown', (e) => {
+        if (e.button === 0) { 
+            fieldGroup.setAttribute('draggable', 'true');
+        }
+    });
+
+    // 3. Вимикаємо, якщо просто клікнули і відпустили
+    dragHandle.addEventListener('mouseup', () => {
+        fieldGroup.setAttribute('draggable', 'false');
+    });
+
+    // 4. Вимикаємо, якщо мишка зійшла з ручки (захист від залипання)
+    dragHandle.addEventListener('mouseleave', () => {
+        if (!window.draggedTemplate) {
+            fieldGroup.setAttribute('draggable', 'false');
+        }
+    });
 
     fieldGroup.addEventListener('dragstart', function(e) {
-        e.dataTransfer.effectAllowed = 'move';
-        window.draggedTemplate = this;
-        
-        // Створюємо порожню "заглушку"
-        window.dragPlaceholder = document.createElement('div');
-        window.dragPlaceholder.className = 'template-drag-placeholder';
-        
-        // Задаємо заглушці такі ж розміри, як у картки, яку взяли
-        const rect = this.getBoundingClientRect();
-        window.dragPlaceholder.style.width = rect.width + 'px';
-        window.dragPlaceholder.style.height = rect.height + 'px';
+        // Якщо перетягування увімкнене (тобто ми затисли ручку)
+        if (this.getAttribute('draggable') === 'true') {
+            e.dataTransfer.effectAllowed = 'move';
+            window.draggedTemplate = this;
+            
+            // Створюємо порожню "заглушку"
+            window.dragPlaceholder = document.createElement('div');
+            window.dragPlaceholder.className = 'template-drag-placeholder';
+            
+            const rect = this.getBoundingClientRect();
+            window.dragPlaceholder.style.width = rect.width + 'px';
+            window.dragPlaceholder.style.height = rect.height + 'px';
 
-        // Робимо невелику затримку, щоб браузер встиг зробити "фото" картки для мишки
-        setTimeout(() => {
-            this.classList.add('is-dragging');
-            // Вставляємо заглушку на місце оригінальної картки
-            this.parentNode.insertBefore(window.dragPlaceholder, this);
-        }, 0);
+            setTimeout(() => {
+                this.classList.add('is-dragging');
+                this.parentNode.insertBefore(window.dragPlaceholder, this);
+            }, 0);
+        }
     });
 
     fieldGroup.addEventListener('dragend', function() {
         this.classList.remove('is-dragging');
         
-        // Ставимо справжню картку на місце заглушки
+        // ОБОВ'ЯЗКОВО знову вимикаємо перетягування після того, як відпустили шаблон!
+        this.setAttribute('draggable', 'false');
+        
         if (window.dragPlaceholder && window.dragPlaceholder.parentNode) {
             window.dragPlaceholder.parentNode.replaceChild(this, window.dragPlaceholder);
         }
@@ -4079,53 +4100,43 @@ const templatesContainer = document.getElementById('templates-grid-wrapper');
 
 if (templatesContainer) {
     templatesContainer.addEventListener('dragover', (e) => {
+        // НАЙГОЛОВНІША ПЕРЕВІРКА: 
+        // Якщо ми зараз тягнемо ТЕКСТ (тобто немає window.draggedTemplate),
+        // ми просто повертаємо `return` БЕЗ `e.preventDefault()`. 
+        // Завдяки цьому браузер спокійно переносить текст у нове місце.
+        if (!window.draggedTemplate) {
+            return;
+        }
+
+        // А от якщо ми тягнемо ШАБЛОН — тоді вже беремо керування на себе
         e.preventDefault(); 
         
         const placeholder = window.dragPlaceholder;
-        if (!window.draggedTemplate || !placeholder) return;
+        if (!placeholder) return;
 
         const targetCard = e.target.closest('.template-field-group:not(.is-dragging)');
         
-        // Нічого не робимо, якщо мишка над самим плейсхолдером або вікном (поза картками)
         if (!targetCard || targetCard === placeholder) return;
 
         const rect = targetCard.getBoundingClientRect();
-        
-        // МАГІЯ ТУТ: Визначаємо чи мишка пройшла рівно половину картки
         const isMouseOnLeftHalf = e.clientX < rect.left + rect.width / 2;
         const isMouseOnTopHalf = e.clientY < rect.top + rect.height / 2;
 
-        // Перевіряємо, чи картка і плейсхолдер зараз в одному ряду
         const phRect = placeholder.getBoundingClientRect();
         const isSameRow = Math.abs(rect.top - phRect.top) < 30;
 
-        // Логіка заміни:
+        // Логіка заміни (сортування)
         if (isSameRow) {
-            // МИ В ОДНОМУ РЯДУ (орієнтуємось на ліво/право)
             if (isMouseOnLeftHalf) {
-                // Мишка перетнула центр наліво -> ставимо плейсхолдер ПЕРЕД карткою
-                // (Додаткова перевірка, щоб не робити зайвих рухів, якщо він вже там)
-                if (placeholder.nextSibling !== targetCard) {
-                    templatesContainer.insertBefore(placeholder, targetCard);
-                }
+                if (placeholder.nextSibling !== targetCard) templatesContainer.insertBefore(placeholder, targetCard);
             } else {
-                // Мишка перетнула центр направо -> ставимо плейсхолдер ПІСЛЯ картки
-                if (placeholder.previousSibling !== targetCard) {
-                    templatesContainer.insertBefore(placeholder, targetCard.nextSibling);
-                }
+                if (placeholder.previousSibling !== targetCard) templatesContainer.insertBefore(placeholder, targetCard.nextSibling);
             }
         } else {
-            // МИ ПЕРЕСКАКУЄМО В ІНШИЙ РЯД (орієнтуємось на верх/низ)
             if (isMouseOnTopHalf) {
-                // Мишка у верхній половині -> ставимо ПЕРЕД
-                if (placeholder.nextSibling !== targetCard) {
-                    templatesContainer.insertBefore(placeholder, targetCard);
-                }
+                if (placeholder.nextSibling !== targetCard) templatesContainer.insertBefore(placeholder, targetCard);
             } else {
-                // Мишка у нижній половині -> ставимо ПІСЛЯ
-                if (placeholder.previousSibling !== targetCard) {
-                    templatesContainer.insertBefore(placeholder, targetCard.nextSibling);
-                }
+                if (placeholder.previousSibling !== targetCard) templatesContainer.insertBefore(placeholder, targetCard.nextSibling);
             }
         }
     });
