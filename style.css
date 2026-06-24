@@ -3453,11 +3453,6 @@ body.dark .config-mix-toggle-btn.is-epon:hover {
     transform: translateY(-50%) scale(0.85);
 }
 
-/* При натисканні "втискаємо" повзунок всередині */
-.config-mix-toggle-btn:active::before {
-    transform: translateY(-50%) scale(0.85);
-}
-
 /* === ПРОФЕСІЙНИЙ КАСТОМНИЙ SELECT ДЛЯ ОЛТ === */
 .config-custom-select {
     position: relative;
