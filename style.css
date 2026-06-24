@@ -2026,7 +2026,7 @@ body.dark #clear-all-templates-button:hover {
     min-height: 90px;
     min-width: 450px;
     /* Додаємо плавність для переміщення карток */
-    transition: box-shadow 0.2s ease, transform 0.2s ease;
+    transition: box-shadow 0.2s ease, transform 0.2s ease, min-width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* --- КНОПКА-РУЧКА --- */
@@ -3237,13 +3237,17 @@ body.dark .template-config-bar {
     box-sizing: border-box;
     cursor: text;
 }
-.config-sn-input { flex: 0 0 130px; }
+.config-sn-input { flex: 0 0 120px; }
 .config-port-input { flex: 0 0 94px; }
-.config-speed-select { flex: 0 0 94px; cursor: pointer; }
+.config-speed-select { flex: 0 0 70px; cursor: pointer; }
 
 /* --- РОЗПОДІЛ ШИРИНИ (НИЖНІЙ РЯД) --- */
 .config-login-input { flex: 1 }
-.config-vlan-input { flex: 0 0 94px; }
+.config-vlan-input { flex: 0 0 90px; }
+
+.template-field-group:has(.template-config-bar.active) {
+    min-width: 700px !important; /* Ідеальна ширина, щоб вмістити всі поля і кнопку "Згенерувати" */
+}
 
 /* --- КНОПКА ГЕНЕРАЦІЇ (ДВОПОВЕРХОВА) --- */
 .config-generate-btn {
@@ -3339,78 +3343,119 @@ body.dark .config-show-signal-btn:hover {
     border-color: var(--primary-accent-color);
 }
 
-/* === НОВІ СТИЛІ САМЕ ДЛЯ КНОПКИ MIX === */
+/* === НОВІ СТИЛІ ДЛЯ КНОПКИ MIX (МЕХАНІЧНИЙ ПЕРЕМИКАЧ) === */
+
+/* Базовий контейнер "доріжки" перемикача */
 .config-mix-toggle-btn {
-    flex: 0 0 auto !important; /* Щоб кнопка могла розтягуватись під текст */
-    padding: 0 10px !important;
+    flex: 0 0 auto !important; 
+    display: inline-flex;
+    align-items: center;
+    min-width: 82px; 
+    
+    /* Змінили на 6px, щоб ідеально збігалося з іншими input/select у цьому ряду */
+    border-radius: 6px !important; 
+    border: 1px solid var(--input-border-color);
+    background-color: var(--input-bg-color);
+    
+    font-size: 13px;
     font-weight: 600;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
+    
+    /* Ефект "втиснутої" доріжки */
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.04);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Стан 1: ОЛТ вибрано, але технологію ще не обрано (Горить червоним) */
-.config-mix-toggle-btn.needs-selection {
-    border-color: #dc3545;
-    color: #dc3545;
-    background-color: rgba(220, 53, 69, 0.05);
+/* Сам "повзунок" (тепер це квадратний блок) */
+.config-mix-toggle-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    border-radius: 4px; /* Легке закруглення самого повзунка */
+    transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    opacity: 0;
 }
 
-.config-mix-toggle-btn.needs-selection:hover {
-    box-shadow: 0 2px 4px rgba(220, 53, 69, 0.15);
-}
-
-body.dark .config-mix-toggle-btn.needs-selection {
-    border-color: #e35d6a; /* трохи світліший червоний для кращої контрастності в темній темі */
-    color: #e35d6a;
-    background-color: rgba(225, 93, 106, 0.15);
-}
-
-body.dark .config-mix-toggle-btn.needs-selection:hover {
-    box-shadow: 0 2px 4px rgba(225, 93, 106, 0.20);
-}
-
-
-/* Стан 2: Вибрано GPON */
+/* --- Стан 2: Вибрано GPON (Повзунок ЗЛІВА) --- */
 .config-mix-toggle-btn.is-gpon {
-    border-color: #2563eb; /* насиченіший синій для чіткого контуру на світлому фоні */
-    color: #1d4ed8;        /* глибокий синій для ідеальної читабельності тексту */
-    background-color: rgba(37, 99, 235, 0.06); /* легке тонування в колір бренду */
+    justify-content: flex-end; /* Текст йде вправо */
+    padding: 0 10px 0 30px !important; /* Місце для повзунка зліва */
+    border-color: var(--primary-accent-color);
+    color: var(--primary-accent-color);
+    background-color: rgba(0, 123, 255, 0.05);
 }
-
+.config-mix-toggle-btn.is-gpon::before {
+    opacity: 1;
+    left: 6px; /* Фізично притискається вліво */
+    background-color: var(--primary-accent-color);
+    box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3);
+}
 .config-mix-toggle-btn.is-gpon:hover {
-    background-color: rgba(37, 99, 235, 0.12);
-    box-shadow: 0 2px 6px rgba(37, 99, 235, 0.2);
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.04), 0 2px 6px rgba(0, 123, 255, 0.15);
 }
 
 body.dark .config-mix-toggle-btn.is-gpon {
-    /* Зверніть увагу: у вашому коді тут були помаранчеві відтінки, залишив їх за вашим шаблоном */
-    background-color: rgba(255, 140, 66, 0.10);
-    color: #ffad66;
-    border-color: rgba(255, 173, 102, 0.35);
+    border-color: var(--secondary-accent-color);
+    color: var(--secondary-accent-color);
+    background-color: rgba(230, 162, 46, 0.08);
 }
-
+body.dark .config-mix-toggle-btn.is-gpon::before {
+    background-color: var(--secondary-accent-color);
+    /* Звичайна легка тінь вниз, як у всіх інших кнопок */
+    box-shadow: 0 2px 4px rgba(230, 162, 46, 0.25);
+}
 body.dark .config-mix-toggle-btn.is-gpon:hover {
-    box-shadow: 0 2px 4px rgba(255, 140, 66, 0.20);
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.2), 0 2px 4px rgba(230, 162, 46, 0.15);
 }
 
 
-/* Стан 3: Вибрано EPON (зеленуватий колір для відмінності) */
+/* --- Стан 3: Вибрано EPON (Повзунок СПРАВА) --- */
 .config-mix-toggle-btn.is-epon {
-    background-color: rgba(25, 135, 84, 0.1);
-    color: #198754;
-    border-color: #198754;
+    justify-content: flex-start; /* Текст йде вліво */
+    padding: 0 30px 0 10px !important; /* Місце для повзунка справа */
+    border-color: #198754;        /* Насичений зелений контур */
+    color: #146c43;               /* Глибокий темно-зелений для ідеального читання тексту */
+    background-color: rgba(25, 135, 84, 0.06); 
 }
-
+.config-mix-toggle-btn.is-epon::before {
+    opacity: 1;
+    left: calc(100% - 22px); 
+    background-color: #198754;    /* Насичений зелений квадратик */
+    box-shadow: 0 2px 4px rgba(25, 135, 84, 0.3);
+}
 .config-mix-toggle-btn.is-epon:hover {
-    box-shadow: 0 2px 4px rgba(25, 135, 84, 0.15);
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.04), 0 2px 6px rgba(25, 135, 84, 0.15);
 }
 
 body.dark .config-mix-toggle-btn.is-epon {
-    background-color: rgba(46, 204, 113, 0.10);
+    border-color: #57e389; /* Яскраво-зелений для темної темы */
     color: #57e389;
-    border-color: rgba(87, 227, 137, 0.35);
+    background-color: rgba(87, 227, 137, 0.08);
+}
+body.dark .config-mix-toggle-btn.is-epon::before {
+    background-color: #57e389;
+    /* Звичайна легка тінь вниз */
+    box-shadow: 0 2px 4px rgba(87, 227, 137, 0.25);
+}
+body.dark .config-mix-toggle-btn.is-epon:hover {
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.2), 0 2px 4px rgba(87, 227, 137, 0.15);
 }
 
-body.dark .config-mix-toggle-btn.is-epon:hover {
-    box-shadow: 0 2px 4px rgba(46, 204, 113, 0.20);
+
+/* При натисканні "втискаємо" повзунок всередині */
+.config-mix-toggle-btn:active::before {
+    transform: translateY(-50%) scale(0.85);
+}
+
+/* При натисканні "втискаємо" повзунок всередині */
+.config-mix-toggle-btn:active::before {
+    transform: translateY(-50%) scale(0.85);
 }
 
 /* === ПРОФЕСІЙНИЙ КАСТОМНИЙ SELECT ДЛЯ ОЛТ === */
@@ -3438,6 +3483,20 @@ body.dark .config-mix-toggle-btn.is-epon:hover {
 
 .config-custom-select.open .select-arrow {
     transform: translateY(-50%) rotate(180deg);
+}
+
+/* Підняття всієї кнопки при наведенні (ідентично до сусідніх кнопок) */
+.config-mix-toggle-btn:hover {
+    transform: translateY(0px);
+    z-index: 2;
+}
+
+/* Фізичне втискання всієї кнопки при кліку (ідентично до сусідніх кнопок) */
+.config-mix-toggle-btn:active {
+    transform: translateY(1px) scale(0.96);
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.15) !important;
+    filter: brightness(0.9);
+    transition: all 0.05s ease-out;
 }
 
 /* =============================================

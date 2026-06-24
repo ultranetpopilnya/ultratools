@@ -1519,13 +1519,13 @@ const vlanInputNode = configPanel.querySelector('.config-vlan-input');
 const oltDropdownList = configPanel.querySelector('.olt-dropdown-list');
 
 // === ЛОГІКА КНОПКИ MIX ===
-let currentMixState = null; // Може бути null, 'GPON', або 'EPON'
+let currentMixState = 'GPON'; // Ставимо базове значення
 const btnMixToggle = configPanel.querySelector('.config-mix-toggle-btn');
 
 btnMixToggle.addEventListener('click', (e) => {
     e.preventDefault();
-    // Логіка перемикання: Null -> GPON -> EPON -> GPON...
-    if (currentMixState === null || currentMixState === 'EPON') {
+    // Логіка перемикання тепер чітка: тільки GPON <-> EPON
+    if (currentMixState === 'EPON') {
         currentMixState = 'GPON';
         btnMixToggle.textContent = 'GPON';
         btnMixToggle.className = 'config-mix-toggle-btn is-gpon';
@@ -1539,13 +1539,15 @@ btnMixToggle.addEventListener('click', (e) => {
 // Допоміжна функція для скидання кнопки
 function resetMixButton(show, isMix = false) {
     if (show && isMix) {
-        btnMixToggle.style.display = 'flex';
-        currentMixState = null;
-        btnMixToggle.textContent = 'MIX ?';
-        btnMixToggle.className = 'config-mix-toggle-btn needs-selection';
+        btnMixToggle.style.display = 'inline-flex'; // Використовуємо inline-flex для правильної геометрії
+        
+        // ВІДРАЗУ СТАВИМО СТАН GPON ПРИ ПОЯВІ
+        currentMixState = 'GPON';
+        btnMixToggle.textContent = 'GPON';
+        btnMixToggle.className = 'config-mix-toggle-btn is-gpon';
     } else {
         btnMixToggle.style.display = 'none';
-        currentMixState = null;
+        currentMixState = 'GPON'; // Скидаємо на дефолт при хованні
     }
 }
 
