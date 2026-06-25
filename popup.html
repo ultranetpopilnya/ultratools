@@ -650,35 +650,57 @@ input[type="checkbox"]:focus {
 
         /* КНОПКИ */
         /* === УНІВЕРСАЛЬНІ КНОПКИ ДІЙ === */
-        button.btn { 
-            width: 100%; 
-            height: 40px; 
-            padding: 16px 16px 16px 16px; 
-            margin: 16px; 
-            background-color: var(--primary-accent-color); 
-            font-family: inherit; 
-            color: white; 
-            border: none; 
-            border-radius: 14px; 
-            cursor: pointer;  
-            font-weight: 600; /* Зробив трохи жирнішим для кращого вигляду (Bold) */
-            font-size: 14px; 
-            letter-spacing: 0.02em;
-            transition: background-color 0.4s ease, 
+        /* === УНІВЕРСАЛЬНІ КНОПКИ ДІЙ === */
+button.btn { 
+    width: 100%; 
+    height: 40px; 
+    padding: 16px; 
+    margin: 16px; 
+    background-color: var(--primary-accent-color); 
+    font-family: inherit; 
+    color: white; 
+    border: none; 
+    border-radius: 14px; 
+    cursor: pointer;  
+    font-weight: 600; 
+    font-size: 14px; 
+    letter-spacing: 0.02em;
+    position: relative; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 6px; 
+    white-space: nowrap; 
+    overflow: hidden; 
+    text-overflow: ellipsis;
+    
+    /* Ідеальна плавна анімація (Пружина) */
+    transition: background-color 0.4s ease, 
                 border-color 0.4s ease, 
                 color 0.4s ease, 
                 box-shadow 0.4s ease, 
-                transform 0.15s ease, 
+                transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), 
                 filter 0.4s ease !important;
-            position: relative; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 6px; 
-            white-space: nowrap; 
-            overflow: hidden; 
-            text-overflow: ellipsis;
-        }
+}
+
+button.btn:not(:disabled):hover {
+    filter: brightness(1.1);
+}
+
+button.btn:not(:disabled):active {
+    transform: scale(0.96) !important;
+    filter: brightness(0.9) !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+    transition: transform 0.05s ease-out, filter 0.05s ease-out !important; 
+}
+
+button:disabled, button.btn:disabled { 
+    background-color: var(--btn-disabled-bg) !important; 
+    color: var(--subtitle-color); 
+    cursor: not-allowed; 
+    box-shadow: none !important;
+    filter: none;
+}
 
         /* ОКРЕМИЙ СТИЛЬ НАТИСНЕННЯ (ІГНОРУЄ ІНШІ СТАНИ) */
 button.btn:active {
@@ -854,92 +876,47 @@ button.btn:active {
     box-shadow: 0 6px 18px rgba(59, 130, 246, 0.4);
 }
         
-/* --- УСПІХ (Зелена) --- */
-button.btn.btn-success, 
-button.btn.btn-success:disabled { 
-    /* Використовуємо суцільний пастельний колір замість rgba, щоб нічого не просвічувалось */
+/* --- СТАТУСИ: СВІТЛА ТЕМА --- */
+button.btn.btn-success, button.btn.btn-success:disabled { 
     background-color: #e8f7ec !important; 
     border: 1px solid var(--success-color) !important; 
     color: #20874b !important; 
     cursor: default !important; 
     box-shadow: 0 4px 14px rgba(56, 193, 113, 0.25) !important;
-    transform: scale(1) !important; 
 }
-
-/* --- ПОМИЛКА / ВІДКРИТИ КАРТКУ --- */
-button.btn.btn-error, 
-button.btn.btn-error:disabled { 
+button.btn.btn-error, button.btn.btn-error:disabled { 
     background-color: #fbe8e8 !important; 
     border: 1px solid var(--danger-color) !important; 
     color: var(--danger-color) !important; 
     cursor: pointer !important; 
     box-shadow: 0 4px 14px rgba(191, 26, 26, 0.25) !important;
 }
-
-/* --- ЗАВАНТАЖЕННЯ (Синя) --- */
-button.btn.btn-loading, 
-button.btn.btn-loading:disabled { 
+button.btn.btn-loading, button.btn.btn-loading:disabled { 
     background-color: #e6f0fc !important; 
     border: 1px solid var(--primary-accent-color) !important; 
     color: #0056b3 !important; 
     cursor: wait !important; 
     box-shadow: 0 4px 14px rgba(0, 123, 255, 0.25) !important;
-    transform: scale(1) !important; 
 }
 
-/* ================= ПОСИЛЕННЯ СВІТІННЯ ПРИ НАВЕДЕННІ (СВІТЛА ТЕМА) ================= */
-button.btn.btn-success:hover {
-    box-shadow: 0 6px 18px rgba(56, 193, 113, 0.4) !important;
-    filter: brightness(0.97) !important;
+button.btn.btn-success:not(:disabled):hover { box-shadow: 0 6px 18px rgba(56, 193, 113, 0.4) !important; filter: brightness(0.97) !important; }
+button.btn.btn-error:not(:disabled):hover { box-shadow: 0 6px 18px rgba(191, 26, 26, 0.4) !important; filter: brightness(0.97) !important; }
+button.btn.btn-loading:not(:disabled):hover { box-shadow: 0 6px 18px rgba(0, 123, 255, 0.4) !important; filter: brightness(0.97) !important; }
+
+/* --- СТАТУСИ: ТЕМНА ТЕМА --- */
+[data-theme="dark"] button.btn.btn-success, [data-theme="dark"] button.btn.btn-success:disabled { 
+    background-color: #254131 !important; border-color: #4ade80 !important; color: #4ade80 !important; box-shadow: 0 4px 14px rgba(74, 222, 128, 0.25) !important;
 }
-button.btn.btn-error:hover {
-    box-shadow: 0 6px 18px rgba(191, 26, 26, 0.4) !important;
-    filter: brightness(0.97) !important;
+[data-theme="dark"] button.btn.btn-error, [data-theme="dark"] button.btn.btn-error:disabled { 
+    background-color: #453520 !important; border-color: #ffb74d !important; color: #ffb74d !important; box-shadow: 0 4px 14px rgba(235, 151, 25, 0.25) !important;
 }
-button.btn.btn-loading:hover {
-    box-shadow: 0 6px 18px rgba(0, 123, 255, 0.4) !important;
-    filter: brightness(0.97) !important;
+[data-theme="dark"] button.btn.btn-loading, [data-theme="dark"] button.btn.btn-loading:disabled { 
+    background-color: #263951 !important; border-color: #60a5fa !important; color: #60a5fa !important; box-shadow: 0 4px 14px rgba(96, 165, 250, 0.25) !important;
 }
 
-/* ================= СТАНИ КНОПКИ: ТЕМНА ТЕМА ================= */
-
-[data-theme="dark"] button.btn.btn-success, 
-[data-theme="dark"] button.btn.btn-success:disabled { 
-    background-color: #254131 !important; /* Непрозорий темний фон */
-    border-color: #4ade80 !important;
-    color: #4ade80 !important; 
-    box-shadow: 0 4px 14px rgba(74, 222, 128, 0.25) !important;
-}
-
-[data-theme="dark"] button.btn.btn-error, 
-[data-theme="dark"] button.btn.btn-error:disabled { 
-    background-color: #453520 !important; /* Непрозорий темний фон */
-    border-color: #ffb74d !important;
-    color: #ffb74d !important; 
-    box-shadow: 0 4px 14px rgba(235, 151, 25, 0.25) !important;
-}
-
-[data-theme="dark"] button.btn.btn-loading, 
-[data-theme="dark"] button.btn.btn-loading:disabled { 
-    background-color: #263951 !important; /* Непрозорий темний фон */
-    border-color: #60a5fa !important;
-    color: #60a5fa !important; 
-    box-shadow: 0 4px 14px rgba(96, 165, 250, 0.25) !important;
-}
-
-/* ================= ПОСИЛЕННЯ СВІТІННЯ ПРИ НАВЕДЕННІ (ТЕМНА ТЕМА) ================= */
-[data-theme="dark"] button.btn.btn-success:hover {
-    box-shadow: 0 6px 18px rgba(74, 222, 128, 0.4) !important;
-    filter: brightness(1.15) !important;
-}
-[data-theme="dark"] button.btn.btn-error:hover {
-    box-shadow: 0 6px 18px rgba(235, 151, 25, 0.4) !important;
-    filter: brightness(1.15) !important;
-}
-[data-theme="dark"] button.btn.btn-loading:hover {
-    box-shadow: 0 6px 18px rgba(96, 165, 250, 0.4) !important;
-    filter: brightness(1.15) !important;
-}
+[data-theme="dark"] button.btn.btn-success:not(:disabled):hover { box-shadow: 0 6px 18px rgba(74, 222, 128, 0.4) !important; filter: brightness(1.15) !important; }
+[data-theme="dark"] button.btn.btn-error:not(:disabled):hover { box-shadow: 0 6px 18px rgba(235, 151, 25, 0.4) !important; filter: brightness(1.15) !important; }
+[data-theme="dark"] button.btn.btn-loading:not(:disabled):hover { box-shadow: 0 6px 18px rgba(96, 165, 250, 0.4) !important; filter: brightness(1.15) !important; }
 
         /* НАЛАШТУВАННЯ ТА РОЗДІЛЮВАЧІ */
         #settingsView { display: none; }
@@ -992,10 +969,10 @@ button.btn.btn-loading:hover {
 }
 
         /* === ТАКТИЛЬНІ ВІДЧУТТЯ ДЛЯ КНОПОК === */
-        button.btn:active, .icon-btn:active { 
-            transform: scale(0.92); 
-            transition: transform 0.2s ease-out;
-        }
+.icon-btn:active { 
+    transform: scale(0.92); 
+    transition: transform 0.2s ease-out;
+}
 
         /* === ГОРИЗОНТАЛЬНА АНІМАЦІЯ ПЕРЕХОДІВ === */
         @keyframes slideInRight {
