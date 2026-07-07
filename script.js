@@ -1349,6 +1349,7 @@ let isSwitchMode = (fieldGroup.dataset.switchMode === 'true'); // ДОДАНО
     // Генеруємо унікальний ID для списку, щоб шаблони не конфліктували
     let selectedOltObj = null;
 let selectedOltSource = null;
+let lastConfirmedOltName = null;
 
     configPanel.innerHTML = `
         <div class="config-two-rows-wrapper">
@@ -1594,16 +1595,30 @@ function renderOltDropdown(filter = '') {
             item.className = 'olt-dropdown-item';
             item.textContent = olt.name;
             item.addEventListener('mousedown', (e) => {
-    e.preventDefault();
-    oltInputNode.value = olt.name;
-    selectedOltObj = olt;
-    selectedOltSource = source;
-    oltDropdownList.classList.remove('open');
-    vlanInputNode.placeholder = olt.defaultVlan ? `VLAN (${olt.defaultVlan})` : 'VLAN';
-    
-    // Показуємо кнопку, якщо в назві є (MIX)
-    resetMixButton(true, olt.name.includes('(MIX)'));
-});
+            e.preventDefault();
+            
+            // Перевіряємо, чи це ДІЙСНО інший ОЛТ порівняно з останнім обраним
+            // (якщо lastConfirmedOltName === null, значить вибирають вперше, тому не стираємо)
+            const isDifferentOlt = (lastConfirmedOltName !== null && lastConfirmedOltName !== olt.name);
+
+            oltInputNode.value = olt.name;
+            selectedOltObj = olt;
+            selectedOltSource = source;
+            lastConfirmedOltName = olt.name; // Запам'ятовуємо цей вибір
+            
+            oltDropdownList.classList.remove('open');
+            vlanInputNode.placeholder = olt.defaultVlan ? `VLAN (${olt.defaultVlan})` : 'VLAN';
+            
+            // Показуємо кнопку, якщо в назві є (MIX)
+            resetMixButton(true, olt.name.includes('(MIX)'));
+
+            // Стираємо дані ТІЛЬКИ якщо змінили ОЛТ на інший
+            if (isDifferentOlt) {
+                snInputBox.value = '';
+                portInputBox.value = '';
+                vlanInputNode.value = '';
+            }
+        });
             oltDropdownList.appendChild(item);
         });
     }
@@ -1618,6 +1633,10 @@ oltInputNode.addEventListener('input', (e) => {
     selectedOltSource = null;
     vlanInputNode.placeholder = 'VLAN';
     resetMixButton(false); // Ховаємо кнопку
+    
+    // ТУТ ДАНІ БІЛЬШЕ НЕ СТИРАЮТЬСЯ
+    // Вони видаляться тільки тоді, коли зі списку клікнуть на інший ОЛТ.
+
     renderOltDropdown(e.target.value);
 });
 
@@ -2195,7 +2214,7 @@ fieldGroup.dataset.lastGeneratedConfig = finalConfig;
         clearTimeout(bookmarksTimeout);
         bookmarksTimeout = setTimeout(() => {
             updateBookmarksOnTextChange(fieldGroup);
-        }, 500);
+        }, 5);
 
         debouncedSaveTemplates();
     });
