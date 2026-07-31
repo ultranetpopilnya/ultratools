@@ -493,78 +493,112 @@ function areDatesInDefaultState() {
 }
 
     function calculateDifference() {
-        const startDateInput = document.getElementById('start-date').value;
-        const startTimeInput = document.getElementById('start-time').value; 
-        const endDateValue = document.getElementById('end-date').value;
-        const endTimeValue = document.getElementById('end-time').value; 
-        const resultDisplay = document.getElementById('result-display');
+    const startDateInput = document.getElementById('start-date').value;
+    const startTimeInput = document.getElementById('start-time').value; 
+    const endDateValue = document.getElementById('end-date').value;
+    const endTimeValue = document.getElementById('end-time').value; 
+    const resultDisplay = document.getElementById('result-display');
 
-        if (!startDateInput || !endDateValue || !startTimeInput || !endTimeValue) {
-            resultDisplay.innerHTML = 'Оберіть дві дати та час для розрахунку.';
-            return;
-        }
+    if (!startDateInput || !endDateValue || !startTimeInput || !endTimeValue) {
+        resultDisplay.innerHTML = 'Оберіть дві дати та час для розрахунку.';
+        return;
+    }
 
-        const startDate = new Date(`${startDateInput}T${startTimeInput}:00`);
-        const endDate = new Date(`${endDateValue}T${endTimeValue}:00`); 
+    const startDate = new Date(`${startDateInput}T${startTimeInput}:00`);
+    const endDate = new Date(`${endDateValue}T${endTimeValue}:00`); 
 
-        if (startDate > endDate) {
-            resultDisplay.innerHTML = '<span style="color: red;">Початкова дата та час не можуть бути пізнішими за Кінцеву.</span>';
-            return;
-        }
-        
-        const diffTime = endDate.getTime() - startDate.getTime();
-        const totalHours = Math.floor(diffTime / 3600000);
-        const totalMinutesRemainder = Math.floor((diffTime % 3600000) / 60000);
-        let totalHoursText = `${totalHours} год.`;
-        if (totalMinutesRemainder > 0) totalHoursText += ` та ${totalMinutesRemainder} хв.`;
-        
-        const totalDaysInclusive = Math.ceil(diffTime / 86400000);
-        const dayWord = getCorrectDayWord(totalDaysInclusive);
-        
-        let tempStartDate = new Date(startDate);
-        let tempEndDate = new Date(endDate);
-        const startTotalMinutes = tempStartDate.getHours() * 60 + tempStartDate.getMinutes();
-        const endTotalMinutes = tempEndDate.getHours() * 60 + tempEndDate.getMinutes();
-        if (endTotalMinutes < startTotalMinutes) tempEndDate.setDate(tempEndDate.getDate() - 1);
-        
-        if (tempStartDate.toDateString() === tempEndDate.toDateString() && diffTime > 0) {
-            let durationText = `${totalHours} год. та ${totalMinutesRemainder} хв.`;
-            resultDisplay.innerHTML = `<span class="total-hours-text">Кількість годин (загальна): ${totalHoursText}</span><br><span class="duration-text">Період (повний): ${durationText}</span><br><span class="total-days-text">Загальна кількість (днів): ${totalDaysInclusive} ${dayWord}.</span>`;
-            return;
-        }
+    if (startDate > endDate) {
+        resultDisplay.innerHTML = '<span style="color: red;">Початкова дата та час не можуть бути пізнішими за Кінцеву.</span>';
+        return;
+    }
+    
+    const diffTime = endDate.getTime() - startDate.getTime();
+    
+    // 1. Години та хвилини
+    const totalHours = Math.floor(diffTime / 3600000);
+    const totalMinutesRemainder = Math.floor((diffTime % 3600000) / 60000);
+    let totalHoursText = `${totalHours} год.`;
+    if (totalMinutesRemainder > 0) totalHoursText += ` та ${totalMinutesRemainder} хв.`;
+    
+    // 2. Базова кількість днів (фізична)
+    let totalDaysInclusive = Math.round(diffTime / 86400000);
+    
+    let tempStartDate = new Date(startDate);
+    let tempEndDate = new Date(endDate);
+    const startTotalMinutes = tempStartDate.getHours() * 60 + tempStartDate.getMinutes();
+    const endTotalMinutes = tempEndDate.getHours() * 60 + tempEndDate.getMinutes();
+    
+    if (endTotalMinutes < startTotalMinutes) tempEndDate.setDate(tempEndDate.getDate() - 1);
+    
+    // === СИНХРОНІЗУЄМО +1 ДЕНЬ ДЛЯ ОБОХ ЗНАЧЕНЬ ===
+    let shouldAddInclusiveDay = (endTotalMinutes >= startTotalMinutes && diffTime > 0);
+    if (shouldAddInclusiveDay) {
+        totalDaysInclusive++; // Тепер "Всього днів" ТЕЖ отримує +1 день!
+    }
 
-        let years = tempEndDate.getFullYear() - tempStartDate.getFullYear();
-        let months = tempEndDate.getMonth() - tempStartDate.getMonth();
-        let days = tempEndDate.getDate() - tempStartDate.getDate();
+    const dayWord = getCorrectDayWord(totalDaysInclusive);
+    
+    // Якщо дати однакові (той самий день)
+    if (tempStartDate.toDateString() === tempEndDate.toDateString() && diffTime > 0) {
+        let durationText = `${totalHours} год. та ${totalMinutesRemainder} хв.`;
+        resultDisplay.innerHTML = `
+            <span class="total-hours-text">Загальний час: <b>${totalHoursText}</b></span><br>
+            <span class="duration-text">Календарний термін: <b>${durationText}</b></span><br>
+            <span class="total-days-text">Всього днів (включно): <b>${totalDaysInclusive} ${dayWord}.</b></span>
+        `;
+        return;
+    }
 
-        if (days < 0) {
+    // 3. Розрахунок календарного терміну (роки, місяці, дні)
+    let years = tempEndDate.getFullYear() - tempStartDate.getFullYear();
+    let months = tempEndDate.getMonth() - tempStartDate.getMonth();
+    let days = tempEndDate.getDate() - tempStartDate.getDate();
+
+    const isEndEndOfMonth = tempEndDate.getDate() === new Date(tempEndDate.getFullYear(), tempEndDate.getMonth() + 1, 0).getDate();
+
+    if (days < 0) {
+        if (isEndEndOfMonth && tempStartDate.getDate() >= tempEndDate.getDate()) {
+            days = 0; 
+        } else {
             months--;
             days += new Date(tempEndDate.getFullYear(), tempEndDate.getMonth(), 0).getDate();
         }
-        if (months < 0) {
-            years--;
-            months += 12;
-        }
-
-        if (endTotalMinutes >= startTotalMinutes && diffTime > 0 && !(years === 0 && months === 0 && days === 0)) days++;
-        if (days >= new Date(tempStartDate.getFullYear(), tempStartDate.getMonth() + 1, 0).getDate()) {
-            days = 0;
-            months++;
-            if (months >= 12) {
-                months = 0;
-                years++;
-            }
-        }
-        
-        let parts = [];
-        if (years > 0) parts.push(`${years} р.`);
-        if (months > 0) parts.push(`${months} міс.`);
-        if (days > 0 || parts.length === 0) parts.push(`${days} дн.`);
-        let durationText = parts.join(' та ');
-        if (durationText === '') durationText = '0 дн.';
-        
-        resultDisplay.innerHTML = `<span class="total-hours-text">Кількість годин (загальна): ${totalHoursText}</span><br><span class="duration-text">Період (повний): ${durationText}</span><br><span class="total-days-text">Загальна кількість (днів): ${totalDaysInclusive} ${dayWord}.</span>`;
     }
+    
+    if (months < 0) {
+        years--;
+        months += 12;
+    }
+
+    // Додаємо +1 день до календарного терміну
+    if (shouldAddInclusiveDay && !(years === 0 && months === 0 && days === 0)) {
+        days++;
+    }
+    
+    if (days >= new Date(tempStartDate.getFullYear(), tempStartDate.getMonth() + 1, 0).getDate()) {
+        days = 0;
+        months++;
+        if (months >= 12) {
+            months = 0;
+            years++;
+        }
+    }
+    
+    let parts = [];
+    if (years > 0) parts.push(`${years} р.`);
+    if (months > 0) parts.push(`${months} міс.`);
+    if (days > 0 || parts.length === 0) parts.push(`${days} дн.`);
+    
+    let durationText = parts.join(' та ');
+    if (durationText === '') durationText = '0 дн.';
+    
+    // 4. Фінальний вивід
+    resultDisplay.innerHTML = `
+        <span class="total-hours-text">Загальний час: <b>${totalHoursText}</b></span><br>
+        <span class="duration-text">Календарний термін: <b>${durationText}</b></span><br>
+        <span class="total-days-text">Всього днів (включно): <b>${totalDaysInclusive} ${dayWord}.</b></span>
+    `;
+}
     
     let COMMANDS = { gpon: [], epon: [], bdcom: [] }; // Тепер це порожній об'єкт, який заповниться сам
     // === РОЗУМНИЙ ПАРСЕР КОМАНД ===
@@ -3109,11 +3143,33 @@ const addDurationToEndDate = (monthsToAdd, yearsToAdd) => {
         return;
     }
 
-    const [year, month, day] = startDateValue.split('-');
-    const newEndDate = new Date(year, month - 1, day);
-    
-    if (monthsToAdd > 0) newEndDate.setMonth(newEndDate.getMonth() + monthsToAdd);
-    if (yearsToAdd > 0) newEndDate.setFullYear(newEndDate.getFullYear() + yearsToAdd);
+    // Розбиваємо дату на складові (рік, місяць, день)
+    const [yearStr, monthStr, dayStr] = startDateValue.split('-');
+    let year = parseInt(yearStr, 10);
+    let month = parseInt(monthStr, 10) - 1; // У JS місяці починаються з 0
+    let day = parseInt(dayStr, 10);
+
+    // Рахуємо цільовий місяць і рік
+    let targetMonth = month + monthsToAdd;
+    let targetYear = year + yearsToAdd;
+
+    // Створюємо тимчасову дату на 1-ше число цільового місяця, 
+    // щоб JS сам розрахував перехід на наступний рік (якщо місяць > 11)
+    let tempDate = new Date(targetYear, targetMonth, 1);
+    let finalYear = tempDate.getFullYear();
+    let finalMonth = tempDate.getMonth();
+
+    // Дізнаємося, скільки максимум днів у цьому цільовому місяці
+    // (0-й день наступного місяця повертає останній день поточного)
+    let maxDaysInTargetMonth = new Date(finalYear, finalMonth + 1, 0).getDate();
+
+    // РОЗУМНЕ ОБМЕЖЕННЯ:
+    // Якщо початковий день був 31, а в новому місяці лише 28 днів, 
+    // Math.min вибере 28.
+    let finalDay = Math.min(day, maxDaysInTargetMonth);
+
+    // Створюємо фінальну дату
+    const newEndDate = new Date(finalYear, finalMonth, finalDay);
 
     endDateInput.value = formatDate(newEndDate);
     if (typeof handleInputAndTimer === 'function') handleInputAndTimer(); 
