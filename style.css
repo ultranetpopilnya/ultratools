@@ -2825,9 +2825,8 @@ body.dark .history-copy-btn:hover { background: var(--secondary-accent-color); c
 .clear-history-footer-btn:hover { background: var(--danger-color); color: white; }
 
 .container[data-content="text-templates"] {
-    height: 738px;
-    width: 1906px;
-    margin-bottom: 5px !important;
+    height: 100%;
+    width: 100%;
 }
 
 /* =========================================================
