@@ -1662,19 +1662,28 @@ function renderOltDropdown(filter = '') {
     oltDropdownList.classList.add('open');
 }
 
-oltInputNode.addEventListener('input', (e) => {
+oltInputNode.addEventListener('input', async (e) => { // ДОДАНО async
     selectedOltObj = null;
     selectedOltSource = null;
     vlanInputNode.placeholder = 'VLAN';
     resetMixButton(false); // Ховаємо кнопку
     
-    // ТУТ ДАНІ БІЛЬШЕ НЕ СТИРАЮТЬСЯ
-    // Вони видаляться тільки тоді, коли зі списку клікнуть на інший ОЛТ.
+    // ПЕРЕВІРКА: Якщо база порожня (був збій мережі при запуску) - вантажимо знову
+    if (OLT_CONFIGS.ultranet.length === 0 && OLT_CONFIGS.energy.length === 0) {
+        await loadOltConfigs();
+    }
 
     renderOltDropdown(e.target.value);
 });
 
-oltInputNode.addEventListener('click', () => {
+oltInputNode.addEventListener('click', async () => { // ДОДАНО async
+    // ПЕРЕВІРКА: Якщо база порожня - показуємо індикатор і вантажимо
+    if (OLT_CONFIGS.ultranet.length === 0 && OLT_CONFIGS.energy.length === 0) {
+        oltDropdownList.innerHTML = `<div class="olt-no-results">🔄 Завантаження бази...</div>`;
+        oltDropdownList.classList.add('open');
+        await loadOltConfigs();
+    }
+    
     renderOltDropdown(oltInputNode.value);
 });
 
@@ -1994,11 +2003,17 @@ fieldGroup.dataset.lastGeneratedConfig = finalConfig;
     deleteButton.title = 'Видалити шаблон';
     deleteButton.className = 'delete-template-btn';
     deleteButton.onclick = () => {
-        if (confirm('Видалити шаблон?')) {
-            fieldGroup.remove();
-            saveTemplates();
+    if (confirm('Видалити шаблон?')) {
+        // ДОДАНО: Відключаємо від ResizeObserver перед видаленням
+        const textarea = fieldGroup.querySelector('textarea');
+        if (textarea && window.textareaObserver) {
+            window.textareaObserver.unobserve(textarea);
         }
-    };
+        
+        fieldGroup.remove();
+        saveTemplates();
+    }
+};
 
     const searchPanel = document.createElement('div');
     searchPanel.className = 'template-search-bar';
@@ -2786,7 +2801,7 @@ let REG_TEMPLATES = { gpon: "", epon: "" };    // ДОДАНО
 let SWITCH_TEMPLATES = { gpon: "", epon: "" }; // ДОДАНО
 
 function loadOltConfigs() {
-    fetch('olt_configs.txt?v=' + Date.now())
+     return fetch('olt_configs.txt?v=' + Date.now())
         .then(res => {
             if (!res.ok) throw new Error("Файл olt_configs.txt не знайдено");
             return res.text();
@@ -3799,7 +3814,7 @@ document.addEventListener('keydown', (e) => {
                 // === МАГІЯ ТУТ ===
                 // Якщо ви пишете нові версії ВНИЗУ файлу, нам треба перевернути масив,
                 // щоб на сайті найновіша (остання в файлі) стала першою.
-                versions.reverse(); 
+                // versions.reverse(); 
 
                 // 3. Відображення (Рендеринг)
                 const numEl = document.getElementById('ver-number');
