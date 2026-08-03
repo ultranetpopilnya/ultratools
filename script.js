@@ -1098,7 +1098,7 @@ function initDraggableAndResizable(element) {
         lastGeneratedConfig = '', lastConfigStart = -1, lastConfigEnd = -1,
         ponOnuMode = false, replaceMode = true,
         showSignalMode = false,
-        regMode = false, switchMode = false,
+        onuMode = '', regMode = false, switchMode = false,
         isSearchOpen = false, isConfigOpen = false
     } = data;
 
@@ -1136,8 +1136,7 @@ fieldGroup.dataset.lastConfigEnd       = lastConfigEnd;
 fieldGroup.dataset.ponOnuMode          = ponOnuMode;
 fieldGroup.dataset.replaceMode         = replaceMode;
 fieldGroup.dataset.showSignalMode      = showSignalMode;
-fieldGroup.dataset.regMode             = regMode;      /* ДОДАНО */
-    fieldGroup.dataset.switchMode          = switchMode;   /* ДОДАНО */
+fieldGroup.dataset.onuMode             = onuMode || (switchMode ? 'SWITCH' : 'REG');
     
     fieldGroup.style.width = width;
     fieldGroup.style.height = height;
@@ -1377,8 +1376,11 @@ fieldGroup.dataset.regMode             = regMode;      /* ДОДАНО */
     let isReplaceMode = (fieldGroup.dataset.replaceMode !== 'false');
 let isPonOnuMode  = (fieldGroup.dataset.ponOnuMode === 'true');
 let isShowSignalMode = (fieldGroup.dataset.showSignalMode === 'true');
-let isRegMode = (fieldGroup.dataset.regMode === 'true');       // ДОДАНО
-let isSwitchMode = (fieldGroup.dataset.switchMode === 'true'); // ДОДАНО
+
+// НОВА ЛОГІКА: Єдиний стан режиму ОНУ
+let currentOnuMode = fieldGroup.dataset.onuMode; 
+let isRegMode = (currentOnuMode === 'REG');
+let isSwitchMode = (currentOnuMode === 'SWITCH');
 
     // Генеруємо унікальний ID для списку, щоб шаблони не конфліктували
     let selectedOltObj = null;
@@ -1423,12 +1425,7 @@ let lastConfirmedOltName = null;
                         <i class="fa-solid fa-arrows-rotate"></i>
                     </button>
                     
-                    <button type="button" class="config-reg-btn" title="Режим реєстрації ОНУ">
-                        <i class="fa-solid fa-plus"></i>
-                    </button>
-                    <button type="button" class="config-switch-btn" title="Режим заміни ОНУ">
-                        <i class="fa-solid fa-right-left"></i>
-                    </button>
+                    <button type="button" class="config-onu-mode-btn" title="Режим (Реєстрація або Заміна ону)">РЕЄСТРАЦІЯ</button>
 
                     <button type="button" class="config-pon-onu-btn" title="Додати PON-ONU до конфігу">
                         <i class="fa-solid fa-wave-square"></i>
@@ -1691,42 +1688,35 @@ oltInputNode.addEventListener('blur', () => {
     setTimeout(() => oltDropdownList.classList.remove('open'), 150);
 });
 
-// === ТУМБЛЕР: РЕЄСТРАЦІЯ ОНУ ===
-const btnReg = configPanel.querySelector('.config-reg-btn');
-const btnSwitch = configPanel.querySelector('.config-switch-btn');
+// === ТУМБЛЕР: РЕЖИМ ОНУ (РЕЄСТРАЦІЯ / ЗАМІНА) ===
+const btnOnuMode = configPanel.querySelector('.config-onu-mode-btn');
 
-btnReg.addEventListener('click', (e) => {
-    e.preventDefault();
-    isRegMode = !isRegMode;
-    if (isRegMode) {
-        isSwitchMode = false; // Вимикаємо заміну
-        btnSwitch.classList.remove('active');
-        fieldGroup.dataset.switchMode = 'false';
+function updateOnuModeUI() {
+    if (currentOnuMode === 'REG') {
+        btnOnuMode.textContent = 'РЕЄСТРАЦІЯ';
+        btnOnuMode.className = 'config-onu-mode-btn active is-reg'; // Додаємо класи для твого майбутнього CSS
+    } else {
+        btnOnuMode.textContent = 'ЗАМІНА';
+        btnOnuMode.className = 'config-onu-mode-btn active is-switch';
     }
-    btnReg.classList.toggle('active', isRegMode);
-    fieldGroup.dataset.regMode = isRegMode;
+    
+    // Синхронізуємо змінні для генератора
+    isRegMode = (currentOnuMode === 'REG');
+    isSwitchMode = (currentOnuMode === 'SWITCH');
+    fieldGroup.dataset.onuMode = currentOnuMode;
+}
+
+btnOnuMode.addEventListener('click', (e) => {
+    e.preventDefault();
+    // Перемикаємо між двома станами
+    currentOnuMode = (currentOnuMode === 'REG') ? 'SWITCH' : 'REG';
+    updateOnuModeUI();
     saveTemplates();
-    showNotification(isRegMode ? "Режим: РЕЄСТРАЦІЯ" : "Реєстрацію вимкнено");
+    showNotification(currentOnuMode === 'REG' ? "Режим: РЕЄСТРАЦІЯ ОНУ" : "Режим: ПЕРЕНЕСЕННЯ (ЗАМІНА) ОНУ");
 });
 
-// === ТУМБЛЕР: ЗАМІНА ОНУ ===
-btnSwitch.addEventListener('click', (e) => {
-    e.preventDefault();
-    isSwitchMode = !isSwitchMode;
-    if (isSwitchMode) {
-        isRegMode = false; // Вимикаємо реєстрацію
-        btnReg.classList.remove('active');
-        fieldGroup.dataset.regMode = 'false';
-    }
-    btnSwitch.classList.toggle('active', isSwitchMode);
-    fieldGroup.dataset.switchMode = isSwitchMode;
-    saveTemplates();
-    showNotification(isSwitchMode ? "Режим: ЗАМІНА" : "Заміну вимкнено");
-});
-
-// Відновлюємо стан після перезавантаження
-btnReg.classList.toggle('active', isRegMode);
-btnSwitch.classList.toggle('active', isSwitchMode);
+// Відновлюємо стан при завантаженні шаблону
+updateOnuModeUI();
 
     // === ТУМБЛЕР: ЗАМІНА КОНФІГУ ===
     const btnReplaceMode = configPanel.querySelector('.config-replace-mode-btn');
@@ -2553,8 +2543,7 @@ function addTemplate() {
             ponOnuMode:  group.dataset.ponOnuMode  === 'true',
 replaceMode: group.dataset.replaceMode !== 'false',
 showSignalMode: group.dataset.showSignalMode === 'true',
-regMode: group.dataset.regMode === 'true',       // ДОДАНО
-            switchMode: group.dataset.switchMode === 'true', // ДОДАНО
+onuMode: group.dataset.onuMode || 'REG',
             
             // ДОДАНО: Зберігаємо стани відкритих панелей
             isSearchOpen: searchPanel ? searchPanel.classList.contains('active') : false,
