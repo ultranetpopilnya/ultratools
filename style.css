@@ -3238,9 +3238,9 @@ body.dark .template-config-bar {
     cursor: text;
 }
 /* Всі інші поля верхнього ряду ЖОРСТКО ФІКСОВАНІ */
-.config-row .config-sn-input    { flex: 0 0 120px; } /* Ідеально для МАКів і SN */
-.config-row .config-port-input  { flex: 0 0 94px; }  /* Ідеально для 1/15/15:128 */
-.config-row .config-speed-select{ flex: 0 0 94px; cursor: pointer; }
+.config-row .config-sn-input    { flex: 0 0 130px; }
+.config-row .config-port-input  { flex: 0 0 96px; }
+.config-row .config-speed-select{ flex: 0 0 96px; cursor: pointer; }
 
 /* --- РОЗПОДІЛ ШИРИНИ (НИЖНІЙ РЯД: Сервіс) --- */
 .config-row .config-login-input { 

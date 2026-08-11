@@ -86,21 +86,28 @@
     </h1>
     
     <div class="main-content-wrapper"> 
-        <div class="tabs"> 
+    <div class="tabs"> 
+    <!-- 1. Генератор логінів -->
     <div class="tab-button active" data-tab="login-generator">
         <i class="fa-solid fa-id-card-clip"></i>Генератор логінів
         <span class="close-tab-btn" title="Закрити вкладку"><i class="fa-solid fa-xmark"></i></span>
     </div>
+
+    <!-- 2. Текстовий простір (перемістили сюди) -->
+    <div class="tab-button" data-tab="text-templates">
+        <i class="fa-solid fa-file-lines"></i> Текстовий простір
+        <span class="close-tab-btn" title="Закрити вкладку"><i class="fa-solid fa-xmark"></i></span>
+    </div>
+
+    <!-- 3. Калькулятор -->
     <div class="tab-button" data-tab="date-calculator">
         <i class="fa-solid fa-calendar-days"></i> Калькулятор
         <span class="close-tab-btn" title="Закрити вкладку"><i class="fa-solid fa-xmark"></i></span>
     </div>
+
+    <!-- 4. Команди -->
     <div class="tab-button" data-tab="gpon-commands">
         <i class="fa-solid fa-network-wired"></i> Команди
-        <span class="close-tab-btn" title="Закрити вкладку"><i class="fa-solid fa-xmark"></i></span>
-    </div>
-    <div class="tab-button" data-tab="text-templates">
-        <i class="fa-solid fa-file-lines"></i> Текстовий простір
         <span class="close-tab-btn" title="Закрити вкладку"><i class="fa-solid fa-xmark"></i></span>
     </div>
 
@@ -146,6 +153,38 @@
 				</div>
             </div>
 
+            <div class="container" data-content="text-templates">
+			<div class="content-card">
+<div class="templates-header-wrapper">
+    <h2 class="template-main-title">📝 Текстовий простір</h2>
+
+    <div class="template-global-actions">
+        <button id="add-template-button" title="Додати текстовий шаблон"><i class="fa-regular fa-square-plus"></i></button>
+        <input type="file" id="import-file-input" accept=".json" style="display: none;">
+        <button id="import-templates-button" title="Імпортувати шаблони з файлу">
+            <i class="fa-solid fa-file-arrow-down"></i>
+        </button>
+        <button id="export-templates-button" title="Експортувати шаблони у файл">
+            <i class="fa-solid fa-file-arrow-up"></i>
+        </button>
+        <button id="clear-all-templates-button" title="Видалити всі шаблони">
+            <i class="fa-solid fa-trash-can"></i>
+        </button>
+    </div>
+</div>
+                <div id="templates-grid-wrapper">
+                    </div>
+            </div>
+             <div class="scroll-nav-buttons">
+        <button id="scroll-up-btn" class="scroll-nav-btn" title="Прокрутити вгору">
+            <i class="fa-solid fa-angle-up"></i>
+        </button>
+        <button id="scroll-down-btn" class="scroll-nav-btn" title="Прокрутити вниз">
+            <i class="fa-solid fa-angle-down"></i>
+        </button>
+    </div>   
+        </div> 
+        
             <!-- === ПОЧАТОК ЗМІНЕНОГО БЛОКУ DATE CALCULATOR === -->
 <div class="container date-calculator-container" data-content="date-calculator" data-default-width="840px">
     <div class="content-card">
@@ -319,38 +358,6 @@
                     
                 </div> <!-- Кінець content-card -->
             </div> <!-- Кінець gpon-commands-container -->
-            
-            <div class="container" data-content="text-templates">
-			<div class="content-card">
-<div class="templates-header-wrapper">
-    <h2 class="template-main-title">📝 Текстовий простір</h2>
-
-    <div class="template-global-actions">
-        <button id="add-template-button" title="Додати текстовий шаблон"><i class="fa-regular fa-square-plus"></i></button>
-        <input type="file" id="import-file-input" accept=".json" style="display: none;">
-        <button id="import-templates-button" title="Імпортувати шаблони з файлу">
-            <i class="fa-solid fa-file-arrow-down"></i>
-        </button>
-        <button id="export-templates-button" title="Експортувати шаблони у файл">
-            <i class="fa-solid fa-file-arrow-up"></i>
-        </button>
-        <button id="clear-all-templates-button" title="Видалити всі шаблони">
-            <i class="fa-solid fa-trash-can"></i>
-        </button>
-    </div>
-</div>
-                <div id="templates-grid-wrapper">
-                    </div>
-            </div>
-             <div class="scroll-nav-buttons">
-        <button id="scroll-up-btn" class="scroll-nav-btn" title="Прокрутити вгору">
-            <i class="fa-solid fa-angle-up"></i>
-        </button>
-        <button id="scroll-down-btn" class="scroll-nav-btn" title="Прокрутити вниз">
-            <i class="fa-solid fa-angle-down"></i>
-        </button>
-    </div>   
-        </div> 
     </div>
 </div>	
     
