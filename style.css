@@ -647,7 +647,7 @@ body.holiday-mode #snow-container {
     display: flex;
     flex-direction: row; 
     justify-content: space-between; 
-    align-items: flex-start; /* <--- ЗМІНЕНО: Текст завжди починається зверху */
+    align-items: center;
     padding: 10px 10px 10px 10px; 
     border: 1px solid #dee2e6; 
     border-radius: 12px;
@@ -716,8 +716,7 @@ body.dark .login-generator-container .result-item span.login-text {
     align-items: center;
     gap: 6px;
     flex-shrink: 0; 
-    align-self: flex-end; /* <--- ДОДАНО: Притискає кнопки до низу */
-    margin-top: auto;     /* <--- ДОДАНО: Відштовхує кнопки вниз, якщо текст короткий */
+    align-self: center; /* замість flex-end */
 }
 
 /* --- ТВОЇ СТИЛІ КНОПОК --- */
