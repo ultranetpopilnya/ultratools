@@ -2786,7 +2786,7 @@ body.dark .history-toggle-btn {
     transform: translateY(-10px); /* Трохи посунуто вгору для ефекту появи */
     transition: max-height 0.4s ease-out, opacity 0.3s ease-out, transform 0.3s ease-out; /* Плавний перехід */
     display: block; /* Залишаємо block, але керуємо видимістю через max-height */
-	padding-bottom: 10px;
+	padding-bottom: 0px;
 }
 
 .history-content-wrapper.open {
