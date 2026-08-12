@@ -3189,6 +3189,7 @@ body.dark .template-config-bar {
     flex-direction: column;
     gap: 4px;
     flex: 1;
+    min-width: 0; 
 }
 
 /* Кожен окремий ряд (верхній і нижній) */
@@ -3228,7 +3229,7 @@ body.dark .template-config-bar {
 /* --- РОЗПОДІЛ ШИРИНИ (ВЕРХНІЙ РЯД: Залізо) --- */
 .config-row .olt-dropdown-wrapper {
     flex: 1; /* Гумове поле: забирає всю вільну ширину */
-    min-width: 150px; /* Але не менше 150px */
+    min-width: 200px; /* ЗАМІНЕНО: тепер воно стиснеться, але не зникне */
     position: relative;
 }
 .olt-dropdown-wrapper .config-olt-select {
@@ -3243,20 +3244,19 @@ body.dark .template-config-bar {
 
 /* --- РОЗПОДІЛ ШИРИНИ (НИЖНІЙ РЯД: Сервіс) --- */
 .config-row .config-login-input { 
-    flex: 1; /* Гумове поле: забирає всю вільну ширину */
-    min-width: 150px; 
+    flex: 1; 
+    min-width: 150px; /* ЗАМІНЕНО: розумний мінімум для логіна */
 }
-.config-row .config-vlan-input  { flex: 0 0 94px; } /* Ідеально для 4 цифр VLAN */
+.config-row .config-vlan-input  { flex: 0 0 96px; } /* Ідеально для 4 цифр VLAN */
 
 
 /* --- ЗАХИСТ ВІД ЗЛАМУ КАРТКИ --- */
 .template-field-group:has(.template-config-bar.active) {
-    /* 
-       720px - це ідеальний мінімум для 2 рядів, де є Логін, VLAN, всі кнопки і Згенерувати.
-       Якщо користувач спробує звузити картку менше ніж 720px, 
-       з'явиться горизонтальний скрол, але верстка НЕ ЗЛАМАЄТЬСЯ. 
-    */
-    min-width: 720px !important; 
+    /* Картка вирахує свій ідеальний мінімум автоматично */
+    min-width: min-content !important; 
+    
+    /* Дозволяємо їй розтягуватися на всю доступну ширину, якщо є місце */
+    width: 100%; 
 }
 
 /* --- КНОПКА ГЕНЕРАЦІЇ (ДВОПОВЕРХОВА) --- */
@@ -3352,7 +3352,7 @@ body.dark .config-show-signal-btn:hover {
     flex: 0 0 auto !important; 
     display: inline-flex;
     align-items: center;
-    min-width: 82px; 
+    width: 74px; 
     
     /* Змінили на 6px, щоб ідеально збігалося з іншими input/select у цьому ряду */
     border-radius: 6px !important; 
@@ -3387,7 +3387,7 @@ body.dark .config-show-signal-btn:hover {
 /* --- Стан 2: Вибрано GPON (Повзунок ЗЛІВА) --- */
 .config-mix-toggle-btn.is-gpon {
     justify-content: flex-end; /* Текст йде вправо */
-    padding: 0 10px 0 30px !important; /* Місце для повзунка зліва */
+    padding: 0 6px 0 30px !important; /* Місце для повзунка зліва */
     border-color: var(--primary-accent-color);
     color: var(--primary-accent-color);
     background-color: rgba(0, 123, 255, 0.05);
@@ -3420,7 +3420,7 @@ body.dark .config-mix-toggle-btn.is-gpon:hover {
 /* --- Стан 3: Вибрано EPON (Повзунок СПРАВА) --- */
 .config-mix-toggle-btn.is-epon {
     justify-content: flex-start; /* Текст йде вліво */
-    padding: 0 30px 0 10px !important; /* Місце для повзунка справа */
+    padding: 0 30px 0 6px !important; /* Місце для повзунка справа */
     border-color: #198754;        /* Насичений зелений контур */
     color: #146c43;               /* Глибокий темно-зелений для ідеального читання тексту */
     background-color: rgba(25, 135, 84, 0.06); 
@@ -3458,7 +3458,7 @@ body.dark .config-mix-toggle-btn.is-epon:hover {
 /* === ПРОФЕСІЙНИЙ КАСТОМНИЙ SELECT ДЛЯ ОЛТ === */
 .config-custom-select {
     position: relative;
-    width: 200px;
+    width: 100%; /* ЗАМІНЕНО З 200px. Тепер він точно повторює ширину гумової обгортки */
 }
 
 .config-olt-input {
@@ -3505,8 +3505,7 @@ body.dark .config-mix-toggle-btn.is-epon:hover {
     flex: 0 0 auto !important; 
     display: inline-flex;
     align-items: center;
-    /* Збільшено ширину, бо слово "РЕЄСТРАЦІЯ" довге */
-    min-width: 120px; 
+    width: 120px; 
     
     border-radius: 6px !important; 
     border: 1px solid var(--input-border-color);
@@ -3553,7 +3552,7 @@ body.dark .config-mix-toggle-btn.is-epon:hover {
 /* --- Стан 1: РЕЄСТРАЦІЯ (Повзунок ЗЛІВА, Teal / Морська хвиля) --- */
 .config-onu-mode-btn.is-reg {
     justify-content: flex-end; 
-    padding: 0 10px 0 30px !important; 
+    padding: 0 6px 0 30px !important; 
     border-color: #0d9488;        /* Глибокий Teal для світлої теми */
     color: #0d9488;
     background-color: rgba(13, 148, 136, 0.06);
@@ -3586,7 +3585,7 @@ body.dark .config-onu-mode-btn.is-reg:hover {
 /* --- Стан 2: ЗАМІНА (Повзунок СПРАВА, Violet / Фіолетовий) --- */
 .config-onu-mode-btn.is-switch {
     justify-content: flex-start; 
-    padding: 0 30px 0 10px !important; 
+    padding: 0 30px 0 6px !important; 
     border-color: #7c3aed;        /* Насичений фіолетовий */
     color: #7c3aed;               
     background-color: rgba(124, 58, 237, 0.06); 
