@@ -3229,7 +3229,7 @@ body.dark .template-config-bar {
 /* --- РОЗПОДІЛ ШИРИНИ (ВЕРХНІЙ РЯД: Залізо) --- */
 .config-row .olt-dropdown-wrapper {
     flex: 1; /* Гумове поле: забирає всю вільну ширину */
-    min-width: 200px; /* ЗАМІНЕНО: тепер воно стиснеться, але не зникне */
+    min-width: 250px; /* ЗАМІНЕНО: тепер воно стиснеться, але не зникне */
     position: relative;
 }
 .olt-dropdown-wrapper .config-olt-select {
@@ -3352,7 +3352,8 @@ body.dark .config-show-signal-btn:hover {
     flex: 0 0 auto !important; 
     display: inline-flex;
     align-items: center;
-    width: 74px; 
+    min-width: 74px;
+    max-width: 200px; 
     
     /* Змінили на 6px, щоб ідеально збігалося з іншими input/select у цьому ряду */
     border-radius: 6px !important; 
@@ -3455,10 +3456,87 @@ body.dark .config-mix-toggle-btn.is-epon:hover {
     transform: translateY(-50%) scale(0.85);
 }
 
+/* =========================================================
+   СТАН ОЧІКУВАННЯ ВИБОРУ (ДЛЯ MIX OLT) 
+   ========================================================= */
+
+/* Плавна пульсація для СВІТЛОЇ теми (М'який бурштин) */
+@keyframes pulse-attention-light {
+    0%, 100% {
+        border-color: #f59e0b; /* Amber 500 */
+        background-color: rgba(245, 158, 11, 0.05);
+        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+    50% {
+        border-color: #d97706; /* Amber 600 */
+        background-color: rgba(245, 158, 11, 0.15);
+        box-shadow: 0 0 10px rgba(245, 158, 11, 0.25), inset 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+}
+
+/* Плавна пульсація для ТЕМНОЇ теми (Яскравий жовто-помаранчевий) */
+@keyframes pulse-attention-dark {
+    0%, 100% {
+        border-color: #fbbf24; /* Amber 400 */
+        background-color: rgba(251, 191, 36, 0.05);
+        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+    }
+    50% {
+        border-color: #f59e0b;
+        background-color: rgba(251, 191, 36, 0.15);
+        box-shadow: 0 0 12px rgba(251, 191, 36, 0.35), inset 0 1px 3px rgba(0, 0, 0, 0.2);
+    }
+}
+
+.config-mix-toggle-btn.is-attention {
+    justify-content: center !important; /* Текст рівно по центру */
+    padding: 0 6px !important; 
+    color: #b45309; /* Темно-помаранчевий для ідеального читання */
+    animation: pulse-attention-light 2s infinite ease-in-out;
+}
+
+body.dark .config-mix-toggle-btn.is-attention {
+    color: #fbbf24;
+    animation: pulse-attention-dark 2s infinite ease-in-out;
+}
+
+/* Ховаємо квадратний повзунок у стані очікування (плавно зменшуємо) */
+.config-mix-toggle-btn.is-attention::before {
+    opacity: 0;
+    transform: translateY(-50%) scale(0);
+}
+
+
+/* =========================================================
+   СТАН ПОМИЛКИ (КРИТИЧНИЙ СТРУС)
+   ========================================================= */
+@keyframes shake-error-mix {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-3px); }
+    40%, 80% { transform: translateX(3px); }
+}
+
+.config-mix-toggle-btn.shake-it {
+    /* Більш жорстка анімація струсу */
+    animation: shake-error-mix 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both !important;
+    
+    border-color: #ef4444 !important; /* Red 500 */
+    color: #ef4444 !important;
+    background-color: rgba(239, 68, 68, 0.08) !important;
+    box-shadow: 0 0 12px rgba(239, 68, 68, 0.4) !important;
+}
+
+body.dark .config-mix-toggle-btn.shake-it {
+    border-color: #f87171 !important; /* Red 400 */
+    color: #f87171 !important;
+    background-color: rgba(248, 113, 113, 0.15) !important;
+    box-shadow: 0 0 12px rgba(248, 113, 113, 0.5) !important;
+}
+
 /* === ПРОФЕСІЙНИЙ КАСТОМНИЙ SELECT ДЛЯ ОЛТ === */
 .config-custom-select {
     position: relative;
-    width: 100%; /* ЗАМІНЕНО З 200px. Тепер він точно повторює ширину гумової обгортки */
+    width: 100%;
 }
 
 .config-olt-input {

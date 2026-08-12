@@ -1551,35 +1551,50 @@ const vlanInputNode = configPanel.querySelector('.config-vlan-input');
 const oltDropdownList = configPanel.querySelector('.olt-dropdown-list');
 
 // === ЛОГІКА КНОПКИ MIX ===
-let currentMixState = 'GPON'; // Ставимо базове значення
+let currentMixState = null; // За замовчуванням вибору немає
 const btnMixToggle = configPanel.querySelector('.config-mix-toggle-btn');
 
 btnMixToggle.addEventListener('click', (e) => {
     e.preventDefault();
-    // Логіка перемикання тепер чітка: тільки GPON <-> EPON
-    if (currentMixState === 'EPON') {
+    
+    // Знімаємо клас помилки (струсу), якщо він був
+    btnMixToggle.classList.remove('shake-it');
+
+    // Якщо натиснули вперше (знімаємо пульсацію і ставимо GPON)
+    if (currentMixState === null) {
         currentMixState = 'GPON';
         btnMixToggle.textContent = 'GPON';
         btnMixToggle.className = 'config-mix-toggle-btn is-gpon';
-    } else {
+    } 
+    // Звичайне перемикання GPON -> EPON
+    else if (currentMixState === 'GPON') {
         currentMixState = 'EPON';
         btnMixToggle.textContent = 'EPON';
         btnMixToggle.className = 'config-mix-toggle-btn is-epon';
+    } 
+    // Звичайне перемикання EPON -> GPON
+    else {
+        currentMixState = 'GPON';
+        btnMixToggle.textContent = 'GPON';
+        btnMixToggle.className = 'config-mix-toggle-btn is-gpon';
     }
 });
 
 // Допоміжна функція для скидання кнопки
 function resetMixButton(show, isMix = false) {
+    // Спочатку скидаємо будь-які анімації помилок
+    btnMixToggle.classList.remove('shake-it');
+
     if (show && isMix) {
-        btnMixToggle.style.display = 'inline-flex'; // Використовуємо inline-flex для правильної геометрії
+        btnMixToggle.style.display = 'inline-flex'; 
         
-        // ВІДРАЗУ СТАВИМО СТАН GPON ПРИ ПОЯВІ
-        currentMixState = 'GPON';
-        btnMixToggle.textContent = 'GPON';
-        btnMixToggle.className = 'config-mix-toggle-btn is-gpon';
+        // ВАЖЛИВО: Ставимо стан "Нуль", щоб примусити обрати!
+        currentMixState = null;
+        btnMixToggle.innerHTML = 'ОБЕРІТЬ !?';
+        btnMixToggle.className = 'config-mix-toggle-btn is-attention';
     } else {
         btnMixToggle.style.display = 'none';
-        currentMixState = 'GPON'; // Скидаємо на дефолт при хованні
+        currentMixState = null; 
     }
 }
 
@@ -1814,15 +1829,16 @@ if (!oltObj) {
         let currentTemplateName = oltObj.templateName; 
 
         // === НОВА ЛОГІКА ТЕХНОЛОГІЇ (ТУМБЛЕР) ДЛЯ MIX OLT ===
-        // =========================================================
         if (oltObj.name.includes('(MIX)')) {
             // Перевіряємо, чи користувач клацнув тумблер
             if (currentMixState === null) {
-                showNotification("Помилка! Оберіть тип (GPON чи EPON) для MIX OLT.");
-                // Додаємо візуальний "струс" червоній кнопці, щоб привернути увагу
-                btnMixToggle.style.animation = 'none';
-                void btnMixToggle.offsetWidth; // рефлоу
-                btnMixToggle.style.animation = 'shake 0.3s';
+                showNotification("Помилка! Оберіть тип (GPON чи EPON).");
+                
+                // Візуальний струс кнопки
+                btnMixToggle.classList.remove('shake-it');
+                void btnMixToggle.offsetWidth; // Магія для перезапуску анімації
+                btnMixToggle.classList.add('shake-it');
+                
                 return; // ⛔ ЗУПИНЯЄМО ГЕНЕРАЦІЮ!
             }
 
