@@ -3347,29 +3347,37 @@ body.dark .config-show-signal-btn:hover {
 
 /* === НОВІ СТИЛІ ДЛЯ КНОПКИ MIX (МЕХАНІЧНИЙ ПЕРЕМИКАЧ) === */
 
-/* Базовий контейнер "доріжки" перемикача */
+/* 1. БАЗОВИЙ КЛАС КНОПКИ (оновлюємо transition та додаємо overflow) */
 .config-mix-toggle-btn {
     flex: 0 0 auto !important; 
     display: inline-flex;
     align-items: center;
     min-width: 78px;
     max-width: 200px; 
-    
-    /* Змінили на 6px, щоб ідеально збігалося з іншими input/select у цьому ряду */
     border-radius: 6px !important; 
     border: 1px solid var(--input-border-color);
     background-color: var(--input-bg-color);
-    
     font-size: 13px;
     font-weight: 600;
     cursor: pointer;
     position: relative;
-    overflow: hidden;
     box-sizing: border-box;
-    
-    /* Ефект "втиснутої" доріжки */
     box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.04);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* --- ДОДАНО ДЛЯ АНІМАЦІЇ РОЗСУВАННЯ --- */
+    overflow: hidden !important;     /* Щоб текст не вилазив, коли кнопка стискається */
+    white-space: nowrap !important;  /* Щоб текст не стрибав на 2 рядки */
+    
+    /* Перераховуємо все, що впливає на ширину, для плавного розсування */
+    transition: 
+        min-width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+        max-width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+        padding 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+        border-width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+        margin 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+        opacity 0.25s ease-in-out,
+        transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+        display 0.3s allow-discrete !important; /* Магія для JS display: none */
 }
 
 /* Сам "повзунок" (тепер це квадратний блок) */
@@ -3450,10 +3458,40 @@ body.dark .config-mix-toggle-btn.is-epon:hover {
     box-shadow: inset 0 1px 3px rgba(0,0,0,0.2), 0 2px 4px rgba(87, 227, 137, 0.15);
 }
 
-
 /* При натисканні "втискаємо" повзунок всередині */
 .config-mix-toggle-btn:active::before {
     transform: translateY(-50%) scale(0.85);
+}
+
+/* 2. СТАН ПОЯВИ (кнопка виростає з 0, розсуваючи сусідів) */
+@starting-style {
+    .config-mix-toggle-btn {
+        opacity: 0;
+        transform: scale(0.8);
+        min-width: 0 !important;
+        max-width: 0 !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        border-width: 0 !important;
+    }
+}
+
+/* 3. СТАН ЗНИКАННЯ (кнопка здувається до 0, сусіди з'їжджаються) */
+.config-mix-toggle-btn[style*="display: none"],
+.config-mix-toggle-btn[style*="display:none"] {
+    opacity: 0 !important;
+    transform: scale(0.8) !important;
+    
+    /* Фізично "знищуємо" розмір, щоб сусіди посунулися на її місце */
+    min-width: 0 !important;
+    max-width: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    border-width: 0 !important;
 }
 
 /* =========================================================
