@@ -4983,7 +4983,10 @@ body.dark .qn-item {
 /* Перетворюємо саму нотатку на плейсхолдер під час перетягування */
 .qn-item.qn-dragging {
     background: rgba(52, 152, 219, 0.05) !important;
-    border: 2px dashed #3498db !important;
+    
+    /* СЕКРЕТ ТУТ: Робимо рамку 1px, точно як в оригіналу, щоб розмір не мінявся ні на міліметр */
+    border: 1px dashed #3498db !important; 
+    
     box-shadow: none !important;
     color: transparent !important;
 }
