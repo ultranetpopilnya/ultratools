@@ -3247,7 +3247,7 @@ body.dark .template-config-bar {
     flex: 1; 
     min-width: 150px; /* ЗАМІНЕНО: розумний мінімум для логіна */
 }
-.config-row .config-vlan-input  { flex: 0 0 96px; } /* Ідеально для 4 цифр VLAN */
+.config-row .config-vlan-input  { flex: 0 0 85px; } /* Ідеально для 4 цифр VLAN */
 
 
 /* --- ЗАХИСТ ВІД ЗЛАМУ КАРТКИ --- */
