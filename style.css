@@ -3352,7 +3352,7 @@ body.dark .config-show-signal-btn:hover {
     flex: 0 0 auto !important; 
     display: inline-flex;
     align-items: center;
-    min-width: 74px;
+    min-width: 78px;
     max-width: 200px; 
     
     /* Змінили на 6px, щоб ідеально збігалося з іншими input/select у цьому ряду */
