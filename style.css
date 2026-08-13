@@ -4719,8 +4719,10 @@ body.dark .moon-icon {
 .qn-popover {
     position: fixed;
     width: 420px; /* Трішки ширше для комфорту */
+    height: auto; 
+    max-height: 540px;
     z-index: 10000;
-    overflow: hidden;
+    overflow-y: auto;
     display: flex;
     flex-direction: column;
     
@@ -4916,7 +4918,6 @@ body.dark .qn-add-btn:hover {
 /* Список збережених нотаток */
 .qn-list {
     padding: 0 16px 16px;
-    max-height: 250px;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
