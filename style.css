@@ -5013,7 +5013,6 @@ body.dark .qn-item {
     color: var(--text-color);
     word-break: break-word;
     white-space: pre-wrap; /* Зберігає пробіли та переноси рядків */
-    user-select: none;    /* Забороняє виділення тексту, щоб не заважати перетягуванню */
 }
 
 /* Блок кнопок справа */

@@ -4171,10 +4171,12 @@ function renderQuickNotes() {
     quickNotesArray.forEach((text, index) => {
         const item = document.createElement('div');
         item.className = 'qn-item';
-        item.setAttribute('draggable', 'true');
+        
+        // 1. ЗА ЗАМОВЧУВАННЯМ ПЕРЕТЯГУВАННЯ ВИМКНЕНО
+        item.setAttribute('draggable', 'false');
         
         item.innerHTML = `
-            <div class="qn-drag-handle"><i class="fa-solid fa-grip-vertical"></i></div>
+            <div class="qn-drag-handle" title="Потягніть, щоб перемістити"><i class="fa-solid fa-grip-vertical"></i></div>
             <div class="qn-text">${escapeHtml(text)}</div>
             <div class="qn-actions">
                 <button class="qn-action-btn" onclick="copyQuickNote(${index})"><i class="fa-solid fa-copy"></i></button>
@@ -4183,18 +4185,41 @@ function renderQuickNotes() {
             </div>
         `;
 
+        // === 2. ЛОГІКА РУЧКИ ПЕРЕТЯГУВАННЯ ===
+        const dragHandle = item.querySelector('.qn-drag-handle');
+        
+        // Вмикаємо перетягування ТІЛЬКИ коли затиснули ліву кнопку миші на ручці
+        dragHandle.addEventListener('mousedown', (e) => {
+            if (e.button === 0) { // 0 - це ліва кнопка
+                item.setAttribute('draggable', 'true');
+            }
+        });
+
+        // Вимикаємо перетягування, якщо мишку відпустили або курсор зійшов з ручки
+        dragHandle.addEventListener('mouseup', () => item.setAttribute('draggable', 'false'));
+        dragHandle.addEventListener('mouseleave', () => {
+            if (!item.classList.contains('qn-dragging')) {
+                item.setAttribute('draggable', 'false');
+            }
+        });
+
+        // === 3. ПОДІЇ САМОГО ПЕРЕТЯГУВАННЯ ===
         item.addEventListener('dragstart', (e) => {
+            // Захист: якщо якось почали тягнути не за ручку, зупиняємо
+            if (item.getAttribute('draggable') === 'false') {
+                e.preventDefault();
+                return;
+            }
             e.dataTransfer.effectAllowed = 'move';
-            // Браузер "фотографує" нормальну нотатку для мишки.
-            // Відразу після цього перетворюємо оригінал на штрихпунктир.
             setTimeout(() => item.classList.add('qn-dragging'), 0);
         });
 
         item.addEventListener('dragend', () => {
-            // Повертаємо нотатці звичайний вигляд
             item.classList.remove('qn-dragging');
+            // ОБОВ'ЯЗКОВО вимикаємо перетягування, коли відпустили нотатку
+            item.setAttribute('draggable', 'false');
             
-            // Зберігаємо новий порядок, як він зараз є на екрані
+            // Зберігаємо новий порядок
             const currentItems = [...list.querySelectorAll('.qn-text')];
             quickNotesArray = currentItems.map(el => el.innerText);
             localStorage.setItem('quickNotesData', JSON.stringify(quickNotesArray));
