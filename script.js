@@ -2671,31 +2671,27 @@ onuMode: group.dataset.onuMode || 'REG',
             
             saveTemplates(); 
             
-            // --- 2. ІМПОРТ НОТАТОК (РОЗУМНЕ ЗЛИВАННЯ) ---
-            if (parsedData.isUltraBackup && notesToImport.length > 0) {
-                
-                // Отримуємо поточні нотатки, які вже є на сайті
-                let existingNotes = JSON.parse(localStorage.getItem('quickNotesData') || '[]');
-                
-                // З'єднуємо поточні нотатки і ті, що прийшли з бекапу
-                let combinedNotes = [...existingNotes, ...notesToImport];
-                
-                // МАГІЯ: Видаляємо точні дублікати, щоб не було однакових текстів
-                let uniqueNotes = Array.from(new Set(combinedNotes));
-                
-                // Зберігаємо оновлений список
-                localStorage.setItem('quickNotesData', JSON.stringify(uniqueNotes));
-                
-                if (typeof quickNotesArray !== 'undefined') {
-                    quickNotesArray = uniqueNotes; // Оновлюємо змінну в пам'яті
-                    
-                    // Якщо вікно нотаток відкрите - миттєво перемальовуємо його
-                    const popover = document.getElementById('qn-popover');
-                    if (popover && popover.classList.contains('active')) {
-                        if (typeof renderQuickNotes === 'function') renderQuickNotes();
-                    }
-                }
-            }
+            // --- 2. ІМПОРТ НОТАТОК (ПРАВИЛЬНИЙ ПОРЯДОК) ---
+if (parsedData.isUltraBackup && notesToImport.length > 0) {
+    let existingNotes = JSON.parse(localStorage.getItem('quickNotesData') || '[]');
+    
+    // Фільтруємо нотатки з файлу, яких ще немає в базі (щоб уникнути дублів)
+    const newUniqueNotes = notesToImport.filter(note => !existingNotes.includes(note));
+    
+    // Додаємо нові нотатки в кінець існуючих
+    let combinedNotes = [...existingNotes, ...newUniqueNotes];
+    
+    localStorage.setItem('quickNotesData', JSON.stringify(combinedNotes));
+    
+    // Оновлюємо глобальну змінну, якщо вікно відкрите
+    if (typeof quickNotesArray !== 'undefined') {
+        quickNotesArray = combinedNotes;
+        const popover = document.getElementById('qn-popover');
+        if (popover && popover.classList.contains('active')) {
+            renderQuickNotes();
+        }
+    }
+}
             
             // Візуальне повідомлення
             setTimeout(() => {
@@ -3990,6 +3986,9 @@ document.addEventListener('DOMContentLoaded', () => {
 /* =========================================
    ЛОГІКА ШВИДКИХ НОТАТОК (POPOVER) + РЕДАГУВАННЯ
    ========================================= */
+const qnPlaceholder = document.createElement('div');
+qnPlaceholder.className = 'qn-placeholder';
+
 let quickNotesArray = [];
 let currentActiveQnBtn = null;
 let editingNoteIndex = -1; // -1 означає "додаємо нову", інакше - індекс нотатки, яку редагуємо
@@ -4159,7 +4158,10 @@ function deleteQuickNote(index) {
 // 9. Відмалювати список
 function renderQuickNotes() {
     const list = document.getElementById('qn-list');
+    if (!list) return;
     list.innerHTML = '';
+    
+    quickNotesArray = JSON.parse(localStorage.getItem('quickNotesData') || '[]');
 
     if (quickNotesArray.length === 0) {
         list.innerHTML = '<div class="qn-empty">У вас немає збережених нотаток.</div>';
@@ -4169,27 +4171,75 @@ function renderQuickNotes() {
     quickNotesArray.forEach((text, index) => {
         const item = document.createElement('div');
         item.className = 'qn-item';
+        item.setAttribute('draggable', 'true');
         
-        // Візуально замінюємо пробіли на спеціальні символи нерозривних пробілів (тільки для показу в HTML)
-        // Це гарантує, що пробіли в кінці чи на початку будуть видимі в браузері.
-        let displayHtml = escapeHtml(text);
-
         item.innerHTML = `
-            <div class="qn-text">${displayHtml}</div>
+            <div class="qn-drag-handle"><i class="fa-solid fa-grip-vertical"></i></div>
+            <div class="qn-text">${escapeHtml(text)}</div>
             <div class="qn-actions">
-                <button class="qn-action-btn qn-copy-btn" onclick="copyQuickNote(${index})" title="Скопіювати">
-                    <i class="fa-solid fa-copy"></i>
-                </button>
-                <button class="qn-action-btn qn-edit-btn" onclick="editQuickNote(${index})" title="Редагувати">
-                    <i class="fa-solid fa-pen"></i>
-                </button>
-                <button class="qn-action-btn qn-del-btn" onclick="deleteQuickNote(${index})" title="Видалити">
-                    <i class="fa-solid fa-trash"></i>
-                </button>
+                <button class="qn-action-btn" onclick="copyQuickNote(${index})"><i class="fa-solid fa-copy"></i></button>
+                <button class="qn-action-btn" onclick="editQuickNote(${index})"><i class="fa-solid fa-pen"></i></button>
+                <button class="qn-action-btn" onclick="deleteQuickNote(${index})"><i class="fa-solid fa-trash"></i></button>
             </div>
         `;
+
+        item.addEventListener('dragstart', (e) => {
+            e.dataTransfer.effectAllowed = 'move';
+            // Браузер "фотографує" нормальну нотатку для мишки.
+            // Відразу після цього перетворюємо оригінал на штрихпунктир.
+            setTimeout(() => item.classList.add('qn-dragging'), 0);
+        });
+
+        item.addEventListener('dragend', () => {
+            // Повертаємо нотатці звичайний вигляд
+            item.classList.remove('qn-dragging');
+            
+            // Зберігаємо новий порядок, як він зараз є на екрані
+            const currentItems = [...list.querySelectorAll('.qn-text')];
+            quickNotesArray = currentItems.map(el => el.innerText);
+            localStorage.setItem('quickNotesData', JSON.stringify(quickNotesArray));
+            
+            // Перемальовуємо, щоб оновити індекси кнопок
+            renderQuickNotes(); 
+        });
+
         list.appendChild(item);
     });
+}
+
+// Допоміжна функція для визначення позиції мишки відносно списку
+function getDragAfterElement(container, y) {
+    // Отримуємо всі елементи, які НЕ перетягуються в даний момент
+    const draggableElements = [...container.querySelectorAll('.qn-item:not(.qn-dragging)')];
+
+    return draggableElements.reduce((closest, child) => {
+        const box = child.getBoundingClientRect();
+        const offset = y - box.top - box.height / 2; // Відстань від центру елемента
+
+        if (offset < 0 && offset > closest.offset) {
+            return { offset: offset, element: child };
+        } else {
+            return closest;
+        }
+    }, { offset: Number.NEGATIVE_INFINITY }).element;
+}
+
+// Функція для синхронізації DOM-порядку з масивом quickNotesArray
+function saveNewOrder() {
+    const list = document.getElementById('qn-list');
+    const items = [...list.querySelectorAll('.qn-item')];
+    
+    // Перебудовуємо масив на основі того, як елементи стоять у DOM
+    const newArray = items.map(item => {
+        // Отримуємо текст з блоку qn-text (враховуючи, що він може бути багаторядковим)
+        return item.querySelector('.qn-text').innerText;
+    });
+
+    quickNotesArray = newArray;
+    localStorage.setItem('quickNotesData', JSON.stringify(quickNotesArray));
+    
+    // Перемальовуємо, щоб оновити індекси в кнопках onclick
+    renderQuickNotes();
 }
 
 // --- ЛОГІКА КОНТЕЙНЕРА ДЛЯ ПЕРЕТЯГУВАННЯ ШАБЛОНІВ ---
@@ -4246,3 +4296,60 @@ if (templatesContainer) {
         window.dragPlaceholder = null;
     });
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    const list = document.getElementById('qn-list');
+    
+    // Запам'ятовуємо позицію і напрямок миші, щоб зробити сортування чутливішим
+    let lastY = 0;
+    let isDraggingDown = false;
+    
+    if (list) {
+        list.addEventListener('dragenter', (e) => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move'; // Забороняємо червоний круг
+        });
+
+        list.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            
+            const draggingItem = document.querySelector('.qn-dragging');
+            if (!draggingItem) return;
+
+            // Визначаємо, куди ми тягнемо мишку (вгору чи вниз), ігноруючи зупинки
+            if (e.clientY !== lastY) {
+                isDraggingDown = e.clientY > lastY;
+                lastY = e.clientY;
+            }
+
+            const siblings = [...list.querySelectorAll('.qn-item:not(.qn-dragging)')];
+            
+            let nextSibling = siblings.find(sibling => {
+                const box = sibling.getBoundingClientRect();
+                
+                // МАГІЯ ЧУТЛИВОСТІ (25% замість 50%)
+                // Якщо тягнемо вниз — спрацьовує, коли зайшли на 25% зверху
+                // Якщо тягнемо вгору — спрацьовує, коли зайшли на 25% знизу
+                const threshold = isDraggingDown 
+                    ? box.top + box.height * 0.25 
+                    : box.top + box.height * 0.75;
+
+                return e.clientY <= threshold;
+            });
+
+            // Захист від сіпання: міняємо тільки якщо позиція дійсно змінилась
+            if (nextSibling !== draggingItem.nextSibling) {
+                list.insertBefore(draggingItem, nextSibling);
+            }
+        });
+    }
+
+    // Закриття поп-апу по кліку поза ним
+    document.addEventListener('click', (e) => {
+        const popover = document.getElementById('qn-popover');
+        if (popover && popover.classList.contains('active') && !popover.contains(e.target) && !e.target.closest('.quick-notes-btn')) {
+            closeQuickNotes();
+        }
+    });
+});

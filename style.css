@@ -4718,7 +4718,7 @@ body.dark .moon-icon {
 /* Основне вікно попапу */
 .qn-popover {
     position: fixed;
-    width: 340px; /* Трішки ширше для комфорту */
+    width: 420px; /* Трішки ширше для комфорту */
     z-index: 10000;
     overflow: hidden;
     display: flex;
@@ -4932,38 +4932,84 @@ body.dark .qn-add-btn:hover {
 }
 body.dark .qn-list::-webkit-scrollbar-thumb { background-color: rgba(255, 255, 255, 0.2); }
 
-/* Картка однієї нотатки */
+/* Базовий стиль замітки та її стани */
 .qn-item {
     display: flex;
-    flex-direction: row; 
-    justify-content: space-between;
     align-items: center; 
     gap: 12px;
     padding: 8px;
-    
     background: #ffffff;
     border: 1px solid rgba(0, 0, 0, 0.05);
     border-radius: 10px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
-    
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+    cursor: default;
 }
+
+/* Темна тема та інтерактивні стани */
 body.dark .qn-item {
     background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.02);
+    border-color: rgba(255, 255, 255, 0.05);
 }
 
+/* Ручка для перетягування (іконка ⋮⋮) */
+.qn-drag-handle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 2px;
+    cursor: grab; /* Курсор "рука" */
+    color: #ccc;
+    transition: color 0.2s;
+}
 
-/* Текст нотатки */
+.qn-drag-handle:hover {
+    color: #888;
+}
+
+.qn-drag-handle:active {
+    cursor: grabbing; /* Курсор "затиснута рука" */
+}
+
+.qn-placeholder {
+    border: 2px dashed #3498db;
+    border-radius: 10px;
+    background: rgba(52, 152, 219, 0.05);
+    margin-bottom: 8px;
+    box-sizing: border-box;
+    pointer-events: none;
+}
+
+/* Перетворюємо саму нотатку на плейсхолдер під час перетягування */
+.qn-item.qn-dragging {
+    background: rgba(52, 152, 219, 0.05) !important;
+    border: 2px dashed #3498db !important;
+    box-shadow: none !important;
+    color: transparent !important;
+}
+
+/* Ховаємо весь текст, іконки і кнопки всередині неї */
+.qn-item.qn-dragging * {
+    opacity: 0 !important;
+    pointer-events: none;
+}
+
+/* СТАН: Над цією заміткою зараз тримають іншу замітку (куди вона впаде) */
+.qn-item.qn-drag-over {
+    border: 1px solid #3498db;
+    background: rgba(52, 152, 219, 0.05);
+    transform: translateY(2px);
+}
+
 .qn-text {
     flex: 1;
     min-width: 0;
     font-size: 13.5px;
-    line-height: 1.35;
+    line-height: 1.4;
     color: var(--text-color);
     word-break: break-word;
-    white-space: pre-wrap;
+    white-space: pre-wrap; /* Зберігає пробіли та переноси рядків */
+    user-select: none;    /* Забороняє виділення тексту, щоб не заважати перетягуванню */
 }
 
 /* Блок кнопок справа */
@@ -4971,7 +5017,7 @@ body.dark .qn-item {
     display: flex;
     flex-direction: row; 
     align-items: center; 
-    gap: 6px;
+    gap: 4px;
     flex-shrink: 0; 
 }
 
