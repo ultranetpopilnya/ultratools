@@ -1002,7 +1002,7 @@ body.dark .gpon-commands-container select {
         .command-item {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: center;
     gap: 15px; /* Замість margin-right, створює рівний відступ між ними */
     padding: 5px 7px; 
     background-color: transparent; 
