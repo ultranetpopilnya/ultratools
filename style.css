@@ -652,7 +652,6 @@ body.holiday-mode #snow-container {
     border: 1px solid #dee2e6; 
     border-radius: 12px;
     background-color: #ffffff; 
-    box-sizing: border-box;
     min-height: 52px; 
 }
 
@@ -773,7 +772,6 @@ body.dark .login-generator-container .result-item .regenerate-login-btn {
     padding: 10px;
     border: none; /* Внутрішній бордер тепер не потрібен */
     border-radius: 0;
-    box-sizing: border-box;
     width: 100%;
     height: 100%;
     
@@ -839,14 +837,6 @@ z-index: 3;
         linear-gradient(135deg, transparent 80%, var(--resize-handle-color) 81%, var(--resize-handle-color) 90%, transparent 91%);
 }
 
-	/* ВИРІШЕННЯ ПРОБЛЕМИ ЗСУВУ ЗАГОЛОВКА ПРИ ПРОКРУТЦІ */
-.container[data-content="text-templates"] {
-    scrollbar-gutter: auto; 
-    /* --- ЗМІНА 1: Забороняємо скрол батьківського елемента --- */
-    overflow: hidden !important;   
-}
-	/* === КОРЕКТНЕ ПІДСВІЧУВАННЯ ВНУТРІШНІХ ЕЛЕМЕНТІВ ШАБЛОНУ === */
-
 /* Світла тема: підсвічуємо синім ТІЛЬКИ активне поле вводу */
 .template-field-group .template-name-input:focus,
 .template-field-group .textarea-wrapper:focus-within {
@@ -869,10 +859,7 @@ body.dark .template-field-group .textarea-wrapper:focus-within {
 
 /* 1. Забороняємо виділення для всього контейнера шаблону */
 .template-field-group {
-    -webkit-user-select: none; /* Safari */
-    -ms-user-select: none;     /* IE 10+ */
     user-select: none;         /* Стандартний синтаксис */
-	/* ОПТИМІЗАЦІЯ: Ізолюємо шаблон від решти сторінки */
     contain: layout paint style;
 }
 
@@ -965,7 +952,6 @@ body.dark #static-clarification-message {
             margin-bottom: 0px;
              border: 1px solid var(--input-border-color);
             border-radius: 6px;
-            box-sizing: border-box;
             font-size: 16px;
             background-color: #fff;
             color: #333;
@@ -1010,7 +996,8 @@ body.dark .gpon-commands-container select {
     transition: background-color 0.2s, box-shadow 0.2s;
     border-radius: 6px;
     border-bottom: none;
-    margin: 0 10px; 
+    margin: 0 10px;
+    font-size: 1em;
 }
         
         body.dark .command-item {
@@ -1135,16 +1122,16 @@ body.dark .gpon-commands-container select {
         }
         
         .tab-content-wrapper {
-            width: 100%; 
-            max-width: 100%; 
-            flex-grow: 1; 
-            position: relative;
-            min-width: 0; 
-            padding-top: 0px; 
-			margin: 0 auto;
-			margin-top: -3px;
- 
-        }
+    width: 100%; 
+    max-width: 100%; 
+    flex-grow: 1; 
+    position: relative;
+    min-width: 0; 
+    margin: 0 auto;
+    margin-top: -3px;
+    height: 100%;
+    min-height: 0;
+}
 
         /* === БАЗОВИЙ КОНТЕЙНЕР ВКЛАДОК === */
 .container {
@@ -1190,15 +1177,13 @@ body.dark .gpon-commands-container select {
     z-index: 10; 
 }
         		
-		.login-generator-container {
+.login-generator-container {
     align-items: center;
 }
        
-        
-        
-        .date-calculator-container {
-            text-align: center;
-        }
+.date-calculator-container {
+    text-align: center;
+}
 
         /* Нова рамка для дат (однакова з іншими панелями) */
 .date-inputs-row {
@@ -1206,9 +1191,6 @@ body.dark .gpon-commands-container select {
     justify-content: center;
     gap: 24px;
     width: 100%;
-    box-sizing: border-box;
-    
-    /* Дизайн панелі */
     background-color: #FCFCFC; 
     border: 1px solid var(--input-border-color);
     border-radius: 12px;
@@ -1571,7 +1553,6 @@ body.dark .tab-button.active {
     width: 22px;
     height: 22px;
     border-radius: 50%;
-    box-sizing: border-box !important;
     flex-shrink: 0;
     
     border: none;
@@ -2010,7 +1991,6 @@ body.dark #clear-all-templates-button:hover {
     box-shadow: 0 4px 8px rgba(0,0,0,0.05);
     display: flex;
     flex-direction: column;
-    box-sizing: border-box;
     max-width: 100%;
     flex-grow: 0;
 
@@ -2064,7 +2044,6 @@ body.dark #clear-all-templates-button:hover {
     border: 2px dashed var(--accent-color);
     background-color: rgba(0, 0, 0, 0.03);
     border-radius: 12px;
-    box-sizing: border-box;
     pointer-events: none; /* Щоб мишка крізь нього бачила інші елементи */
     margin: 0;
     /* Плавна зміна розмірів, якщо картки різні */
@@ -2264,14 +2243,6 @@ body.dark .line-marker {
     color: #E6A22E;
 }
 
-/* === ФІНАЛЬНИЙ КОД: ЧИСТА АНІМАЦІЯ МАСШТАБУВАННЯ === */
-
-/* 1. Налаштовуємо батьківський контейнер */
-.tab-content-wrapper {
-    position: relative;
-    /* min-height буде встановлюватися динамічно через JS */
-}
-
 /* === НОВИЙ, СУЧАСНИЙ ДИЗАЙН ІНТЕРФЕЙСУ КАЛЬКУЛЯТОРА === */
 /* Робимо групи полів вводу гнучкими та рівними */
 .date-calculator-container .date-input-group {
@@ -2284,10 +2255,7 @@ body.dark .line-marker {
     flex-direction: column;
     align-items: center;
     gap: 10px;
-    
-    /* Робимо на всю ширину колонки для симетрії */
     width: 100%;
-    box-sizing: border-box;
     
     margin: 0 0 15px 0; /* Одинаковий відступ з іншими панелями */
     padding: 15px;
@@ -2361,22 +2329,12 @@ body.dark .calc-action-button:hover {
     display: flex;
     flex-direction: column;
     align-items: center;
-    
-    /* 1. Зменшуємо проміжок між поверхами (було 8px) */
     gap: 6px; 
-    
-    /* 2. Зменшуємо відступи зверху/знизу (було 10px) */
     padding: 10px 10px; 
-    
     border-radius: 12px; 
-    
     background-color: #ffffff; 
     border: 1px solid var(--input-border-color);
-    
-    /* 3. Чітка ширина */
     width: 378px;
-    box-sizing: border-box; 
-    
     box-shadow: 0 1px 3px rgba(0,0,0,0.05); 
 }
 
@@ -2406,16 +2364,11 @@ body.dark .calculator-actions-block {
 /* Об'єднаний та чистий стиль */
 .container[data-content="text-templates"] .content-card {
     padding: 16px 4px 4px 4px; 
-    
-    /* --- ЗМІНА 2: Вмикаємо скрол саме тут --- */
     overflow-y: auto;
-overflow-x: hidden;	
+    overflow-x: hidden;	
     height: 100%;
- display: block;
- scrollbar-gutter: stable;	
-    
-    /* --- ЗМІНА 3: Фікс графічного багу (курсора/артефактів) --- */
-    /* Цей рядок змушує браузер краще обробляти краї при скролі */
+    display: block;
+    scrollbar-gutter: stable;
     transform: translate3d(0,0,0); 
 }
 
@@ -2459,7 +2412,7 @@ body.dark ::placeholder {
     transition: background-color 0.2s;
     border-radius: 6px;
     margin: 0 10px 0 10px; 
-    font-size: 0.95em; /* Трохи менший шрифт */
+    font-size: 1em;
 }
 
 .sub-command-item:hover {
@@ -2680,13 +2633,6 @@ body {
     min-height: 0;          /* Критично важливо для роботи скролу всередині flex */
 }
 
-.tab-content-wrapper {
-    flex-grow: 1;           /* Розтягується всередині main-content-wrapper */
-    position: relative;     /* Якір для position: absolute */
-    height: 100%;           /* Займає всю висоту */
-    min-height: 0;          /* Дозволяє стискатися, якщо треба */
-}
-
 /* 4. Вмикаємо скрол ТІЛЬКИ всередині карток */
 .container[data-content="gpon-commands"] .content-card,
 .container[data-content="text-templates"] .content-card {
@@ -2821,6 +2767,8 @@ body.dark .history-copy-btn:hover { background: var(--secondary-accent-color); c
 .container[data-content="text-templates"] {
     height: 100%;
     width: 100%;
+    scrollbar-gutter: auto;
+    overflow: hidden !important; 
 }
 
 /* =========================================================
@@ -2880,13 +2828,13 @@ body.dark .history-copy-btn:hover { background: var(--secondary-accent-color); c
 .login-generator-container textarea {
     display: block;
     width: 85%;
-    min-height: 100px;                       /* <--- ЗБІЛЬШЕНА ВИСОТА ПОЛЯ */
+    min-height: 100px;              
     
     padding: 10px;
     font-size: 1rem;
     border-radius: 12px;
     border: 1px solid var(--input-border-color);
-    box-sizing: border-box;
+
     resize: none;
     
     margin-left: auto;
@@ -2925,7 +2873,6 @@ body.dark .history-copy-btn:hover { background: var(--secondary-accent-color); c
     background-color: var(--tab-strip-bg);
     border-radius: 12px;
     border: 1px solid transparent; 
-    box-sizing: border-box;
     
     /* === СУЧАСНА АНІМАЦІЯ (ЗАКРИТО) === */
     max-height: 0;
@@ -3012,7 +2959,6 @@ body.dark .history-copy-btn:hover { background: var(--secondary-accent-color); c
     box-shadow: inset 0 1px 2px rgba(0,0,0,0.03);
     outline: none;
     font-family: inherit;
-    box-sizing: border-box;
 }
 
 /* Налаштування ширини */
@@ -3125,10 +3071,8 @@ body.dark .swap-inputs-btn:hover {
     
     background-color: var(--tab-strip-bg);
     border-radius: 12px;
-    box-sizing: border-box;
     border: 1px solid transparent; /* Готуємо рамку для плавної появи */
     
-    /* === СУЧАСНА АНІМАЦІЯ (ЗАКРИТО) === */
     max-height: 0;
     opacity: 0;
     overflow: hidden;
@@ -3229,7 +3173,6 @@ body.dark .template-config-bar {
 }
 .olt-dropdown-wrapper .config-olt-select {
     width: 100%;
-    box-sizing: border-box;
     cursor: text;
 }
 /* Всі інші поля верхнього ряду ЖОРСТКО ФІКСОВАНІ */
@@ -3356,7 +3299,6 @@ body.dark .config-show-signal-btn:hover {
     font-weight: 600;
     cursor: pointer;
     position: relative;
-    box-sizing: border-box;
     box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.04);
 
     /* --- ДОДАНО ДЛЯ АНІМАЦІЇ РОЗСУВАННЯ --- */
@@ -3627,7 +3569,6 @@ body.dark .config-mix-toggle-btn.shake-it {
     cursor: pointer;
     position: relative;
     overflow: hidden;
-    box-sizing: border-box;
     
     box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.04);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -3984,7 +3925,6 @@ body.dark .calc-title { color: var(--text-color); }
 
 /* Кнопка історії (КАЛЬКУЛЯТОР - ВИПРАВЛЕНО КОНФЛІКТ) */
 .calc-head-history-btn {
-    appearance: none;
     background: transparent;
     border: none;
     box-shadow: none;
@@ -4190,7 +4130,6 @@ body.dark .c-btn.equal { background-color: var(--secondary-accent-color); color:
     display: flex;
     flex-direction: column;
     padding: 12px; /* Більше відступів */
-    box-sizing: border-box;
     border-radius: 12px;
 }
 
@@ -4422,22 +4361,31 @@ body.dark #calc-auto-clear-btn.active {
 }
 
 /* ========================================= */
-/* === РОЗУМНІ КОЛОНКИ ДЛЯ КОМАНД GPON === */
+/* === РОЗУМНІ КОЛОНКИ ДЛЯ КОМАНД (АВТО-ШИРИНА) === */
 /* ========================================= */
 
-/* Базовий контейнер */
+/* 1. Базовий контейнер */
 .container.gpon-commands-container {
-    width: 94%;
-    max-width: 54%;
     margin: 0 auto;
+    
+    /* Створюємо змінну зі значенням за замовчуванням */
+    --dynamic-width: 54%; 
+    max-width: var(--dynamic-width);
+    
+    /* Анімуємо саме max-width. Важливо: без !important на самій властивості, інакше глючить */
     transition: max-width 0.4s cubic-bezier(0.25, 1, 0.5, 1),
                 opacity 0.3s ease-in-out, 
                 transform 0.3s ease-in-out !important;
 }
 
+.container.gpon-commands-container:has(option[value="gpon"]:checked) { --dynamic-width: 93%; }
+.container.gpon-commands-container:has(option[value="epon"]:checked) { --dynamic-width: 50%; }
+.container.gpon-commands-container:has(option[value="bdcom"]:checked) { --dynamic-width: 56%; }
+.container.gpon-commands-container:has(option[value="mx80"]:checked)  { --dynamic-width: 48%; }
+
 /* Розширений стан контейнера (на великих моніторах) */
 .container.gpon-commands-container.expanded-layout {
-    max-width: 94%; 
+    --dynamic-width: 94%; 
 }
 
 /* Сам список команд */
@@ -4781,7 +4729,6 @@ body.dark .qn-header { border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
     width: 22px;
     height: 22px;
     border-radius: 50%;
-    box-sizing: border-box !important;
     flex-shrink: 0;
     
     border: none;
@@ -4857,7 +4804,6 @@ body.dark .qn-close-btn:active {
     font-family: inherit;
     font-size: 13.5px;
     line-height: 1.4;
-    box-sizing: border-box;
     outline: none;
     
     /* Сучасний стиль інпуту */
@@ -4972,7 +4918,6 @@ body.dark .qn-item {
     border-radius: 10px;
     background: rgba(52, 152, 219, 0.05);
     margin-bottom: 8px;
-    box-sizing: border-box;
     pointer-events: none;
 }
 
@@ -5191,8 +5136,6 @@ body.dark .qn-edit-btn:hover { color: var(--secondary-accent-color); background-
             
             padding: 10px !important;
             padding-bottom: 20px !important;
-            
-            box-sizing: border-box !important;
         }
 
         /* Для Шаблонів прибираємо зайві паддінги всередині картки */
