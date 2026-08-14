@@ -74,3 +74,9 @@ write all :: Зберегти внесені зміни на OLT
 > interface ePON 0/1:11 :: Зайти в інтерфейс ONU
 > no epon bind-onu mac abcd.efgh.1234 :: Видалення ONU з PON
 > epon onu port 1 ctc vlan mode tag 99 priority 0 :: Змінити VLAN в конфігу ONU
+
+[MX80]
+show subscribers summary :: Загальна кількість піднятих сесій
+show subscribers | match (IP абона) :: Пошук інтерфейса абонента на основі його айпі (айпі беремо з білінга)
+monitor interface demux0.3221226622 :: Трафік абонента по інтерфейсу
+show subscribers interface demux0.3221227050 extensive :: Профіль абонента
