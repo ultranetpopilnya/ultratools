@@ -80,4 +80,4 @@ show subscribers summary :: Загальна кількість піднятих
 show subscribers | match (IP абона) :: Пошук інтерфейса абонента на основі його айпі (айпі беремо з білінга)
 monitor interface demux0.3221226622 :: Трафік абонента по інтерфейсу
 show subscribers interface demux0.3221227050 extensive :: Профіль абонента
-show services sessions source-prefix 10.12.88.135 | count :: Виконання буде таке: Count: 79 lines. Команда на джуніку для перегляду типу запитів
+show services sessions source-prefix 10.12.88.135 | count :: Виконання буде таке: Count: 79 lines. Команда на джуніку для перегляду типу запитів (Має бути меньше 1500)

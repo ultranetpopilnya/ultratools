@@ -1000,17 +1000,18 @@ body.dark .gpon-commands-container select {
         }
 
         .command-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            padding: 5px 7px; 
-            background-color: transparent; 
-            cursor: pointer;
-            transition: background-color 0.2s, box-shadow 0.2s;
-            border-radius: 6px;
-            border-bottom: none;
-            margin: 0 10px 0 10px; 
-        }
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 15px; /* Замість margin-right, створює рівний відступ між ними */
+    padding: 5px 7px; 
+    background-color: transparent; 
+    cursor: pointer;
+    transition: background-color 0.2s, box-shadow 0.2s;
+    border-radius: 6px;
+    border-bottom: none;
+    margin: 0 10px; 
+}
         
         body.dark .command-item {
             background-color: transparent; 
@@ -1039,14 +1040,10 @@ body.dark .gpon-commands-container select {
     color: var(--text-color); 
     user-select: none; 
     
-    /* === ЗМІНЕНО === */
-    flex-shrink: 1;         /* Було 0, тепер дозволяємо трохи стискатись */
-    max-width: 100%;         /* Команда не забере більше 65% місця */
-    word-break: break-word; /* Дозволяємо перенос тексту на новий рядок */
-    white-space: pre-wrap;  /* Зберігаємо переноси */
-    /* ================ */
-    
-    margin-right: 15px;
+    flex: 1;                /* Бере рівно половину вільного простору */
+    min-width: 0;           /* Дозволяє довгому тексту переноситись */
+    word-break: break-word; 
+    white-space: pre-wrap;  
 }
 		
 		body.dark .command-text {
@@ -1056,13 +1053,11 @@ body.dark .gpon-commands-container select {
         .command-description {
     font-size: 0.9em;
     color: var(--description-color) !important; 
-    flex-grow: 1; 
     
-    /* === ЗМІНЕНО === */
-    flex-shrink: 0;       /* Забороняємо опису стискатися і пропадати */
-    min-width: 100px;     /* Гарантована мінімальна ширина для опису */
-    line-height: 1.4;     /* Трохи міжрядкового інтервалу для краси */
-    /* ================ */
+    flex: 1;                /* Бере рівно половину вільного простору */
+    min-width: 0;           /* Дозволяє довгому тексту переноситись */
+    line-height: 1.4;     
+    word-break: break-word; 
     
     text-align: right;
     user-select: none;
