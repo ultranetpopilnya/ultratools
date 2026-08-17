@@ -2238,6 +2238,47 @@ body.dark .line-marker {
     color: #E6A22E;
 }
 
+/* === НОВИЙ, СУЧАСНИЙ ДИЗАЙН ІНТЕРФЕЙСУ КАЛЬКУЛЯТОРА === */
+/* Робимо групи полів вводу гнучкими та рівними */
+.date-calculator-container .date-input-group {
+    flex: 1;
+}
+
+/* Стиль для головної об'єднаної панелі */
+.calculator-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    
+    margin: 0 0 15px 0; /* Одинаковий відступ з іншими панелями */
+    padding: 20px;
+    background-color: #FCFCFC; 
+    border: 1px solid var(--input-border-color);
+    border-radius: 12px;
+}
+body.dark .calculator-panel {
+    background-color: #2c2c2e;
+}
+
+/* Контейнер для перемикача автоскидання */
+.reset-toggle-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 2px;
+    padding: 0px;
+}
+
+.reset-toggle-text {
+    font-size: 1em;
+    font-weight: 600;
+    color: var(--text-color);
+    user-select: none; /* Щоб текст не виділявся випадково */
+}
+
 /* =========================================================
    ПАНЕЛЬ КЕРУВАННЯ ЧАСОМ (КАЛЬКУЛЯТОР МІСЯЦІВ) - СУЧАСНА КОМПАКТНА
    ========================================================= */
@@ -2423,55 +2464,6 @@ body.dark .stepper-btn:hover {
     border-color: var(--secondary-accent-color);
     color: var(--bg-color);
     box-shadow: 0 3px 8px rgba(230, 162, 46, 0.2);
-}
-
-/* === НОВИЙ, СУЧАСНИЙ ДИЗАЙН ІНТЕРФЕЙСУ КАЛЬКУЛЯТОРА === */
-/* Робимо групи полів вводу гнучкими та рівними */
-.date-calculator-container .date-input-group {
-    flex: 1;
-}
-
-/* Стиль для головної об'єднаної панелі */
-.calculator-panel {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    width: 100%;
-    
-    margin: 0 0 15px 0; /* Одинаковий відступ з іншими панелями */
-    padding: 15px;
-    background-color: #FCFCFC; 
-    border: 1px solid var(--input-border-color);
-    border-radius: 12px;
-}
-body.dark .calculator-panel {
-    background-color: #2c2c2e;
-}
-
-/* Стиль для елегантного вертикального роздільника */
-.action-divider {
-    width: 1px;
-    height: 24px;
-    background-color: var(--input-border-color);
-    margin: 0 4px;
-}
-
-/* Контейнер для перемикача автоскидання */
-.reset-toggle-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 2px;
-    padding: 0px;
-}
-
-.reset-toggle-text {
-    font-size: 1em;
-    font-weight: 600;
-    color: var(--text-color);
-    user-select: none; /* Щоб текст не виділявся випадково */
 }
 
 /* Об'єднаний та чистий стиль */
@@ -3977,7 +3969,7 @@ body.dark .speed-select option {
 .calc-flex-wrapper {
     display: flex;
     justify-content: center; 
-    align-items: flex-start; /* <--- Вирівнює обидві колонки по верхньому краю */
+    align-items: flex-start;
     gap: 16px;               
     flex-wrap: wrap;
     width: 100%;
