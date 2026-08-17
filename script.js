@@ -3218,6 +3218,80 @@ if (btnEndNow) btnEndNow.addEventListener('click', () => {
     if (typeof handleInputAndTimer === 'function') handleInputAndTimer();
 });
 
+// === КНОПКИ +/- 1 МІСЯЦЬ (НАКОПИЧУВАЛЬНІ З УРАХУВАННЯМ "ЗАВТРА") ===
+
+// Універсальна функція для додавання/віднімання місяців
+const adjustMonthToEndDate = (amount) => {
+    const startDateInput = document.getElementById('start-date');
+    const endDateInput = document.getElementById('end-date');
+    if (!endDateInput) return; // Захист
+
+    // За замовчуванням беремо кінцеву дату
+    let baseDateValue = endDateInput.value;
+
+    // РОЗУМНА ПЕРЕВІРКА НА "ЗАВТРА"
+    if (startDateInput && startDateInput.value && endDateInput.value) {
+        const sDate = new Date(startDateInput.value);
+        const eDate = new Date(endDateInput.value);
+        
+        // Створюємо "завтра" відносно початкової дати
+        const sDatePlusOne = new Date(sDate);
+        sDatePlusOne.setDate(sDate.getDate() + 1);
+
+        // Якщо кінцева дата зараз стоїть на "завтра"
+        if (eDate.getTime() === sDatePlusOne.getTime()) {
+            baseDateValue = startDateInput.value; // Рахуємо від початкової
+        }
+    }
+
+    // Якщо дата пуста, беремо поточну
+    if (!baseDateValue) {
+        baseDateValue = (startDateInput && startDateInput.value) ? startDateInput.value : formatDate(new Date());
+    }
+
+    // Розбиваємо дату
+    const [yearStr, monthStr, dayStr] = baseDateValue.split('-');
+    let year = parseInt(yearStr, 10);
+    let month = parseInt(monthStr, 10) - 1;
+    let day = parseInt(dayStr, 10);
+
+    // Додаємо або віднімаємо місяць (amount може бути 1 або -1)
+    let targetMonth = month + amount;
+
+    // JS сам коректно розрахує переходи між роками
+    let tempDate = new Date(year, targetMonth, 1);
+    let finalYear = tempDate.getFullYear();
+    let finalMonth = tempDate.getMonth();
+
+    // Захист від 31-го числа (якщо в новому місяці менше днів)
+    let maxDaysInTargetMonth = new Date(finalYear, finalMonth + 1, 0).getDate();
+    let finalDay = Math.min(day, maxDaysInTargetMonth);
+
+    // Створюємо фінальну дату і записуємо в поле
+    const newEndDate = new Date(finalYear, finalMonth, finalDay);
+    endDateInput.value = formatDate(newEndDate);
+
+    // Оновлюємо таймер
+    if (typeof handleInputAndTimer === 'function') handleInputAndTimer(); 
+};
+
+// Прив'язуємо функції до кнопок
+const btnAddMonth = document.getElementById('add-month-btn');
+if (btnAddMonth) {
+    btnAddMonth.addEventListener('click', (event) => {
+        event.preventDefault(); 
+        adjustMonthToEndDate(1); // Передаємо +1
+    });
+}
+
+const btnSubMonth = document.getElementById('sub-month-btn');
+if (btnSubMonth) {
+    btnSubMonth.addEventListener('click', (event) => {
+        event.preventDefault(); 
+        adjustMonthToEndDate(-1); // Передаємо -1
+    });
+}
+
 // === АКТИВАЦІЯ ГЕНЕРАТОРА ЛОГІНІВ ТА ШАБЛОНІВ ===
 const fullNameInput = document.getElementById('fullNameInput');
 if (fullNameInput) {

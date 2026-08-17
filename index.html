@@ -186,7 +186,7 @@
         </div> 
         
             <!-- === ПОЧАТОК ЗМІНЕНОГО БЛОКУ DATE CALCULATOR === -->
-<div class="container date-calculator-container" data-content="date-calculator" data-default-width="840px">
+<div class="container date-calculator-container" data-content="date-calculator" data-default-width="940px">
     <div class="content-card">
         <h2 style="margin-top: 0; text-align: center; width: 100%;">🗓️ Комбінований калькулятор</h2>
         
@@ -221,11 +221,26 @@
                             </button>
                         </div>
                         <div class="horizontal-divider"></div>
-                        <div class="actions-floor">
-        <button id="add-6-months-btn" class="calc-action-button quick-add-btn" title="Додати 6 місяців до початкової дати">+6 міс.</button>
-        <button id="add-7-months-btn" class="calc-action-button quick-add-btn" title="Додати 7 місяців до початкової дати">+7 міс.</button>
-        <button id="add-1-year-btn" class="calc-action-button quick-add-btn" title="Додати 1 рік до початкової дати">+1 рік</button>
-    </div>
+                        
+                        <!-- НОВИЙ БЛОК КНОПОК -->
+                        <div class="actions-floor" style="display: block; padding-top: 5px;">
+                            <div class="quick-add-container">
+                                <!-- Верхні кнопки -->
+                                <div class="quick-add-row" style="justify-content: center;">
+                                    <button id="add-6-months-btn" class="calc-action-button quick-add-btn" title="Додати 6 місяців">+6 міс.</button>
+                                    <button id="add-7-months-btn" class="calc-action-button quick-add-btn" title="Додати 7 місяців">+7 міс.</button>
+                                    <button id="add-1-year-btn" class="calc-action-button quick-add-btn" title="Додати 1 рік">+1 рік</button>
+                                </div>
+                                <!-- Нижні кнопки-пігулки -->
+                                <div class="quick-add-row" style="justify-content: center;">
+                                    <div class="month-stepper">
+                                        <button id="add-month-btn" class="stepper-btn plus" title="Додати 1 місяць">+ 1 міс.</button>
+                                        <button id="sub-month-btn" class="stepper-btn minus" title="Відняти 1 місяць">− 1 міс.</button>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="reset-toggle-container">

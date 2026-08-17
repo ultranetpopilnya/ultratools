@@ -1202,31 +1202,31 @@ body.dark .date-inputs-row {
     background-color: #2c2c2e;
 }
 
-        .date-calculator-container .date-input-group {
+.date-calculator-container .date-input-group {
     display: flex;
     flex-direction: column;
     margin-bottom: 0px;
     position: relative;
-    flex-grow: 1; /* <-- ДОДАЙТЕ ЦЕЙ РЯДОК */
+    flex-grow: 1;
 	gap: 1px;
 	max-width: 180px;
 }
 
-        .date-calculator-container .date-input-group label {
-            margin-bottom: 10px;
-            font-size: 1.1em;
-            font-weight: bold;
-            color: #555;
-            text-align: center;
-            width: 100%;
-			 white-space: nowrap;
-        }
+.date-calculator-container .date-input-group label {
+    margin-bottom: 10px;
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #555;
+    text-align: center;
+    width: 100%;
+	white-space: nowrap;
+}
 		
 		body.dark .date-calculator-container .date-input-group label {
     color: var(--text-color); 
 }
 
-		body.dark .date-calculator-container .date-input-group input[type="date"],
+body.dark .date-calculator-container .date-input-group input[type="date"],
 body.dark .date-calculator-container .date-input-group input[type="time"] { 
     background-color: var(--input-bg-color);
     border-color: var(--input-border-color);
@@ -2307,6 +2307,42 @@ body.dark .calc-action-button:hover {
     color: var(--bg-color);
     box-shadow: 0 4px 10px rgba(230, 162, 46, 0.2);
 }
+
+.quick-add-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.quick-add-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap; 
+}
+.month-stepper {
+    display: inline-flex;
+    background-color: #f8f9fa;
+    border-radius: 6px;
+    border: 1px solid #ced4da;
+    overflow: hidden; 
+}
+.stepper-btn {
+    background: transparent;
+    border: none;
+    padding: 6px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #495057;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.stepper-btn.minus { border-right: 1px solid #ced4da; }
+.stepper-btn:hover { background-color: #e9ecef; color: #212529; }
+.stepper-btn:active { background-color: #dee2e6; }
+/* Темна тема (опціонально, якщо у вас є dark mode) */
+body.dark .month-stepper { background-color: #2b3035; border-color: #495057; }
+body.dark .stepper-btn { color: #dee2e6; }
+body.dark .stepper-btn.minus { border-color: #495057; }
+body.dark .stepper-btn:hover { background-color: #343a40; color: #fff; }
 
 /* Контейнер для перемикача автоскидання */
 .reset-toggle-container {
@@ -3877,7 +3913,7 @@ body.dark .speed-select option {
     flex: 0 1 auto;          
     
     /* Фіксуємо ширину лівого блоку, щоб він був співмірний з правим */
-    width: 420px;            
+    width: 460px;            
     max-width: 100%;
     
     display: flex;
