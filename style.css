@@ -2249,7 +2249,7 @@ body.dark .line-marker {
     align-items: center;
     gap: 12px; /* Ідеальна відстань між поверхами */
     
-    padding: 14px 16px; /* Компактніше по вертикалі, але дихає по горизонталі */
+    padding: 14px 24px; 
     border-radius: 12px; 
     background-color: #ffffff; 
     border: 1px solid var(--input-border-color); 
@@ -2263,7 +2263,14 @@ body.dark .calculator-actions-block {
 
 /* Обгортки (Flexbox) */
 .quick-add-container { display: flex; flex-direction: column; gap: 12px; width: 100%; }
-.quick-add-row { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; align-items: center; }
+.quick-add-row { 
+    display: flex; 
+    gap: 6px; 
+    flex-wrap: wrap; 
+    justify-content: center; 
+    align-items: center; 
+    width: 100%;
+}
 .actions-floor { display: flex; justify-content: center; align-items: center; gap: 6px; width: 100%; }
 
 /* --- РОЗДІЛЮВАЧІ (Елегантні та акуратні) --- */
@@ -2291,13 +2298,15 @@ body.dark .horizontal-divider {
 
 /* --- 2. СТАНДАРТНІ КНОПКИ */
 .calc-action-button {
-    display: inline-flex;
+    display: flex; 
+    flex: 1; 
+    justify-content: center;
     align-items: center;
-    gap: 6px; /* Іконка ближче до тексту */
+    gap: 8px; /* Іконка ближче до тексту */
     
     padding: 6px 10px; /* Компактні відступи */
     
-    border: 1px solid transparent; 
+    border: 1px solid var(--input-border-color);
     border-radius: 6px; /* М'які квадрати замість пігулок - виглядає зібраніше */
     background-color: transparent;
     
@@ -2333,9 +2342,10 @@ body.dark .calc-action-button:hover {
 }
 body.dark .calc-action-button:hover i { color: var(--bg-color); }
 
-/* --- 3. РОЗДІЛЕНИЙ ПЕРЕМИКАЧ (+ / -) --- */
+/* --- 3. РОЗДІЛЕНИЙ ПЕРЕМИКАЧ (УНІВЕРСАЛЬНИЙ ДЛЯ 2+ КНОПОК) --- */
 .month-stepper {
-    display: inline-flex;
+    display: flex; /* Змінено з inline-flex */
+    width: 100%; /* Контейнер кнопок займає всю ширину */
     background-color: transparent; 
     border: none;
     box-shadow: none;
@@ -2343,8 +2353,9 @@ body.dark .calc-action-button:hover i { color: var(--bg-color); }
 }
 
 .stepper-btn {
+    flex: 1;
     background: transparent;
-    padding: 6px 18px; /* Збалансований розмір */
+    padding: 6px 16px; /* Трохи зменшив відступ для 3-х кнопок, щоб гарно вміщалися */
     font-size: 13.5px; 
     font-weight: 600;
     color: var(--text-color);
@@ -2354,23 +2365,29 @@ body.dark .calc-action-button:hover i { color: var(--bg-color); }
     align-items: center;
     justify-content: center;
     position: relative; 
+    
+    /* Спільні рамки для всіх (зверху і знизу) */
+    border-top: 1px solid var(--input-border-color);
+    border-bottom: 1px solid var(--input-border-color);
+    border-left: none;
+    border-right: none;
+    border-radius: 0; /* Середні кнопки будуть квадратними */
 }
 
-/* Ліва половинка (-) */
+/* Перша кнопка (лівий край) */
 .stepper-btn:first-child {
-    border: 1px solid var(--input-border-color);
-    border-right: none; 
-    border-radius: 6px 0 0 6px; /* Уніфікуємо форму з іншими кнопками */
+    border-left: 1px solid var(--input-border-color);
+    border-radius: 6px 0 0 6px;
 }
-/* Права половинка (+) */
+
+/* Остання кнопка (правий край) */
 .stepper-btn:last-child {
-    border: 1px solid var(--input-border-color);
-    border-left: none; 
+    border-right: 1px solid var(--input-border-color);
     border-radius: 0 6px 6px 0; 
 }
 
-/* Центральний розділювач для гойдалки (щоб лінія була ідеальною) */
-.stepper-btn:first-child::after {
+/* Центральний розділювач (після кожної кнопки, крім останньої) */
+.stepper-btn:not(:last-child)::after {
     content: '';
     position: absolute;
     right: 0;
@@ -2381,7 +2398,8 @@ body.dark .calc-action-button:hover i { color: var(--bg-color); }
     pointer-events: none;
     z-index: 1;
 }
-body.dark .stepper-btn:first-child::after {
+
+body.dark .stepper-btn:not(:last-child)::after {
     background-color: rgba(255, 255, 255, 0.15);
 }
 
@@ -2392,11 +2410,12 @@ body.dark .stepper-btn:first-child::after {
     box-shadow: 0 3px 8px rgba(0, 123, 255, 0.2);
     z-index: 2; 
 }
-/* Ховаємо внутрішню лінію при наведенні, щоб не псувала колір */
-.month-stepper:hover .stepper-btn:first-child::after { display: none; } 
 
-body.dark .stepper-btn:first-child,
-body.dark .stepper-btn:last-child {
+/* Ховаємо ВСІ внутрішні лінії при наведенні на блок, щоб не псували колір */
+.month-stepper:hover .stepper-btn::after { display: none; } 
+
+/* Темна тема для рамок */
+body.dark .stepper-btn {
     border-color: var(--input-border-color);
 }
 body.dark .stepper-btn:hover {
@@ -4680,6 +4699,8 @@ body.dark .moon-icon {
     opacity: 0;
 }
 
+.stepper-btn:hover,
+.calc-action-button:hover,
 .login-generator-container .result-item .regenerate-login-btn:hover,
 .login-generator-container .result-item .copy-login-btn:hover,
 .extension-info-btn:hover,
@@ -4727,8 +4748,8 @@ body.dark .moon-icon {
 }
 
 /* === ЕФЕКТ ФІЗИЧНОГО НАТИСКАННЯ ДЛЯ ШИРОКИХ КНОПОК === */
-.calc-action-button:active,
 .stepper-btn:active,
+.calc-action-button:active,
 .config-replace-mode-btn:active,
 .config-pon-onu-btn:active,
 .config-show-signal-btn:active, 
