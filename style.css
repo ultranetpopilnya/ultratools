@@ -1597,7 +1597,7 @@ body.dark .tab-button.active {
 
 /* Активний стан (клік) - стискається і стає червоним */
 .close-tab-btn:active {
-    transform: scale(0.85); 
+    transform: scale(0.90); 
     background-color: var(--danger-color) !important;
     color: white !important;
     transition: transform 0.05s ease-out, background-color 0s; 
@@ -1657,7 +1657,7 @@ body.dark .close-tab-btn:active {
 
 /* Ефект кліку: Ледь помітне втискання */
 .add-tab-btn:active {
-    transform: rotate(90deg) scale(0.95);
+    transform: rotate(90deg) scale(0.90);
     background-color: rgba(0, 0, 0, 0.1);
     transition: all 0.05s ease-out;
 }
@@ -1765,7 +1765,7 @@ body.dark .add-tab-btn.menu-open:active {
 
 /* Ефект фізичного кліку */
 .add-tab-item:active {
-    transform: scale(0.97);
+    transform: scale(0.90);
     background-color: rgba(0, 123, 255, 0.15);
     transition: all 0.05s ease-out;
 }
@@ -4701,7 +4701,7 @@ body.dark .moon-icon {
 .login-generator-container .result-item .regenerate-login-btn:hover:active,
 .login-generator-container .result-item .copy-login-btn:hover:active,
 .scroll-nav-btn.visible:hover:active {
-    transform: translateY(1px) scale(0.92);
+    transform: translateY(1px) scale(0.95);
     box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
     filter: brightness(0.9);
     transition: all 0.05s ease-out;
@@ -4720,7 +4720,7 @@ body.dark .moon-icon {
 .hist-clear-btn:hover:active,
 .qn-close-btn:hover:active,     
 .qn-action-btn:hover:active {  
-    transform: translateY(1px) scale(0.92);
+    transform: translateY(1px) scale(0.95);
     box-shadow: none;
     filter: brightness(0.9);
     transition: all 0.05s ease-out;
@@ -4741,7 +4741,7 @@ body.dark .moon-icon {
 .clear-history-footer-btn:active,
 .hist-close-btn:active,
 .qn-add-btn:active {          
-    transform: translateY(1px) scale(0.96);
+    transform: translateY(1px) scale(0.95);
     box-shadow: inset 0 2px 5px rgba(0,0,0,0.15);
     filter: brightness(0.9);
     transition: all 0.05s ease-out;
