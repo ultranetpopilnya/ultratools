@@ -2248,10 +2248,10 @@ body.dark .line-marker {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 12px; 
+    gap: 10px; 
     
     /* ТУТ МІНЯТИ ВІДСТУПИ ВІД КНОПОК ДО РАМКИ */
-    padding: 14px; 
+    padding: 12px; 
     
     border-radius: 12px; 
     background-color: #ffffff; 
@@ -2277,7 +2277,7 @@ body.dark .calculator-actions-block {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 6px 14px;
+    padding: 6px 12px;
     border: none;
     border-radius: 9999px; /* Форма капсули */
     background-color: transparent;
@@ -2893,7 +2893,7 @@ body.dark .history-copy-btn:hover { background: var(--secondary-accent-color); c
 /* 3. Оновлений стиль для поля вводу (Велике і по центру) */
 .login-generator-container textarea {
     display: block;
-    width: 85%;
+    width: 90%;
     min-height: 100px;              
     
     padding: 10px;
@@ -2911,7 +2911,7 @@ body.dark .history-copy-btn:hover { background: var(--secondary-accent-color); c
 /* 4. Результати та Історія: рівно по центру */
 .login-generator-container #results-container,
 .login-generator-container .history-section {
-    width: 85%;
+    width: 90%;
     margin-left: auto;
     margin-right: auto;
 }
