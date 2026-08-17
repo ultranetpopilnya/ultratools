@@ -444,8 +444,6 @@ body.dark .progress-ring-fg {
     --c3: #f1f1f1;
     --c4: #f6fcff;
 
-    --bg-base: #f8fafc; 
-
     /* Світла тема */
     --text-color: #333;
     --header-color: #444;
@@ -502,8 +500,6 @@ body.dark {
     --c2: #1e1622;
     --c3: #141a18;
     --c4: #11131d;
-
-    --bg-base: #191919;
 
     /* Темна тема (перевизначення) */
 --text-color: #e0e0e0;
@@ -2243,6 +2239,146 @@ body.dark .line-marker {
     color: #E6A22E;
 }
 
+/* ========================================================= */
+/*       ПАНЕЛЬ КЕРУВАННЯ ЧАСОМ (КАЛЬКУЛЯТОР МІСЯЦІВ)        */
+/* ========================================================= */
+
+/* --- 1. ГОЛОВНА РАМКА ТА РОЗМІТКА --- */
+.calculator-actions-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px; 
+    
+    /* ТУТ МІНЯТИ ВІДСТУПИ ВІД КНОПОК ДО РАМКИ */
+    padding: 14px; 
+    
+    border-radius: 12px; 
+    background-color: #ffffff; 
+    border: 1px solid var(--input-border-color); 
+    
+    /* ТУТ МІНЯТИ ШИРИНУ ВСІЄЇ ПАНЕЛІ */
+    width: 384px; 
+    
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05); 
+}
+body.dark .calculator-actions-block {
+    background-color: var(--template-handle-bg);
+    border-color: var(--input-border-color);
+}
+
+.quick-add-container { display: flex; flex-direction: column; gap: 12px; }
+.quick-add-row { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+.actions-floor { display: flex; justify-content: center; align-items: center; gap: 8px; width: 100%; }
+.horizontal-divider { width: 100%; height: 1px; background-color: var(--input-border-color); opacity: 0.7; }
+
+/* --- 2. СТАНДАРТНІ КНОПКИ-КАПСУЛИ (+6, +7, Копіювати тощо) --- */
+.calc-action-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border: none;
+    border-radius: 9999px; /* Форма капсули */
+    background-color: transparent;
+    color: var(--text-color);
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.95em;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.calc-action-button i { font-size: 1.1em; }
+
+/* Наведення */
+.calc-action-button:hover {
+    background-color: var(--primary-accent-color);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);
+}
+/* Натискання */
+.calc-action-button:active {
+    transform: translateY(1px) scale(0.96);
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.15);
+    filter: brightness(0.9);
+    transition: all 0.05s ease-out;
+}
+/* Темна тема */
+body.dark .calc-action-button:hover {
+    background-color: var(--secondary-accent-color);
+    color: var(--bg-color);
+    box-shadow: 0 4px 10px rgba(230, 162, 46, 0.2);
+}
+
+/* --- 3. РОЗДІЛЕНИЙ ПЕРЕМИКАЧ (+ / -) --- */
+.month-stepper {
+    display: inline-flex;
+    background-color: transparent; 
+    border: none;
+    box-shadow: none;
+    overflow: visible; 
+}
+
+.stepper-btn {
+    background: transparent;
+    padding: 6px 14px;
+    font-size: 0.95em; 
+    font-weight: 600;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative; 
+}
+
+/* Ліва половинка (-) */
+.stepper-btn:first-child {
+    border: 1px solid var(--input-border-color);
+    border-right: none; 
+    border-radius: 9999px 0 0 9999px; 
+}
+/* Права половинка (+) */
+.stepper-btn:last-child {
+    border: 1px solid var(--input-border-color);
+    border-left: none; 
+    border-radius: 0 9999px 9999px 0; 
+}
+
+/* Наведення (Тільки наведена половинка піднімається) */
+.stepper-btn:hover {
+    background-color: var(--primary-accent-color);
+    border-color: var(--primary-accent-color);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);
+    z-index: 2; 
+}
+/* Натискання */
+.stepper-btn:active {
+    transform: translateY(1px) scale(0.96);
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.15);
+    filter: brightness(0.9);
+    transition: all 0.05s ease-out;
+}
+
+/* Темна тема для +/- */
+body.dark .stepper-btn:first-child,
+body.dark .stepper-btn:last-child {
+    border-color: var(--input-border-color);
+}
+body.dark .stepper-btn:hover {
+    background-color: var(--secondary-accent-color);
+    border-color: var(--secondary-accent-color);
+    color: var(--bg-color);
+    box-shadow: 0 4px 10px rgba(230, 162, 46, 0.2);
+}
+body.dark .stepper-btn:active {
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.3);
+}
+
 /* === НОВИЙ, СУЧАСНИЙ ДИЗАЙН ІНТЕРФЕЙСУ КАЛЬКУЛЯТОРА === */
 /* Робимо групи полів вводу гнучкими та рівними */
 .date-calculator-container .date-input-group {
@@ -2275,75 +2411,6 @@ body.dark .calculator-panel {
     margin: 0 4px;
 }
 
-/* Стиль для кнопок */
-.calc-action-button {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    padding: 6px 12px;
-    border: none;
-    border-radius: 9999px;
-    background-color: transparent;
-    color: var(--text-color);
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease-in-out;
-    font-size: 0.95em;
-}
-
-.calc-action-button:hover {
-    background-color: var(--primary-accent-color);
-    color: white;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);
-}
-
-.calc-action-button i {
-    font-size: 1.1em;
-}
-
-body.dark .calc-action-button:hover {
-    background-color: var(--secondary-accent-color);
-    color: var(--bg-color);
-    box-shadow: 0 4px 10px rgba(230, 162, 46, 0.2);
-}
-
-.quick-add-container {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-.quick-add-row {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap; 
-}
-.month-stepper {
-    display: inline-flex;
-    background-color: #f8f9fa;
-    border-radius: 6px;
-    border: 1px solid #ced4da;
-    overflow: hidden; 
-}
-.stepper-btn {
-    background: transparent;
-    border: none;
-    padding: 6px 14px;
-    font-size: 13px;
-    font-weight: 600;
-    color: #495057;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-.stepper-btn.minus { border-right: 1px solid #ced4da; }
-.stepper-btn:hover { background-color: #e9ecef; color: #212529; }
-.stepper-btn:active { background-color: #dee2e6; }
-/* Темна тема (опціонально, якщо у вас є dark mode) */
-body.dark .month-stepper { background-color: #2b3035; border-color: #495057; }
-body.dark .stepper-btn { color: #dee2e6; }
-body.dark .stepper-btn.minus { border-color: #495057; }
-body.dark .stepper-btn:hover { background-color: #343a40; color: #fff; }
-
 /* Контейнер для перемикача автоскидання */
 .reset-toggle-container {
     display: flex;
@@ -2361,42 +2428,6 @@ body.dark .stepper-btn:hover { background-color: #343a40; color: #fff; }
     user-select: none; /* Щоб текст не виділявся випадково */
 }
 
-.calculator-actions-block {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px; 
-    padding: 10px 10px; 
-    border-radius: 12px; 
-    background-color: #ffffff; 
-    border: 1px solid var(--input-border-color);
-    width: 378px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05); 
-}
-
-/* Стилі для темної теми та роздільника залишаються ті самі */
-
-/* Темна тема */
-body.dark .calculator-actions-block {
-    background-color: var(--template-handle-bg);
-    border-color: var(--input-border-color);
-}
-
-.actions-floor {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 12px; 
-    width: 100%;
-}
-
-.horizontal-divider {
-    width: 100%;       
-    height: 1px;       
-    background-color: var(--input-border-color);
-    opacity: 0.7;      
-}
-
 /* Об'єднаний та чистий стиль */
 .container[data-content="text-templates"] .content-card {
     padding: 16px 4px 4px 4px; 
@@ -2405,7 +2436,6 @@ body.dark .calculator-actions-block {
     height: 100%;
     display: block;
     scrollbar-gutter: stable;
-    transform: translate3d(0,0,0); 
 }
 
 	::placeholder {
@@ -3852,7 +3882,7 @@ body.dark .select-group-title {
 
 body.dark .config-replace-mode-btn.active,
 body.dark .config-pon-onu-btn.active,
-body.dark .config-mix-toggle-btn,
+body.dark .config-mix-toggle-btn.active,
 body.dark .config-show-signal-btn.active {
     background-color: rgba(230, 162, 46, 0.15);
     color: var(--secondary-accent-color);
@@ -4680,7 +4710,6 @@ body.dark .moon-icon {
 #export-templates-button:active,
 #clear-all-templates-button:active,
 .search-cmd-btn:active,
-.calc-action-button:active,
 .clear-history-footer-btn:active,
 .hist-close-btn:active,
 .qn-add-btn:active {               /* ДОДАНО */
