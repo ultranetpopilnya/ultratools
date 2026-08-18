@@ -4711,16 +4711,17 @@ body.dark #auto-reset-button.active .progress-ring-fg { stroke: #121212; }
 
 /* 3. Ховер у ВКЛЮЧЕНОМУ (активному) стані — Світла тема */
 #auto-reset-button.active:hover {
-    background-color: #0056b3; /* Трохи темніший синій при наведенні */
-    border-color: #0056b3;
-    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.35);
+        background-color: var(--primary-accent-color);
+    border-color: var(--primary-accent-color);
+    box-shadow: 0 3px 8px rgba(0, 123, 255, 0.2);
 }
 
 /* Ховер у ВКЛЮЧЕНОМУ (активному) стані — Темна тема */
 body.dark #auto-reset-button.active:hover {
-    background-color: #d48f17; /* Трохи темніший помаранчевий */
-    border-color: #d48f17;
-    box-shadow: 0 4px 10px rgba(230, 162, 46, 0.35);
+     background-color: var(--secondary-accent-color);
+    border-color: var(--secondary-accent-color);
+    color: var(--bg-color);
+    box-shadow: 0 3px 8px rgba(230, 162, 46, 0.2);
 }
 
 /* 4. Фокус при навігації з клавіатури (доступність / Accessibility) */
