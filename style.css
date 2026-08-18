@@ -4142,13 +4142,13 @@ body.dark .login-generator-container .result-item .regenerate-login-btn {
 .date-inputs-row {
     display: flex;
     justify-content: center;
-    gap: 24px;
+    gap: 20px;
     width: 420px;
     background-color: #FCFCFC; 
     border: 1px solid var(--input-border-color);
     border-radius: 12px;
     padding: 14px 20px;
-    margin: 0; /* Відступ до наступної панелі */
+    margin: 0;
 }
 
 /* Темна тема: date inputs row */
@@ -4350,7 +4350,7 @@ body.dark .calculator-actions-block {
     justify-content: center; 
     align-items: center; 
     gap: 6px; 
-    row-gap: 12px; /* Контролює ідеальний вертикальний відступ при перенесенні */
+    row-gap: 12px;
     width: 344px; 
 }
 
@@ -4732,10 +4732,9 @@ body.dark #auto-reset-button:focus-visible {
 .date-calc-column {
     /* ЗАМІСТЬ flex: 1 (який розтягував блок), ставимо авто-ширину */
     flex: 0 1 auto;          
-    
 
-    gap: 15px;            
-    
+    gap: 12px;
+                 
     display: flex;
     flex-direction: column;
     align-items: center;     /* Центруємо вміст лівої колонки */
@@ -4786,7 +4785,7 @@ body.dark #auto-reset-button:focus-visible {
     display: flex;
     justify-content: center; 
     align-items: flex-start;
-    gap: 20px;               
+    gap: 14px;               
     flex-wrap: wrap;
     width: 100%;
 }
