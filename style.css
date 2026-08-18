@@ -2298,7 +2298,7 @@ body.dark .calculator-panel {
 }
 
 body.dark .calculator-actions-block {
-    background-color: var(--template-handle-bg);
+    background-color: var(--tab-strip-bg);
     border-color: var(--input-border-color);
 }
 
@@ -2349,7 +2349,7 @@ body.dark .horizontal-divider {
     
     border: 1px solid var(--input-border-color);
     border-radius: 6px; /* М'які квадрати замість пігулок - виглядає зібраніше */
-    background-color: transparent;
+    background-color: #f9f9f9;
     
     color: var(--text-color);
     font-weight: 600;
@@ -2363,6 +2363,10 @@ body.dark .horizontal-divider {
     font-size: 14.5px; 
     color: var(--tab-inactive-text); 
     transition: color 0.2s; 
+}
+
+body.dark .calc-action-button {
+    background-color: #3a3b3c;
 }
 
 /* Ховер */
@@ -2395,7 +2399,7 @@ body.dark .calc-action-button:hover i { color: var(--bg-color); }
 
 .stepper-btn {
     flex: 1;
-    background: transparent;
+    background-color: #f9f9f9;
     padding: 6px 16px; /* Трохи зменшив відступ для 3-х кнопок, щоб гарно вміщалися */
     font-size: 13.5px; 
     font-weight: 600;
@@ -2413,6 +2417,10 @@ body.dark .calc-action-button:hover i { color: var(--bg-color); }
     border-left: none;
     border-right: none;
     border-radius: 0; /* Середні кнопки будуть квадратними */
+}
+
+body.dark .stepper-btn {
+    background-color: #3a3b3c;
 }
 
 /* Перша кнопка (лівий край) */
