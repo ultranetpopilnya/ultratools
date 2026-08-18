@@ -4103,7 +4103,7 @@ body.dark .login-generator-container .result-item .regenerate-login-btn {
 /* 3. Оновлений стиль для поля вводу (Велике і по центру) */
 .login-generator-container textarea {
     display: block;
-    width: 90%;
+    width: 92%;
     min-height: 100px;              
     
     padding: 10px;
@@ -4125,20 +4125,6 @@ body.dark .login-generator-container .result-item .regenerate-login-btn {
     height: auto;
     overflow: visible !important;
 }
-
-/* === 1. Кнопки з кольоровим фоном (з тінню) === */
-.login-generator-container .result-item .regenerate-login-btn:active,
-.login-generator-container .result-item .copy-login-btn:active,
-.scroll-nav-btn.visible:active,
-.login-generator-container .result-item .regenerate-login-btn:hover:active,
-.login-generator-container .result-item .copy-login-btn:hover:active,
-.scroll-nav-btn.visible:hover:active {
-    transform: translateY(1px) scale(0.95);
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
-    filter: brightness(0.9);
-    transition: all 0.05s ease-out;
-}
-
 
 /* ================================================================
    13. КАЛЬКУЛЯТОР ДАТ (РІЗНИЦЯ МІЖ ДАТАМИ)
@@ -4330,7 +4316,7 @@ body.dark .date-calculator-container #result-section h2 {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 12px; /* Ідеальна відстань між поверхами */
+    gap: 12px; 
     
     padding: 14px 20px; 
     border-radius: 12px; 
@@ -4365,7 +4351,7 @@ body.dark .calculator-actions-block {
     align-items: center; 
     gap: 6px; 
     row-gap: 12px; /* Контролює ідеальний вертикальний відступ при перенесенні */
-    width: 360px; 
+    width: 344px; 
 }
 
 /* --- РОЗДІЛЮВАЧІ (Елегантні та акуратні) --- */
@@ -5206,7 +5192,7 @@ body.dark #calc-auto-clear-btn.active {
 
 /* Сам блок історії */
 .history-section {
-    width: 85%;
+    width: 92%;
     margin: 0px auto 0 auto;
     flex-shrink: 0;
     border-top: 1px solid var(--input-border-color);
@@ -5340,7 +5326,7 @@ body.dark .history-copy-btn:hover { background: var(--secondary-accent-color); c
 /* 4. Результати та Історія: рівно по центру */
 .login-generator-container #results-container,
 .login-generator-container .history-section {
-    width: 90%;
+    width: 92%;
     margin-left: auto;
     margin-right: auto;
 }
@@ -5389,6 +5375,19 @@ body.dark .history-copy-btn:hover { background: var(--secondary-accent-color); c
 .qn-add-btn:active {          
     transform: translateY(1px) scale(0.96);
     box-shadow: inset 0 2px 5px rgba(0,0,0,0.15);
+    filter: brightness(0.9);
+    transition: all 0.05s ease-out;
+}
+
+/* === 1. Кнопки з кольоровим фоном (з тінню) === */
+.login-generator-container .result-item .regenerate-login-btn:active,
+.login-generator-container .result-item .copy-login-btn:active,
+.scroll-nav-btn.visible:active,
+.login-generator-container .result-item .regenerate-login-btn:hover:active,
+.login-generator-container .result-item .copy-login-btn:hover:active,
+.scroll-nav-btn.visible:hover:active {
+    transform: translateY(1px) scale(0.95);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
     filter: brightness(0.9);
     transition: all 0.05s ease-out;
 }
