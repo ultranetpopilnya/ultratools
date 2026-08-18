@@ -115,34 +115,40 @@ body.dark {
 
 /* body */
 body {
-    /* Сам градієнт тепер використовує змінні */
-    background: linear-gradient(
-        -45deg, 
-        var(--c1), 
-        var(--c2), 
-        var(--c3), 
-        var(--c4)
-    );
-    background-size: 400% 400%;
-    animation: gradient-flow 15s ease infinite;
-
-    /* Плавне перетікання кольорів при увімкненні темної теми */
-    transition: 
-        --c1 0.8s ease, 
-        --c2 0.8s ease, 
-        --c3 0.8s ease, 
-        --c4 0.8s ease, 
-        color 0.5s ease;
+    position: relative;
+    background: var(--page-bg);
 }
 
-/* 5. Анімація руху (трохи змінив назву, щоб було зрозуміліше) */
+body::before {
+    content: "";
+    position: fixed;
+    inset: -20%;
+
+    background: linear-gradient(
+        -45deg,
+        var(--c1),
+        var(--c2),
+        var(--c3),
+        var(--c4)
+    );
+
+    background-size: 250% 250%;
+    animation: gradient-flow 20s ease-in-out infinite;
+
+    z-index: -1;
+    pointer-events: none;
+    will-change: background-position;
+}
+
 @keyframes gradient-flow {
     0% {
         background-position: 0% 50%;
     }
+
     50% {
         background-position: 100% 50%;
     }
+
     100% {
         background-position: 0% 50%;
     }
@@ -1955,6 +1961,7 @@ body.dark .command-description {
      border: 1px solid var(--input-border-color);
     border-radius: 12px;
     overflow: hidden;
+    contain: paint layout;
 }
 
 /* Темна тема: textarea wrapper */
