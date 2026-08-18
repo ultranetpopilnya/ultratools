@@ -185,7 +185,7 @@
     </div>   
         </div> 
         
-            <!-- === ПОЧАТОК ЗМІНЕНОГО БЛОКУ DATE CALCULATOR === -->
+        <!-- === ПОЧАТОК ЗМІНЕНОГО БЛОКУ DATE CALCULATOR === -->
 <div class="container date-calculator-container" data-content="date-calculator" data-default-width="890px">
     <div class="content-card">
         <h2 style="margin-top: 0; text-align: center; width: 100%;">🗓️ Комбінований калькулятор</h2>
@@ -221,10 +221,10 @@
                             </button>
                         </div>
                         
-                        <div class="actions-floor">
+                        <div class="actions-floor" style="flex-wrap: wrap; justify-content: center;">
     <div class="quick-add-container">
-        <!-- Верхні кнопки (тепер згруповані як єдиний перемикач) -->
-        <div class="quick-add-row" style="justify-content: center;">
+        <!-- Верхні кнопки (місяці та роки) -->
+        <div class="quick-add-row" style="display: flex; justify-content: center; gap: 5px;">
             <div class="month-stepper">
                 <button id="add-6-months-btn" class="stepper-btn" title="Додати 6 місяців">+ 6 міс.</button>
                 <button id="add-7-months-btn" class="stepper-btn" title="Додати 7 місяців">+ 7 міс.</button>
@@ -232,119 +232,123 @@
             </div>
         </div>
         
-        <!-- Нижні кнопки-пігулки -->
-        <div class="quick-add-row" style="justify-content: center;">
+        <!-- Нижні кнопки-пігулки (+/- 1 міс) -->
+        <div class="quick-add-row" style="display: flex; justify-content: center; gap: 5px;">
             <div class="month-stepper">
                 <button id="add-month-btn" class="stepper-btn plus" title="Збільшити кінцевий період на 1 місяць">+ 1 міс.</button>
                 <button id="sub-month-btn" class="stepper-btn minus" title="Зменшити кінцевий період на 1 місяць">− 1 міс.</button>
             </div>
         </div>
     </div>
-</div>
-                    </div>
 
-                    <div class="reset-toggle-container">
-                        <button id="auto-reset-button" title="Увімкнути/вимкнути автоскидання">
-                            <svg class="progress-ring" width="40" height="40">
-                                <circle class="progress-ring-bg" cx="20" cy="20" r="18"></circle>
-                                <circle class="progress-ring-fg" cx="20" cy="20" r="18"></circle>
-                            </svg>
-                            <i class="fa-solid fa-stopwatch timer-icon"></i>
-                        </button>
-                        <span class="reset-toggle-text">Авто-скидання дати та часу</span>
-                    </div>
-                </div>
-
-                <div id="result-section">
-                    <h2>⏱️ Результат дати</h2>
-                    <div id="result-display">Оберіть дати...</div>
-                </div>
+    <!-- Кнопка автоскидання (повністю керується вашим CSS) -->
+    <div class="reset-toggle-container">
+        <button id="auto-reset-button" title="Увімкнути/вимкнути автоскидання">
+            <div class="timer-wrapper">
+                <svg class="progress-ring" width="26" height="26">
+                    <circle class="progress-ring-bg" cx="13" cy="13" r="11"></circle>
+                    <circle class="progress-ring-fg" cx="13" cy="13" r="11"></circle>
+                </svg>
+                <i class="fa-solid fa-stopwatch timer-icon"></i>
             </div>
-<!-- ПРАВА КОЛОНКА: ЗВИЧАЙНИЙ КАЛЬКУЛЯТОР -->
-<div class="std-calc-column">
-    <div class="win11-calc">
-        
-       <!-- Шапка: Назва зліва, Кнопки справа -->
-        <div class="calc-header-row">
-            <span class="calc-title">Calculator3000</span>
-            
-            <div class="calc-header-actions" style="display: flex; gap: 2px;">
-                <button id="calc-auto-clear-btn" class="calc-head-history-btn" title="Автоматично очистити результат обчислень через 7 сек." onclick="toggleCalcAutoClear()">
-    <i class="fa-solid fa-eraser" id="calc-auto-clear-icon"></i>
-</button>
-
-                <!-- КНОПКА ІСТОРІЇ -->
-                <button class="calc-head-history-btn" onclick="calcToggleHistory()" title="Відкрити журнал обчислень">
-                    <i class="fa-solid fa-clock-rotate-left"></i>
-                </button>
-            </div>
-        </div>
-
-        <div class="calc-display-container">
-            <button class="calc-copy-btn" onclick="copyCalcResult()" title="Копіювати результат">
-                <i class="fa-solid fa-copy"></i>
-            </button>
-            <div class="calc-display">
-                <div id="calc-prev-operation"></div>
-                <div id="calc-current-result">0</div>
-            </div>
-        </div>
-
-        <!-- Тіло калькулятора -->
-        <div class="calc-body-wrapper">
-            
-            <div class="calc-buttons-grid">
-                <button class="c-btn func" onclick="calcPercent()">%</button>
-                <button class="c-btn func" onclick="calcSquare()">x²</button>
-                <button class="c-btn func" onclick="calcRoot()">√x</button>
-                <button class="c-btn action-clear" onclick="calcClear()">C</button>
-
-                <button class="c-btn digit" onclick="calcAppend('7')">7</button>
-                <button class="c-btn digit" onclick="calcAppend('8')">8</button>
-                <button class="c-btn digit" onclick="calcAppend('9')">9</button>
-                <button class="c-btn operator" onclick="calcAppendOperator('*')">×</button>
-
-                <button class="c-btn digit" onclick="calcAppend('4')">4</button>
-                <button class="c-btn digit" onclick="calcAppend('5')">5</button>
-                <button class="c-btn digit" onclick="calcAppend('6')">6</button>
-                <button class="c-btn operator" onclick="calcAppendOperator('-')">-</button>
-
-                <button class="c-btn digit" onclick="calcAppend('1')">1</button>
-                <button class="c-btn digit" onclick="calcAppend('2')">2</button>
-                <button class="c-btn digit" onclick="calcAppend('3')">3</button>
-                <button class="c-btn operator" onclick="calcAppendOperator('+')">+</button>
-
-                <button class="c-btn action-back" onclick="calcDelete()">⌫</button>
-                <button class="c-btn digit" onclick="calcAppend('0')">0</button>
-                <button class="c-btn digit" onclick="calcAppend('.')">,</button>
-                <button class="c-btn operator" onclick="calcAppendOperator('/')">÷</button>
-
-                <button class="c-btn equal" onclick="calcCalculate()">=</button>
-            </div>
-
-            <!-- ВИСУВНА ПАНЕЛЬ ІСТОРІЇ -->
-            <div id="calc-history-panel" class="calc-history-panel">
-                <div class="hist-header">
-                    <span>Журнал</span>
-                    <button class="hist-clear-btn" onclick="calcClearHistory()" title="Очистити журнал">
-                        <i class="fa-solid fa-trash-can"></i>
-                    </button>
-                </div>
-                <div id="calc-history-list" class="calc-history-list">
-                    <div class="hist-empty">Історії немає</div>
-                </div>
-                <button class="hist-close-btn" onclick="calcToggleHistory()">
-                    <i class="fa-solid fa-angle-down"></i> Приховати
-                </button>
-            </div>
-
-        </div>
+            <span class="reset-toggle-text">Автоскидання часу та дати</span>
+        </button>
     </div>
 </div>
+                    </div> <!-- ВАЖЛИВО: цей тег закриває calculator-actions-block -->
+
+                    <div id="result-section">
+                        <h2>⏱️ Результат дати</h2>
+                        <div id="result-display">Оберіть дати...</div>
+                    </div>
+                </div> <!-- ВАЖЛИВО: цей тег закриває calculator-panel -->
+            </div> <!-- ВАЖЛИВО: цей тег закриває date-calc-column (ЛІВУ КОЛОНКУ) -->
+
+            <!-- ПРАВА КОЛОНКА: ЗВИЧАЙНИЙ КАЛЬКУЛЯТОР -->
+            <div class="std-calc-column">
+                <div class="win11-calc">
+                    
+                   <!-- Шапка: Назва зліва, Кнопки справа -->
+                    <div class="calc-header-row">
+                        <span class="calc-title">Calculator3000</span>
+                        
+                        <div class="calc-header-actions" style="display: flex; gap: 2px;">
+                            <button id="calc-auto-clear-btn" class="calc-head-history-btn" title="Автоматично очистити результат обчислень через 7 сек." onclick="toggleCalcAutoClear()">
+                                <i class="fa-solid fa-eraser" id="calc-auto-clear-icon"></i>
+                            </button>
+
+                            <!-- КНОПКА ІСТОРІЇ -->
+                            <button class="calc-head-history-btn" onclick="calcToggleHistory()" title="Відкрити журнал обчислень">
+                                <i class="fa-solid fa-clock-rotate-left"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="calc-display-container">
+                        <button class="calc-copy-btn" onclick="copyCalcResult()" title="Копіювати результат">
+                            <i class="fa-solid fa-copy"></i>
+                        </button>
+                        <div class="calc-display">
+                            <div id="calc-prev-operation"></div>
+                            <div id="calc-current-result">0</div>
+                        </div>
+                    </div>
+
+                    <!-- Тіло калькулятора -->
+                    <div class="calc-body-wrapper">
+                        
+                        <div class="calc-buttons-grid">
+                            <button class="c-btn func" onclick="calcPercent()">%</button>
+                            <button class="c-btn func" onclick="calcSquare()">x²</button>
+                            <button class="c-btn func" onclick="calcRoot()">√x</button>
+                            <button class="c-btn action-clear" onclick="calcClear()">C</button>
+
+                            <button class="c-btn digit" onclick="calcAppend('7')">7</button>
+                            <button class="c-btn digit" onclick="calcAppend('8')">8</button>
+                            <button class="c-btn digit" onclick="calcAppend('9')">9</button>
+                            <button class="c-btn operator" onclick="calcAppendOperator('*')">×</button>
+
+                            <button class="c-btn digit" onclick="calcAppend('4')">4</button>
+                            <button class="c-btn digit" onclick="calcAppend('5')">5</button>
+                            <button class="c-btn digit" onclick="calcAppend('6')">6</button>
+                            <button class="c-btn operator" onclick="calcAppendOperator('-')">-</button>
+
+                            <button class="c-btn digit" onclick="calcAppend('1')">1</button>
+                            <button class="c-btn digit" onclick="calcAppend('2')">2</button>
+                            <button class="c-btn digit" onclick="calcAppend('3')">3</button>
+                            <button class="c-btn operator" onclick="calcAppendOperator('+')">+</button>
+
+                            <button class="c-btn action-back" onclick="calcDelete()">⌫</button>
+                            <button class="c-btn digit" onclick="calcAppend('0')">0</button>
+                            <button class="c-btn digit" onclick="calcAppend('.')">,</button>
+                            <button class="c-btn operator" onclick="calcAppendOperator('/')">÷</button>
+
+                            <button class="c-btn equal" onclick="calcCalculate()">=</button>
+                        </div>
+
+                        <!-- ВИСУВНА ПАНЕЛЬ ІСТОРІЇ -->
+                        <div id="calc-history-panel" class="calc-history-panel">
+                            <div class="hist-header">
+                                <span>Журнал</span>
+                                <button class="hist-clear-btn" onclick="calcClearHistory()" title="Очистити журнал">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                            </div>
+                            <div id="calc-history-list" class="calc-history-list">
+                                <div class="hist-empty">Історії немає</div>
+                            </div>
+                            <button class="hist-close-btn" onclick="calcToggleHistory()">
+                                <i class="fa-solid fa-angle-down"></i> Приховати
+                            </button>
+                        </div>
+
+                    </div> <!-- Закриваємо calc-body-wrapper -->
+                </div> <!-- Закриваємо win11-calc -->
+            </div> <!-- Закриваємо std-calc-column (ПРАВУ КОЛОНКУ) -->
 
         </div> <!-- Кінець calc-flex-wrapper -->
-    </div>
-</div>
+    </div> <!-- Кінець content-card -->
+</div> <!-- Кінець date-calculator-container -->
 <!-- === КІНЕЦЬ ЗМІНЕНОГО БЛОКУ === -->
             
 <div class="container gpon-commands-container" data-content="gpon-commands">
