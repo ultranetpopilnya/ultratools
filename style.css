@@ -4157,7 +4157,7 @@ body.dark .login-generator-container .result-item .regenerate-login-btn {
     display: flex;
     justify-content: center;
     gap: 24px;
-    width: 460px;
+    width: 420px;
     background-color: #FCFCFC; 
     border: 1px solid var(--input-border-color);
     border-radius: 12px;
@@ -4240,7 +4240,7 @@ body.dark .date-calculator-container #result-section {
     border: 1px solid var(--input-border-color);
     border-radius: 12px; 
     
-    width: 460px;
+    width: 420px;
     overflow: hidden; 
 }
 
@@ -4336,7 +4336,7 @@ body.dark .date-calculator-container #result-section h2 {
     border-radius: 12px; 
     background-color: #FCFCFC; 
     border: 1px solid var(--input-border-color); 
-    width: 460px; /* Чітко по 8-піксельній сітці */
+    width: 420px; 
 }
 
 /* Темна тема: calculator actions block */
@@ -4747,8 +4747,7 @@ body.dark #auto-reset-button:focus-visible {
     /* ЗАМІСТЬ flex: 1 (який розтягував блок), ставимо авто-ширину */
     flex: 0 1 auto;          
     
-    /* Фіксуємо ширину лівого блоку, щоб він був співмірний з правим */
-    width: 460px;
+
     gap: 15px;            
     
     display: flex;

@@ -589,7 +589,7 @@ function areDatesInDefaultState() {
     if (months > 0) parts.push(`${months} міс.`);
     if (days > 0 || parts.length === 0) parts.push(`${days} дн.`);
     
-    let durationText = parts.join(' та ');
+    let durationText = parts.join(' ');
     if (durationText === '') durationText = '0 дн.';
     
     // 4. Фінальний вивід
