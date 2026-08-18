@@ -4709,11 +4709,6 @@ body.dark #auto-reset-button.active .progress-ring-fg { stroke: #121212; }
     transition: color 0.2s ease;
 }
 
-/* 2. Ефект фізичного натискання (клік) */
-#auto-reset-button:active {
-    transform: scale(0.98);
-}
-
 /* 3. Ховер у ВКЛЮЧЕНОМУ (активному) стані — Світла тема */
 #auto-reset-button.active:hover {
     background-color: #0056b3; /* Трохи темніший синій при наведенні */
@@ -5370,13 +5365,14 @@ body.dark .history-copy-btn:hover { background: var(--secondary-accent-color); c
 .hist-clear-btn:hover:active,
 .qn-close-btn:hover:active,     
 .qn-action-btn:hover:active {  
-    transform: translateY(1px) scale(0.95);
+    transform: translateY(1px) scale(0.96);
     box-shadow: none;
     filter: brightness(0.9);
     transition: all 0.05s ease-out;
 }
 
 /* === ЕФЕКТ ФІЗИЧНОГО НАТИСКАННЯ ДЛЯ ШИРОКИХ КНОПОК === */
+#auto-reset-button:active,
 .stepper-btn:active,
 .calc-action-button:active,
 .config-replace-mode-btn:active,
@@ -5391,7 +5387,7 @@ body.dark .history-copy-btn:hover { background: var(--secondary-accent-color); c
 .clear-history-footer-btn:active,
 .hist-close-btn:active,
 .qn-add-btn:active {          
-    transform: translateY(1px) scale(0.95);
+    transform: translateY(1px) scale(0.96);
     box-shadow: inset 0 2px 5px rgba(0,0,0,0.15);
     filter: brightness(0.9);
     transition: all 0.05s ease-out;
