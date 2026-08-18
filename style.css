@@ -113,9 +113,9 @@ body.dark {
     --bg-color: #191919;
 }
 
-/* body */
 body {
     position: relative;
+    min-height: 100vh;
     background: var(--page-bg);
 }
 
@@ -123,34 +123,81 @@ body::before {
     content: "";
     position: fixed;
     inset: -20%;
-
-    background: linear-gradient(
-        -45deg,
-        var(--c1),
-        var(--c2),
-        var(--c3),
-        var(--c4)
-    );
-
-    background-size: 250% 250%;
-    animation: gradient-flow 20s ease-in-out infinite;
-
     z-index: -1;
     pointer-events: none;
-    will-change: background-position;
+
+    background:
+        radial-gradient(
+            ellipse 65% 55% at 8% 8%,
+            var(--c1) 0%,
+            transparent 70%
+        ),
+        radial-gradient(
+            ellipse 60% 50% at 92% 90%,
+            var(--c4) 0%,
+            transparent 70%
+        ),
+        linear-gradient(
+            135deg,
+            var(--c2) 0%,
+            var(--c3) 100%
+        );
+
+    opacity: 0.55;
+    animation: ambient-background 26s ease-in-out infinite alternate;
+    will-change: transform;
+    transform: translate3d(0, 0, 0);
 }
 
-@keyframes gradient-flow {
+body::after {
+    content: "";
+    position: fixed;
+    inset: -25%;
+    z-index: -2;
+    pointer-events: none;
+
+    background:
+        radial-gradient(
+            ellipse 45% 40% at 85% 15%,
+            var(--c2) 0%,
+            transparent 72%
+        );
+
+    opacity: 0.18;
+    animation: ambient-glow 34s ease-in-out infinite alternate;
+    will-change: transform;
+    transform: translate3d(0, 0, 0);
+}
+
+@keyframes ambient-background {
     0% {
-        background-position: 0% 50%;
+        transform: translate3d(-1.5%, -1%, 0) scale(1);
     }
 
     50% {
-        background-position: 100% 50%;
+        transform: translate3d(1%, 0.5%, 0) scale(1.015);
     }
 
     100% {
-        background-position: 0% 50%;
+        transform: translate3d(-0.5%, 1.5%, 0) scale(1.025);
+    }
+}
+
+@keyframes ambient-glow {
+    0% {
+        transform: translate3d(2%, -1%, 0) scale(1);
+    }
+
+    100% {
+        transform: translate3d(-2%, 2%, 0) scale(1.04);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    body::before,
+    body::after {
+        animation: none;
+        transform: none;
     }
 }
 
@@ -4103,7 +4150,7 @@ body.dark .login-generator-container .result-item .regenerate-login-btn {
 /* 3. Оновлений стиль для поля вводу (Велике і по центру) */
 .login-generator-container textarea {
     display: block;
-    width: 92%;
+    width: 88%;
     min-height: 100px;              
     
     padding: 10px;
@@ -5325,7 +5372,7 @@ body.dark .history-copy-btn:hover { background: var(--secondary-accent-color); c
 /* 4. Результати та Історія: рівно по центру */
 .login-generator-container #results-container,
 .login-generator-container .history-section {
-    width: 92%;
+    width: 90%;
     margin-left: auto;
     margin-right: auto;
 }
