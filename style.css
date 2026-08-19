@@ -1928,8 +1928,8 @@ z-index: 3;
 
 /* НАВЕДЕННЯ НА НЕАКТИВНУ вкладку (Світла тема) */
 .segment-btn:not(.active):hover {
-    color: #212529;
-    background-color: rgba(0, 0, 0, 0.05); /* Легкий сірий фон */
+    color: var(--text-color);
+    background-color: rgba(0,0,0,0.05);
 }
 
 /* НАВІГАЦІЯ З КЛАВІАТУРИ (доступність) */
@@ -1963,8 +1963,8 @@ body.dark .segment-btn {
 
 /* НАВЕДЕННЯ НА НЕАКТИВНУ вкладку (Темна тема) */
 body.dark .segment-btn:not(.active):hover {
-    color: var(--text-color, #ccd6f6);
-    background-color: rgba(255, 255, 255, 0.08); /* Легке висвітлення фону */
+    color: var(--text-color);
+    background-color: rgba(255,255,255,0.05);
 }
 
 /* НАВІГАЦІЯ З КЛАВІАТУРИ (Темна тема) */
