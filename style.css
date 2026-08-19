@@ -1802,55 +1802,6 @@ body.holiday-mode #snow-container {
    10. GPON-КОМАНДИ 
    Вкладка GPON-команд: список команд, підкоманди.
    ================================================================ */
-
-/* === СТИЛІ ДЛЯ НОВОЇ ФУНКЦІЇ ПІДСВІТКИ СЛІВ === */
-.highlighting-container {
-    position: relative;
-    flex-grow: 1;
-    min-height: 0;
-    width: 100%;
-}
-
-/* highlighter backdrop */
-.highlighter-backdrop {
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 1;
-    overflow: auto; /* Важливо для синхронізації прокрутки */
-    pointer-events: none; /* Кліки проходять наскрізь до textarea */
-    color: transparent; /* Текст у підкладці невидимий, видно лише фон <mark> */
-}
-
-/* highlighter backdrop */
-.highlighter-backdrop mark {
-    background-color: #85e07d;
-    color: transparent; /* Не змінюємо колір тексту, лише фон */
-    border-radius: 4px;
-}
-
-/* Темна тема: highlighter backdrop */
-body.dark .highlighter-backdrop mark {
-background-color: var(--highlight-bg-color);
-color: transparent;
-z-index: 3;
-}
-
-/* СТИЛІ ДЛЯ НОВОЇ, БІЛЬШ ТОЧНОЇ РУЧКИ ЗМІНИ РОЗМІРУ */
-.resize-handle {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    width: 18px; /* Збільшена область для зручності */
-    height: 18px;
-    cursor: nwse-resize; /* Діагональний курсор */
-    z-index: 10;
-    /* Малюємо більш помітні лінії */
-    background:
-        linear-gradient(135deg, transparent 60%, var(--resize-handle-color) 61%, var(--resize-handle-color) 70%, transparent 71%),
-        linear-gradient(135deg, transparent 80%, var(--resize-handle-color) 81%, var(--resize-handle-color) 90%, transparent 91%);
-}
-
 /* === СЕГМЕНТОВАНИЙ ПЕРЕМИКАЧ (СВІТЛА ТЕМА) === */
 .segmented-control {
     display: inline-flex;
@@ -1994,9 +1945,9 @@ body.dark .segment-btn.active {
 
 /* Темна тема: command list */
 body.dark .command-list {
-            border: none;
-            background-color: transparent;
-        }
+    border: none;
+    background-color: transparent;
+}
 
 /* command item */
 .command-item {
@@ -2394,7 +2345,54 @@ body.dark .command-item.static-header .command-text:hover {
    список OLT, а також пошук і заміна тексту в шаблонах.
    ================================================================ */
 
+/* === СТИЛІ ДЛЯ НОВОЇ ФУНКЦІЇ ПІДСВІТКИ СЛІВ === */
+.highlighting-container {
+    position: relative;
+    flex-grow: 1;
+    min-height: 0;
+    width: 100%;
+}
+
 /* highlighter backdrop */
+.highlighter-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    overflow: auto; /* Важливо для синхронізації прокрутки */
+    pointer-events: none; /* Кліки проходять наскрізь до textarea */
+    color: transparent; /* Текст у підкладці невидимий, видно лише фон <mark> */
+}
+
+/* highlighter backdrop */
+.highlighter-backdrop mark {
+    background-color: #85e07d;
+    color: transparent; /* Не змінюємо колір тексту, лише фон */
+    border-radius: 4px;
+}
+
+/* Темна тема: highlighter backdrop */
+body.dark .highlighter-backdrop mark {
+background-color: var(--highlight-bg-color);
+color: transparent;
+z-index: 3;
+}
+
+/* СТИЛІ ДЛЯ НОВОЇ, БІЛЬШ ТОЧНОЇ РУЧКИ ЗМІНИ РОЗМІРУ */
+.resize-handle {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 18px; /* Збільшена область для зручності */
+    height: 18px;
+    cursor: nwse-resize; /* Діагональний курсор */
+    z-index: 10;
+    /* Малюємо більш помітні лінії */
+    background:
+        linear-gradient(135deg, transparent 60%, var(--resize-handle-color) 61%, var(--resize-handle-color) 70%, transparent 71%),
+        linear-gradient(135deg, transparent 80%, var(--resize-handle-color) 81%, var(--resize-handle-color) 90%, transparent 91%);
+}
+   /* highlighter backdrop */
 .highlighter-backdrop, .template-field-group textarea {
     /* Синхронізація геометрії */
     margin: 0;
