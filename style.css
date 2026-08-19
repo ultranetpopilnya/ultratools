@@ -58,6 +58,7 @@ select {
 --highlight-bg-color: rgba(255, 229, 100, 0.7);
     --snow-color: #46d1ff;  /* Обов'язково 6 символів і крапка з комою */
 --bg-color: #f8fafc;
+--bg-second-color: #fcfcfc;
 
     --glass-white-lg: rgba(255, 255, 255, 0.9);
         --glass-white: rgba(255, 255, 255, 0.3);
@@ -111,6 +112,7 @@ body.dark {
 --highlight-bg-color: rgba(230, 162, 46, 0.5);
     --snow-color: #ffffff;
     --bg-color: #191919;
+    --bg-second-color: #2c2c2e;
 }
 
 body {
@@ -486,10 +488,18 @@ body {
 }
 
 /* 4. Вмикаємо скрол ТІЛЬКИ всередині карток */
-.container[data-content="gpon-commands"] .content-card,
 .container[data-content="text-templates"] .content-card {
     height: 100%;
-    overflow-y: auto;       /* Скрол з'являється тут */
+    overflow-y: auto;
+    padding-bottom: 22px;
+}
+
+.container[data-content="gpon-commands"] .content-card {
+    height: 100%;
+    overflow: hidden;      /* картка більше не скролиться сама */
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
     padding-bottom: 22px;
 }
 
@@ -1789,10 +1799,8 @@ body.holiday-mode #snow-container {
 
 
 /* ================================================================
-   10. GPON-КОМАНДИ ТА ПАНЕЛЬ КОНФІГУРАТОРА
-   Вкладка GPON-команд: список команд, підкоманди, панель
-   конфігуратора (ONU/OLT, режими, generate-кнопка), випадаючий
-   список OLT, а також пошук і заміна тексту в шаблонах.
+   10. GPON-КОМАНДИ 
+   Вкладка GPON-команд: список команд, підкоманди.
    ================================================================ */
 
 /* === СТИЛІ ДЛЯ НОВОЇ ФУНКЦІЇ ПІДСВІТКИ СЛІВ === */
@@ -1843,18 +1851,41 @@ z-index: 3;
         linear-gradient(135deg, transparent 80%, var(--resize-handle-color) 81%, var(--resize-handle-color) 90%, transparent 91%);
 }
 
+/* === СЕГМЕНТОВАНИЙ ПЕРЕМИКАЧ (СВІТЛА ТЕМА) === */
+.segmented-control {
+    display: inline-flex;
+    background-color: var(--bg-second-color); /* Світло-сірий фон плашки */
+    border-radius: 12px;
+    padding: 4px;
+    gap: 2px;
+    border: 1px solid var(--input-border-color);
+}
+
+/* Перемикач типу обладнання завжди зберігає власний розмір і не стискається */
+#controls-and-clarification .segmented-control {
+    flex-shrink: 0;
+}
+
 /* Стилі для статичного напису-підказки */
 #static-clarification-message {
     font-style: italic; 
     color: #1e9e12;
-    margin: 0 0 10px 0; 
-    padding: 5px 10px;
+    text-align: center;
+    margin: 0 0 12px 0;
+    padding: 0;
     border-radius: 1px;
     font-size: 0.9em;
     user-select: none;
     font-weight: 600;
-    margin-top: 0px;
-text-align: right;	
+    
+    flex: 0 1 auto;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    flex-shrink: 0 !important;
+    min-height: min-content !important;
 }
 
 /* Темна тема: static clarification message */
@@ -1862,53 +1893,77 @@ body.dark #static-clarification-message {
     color: #20be00;
 }
 
-/* gpon commands container */
-.gpon-commands-container label {
-            display: inline-block; 
-            margin-right: 0px;    
-            margin-bottom: 0px;
-            font-weight: bold;
-            color: #555;
-			font-size: 18px;
-        }
-
-/* gpon commands container */
-.gpon-commands-container select {
-            width: 100px;
-            padding: 1px;
-            margin-bottom: 0px;
-             border: 1px solid var(--input-border-color);
-            border-radius: 6px;
-            font-size: 16px;
-            background-color: #fff;
-            color: #333;
-			display: inline-block;
-			margin-left: 0px;
-        }
-
-/* Темна тема: gpon commands container */
-body.dark .gpon-commands-container label {
-    color: var(--text-color);
+#controls-and-clarification {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 15px;
+        flex-shrink: 0 !important;
+    min-height: min-content !important;
 }
 
-/* Темна тема: gpon commands container */
-body.dark .gpon-commands-container select {
-    background-color: var(--input-bg-color);
-    border-color: var(--input-border-color);
-    color: var(--text-color);
+
+.segment-btn {
+    width: 76px;
+    height: 28px;
+    text-align: center;  /* Текст всередині кнопок по центру */
+    padding: 0; 
+
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #495057;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    -webkit-font-smoothing: antialiased; /* Фіксує згладжування шрифту */
+    transform: translateZ(0);            /* Апаратне прискорення (забирає мікро-сіпання) */
+    box-sizing: border-box;              /* Щоб рамки і тіні не міняли розмір */
+}
+
+.segment-btn:hover {
+    color: #212529;
+}
+
+.segment-btn.active {
+    background-color: var(--primary-accent-color, #007bff);
+    border-color: var(--primary-accent-color, #007bff);
+    color: #fff;
+}
+
+/* === СЕГМЕНТОВАНИЙ ПЕРЕМИКАЧ (ТЕМНА ТЕМА) === */
+body.dark .segmented-control {
+    background-color: var(--bg-second-color); /* Темний фон плашки (адаптовано під ваші кольори) */
+    border: 1px solid var(--input-border-color);
+}
+
+body.dark .segment-btn {
+    color: var(--tab-inactive-text, #8892b0); /* Сірий текст у темній темі */
+}
+
+body.dark .segment-btn:hover {
+    color: var(--text-color, #ccd6f6); /* Світліший при наведенні */
+}
+
+body.dark .segment-btn.active {
+    background-color: var(--secondary-accent-color, #ff9800);
+    border-color: var(--secondary-accent-color, #ff9800);
+    color: #121212; /* або var(--bg-color) */
 }
 
 /* command list */
 .command-list {
-            border: none;
-            border-radius: 6px;
-            background-color: transparent; 
-            flex-grow: 1; 
-            overflow-y: visible;   
-            overflow-x: hidden;
-            margin: 0 auto;
-            width: 100%;          
-        }
+    border: none;
+    border-radius: 6px;
+    background-color: transparent; 
+    flex-grow: 1; 
+    overflow-y: auto;      /* було: visible */
+    overflow-x: hidden;
+    min-height: 0;          /* критично для скролу всередині flex-колонки */
+    margin: 0 auto;
+    width: 100%;          
+}
 
 /* Темна тема: command list */
 body.dark .command-list {
@@ -2181,6 +2236,806 @@ body.dark .command-item.has-subcommands .command-text:hover {
     /* Забороняємо скрол на самому контейнері, щоб не було подвійних смуг */
     overflow: hidden !important;
     
+}
+
+/* ========================================= */
+/* === РОЗУМНІ КОЛОНКИ ДЛЯ КОМАНД (АВТО-ШИРИНА) === */
+/* ========================================= */
+/* 1. Базовий контейнер */
+.container.gpon-commands-container {
+    margin: 0 auto;
+    
+    /* Створюємо змінну зі значенням за замовчуванням */
+    --dynamic-width: 54%; 
+    max-width: var(--dynamic-width);
+    
+    /* Анімуємо саме max-width. Важливо: без !important на самій властивості, інакше глючить */
+    transition: max-width 0.4s cubic-bezier(0.25, 1, 0.5, 1),
+                opacity 0.3s ease-in-out, 
+                transform 0.3s ease-in-out !important;
+}
+
+/* container */
+.container.gpon-commands-container:has(.segment-btn.active[onclick*="'gpon'"])  { --dynamic-width: 93%; }
+.container.gpon-commands-container:has(.segment-btn.active[onclick*="'epon'"])  { --dynamic-width: 50%; }
+.container.gpon-commands-container:has(.segment-btn.active[onclick*="'bdcom'"]) { --dynamic-width: 56%; }
+.container.gpon-commands-container:has(.segment-btn.active[onclick*="'mx80'"])  { --dynamic-width: 48%; }
+
+/* Розширений стан контейнера (на великих моніторах) */
+.container.gpon-commands-container.expanded-layout {
+    --dynamic-width: 94%; 
+}
+
+/* Сам список команд */
+#command-output {
+    display: block; 
+    width: 100%;
+}
+
+/* command output */
+#command-output.two-columns {
+    column-count: 2;
+    column-gap: 0;
+    position: relative;
+}
+
+/* Роздільник через box-shadow на обгортці — стабільно в Chrome */
+#command-output.two-columns .command-group-wrapper {
+    padding: 0;
+}
+
+/* Псевдоелемент на самому контейнері — лінія точно посередині */
+#command-output.two-columns::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 100%;
+    background-color: var(--input-border-color);
+    pointer-events: none;
+}
+
+/* Темна тема: command output — псевдоелемент ::after */
+body.dark #command-output.two-columns::after {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Забороняємо команді розриватись навпіл між колонками */
+.command-group-wrapper {
+    break-inside: avoid;          
+    page-break-inside: avoid;     
+    -webkit-column-break-inside: avoid; 
+    display: block;               /* ← виправлено: block замість inline-block */
+    overflow: hidden;             /* ← це замінює inline-block у ролі "не розривай" */
+    width: 100%;                  
+    margin-bottom: 4px;           
+}
+
+/* === СТИЛІ ДЛЯ ПОСТІЙНО РОЗГОРНУТИХ СПИСКІВ === */
+/* 1. Робимо контейнер постійно видимим і міняємо суцільну лінію на штрихпунктир (dashed) */
+.sub-command-list.always-open {
+    max-height: 2000px; 
+    opacity: 1;
+    transform: translateY(0);
+    transition: none; 
+    
+    /* Зміна бокової лінії на штрихпунктирну */
+    border-left: 2px dashed var(--input-border-color); 
+}
+
+/* 2. Робимо плашку-заголовок візуально ідентичною до звичайної команди */
+.command-item.static-header {
+    cursor: pointer; /* Курсор-стрілка, бо плашка не згортається */
+}
+
+/* Підсвітка фону при наведенні, як у всіх інших команд */
+.command-item.static-header:hover {
+    background-color: #fff; 
+}
+
+/* Темна тема: command item — ховер */
+body.dark .command-item.static-header:hover {
+    background-color: #333333;
+}
+
+/* 3. Текст команди: можна копіювати, АЛЕ БЕЗ ПІДКРЕСЛЕННЯ */
+.command-item.static-header .command-text {
+    cursor: pointer;
+    border-bottom: none !important; /* Примусово прибираємо лінію */
+}
+
+/* command item — ховер */
+.command-item.static-header .command-text:hover {
+    color: var(--description-color);
+    border-bottom: none !important;
+}
+
+/* Темна тема: command item — ховер */
+body.dark .command-item.static-header .command-text:hover {
+    color: var(--secondary-accent-color);
+    border-bottom: none !important;
+}
+
+
+/* ================================================================
+   11. ШАБЛОНИ ТЕКСТУ
+   Вкладка текстових шаблонів: картки шаблонів, підсвітка збігів,
+   кнопки дій під кожним шаблоном, кнопки імпорту/експорту/очистки
+   та кнопки прокрутки списку. випадаючий
+   список OLT, а також пошук і заміна тексту в шаблонах.
+   ================================================================ */
+
+/* highlighter backdrop */
+.highlighter-backdrop, .template-field-group textarea {
+    /* Синхронізація геометрії */
+    margin: 0;
+    padding: 10px;
+    border: none; /* Внутрішній бордер тепер не потрібен */
+    border-radius: 0;
+    width: 100%;
+    height: 100%;
+    
+    /* Синхронізація шрифтів */
+    font-family: 'Fira Code', monospace !important; 
+    font-size: 14px;
+    line-height: 1.5;
+    letter-spacing: normal;
+    white-space: pre-wrap;
+    overflow-wrap: normal;
+    word-break: normal;
+}
+
+/* template field group */
+.template-field-group textarea {
+    position: relative;
+    z-index: 2;
+    background: transparent; 
+    color: var(--text-color); 
+    -webkit-text-fill-color: var(--text-color);
+    resize: none !important;
+}
+
+/* templates grid wrapper */
+#templates-grid-wrapper .template-field-group .highlighting-container textarea,
+#templates-grid-wrapper .template-field-group .highlighting-container .highlighter-backdrop {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    overflow-x: hidden;
+}
+
+/* Світла тема: підсвічуємо синім ТІЛЬКИ активне поле вводу */
+.template-field-group .template-name-input:focus,
+.template-field-group .textarea-wrapper:focus-within {
+    border-color: #007bff !important;
+}
+
+/* Темна тема: підсвічуємо оранжевим ТІЛЬКИ активне поле вводу */
+body.dark .template-field-group .template-name-input:focus,
+body.dark .template-field-group .textarea-wrapper:focus-within {
+    border-color: #E6A22E !important;
+}
+
+/* Прибираємо зайву тінь з внутрішніх елементів, оскільки вона вже є на зовнішньому блоці */
+.template-field-group .template-name-input:focus,
+.template-field-group .textarea-wrapper:focus-within {
+    box-shadow: none !important;
+}
+
+/* --- ВИРІШЕННЯ ПРОБЛЕМИ ВИДІЛЕННЯ ТЕКСТУ ПРИ РЕСАЙЗІ --- */
+/* 1. Забороняємо виділення для всього контейнера шаблону */
+.template-field-group {
+    user-select: none;         /* Стандартний синтаксис */
+    contain: layout paint style;
+}
+
+/* Додамо клас для активного перетягування, щоб підняти z-index та вимкнути зайве */
+.template-field-group.is-dragging {
+    z-index: 1000;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    cursor: grabbing;
+}
+
+/* 2. Але ПОВЕРТАЄМО можливість виділення для полів вводу всередині нього */
+.template-field-group textarea,
+.template-field-group .template-name-input {
+    -webkit-user-select: text; /* Safari */
+    -ms-user-select: text;     /* IE 10+ */
+    user-select: text;         /* Стандартний синтаксис */
+}
+
+/* Окремо для групи шаблонів, бо їй потрібен transparent */
+.template-field-group {
+    border: 1px solid transparent;
+}
+
+/* input:focus:not([type="button"]):not([type="submit"]) — фокус */
+input:focus:not([type="button"]):not([type="submit"]),
+textarea:focus,
+select:focus,
+.template-field-group:focus-within,
+.date-input-group input:focus,
+#fullNameInput:focus {
+    border-color: var(--input-focus-border-color) !important;
+    box-shadow: 0 0 3px var(--primary-accent-shadow);
+    outline: none;
+}
+
+/* templates grid wrapper */
+#templates-grid-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    align-items: flex-start;
+    gap: 4px; /* Чітка відстань між шаблонами (Сітка) */
+    width: 100%;
+    padding-bottom: 150px;
+}
+
+/* Контейнер шапки */
+.templates-header-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end; /* Притискає вміст (кнопки) вправо */
+    position: relative;        /* Створює "якір" для позиціонування заголовка */
+    margin-top: 0;   /* Прибираємо відступ зверху */
+    padding-top: 0;  /* Гарантуємо відсутність внутрішнього відступу */
+    min-height: 32px;           /* Висота рівно під розмір кнопок/тексту */
+    margin-bottom: 14px;        /* Відступ знизу (як було раніше) */
+    
+    padding-left: 10px;
+    padding-right: 5px;
+}
+
+/* Заголовок (Абсолютне центрування) */
+.template-main-title {
+    position: absolute;
+    left: 50%;
+    
+    /* --- ТОЧНЕ ЦЕНТРУВАННЯ --- */
+    top: 50%;
+    transform: translate(-50%, -50%);
+    
+    margin: 0 !important;
+    white-space: nowrap;
+    z-index: 0;
+    text-align: center;
+    
+    /* Гарантуємо, що розмір шрифту такий самий, як усюди */
+    font-size: 1.5rem; 
+    line-height: 1.2;
+}
+
+/* Блок кнопок */
+.template-global-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+    z-index: 1;
+	top: -3px;
+}
+
+/* Базові налаштування для всіх кнопок */
+#add-template-button,
+#import-templates-button,
+#export-templates-button,
+#clear-all-templates-button {
+    position: relative;
+    top: 2px;
+    padding: 0;
+    border-radius: 9999px; /* Капсула */
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 50px;
+    height: 28px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 1. ГОЛОВНА КНОПКА (ДОДАТИ) */
+#add-template-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    width: 50px;
+    padding: 0;
+    background-color: var(--primary-accent-color);
+    color: white;
+    border: 1px solid var(--primary-accent-color);
+    font-size: 1.4rem;
+    box-shadow: 0 2px 5px rgba(0, 123, 255, 0.3);
+}
+
+/* add template button — ховер */
+#add-template-button:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.4);
+}
+
+/* add template button — активний стан */
+#add-template-button:active {
+    transform: translateY(1px) scale(0.94) !important;
+    box-shadow: inset 0 3px 6px rgba(0,0,0,0.3) !important;
+    filter: brightness(0.9);
+    transition: all 0.05s ease-out;
+}
+
+/* ================= СВІТЛА ТЕМА (ПОКРАЩЕНО) ================= */
+/* 2. Кнопки Імпорт/Експорт - СВІТЛА ТЕМА */
+#import-templates-button,
+#export-templates-button {
+    /* Білий фон робить кнопку чіткою на сірому фоні сайту */
+    background-color: #ffffff; 
+    
+    /* Тонка рамка для чіткості */
+    border: 1px solid #d1d5db; 
+    
+    /* Темно-сіра іконка (майже чорна) для гарного контрасту */
+    color: #4b5563; 
+    
+    /* Легка тінь знизу, щоб кнопка "відривалася" від фону */
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* При наведенні у світлій темі */
+#import-templates-button:hover,
+#export-templates-button:hover {
+    border-color: var(--primary-accent-color);
+    color: var(--primary-accent-color);
+    background-color: #f0f7ff; /* Дуже світлий блакитний фон */
+    box-shadow: 0 2px 4px rgba(0, 123, 255, 0.15);
+}
+
+/* 3. Кнопка Очистити - СВІТЛА ТЕМА */
+#clear-all-templates-button {
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb; /* Світліша рамка, ніж у інших */
+    color: #dc3545; /* Червона іконка одразу */
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* clear all templates button — ховер */
+#clear-all-templates-button:hover {
+    background-color: var(--danger-color);
+    border-color: var(--danger-color);
+    color: white;
+    box-shadow: 0 2px 6px rgba(220, 53, 69, 0.3);
+}
+
+/* ================= ТЕМНА ТЕМА (ПОКРАЩЕНО) ================= */
+/* 1. Головна кнопка (Додати) - ТЕМНА */
+body.dark #add-template-button {
+    background-color: var(--secondary-accent-color);
+    color: #1b1c1d;
+    border-color: var(--secondary-accent-color);
+    box-shadow: 0 2px 8px rgba(230, 162, 46, 0.25);
+}
+
+/* Темна тема: add template button — ховер */
+body.dark #add-template-button:hover {
+    background-color: #ffb74d; 
+    border-color: #ffb74d;
+}
+
+/* 2. Кнопки Імпорт/Експорт - ТЕМНА */
+body.dark #import-templates-button,
+body.dark #export-templates-button {
+    background-color: rgba(255, 255, 255, 0.05); /* Ефект скла */
+    border: 1px solid rgba(255, 255, 255, 0.2); /* Напівпрозора біла рамка */
+    color: #f0f0f0; /* Майже біла іконка */
+    box-shadow: none;
+}
+
+/* Темна тема: import templates button — ховер */
+body.dark #import-templates-button:hover,
+body.dark #export-templates-button:hover {
+    border-color: var(--secondary-accent-color);
+    color: var(--secondary-accent-color);
+    background-color: rgba(230, 162, 46, 0.15);
+    box-shadow: 0 0 8px rgba(230, 162, 46, 0.1);
+}
+
+/* 3. Кнопка Очистити - ТЕМНА */
+body.dark #clear-all-templates-button {
+    background-color: rgba(220, 53, 69, 0.05);
+    border: 1px solid rgba(220, 53, 69, 0.4);
+    color: #ff6b6b;
+    box-shadow: none;
+}
+
+/* Темна тема: clear all templates button — ховер */
+body.dark #clear-all-templates-button:hover {
+    background-color: var(--danger-color);
+    border-color: var(--danger-color);
+    color: white;
+}
+
+/* --- СТИЛІ ШАБЛОНУ --- */
+.template-field-group {
+    position: relative;
+    border: 2px solid var(--template-border-color);
+    border-radius: 12px;
+    background-color: var(--input-bg-color);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    max-width: 100%;
+    flex-grow: 0;
+
+    touch-action: none;
+    user-select: none;
+    
+    min-height: 90px;
+    min-width: 450px;
+    /* Додаємо плавність для переміщення карток */
+    transition: box-shadow 0.2s ease, transform 0.2s ease, min-width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* =========================================
+   СТИЛІ ДЛЯ НАТИВНОГО ПЕРЕТЯГУВАННЯ
+========================================= */
+/* Стан картки, яку ми зараз ТЯГНЕМО (ховаємо її з сітки, але браузер залишає "привида" в руці) */
+.template-field-group.is-dragging {
+    display: none !important; 
+}
+
+/* Порожнє місце (заглушка), куди впаде картка */
+.template-drag-placeholder {
+    border: 2px dashed var(--accent-color);
+    background-color: rgba(0, 0, 0, 0.03);
+    border-radius: 12px;
+    pointer-events: none; /* Щоб мишка крізь нього бачила інші елементи */
+    margin: 0;
+    /* Плавна зміна розмірів, якщо картки різні */
+    transition: width 0.2s ease, height 0.2s ease; 
+}
+
+/* Темна тема: template drag placeholder */
+body.dark .template-drag-placeholder {
+    background-color: rgba(255, 255, 255, 0.03);
+}
+
+/* template header */
+.template-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0; 
+    padding: 4px 4px 0px 4px;
+    user-select: none;
+}
+
+/* template name input */
+.template-name-input {
+            flex-grow: 1; 
+            padding: 5px 10px;
+            border: 1px solid var(--input-border-color);
+            border-radius: 12px;
+            font-size: 16px;
+            color: #333;
+            background-color: #f0f0f0;
+            min-width: 150px;	
+        }
+
+/* Темна тема: template name input */
+body.dark .template-name-input {
+    background-color: var(--input-bg-color);
+    border-color: var(--input-border-color);
+    color: var(--text-color);
+}
+
+/* template actions */
+.template-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 0; 
+            flex-shrink: 0; 
+        }
+
+/* === ОНОВЛЕНІ СТИЛІ КНОПОК ШАБЛОНУ (GHOST BUTTONS) === */
+/* Переконаємось, що контейнер кнопок працює як гнучка панель */
+.template-actions {
+    display: flex;
+    align-items: center;
+    gap: 1px; /* Трохи зменшили проміжок, бо кнопки тепер без рамок */
+}
+
+/* 1. БАЗОВИЙ (СПОКІЙНИЙ) СТАН КНОПОК */
+.template-actions button {
+    padding: 0;
+    border: none;
+    border-radius: 6px; /* Замість круглого робимо м'який квадрат (більш сучасно) */
+    background-color: transparent; /* ПРИБИРАЄМО ФОН */
+    color: #888888; /* Нейтральний сірий колір іконки */
+    box-shadow: none; /* Прибираємо тінь */
+    cursor: pointer;
+    
+    width: 26px;
+    height: 26px;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.95rem;
+    
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    z-index: 1;
+}
+
+/* Темна тема: базовий колір іконок */
+body.dark .template-actions button {
+    color: #e2e2e2;
+}
+
+/* 2. ЕФЕКТ ПРИ КЛІКУ (Для всіх) */
+.template-actions button:active {
+    /* Кнопка "провалюється" (йде вниз) і трохи стискається */
+    transform: translateY(1px) scale(0.92); 
+    /* Тінь зникає, щоб підсилити ефект натискання */
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.2) !important; 
+    /* Робимо колір трохи темнішим (реалістичність) */
+    filter: brightness(0.9);
+    transition: all 0.05s ease-out; /* Миттєва реакція */
+}
+
+/* Якщо кнопка вже була в ховері, гарантуємо, що active переб'є її властивості */
+.template-actions button:hover:active {
+    transform: translateY(1px) scale(0.92);
+}
+
+/* 3. ХОВЕР-ЕФЕКТИ (КОЛЬОРИ З'ЯВЛЯЮТЬСЯ ТІЛЬКИ ТУТ) */
+.template-actions button:hover {
+    color: white; /* Іконка стає білою */
+    transform: translateY(-1px); /* Ледь-ледь піднімається */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15); /* З'являється легка тінь */
+    z-index: 2;
+}
+
+/* copy template btn — ховер */
+.copy-template-btn:hover { background-color: var(--success-color); }
+
+/* paste login btn — ховер */
+.paste-login-btn:hover { background-color: var(--button-paste-bg); }
+
+/* paste clipboard btn — ховер */
+.paste-clipboard-btn:hover { background-color: #fd7e14; }
+
+/* search template btn — ховер */
+.search-template-btn:hover { background-color: #6f42c1; }
+
+/* quick notes btn — ховер */
+.quick-notes-btn:hover { background-color: #f39c12; }
+
+/* clear template btn — ховер */
+.clear-template-btn:hover { background-color: var(--primary-accent-color); }
+
+/* delete template btn — ховер */
+.delete-template-btn:hover { background-color: var(--danger-color); }
+
+/* --- СУЧАСНІ РОЗДІЛЮВАЧІ МІЖ КНОПКАМИ --- */
+.action-separator {
+    width: 1px; /* Зробили дуже тонким */
+    height: 14px; /* Коротшим за кнопки */
+    background-color: rgba(0, 0, 0, 0.2); /* Дуже прозорий */
+    border-radius: 2px;
+    margin: 0 2px;
+}
+
+/* Для темної теми */
+body.dark .action-separator {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Гарантуємо, що результати не стискаються */
+#results-container {
+    flex-shrink: 0;
+    margin-bottom: 20px;
+}
+
+/* === ІДЕАЛЬНИЙ ІНТЕГРОВАНИЙ СТИЛЬ ПОШУКУ (ДВОКОЛОНКОВИЙ) === */
+/* 1. Головний контейнер (Стиль ідентичний до template-config-bar) */
+.template-search-bar {
+    position: relative; 
+    width: calc(100% - 8px) !important;
+    margin: 0 4px !important;
+    z-index: 5; 
+    
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    justify-content: center;
+    
+    background-color: var(--tab-strip-bg);
+    border-radius: 12px;
+    border: 1px solid transparent; 
+    
+    /* === СУЧАСНА АНІМАЦІЯ (ЗАКРИТО) === */
+    max-height: 0;
+    min-height: 0;
+    opacity: 0;
+    overflow: hidden; 
+    padding-top: 0;
+    padding-bottom: 0;
+    transform: translateY(-10px) scale(0.98); /* Легкий зсув вгору */
+    pointer-events: none; /* Забороняємо кліки, коли закрито */
+    
+    /* Універсальний плавний таймінг (0.25s) */
+    transition: 
+        max-height 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+        min-height 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+        opacity 0.2s ease-in-out,
+        transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+        margin 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+        padding 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+        border-color 0.25s ease;
+}
+
+/* template search bar — активний стан */
+.template-search-bar.active {
+    /* === СУЧАСНА АНІМАЦІЯ (ВІДКРИТО) === */
+    max-height: 120px; /* Зроблено з запасом */
+    min-height: 65px;
+    opacity: 1;
+    transform: translateY(0) scale(1); /* Падає на своє місце */
+    pointer-events: auto; /* Вмикаємо кліки */
+    
+    margin-top: 4px !important; 
+    margin-bottom: 4px !important; 
+    padding: 10px 4px 14px 4px; 
+    border-color: var(--input-border-color) !important; /* Плавно проявляємо рамку */
+}
+
+/* =========================================================
+   ГЕНЕРАТОР КОНФІГІВ (ДВА РЯДИ)
+   ========================================================= */
+.template-config-bar {
+    position: relative;
+    width: calc(100% - 8px);
+    margin: 0 4px;
+    
+    background-color: var(--tab-strip-bg);
+    border-radius: 12px;
+    border: 1px solid transparent; /* Готуємо рамку для плавної появи */
+    
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    padding-top: 0;
+    padding-bottom: 0;
+    transform: translateY(-10px) scale(0.98); /* Легкий зсув вгору */
+    pointer-events: none; /* Забороняємо кліки, коли закрито */
+    
+    /* Універсальний плавний таймінг (0.25s) */
+    transition: 
+        max-height 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+        opacity 0.2s ease-in-out,
+        transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+        margin 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+        padding 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+        border-color 0.25s ease;
+}
+
+/* Темна тема: template config bar */
+body.dark .template-config-bar {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+/* template config bar — активний стан */
+.template-config-bar.active {
+    /* === СУЧАСНА АНІМАЦІЯ (ВІДКРИТО) === */
+    max-height: 120px; /* Зроблено з запасом, щоб анімація не обрізалась */
+    opacity: 1;
+    transform: translateY(0) scale(1); /* Падає на своє місце */
+    pointer-events: auto; /* Вмикаємо кліки */
+    z-index: 2000;
+
+    margin-top: 4px;
+    margin-bottom: 4px;
+    padding: 6px;
+    border-color: var(--input-border-color); /* Плавно проявляємо рамку */
+    
+    
+    /* Важливо для випадаючого списку ОЛТ */
+    overflow: visible; 
+}
+
+/* Ідеально для 4 цифр VLAN */
+/* --- ЗАХИСТ ВІД ЗЛАМУ КАРТКИ --- */
+.template-field-group:has(.template-config-bar.active) {
+    /* Картка вирахує свій ідеальний мінімум автоматично */
+    min-width: min-content !important; 
+    
+    /* Дозволяємо їй розтягуватися на всю доступну ширину, якщо є місце */
+    width: 100%; 
+}
+
+/* --- ТЕМНА ТЕМА ДЛЯ ПАНЕЛЕЙ --- */
+body.dark .template-search-bar {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+/* Темна тема: template search bar — активний стан */
+body.dark .template-search-bar.active {
+    border: 1px solid rgba(255, 255, 255, 0.15); /* Чітка видима рамка для темної теми */
+}
+
+/* === КНОПКИ ПРОКРУТКИ ДЛЯ ШАБЛОНІВ === */
+.scroll-nav-buttons {
+    position: absolute;
+    bottom: 60px;
+    right: 50px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 2000; /* Поверх шаблонів */
+    pointer-events: none; /* Щоб область навколо кнопок пропускала кліки */
+}
+
+/* scroll nav btn */
+.scroll-nav-btn {
+    pointer-events: auto; /* Самі кнопки клікабельні */
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 1px solid var(--input-border-color);
+    
+    /* Напівпрозорий фон (ефект матового скла) */
+    background-color: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(4px);
+    
+    color: var(--text-color);
+    font-size: 1.2rem;
+    cursor: pointer;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    transition: all 0.3s ease;
+    opacity: 0; /* Приховано за замовчуванням (JS покаже) */
+    transform: translateY(10px);
+    visibility: hidden;
+    
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* Стан, коли кнопка видима */
+.scroll-nav-btn.visible {
+    opacity: 0.7; /* Напівпрозорість у спокої */
+    transform: translateY(0);
+    visibility: visible;
+}
+
+/* При наведенні стають чіткими */
+.scroll-nav-btn.visible:hover {
+    opacity: 1;
+    background-color: var(--input-bg-color);
+    border-color: var(--primary-accent-color);
+    color: var(--primary-accent-color);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+    transform: scale(1.1);
+}
+
+/* Темна тема */
+body.dark .scroll-nav-btn {
+    background-color: rgba(40, 40, 40, 0.6);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+
+/* Темна тема: scroll nav btn — ховер */
+body.dark .scroll-nav-btn.visible:hover {
+    background-color: var(--template-bg-color);
+    border-color: var(--secondary-accent-color);
+    color: var(--secondary-accent-color);
 }
 
 /* 2. Обгортка - ПОВЕРТАЄМО МАГІЮ ІДЕАЛЬНОГО ЦЕНТРУВАННЯ */
@@ -3142,813 +3997,6 @@ body.dark .speed-select option {
     background-color: var(--content-bg-color);
     color: var(--text-color);
 }
-
-/* ========================================= */
-/* === РОЗУМНІ КОЛОНКИ ДЛЯ КОМАНД (АВТО-ШИРИНА) === */
-/* ========================================= */
-/* 1. Базовий контейнер */
-.container.gpon-commands-container {
-    margin: 0 auto;
-    
-    /* Створюємо змінну зі значенням за замовчуванням */
-    --dynamic-width: 54%; 
-    max-width: var(--dynamic-width);
-    
-    /* Анімуємо саме max-width. Важливо: без !important на самій властивості, інакше глючить */
-    transition: max-width 0.4s cubic-bezier(0.25, 1, 0.5, 1),
-                opacity 0.3s ease-in-out, 
-                transform 0.3s ease-in-out !important;
-}
-
-/* container */
-.container.gpon-commands-container:has(option[value="gpon"]:checked) { --dynamic-width: 93%; }
-
-/* container */
-.container.gpon-commands-container:has(option[value="epon"]:checked) { --dynamic-width: 50%; }
-
-/* container */
-.container.gpon-commands-container:has(option[value="bdcom"]:checked) { --dynamic-width: 56%; }
-
-/* container */
-.container.gpon-commands-container:has(option[value="mx80"]:checked)  { --dynamic-width: 48%; }
-
-/* Розширений стан контейнера (на великих моніторах) */
-.container.gpon-commands-container.expanded-layout {
-    --dynamic-width: 94%; 
-}
-
-/* Сам список команд */
-#command-output {
-    display: block; 
-    width: 100%;
-}
-
-/* command output */
-#command-output.two-columns {
-    column-count: 2;
-    column-gap: 0;
-    position: relative;
-}
-
-/* Роздільник через box-shadow на обгортці — стабільно в Chrome */
-#command-output.two-columns .command-group-wrapper {
-    padding: 0;
-}
-
-/* Псевдоелемент на самому контейнері — лінія точно посередині */
-#command-output.two-columns::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 2px;
-    height: 100%;
-    background-color: var(--input-border-color);
-    pointer-events: none;
-}
-
-/* Темна тема: command output — псевдоелемент ::after */
-body.dark #command-output.two-columns::after {
-    background-color: rgba(255, 255, 255, 0.15);
-}
-
-/* Забороняємо команді розриватись навпіл між колонками */
-.command-group-wrapper {
-    break-inside: avoid;          
-    page-break-inside: avoid;     
-    -webkit-column-break-inside: avoid; 
-    display: block;               /* ← виправлено: block замість inline-block */
-    overflow: hidden;             /* ← це замінює inline-block у ролі "не розривай" */
-    width: 100%;                  
-    margin-bottom: 4px;           
-}
-
-/* === СТИЛІ ДЛЯ ПОСТІЙНО РОЗГОРНУТИХ СПИСКІВ === */
-/* 1. Робимо контейнер постійно видимим і міняємо суцільну лінію на штрихпунктир (dashed) */
-.sub-command-list.always-open {
-    max-height: 2000px; 
-    opacity: 1;
-    transform: translateY(0);
-    transition: none; 
-    
-    /* Зміна бокової лінії на штрихпунктирну */
-    border-left: 2px dashed var(--input-border-color); 
-}
-
-/* 2. Робимо плашку-заголовок візуально ідентичною до звичайної команди */
-.command-item.static-header {
-    cursor: pointer; /* Курсор-стрілка, бо плашка не згортається */
-}
-
-/* Підсвітка фону при наведенні, як у всіх інших команд */
-.command-item.static-header:hover {
-    background-color: #fff; 
-}
-
-/* Темна тема: command item — ховер */
-body.dark .command-item.static-header:hover {
-    background-color: #333333;
-}
-
-/* 3. Текст команди: можна копіювати, АЛЕ БЕЗ ПІДКРЕСЛЕННЯ */
-.command-item.static-header .command-text {
-    cursor: pointer;
-    border-bottom: none !important; /* Примусово прибираємо лінію */
-}
-
-/* command item — ховер */
-.command-item.static-header .command-text:hover {
-    color: var(--description-color);
-    border-bottom: none !important;
-}
-
-/* Темна тема: command item — ховер */
-body.dark .command-item.static-header .command-text:hover {
-    color: var(--secondary-accent-color);
-    border-bottom: none !important;
-}
-
-
-/* ================================================================
-   11. ШАБЛОНИ ТЕКСТУ
-   Вкладка текстових шаблонів: картки шаблонів, підсвітка збігів,
-   кнопки дій під кожним шаблоном, кнопки імпорту/експорту/очистки
-   та кнопки прокрутки списку.
-   ================================================================ */
-
-/* highlighter backdrop */
-.highlighter-backdrop, .template-field-group textarea {
-    /* Синхронізація геометрії */
-    margin: 0;
-    padding: 10px;
-    border: none; /* Внутрішній бордер тепер не потрібен */
-    border-radius: 0;
-    width: 100%;
-    height: 100%;
-    
-    /* Синхронізація шрифтів */
-    font-family: 'Fira Code', monospace !important; 
-    font-size: 14px;
-    line-height: 1.5;
-    letter-spacing: normal;
-    white-space: pre-wrap;
-    overflow-wrap: normal;
-    word-break: normal;
-}
-
-/* template field group */
-.template-field-group textarea {
-    position: relative;
-    z-index: 2;
-    background: transparent; 
-    color: var(--text-color); 
-    -webkit-text-fill-color: var(--text-color);
-    resize: none !important;
-}
-
-/* templates grid wrapper */
-#templates-grid-wrapper .template-field-group .highlighting-container textarea,
-#templates-grid-wrapper .template-field-group .highlighting-container .highlighter-backdrop {
-    white-space: pre-wrap;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    overflow-x: hidden;
-}
-
-/* Світла тема: підсвічуємо синім ТІЛЬКИ активне поле вводу */
-.template-field-group .template-name-input:focus,
-.template-field-group .textarea-wrapper:focus-within {
-    border-color: #007bff !important;
-}
-
-/* Темна тема: підсвічуємо оранжевим ТІЛЬКИ активне поле вводу */
-body.dark .template-field-group .template-name-input:focus,
-body.dark .template-field-group .textarea-wrapper:focus-within {
-    border-color: #E6A22E !important;
-}
-
-/* Прибираємо зайву тінь з внутрішніх елементів, оскільки вона вже є на зовнішньому блоці */
-.template-field-group .template-name-input:focus,
-.template-field-group .textarea-wrapper:focus-within {
-    box-shadow: none !important;
-}
-
-/* --- ВИРІШЕННЯ ПРОБЛЕМИ ВИДІЛЕННЯ ТЕКСТУ ПРИ РЕСАЙЗІ --- */
-/* 1. Забороняємо виділення для всього контейнера шаблону */
-.template-field-group {
-    user-select: none;         /* Стандартний синтаксис */
-    contain: layout paint style;
-}
-
-/* Додамо клас для активного перетягування, щоб підняти z-index та вимкнути зайве */
-.template-field-group.is-dragging {
-    z-index: 1000;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-    cursor: grabbing;
-}
-
-/* 2. Але ПОВЕРТАЄМО можливість виділення для полів вводу всередині нього */
-.template-field-group textarea,
-.template-field-group .template-name-input {
-    -webkit-user-select: text; /* Safari */
-    -ms-user-select: text;     /* IE 10+ */
-    user-select: text;         /* Стандартний синтаксис */
-}
-
-/* Окремо для групи шаблонів, бо їй потрібен transparent */
-.template-field-group {
-    border: 1px solid transparent;
-}
-
-/* input:focus:not([type="button"]):not([type="submit"]) — фокус */
-input:focus:not([type="button"]):not([type="submit"]),
-textarea:focus,
-select:focus,
-.template-field-group:focus-within,
-.date-input-group input:focus,
-#fullNameInput:focus {
-    border-color: var(--input-focus-border-color) !important;
-    box-shadow: 0 0 3px var(--primary-accent-shadow);
-    outline: none;
-}
-
-/* templates grid wrapper */
-#templates-grid-wrapper {
-    display: flex;
-    flex-wrap: wrap;
-    align-content: flex-start;
-    align-items: flex-start;
-    gap: 4px; /* Чітка відстань між шаблонами (Сітка) */
-    width: 100%;
-    padding-bottom: 150px;
-}
-
-/* Контейнер шапки */
-.templates-header-wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end; /* Притискає вміст (кнопки) вправо */
-    position: relative;        /* Створює "якір" для позиціонування заголовка */
-    margin-top: 0;   /* Прибираємо відступ зверху */
-    padding-top: 0;  /* Гарантуємо відсутність внутрішнього відступу */
-    min-height: 32px;           /* Висота рівно під розмір кнопок/тексту */
-    margin-bottom: 14px;        /* Відступ знизу (як було раніше) */
-    
-    padding-left: 10px;
-    padding-right: 5px;
-}
-
-/* Заголовок (Абсолютне центрування) */
-.template-main-title {
-    position: absolute;
-    left: 50%;
-    
-    /* --- ТОЧНЕ ЦЕНТРУВАННЯ --- */
-    top: 50%;
-    transform: translate(-50%, -50%);
-    
-    margin: 0 !important;
-    white-space: nowrap;
-    z-index: 0;
-    text-align: center;
-    
-    /* Гарантуємо, що розмір шрифту такий самий, як усюди */
-    font-size: 1.5rem; 
-    line-height: 1.2;
-}
-
-/* Блок кнопок */
-.template-global-actions {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    position: relative;
-    z-index: 1;
-	top: -3px;
-}
-
-/* Базові налаштування для всіх кнопок */
-#add-template-button,
-#import-templates-button,
-#export-templates-button,
-#clear-all-templates-button {
-    position: relative;
-    top: 2px;
-    padding: 0;
-    border-radius: 9999px; /* Капсула */
-    font-size: 1.1rem;
-    cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    width: 50px;
-    height: 28px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-/* 1. ГОЛОВНА КНОПКА (ДОДАТИ) */
-#add-template-button {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-weight: bold;
-    width: 50px;
-    padding: 0;
-    background-color: var(--primary-accent-color);
-    color: white;
-    border: 1px solid var(--primary-accent-color);
-    font-size: 1.4rem;
-    box-shadow: 0 2px 5px rgba(0, 123, 255, 0.3);
-}
-
-/* add template button — ховер */
-#add-template-button:hover {
-    background-color: #0056b3;
-    border-color: #0056b3;
-    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.4);
-}
-
-/* add template button — активний стан */
-#add-template-button:active {
-    transform: translateY(1px) scale(0.94) !important;
-    box-shadow: inset 0 3px 6px rgba(0,0,0,0.3) !important;
-    filter: brightness(0.9);
-    transition: all 0.05s ease-out;
-}
-
-/* ================= СВІТЛА ТЕМА (ПОКРАЩЕНО) ================= */
-/* 2. Кнопки Імпорт/Експорт - СВІТЛА ТЕМА */
-#import-templates-button,
-#export-templates-button {
-    /* Білий фон робить кнопку чіткою на сірому фоні сайту */
-    background-color: #ffffff; 
-    
-    /* Тонка рамка для чіткості */
-    border: 1px solid #d1d5db; 
-    
-    /* Темно-сіра іконка (майже чорна) для гарного контрасту */
-    color: #4b5563; 
-    
-    /* Легка тінь знизу, щоб кнопка "відривалася" від фону */
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-}
-
-/* При наведенні у світлій темі */
-#import-templates-button:hover,
-#export-templates-button:hover {
-    border-color: var(--primary-accent-color);
-    color: var(--primary-accent-color);
-    background-color: #f0f7ff; /* Дуже світлий блакитний фон */
-    box-shadow: 0 2px 4px rgba(0, 123, 255, 0.15);
-}
-
-/* 3. Кнопка Очистити - СВІТЛА ТЕМА */
-#clear-all-templates-button {
-    background-color: #ffffff;
-    border: 1px solid #e5e7eb; /* Світліша рамка, ніж у інших */
-    color: #dc3545; /* Червона іконка одразу */
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-}
-
-/* clear all templates button — ховер */
-#clear-all-templates-button:hover {
-    background-color: var(--danger-color);
-    border-color: var(--danger-color);
-    color: white;
-    box-shadow: 0 2px 6px rgba(220, 53, 69, 0.3);
-}
-
-/* ================= ТЕМНА ТЕМА (ПОКРАЩЕНО) ================= */
-/* 1. Головна кнопка (Додати) - ТЕМНА */
-body.dark #add-template-button {
-    background-color: var(--secondary-accent-color);
-    color: #1b1c1d;
-    border-color: var(--secondary-accent-color);
-    box-shadow: 0 2px 8px rgba(230, 162, 46, 0.25);
-}
-
-/* Темна тема: add template button — ховер */
-body.dark #add-template-button:hover {
-    background-color: #ffb74d; 
-    border-color: #ffb74d;
-}
-
-/* 2. Кнопки Імпорт/Експорт - ТЕМНА */
-body.dark #import-templates-button,
-body.dark #export-templates-button {
-    background-color: rgba(255, 255, 255, 0.05); /* Ефект скла */
-    border: 1px solid rgba(255, 255, 255, 0.2); /* Напівпрозора біла рамка */
-    color: #f0f0f0; /* Майже біла іконка */
-    box-shadow: none;
-}
-
-/* Темна тема: import templates button — ховер */
-body.dark #import-templates-button:hover,
-body.dark #export-templates-button:hover {
-    border-color: var(--secondary-accent-color);
-    color: var(--secondary-accent-color);
-    background-color: rgba(230, 162, 46, 0.15);
-    box-shadow: 0 0 8px rgba(230, 162, 46, 0.1);
-}
-
-/* 3. Кнопка Очистити - ТЕМНА */
-body.dark #clear-all-templates-button {
-    background-color: rgba(220, 53, 69, 0.05);
-    border: 1px solid rgba(220, 53, 69, 0.4);
-    color: #ff6b6b;
-    box-shadow: none;
-}
-
-/* Темна тема: clear all templates button — ховер */
-body.dark #clear-all-templates-button:hover {
-    background-color: var(--danger-color);
-    border-color: var(--danger-color);
-    color: white;
-}
-
-/* --- СТИЛІ ШАБЛОНУ --- */
-.template-field-group {
-    position: relative;
-    border: 2px solid var(--template-border-color);
-    border-radius: 12px;
-    background-color: var(--input-bg-color);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-    display: flex;
-    flex-direction: column;
-    max-width: 100%;
-    flex-grow: 0;
-
-    touch-action: none;
-    user-select: none;
-    
-    min-height: 90px;
-    min-width: 450px;
-    /* Додаємо плавність для переміщення карток */
-    transition: box-shadow 0.2s ease, transform 0.2s ease, min-width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* =========================================
-   СТИЛІ ДЛЯ НАТИВНОГО ПЕРЕТЯГУВАННЯ
-========================================= */
-/* Стан картки, яку ми зараз ТЯГНЕМО (ховаємо її з сітки, але браузер залишає "привида" в руці) */
-.template-field-group.is-dragging {
-    display: none !important; 
-}
-
-/* Порожнє місце (заглушка), куди впаде картка */
-.template-drag-placeholder {
-    border: 2px dashed var(--accent-color);
-    background-color: rgba(0, 0, 0, 0.03);
-    border-radius: 12px;
-    pointer-events: none; /* Щоб мишка крізь нього бачила інші елементи */
-    margin: 0;
-    /* Плавна зміна розмірів, якщо картки різні */
-    transition: width 0.2s ease, height 0.2s ease; 
-}
-
-/* Темна тема: template drag placeholder */
-body.dark .template-drag-placeholder {
-    background-color: rgba(255, 255, 255, 0.03);
-}
-
-/* template header */
-.template-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 4px;
-    flex-shrink: 0; 
-    padding: 4px 4px 0px 4px;
-    user-select: none;
-}
-
-/* template name input */
-.template-name-input {
-            flex-grow: 1; 
-            padding: 5px 10px;
-            border: 1px solid var(--input-border-color);
-            border-radius: 12px;
-            font-size: 16px;
-            color: #333;
-            background-color: #f0f0f0;
-            min-width: 150px;	
-        }
-
-/* Темна тема: template name input */
-body.dark .template-name-input {
-    background-color: var(--input-bg-color);
-    border-color: var(--input-border-color);
-    color: var(--text-color);
-}
-
-/* template actions */
-.template-actions {
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 0; 
-            flex-shrink: 0; 
-        }
-
-/* === ОНОВЛЕНІ СТИЛІ КНОПОК ШАБЛОНУ (GHOST BUTTONS) === */
-/* Переконаємось, що контейнер кнопок працює як гнучка панель */
-.template-actions {
-    display: flex;
-    align-items: center;
-    gap: 1px; /* Трохи зменшили проміжок, бо кнопки тепер без рамок */
-}
-
-/* 1. БАЗОВИЙ (СПОКІЙНИЙ) СТАН КНОПОК */
-.template-actions button {
-    padding: 0;
-    border: none;
-    border-radius: 6px; /* Замість круглого робимо м'який квадрат (більш сучасно) */
-    background-color: transparent; /* ПРИБИРАЄМО ФОН */
-    color: #888888; /* Нейтральний сірий колір іконки */
-    box-shadow: none; /* Прибираємо тінь */
-    cursor: pointer;
-    
-    width: 26px;
-    height: 26px;
-    
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 0.95rem;
-    
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    z-index: 1;
-}
-
-/* Темна тема: базовий колір іконок */
-body.dark .template-actions button {
-    color: #e2e2e2;
-}
-
-/* 2. ЕФЕКТ ПРИ КЛІКУ (Для всіх) */
-.template-actions button:active {
-    /* Кнопка "провалюється" (йде вниз) і трохи стискається */
-    transform: translateY(1px) scale(0.92); 
-    /* Тінь зникає, щоб підсилити ефект натискання */
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.2) !important; 
-    /* Робимо колір трохи темнішим (реалістичність) */
-    filter: brightness(0.9);
-    transition: all 0.05s ease-out; /* Миттєва реакція */
-}
-
-/* Якщо кнопка вже була в ховері, гарантуємо, що active переб'є її властивості */
-.template-actions button:hover:active {
-    transform: translateY(1px) scale(0.92);
-}
-
-/* 3. ХОВЕР-ЕФЕКТИ (КОЛЬОРИ З'ЯВЛЯЮТЬСЯ ТІЛЬКИ ТУТ) */
-.template-actions button:hover {
-    color: white; /* Іконка стає білою */
-    transform: translateY(-1px); /* Ледь-ледь піднімається */
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15); /* З'являється легка тінь */
-    z-index: 2;
-}
-
-/* copy template btn — ховер */
-.copy-template-btn:hover { background-color: var(--success-color); }
-
-/* paste login btn — ховер */
-.paste-login-btn:hover { background-color: var(--button-paste-bg); }
-
-/* paste clipboard btn — ховер */
-.paste-clipboard-btn:hover { background-color: #fd7e14; }
-
-/* search template btn — ховер */
-.search-template-btn:hover { background-color: #6f42c1; }
-
-/* quick notes btn — ховер */
-.quick-notes-btn:hover { background-color: #f39c12; }
-
-/* clear template btn — ховер */
-.clear-template-btn:hover { background-color: var(--primary-accent-color); }
-
-/* delete template btn — ховер */
-.delete-template-btn:hover { background-color: var(--danger-color); }
-
-/* --- СУЧАСНІ РОЗДІЛЮВАЧІ МІЖ КНОПКАМИ --- */
-.action-separator {
-    width: 1px; /* Зробили дуже тонким */
-    height: 14px; /* Коротшим за кнопки */
-    background-color: rgba(0, 0, 0, 0.2); /* Дуже прозорий */
-    border-radius: 2px;
-    margin: 0 2px;
-}
-
-/* Для темної теми */
-body.dark .action-separator {
-    background-color: rgba(255, 255, 255, 0.2);
-}
-
-/* Гарантуємо, що результати не стискаються */
-#results-container {
-    flex-shrink: 0;
-    margin-bottom: 20px;
-}
-
-/* === ІДЕАЛЬНИЙ ІНТЕГРОВАНИЙ СТИЛЬ ПОШУКУ (ДВОКОЛОНКОВИЙ) === */
-/* 1. Головний контейнер (Стиль ідентичний до template-config-bar) */
-.template-search-bar {
-    position: relative; 
-    width: calc(100% - 8px) !important;
-    margin: 0 4px !important;
-    z-index: 5; 
-    
-    display: flex;
-    flex-direction: column;
-    align-items: center; 
-    justify-content: center;
-    
-    background-color: var(--tab-strip-bg);
-    border-radius: 12px;
-    border: 1px solid transparent; 
-    
-    /* === СУЧАСНА АНІМАЦІЯ (ЗАКРИТО) === */
-    max-height: 0;
-    min-height: 0;
-    opacity: 0;
-    overflow: hidden; 
-    padding-top: 0;
-    padding-bottom: 0;
-    transform: translateY(-10px) scale(0.98); /* Легкий зсув вгору */
-    pointer-events: none; /* Забороняємо кліки, коли закрито */
-    
-    /* Універсальний плавний таймінг (0.25s) */
-    transition: 
-        max-height 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-        min-height 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-        opacity 0.2s ease-in-out,
-        transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-        margin 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-        padding 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-        border-color 0.25s ease;
-}
-
-/* template search bar — активний стан */
-.template-search-bar.active {
-    /* === СУЧАСНА АНІМАЦІЯ (ВІДКРИТО) === */
-    max-height: 120px; /* Зроблено з запасом */
-    min-height: 65px;
-    opacity: 1;
-    transform: translateY(0) scale(1); /* Падає на своє місце */
-    pointer-events: auto; /* Вмикаємо кліки */
-    
-    margin-top: 4px !important; 
-    margin-bottom: 4px !important; 
-    padding: 10px 4px 14px 4px; 
-    border-color: var(--input-border-color) !important; /* Плавно проявляємо рамку */
-}
-
-/* =========================================================
-   ГЕНЕРАТОР КОНФІГІВ (ДВА РЯДИ)
-   ========================================================= */
-.template-config-bar {
-    position: relative;
-    width: calc(100% - 8px);
-    margin: 0 4px;
-    
-    background-color: var(--tab-strip-bg);
-    border-radius: 12px;
-    border: 1px solid transparent; /* Готуємо рамку для плавної появи */
-    
-    max-height: 0;
-    opacity: 0;
-    overflow: hidden;
-    padding-top: 0;
-    padding-bottom: 0;
-    transform: translateY(-10px) scale(0.98); /* Легкий зсув вгору */
-    pointer-events: none; /* Забороняємо кліки, коли закрито */
-    
-    /* Універсальний плавний таймінг (0.25s) */
-    transition: 
-        max-height 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-        opacity 0.2s ease-in-out,
-        transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-        margin 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-        padding 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-        border-color 0.25s ease;
-}
-
-/* Темна тема: template config bar */
-body.dark .template-config-bar {
-    background-color: rgba(0, 0, 0, 0.2);
-}
-
-/* template config bar — активний стан */
-.template-config-bar.active {
-    /* === СУЧАСНА АНІМАЦІЯ (ВІДКРИТО) === */
-    max-height: 120px; /* Зроблено з запасом, щоб анімація не обрізалась */
-    opacity: 1;
-    transform: translateY(0) scale(1); /* Падає на своє місце */
-    pointer-events: auto; /* Вмикаємо кліки */
-    z-index: 2000;
-
-    margin-top: 4px;
-    margin-bottom: 4px;
-    padding: 6px;
-    border-color: var(--input-border-color); /* Плавно проявляємо рамку */
-    
-    
-    /* Важливо для випадаючого списку ОЛТ */
-    overflow: visible; 
-}
-
-/* Ідеально для 4 цифр VLAN */
-/* --- ЗАХИСТ ВІД ЗЛАМУ КАРТКИ --- */
-.template-field-group:has(.template-config-bar.active) {
-    /* Картка вирахує свій ідеальний мінімум автоматично */
-    min-width: min-content !important; 
-    
-    /* Дозволяємо їй розтягуватися на всю доступну ширину, якщо є місце */
-    width: 100%; 
-}
-
-/* --- ТЕМНА ТЕМА ДЛЯ ПАНЕЛЕЙ --- */
-body.dark .template-search-bar {
-    background-color: rgba(0, 0, 0, 0.2);
-}
-
-/* Темна тема: template search bar — активний стан */
-body.dark .template-search-bar.active {
-    border: 1px solid rgba(255, 255, 255, 0.15); /* Чітка видима рамка для темної теми */
-}
-
-/* === КНОПКИ ПРОКРУТКИ ДЛЯ ШАБЛОНІВ === */
-.scroll-nav-buttons {
-    position: absolute;
-    bottom: 60px;
-    right: 50px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    z-index: 2000; /* Поверх шаблонів */
-    pointer-events: none; /* Щоб область навколо кнопок пропускала кліки */
-}
-
-/* scroll nav btn */
-.scroll-nav-btn {
-    pointer-events: auto; /* Самі кнопки клікабельні */
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    border: 1px solid var(--input-border-color);
-    
-    /* Напівпрозорий фон (ефект матового скла) */
-    background-color: rgba(255, 255, 255, 0.6);
-    backdrop-filter: blur(4px);
-    
-    color: var(--text-color);
-    font-size: 1.2rem;
-    cursor: pointer;
-    
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    
-    transition: all 0.3s ease;
-    opacity: 0; /* Приховано за замовчуванням (JS покаже) */
-    transform: translateY(10px);
-    visibility: hidden;
-    
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-
-/* Стан, коли кнопка видима */
-.scroll-nav-btn.visible {
-    opacity: 0.7; /* Напівпрозорість у спокої */
-    transform: translateY(0);
-    visibility: visible;
-}
-
-/* При наведенні стають чіткими */
-.scroll-nav-btn.visible:hover {
-    opacity: 1;
-    background-color: var(--input-bg-color);
-    border-color: var(--primary-accent-color);
-    color: var(--primary-accent-color);
-    box-shadow: 0 6px 16px rgba(0,0,0,0.2);
-    transform: scale(1.1);
-}
-
-/* Темна тема */
-body.dark .scroll-nav-btn {
-    background-color: rgba(40, 40, 40, 0.6);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-}
-
-/* Темна тема: scroll nav btn — ховер */
-body.dark .scroll-nav-btn.visible:hover {
-    background-color: var(--template-bg-color);
-    border-color: var(--secondary-accent-color);
-    color: var(--secondary-accent-color);
-}
-
-
 /* ================================================================
    12. ГЕНЕРАТОР ЛОГІНІВ
    Вкладка генератора логінів: картки результатів, бейдж типу
@@ -3991,7 +4039,7 @@ body.dark .scroll-nav-btn.visible:hover {
 
 /* --- ТЕМНА ТЕМА ДЛЯ КАРТКИ --- */
 body.dark .login-generator-container .result-item {
-    background-color: #2c2c2e;
+    background-color: var(--bg-second-color);
     border-color: #3f4145;
 }
 
@@ -4131,7 +4179,9 @@ body.dark .login-generator-container .result-item .regenerate-login-btn {
     height: auto !important;
     max-height: 100% !important;
     
-    display: block !important;
+    display: flex !important;
+    flex-direction: column;
+    min-height: 0;
     
     /* ЗАМОВЧУВАННЯ: Скрол прихований (прибирає миготіння смуги при закритті) */
     overflow: hidden !important; 
@@ -4140,11 +4190,10 @@ body.dark .login-generator-container .result-item .regenerate-login-btn {
 
 }
 
-/* container — активний стан */
+/* container — активний стан: скрол більше НЕ на картці */
 .container.gpon-commands-container.active .content-card,
 .container.login-generator-container.active .content-card {
-    overflow-y: auto !important;
-    overflow-x: hidden;
+    overflow: hidden !important;
 }
 
 /* 3. Оновлений стиль для поля вводу (Велике і по центру) */
@@ -4191,7 +4240,7 @@ body.dark .login-generator-container .result-item .regenerate-login-btn {
     justify-content: center;
     gap: 20px;
     width: 420px;
-    background-color: #FCFCFC; 
+    background-color: var(--bg-second-color); 
     border: 1px solid var(--input-border-color);
     border-radius: 12px;
     padding: 14px 20px;
@@ -4200,7 +4249,7 @@ body.dark .login-generator-container .result-item .regenerate-login-btn {
 
 /* Темна тема: date inputs row */
 body.dark .date-inputs-row {
-    background-color: #2c2c2e;
+    background-color: var(--bg-second-color);
 }
 
 /* date calculator container */
@@ -4269,7 +4318,7 @@ body.dark .date-calculator-container #result-section {
     margin-top: 0px;
     padding: 0;
     
-    background-color: #FCFCFC; 
+    background-color: var(--bg-second-color); 
     border: 1px solid var(--input-border-color);
     border-radius: 12px; 
     
@@ -4293,19 +4342,19 @@ body.dark .date-calculator-container #result-section {
 /* Область з контентом має свій фон для відділення */
 .date-calculator-container #result-section #result-display {
     padding: 15px;
-    background-color: #fcfcfc;
+    background-color: var(--bg-second-color);
 	border-radius: 6px; 
 }
 
 /* Оновлення для темної теми */
 body.dark .date-calculator-container #result-section {
-    background-color: #2c2c2e; /* Темний фон контейнера */
+    background-color: var(--bg-second-color); /* Темний фон контейнера */
     border-color: var(--input-border-color);
 }
 
 /* Темна тема: date calculator container */
 body.dark .date-calculator-container #result-section #result-display {
-    background-color: #2c2c2e; /* Темний фон для тексту, замість білого */
+    background-color: var(--bg-second-color); /* Темний фон для тексту, замість білого */
 }
 
 /* Темна тема: date calculator container */
@@ -4367,14 +4416,14 @@ body.dark .date-calculator-container #result-section h2 {
     
     padding: 14px 20px; 
     border-radius: 12px; 
-    background-color: #FCFCFC; 
+    background-color: var(--bg-second-color); 
     border: 1px solid var(--input-border-color); 
     width: 420px; 
 }
 
 /* Темна тема: calculator actions block */
 body.dark .calculator-actions-block {
-    background-color: #2c2c2e;
+    background-color: var(--bg-second-color);
     border-color: var(--input-border-color);
 }
 
@@ -4840,7 +4889,7 @@ body.dark #auto-reset-button:focus-visible {
 /* Основний блок калькулятора (ЗБІЛЬШЕНО ШИРИНУ) */
 .win11-calc {
     width: 320px; /* Було 280px -> Стало 320px (+~15%) */
-    background-color: #fcfcfc;
+    background-color: var(--bg-second-color);
     border: 1px solid var(--input-border-color);
     border-radius: 12px; /* Трохи більше заокруглення */
     padding: 10px;       /* Більше внутрішнього відступу */
@@ -4850,7 +4899,7 @@ body.dark #auto-reset-button:focus-visible {
 
 /* Темна тема: win11 calc */
 body.dark .win11-calc {
-    background-color: #2c2c2e;
+    background-color: var(--bg-second-color);
     border-color: var(--input-border-color);
 }
 
@@ -5118,7 +5167,7 @@ body.dark .c-btn.equal { background-color: var(--secondary-accent-color); color:
 
 /* Темна тема: calc history panel */
 body.dark .calc-history-panel {
-    background-color: #2c2c2e;
+    background-color: var(--bg-second-color);
 }
 
 /* Шапка історії */

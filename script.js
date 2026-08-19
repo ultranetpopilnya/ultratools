@@ -32,10 +32,19 @@ function clearAllTemplates() {
 }
 
 let lastGeneratedLogin = ''; // Зберігатиме останній згенерований логін
-    function handleDeviceTypeChange() {
-        const selectedValue = document.getElementById('device-type').value;
-        displayCommands(selectedValue);
-    }
+    // Отримує поточний обраний тип (читає текст активної кнопки)
+function getActiveDeviceType() {
+    const activeBtn = document.querySelector('.segmented-control .segment-btn.active');
+    return activeBtn ? activeBtn.textContent.trim().toLowerCase() : 'gpon';
+}
+
+// Зпрацьовує при кліку на кнопки-вкладки
+window.changeDeviceType = function(event, deviceName) {
+    const buttons = event.currentTarget.parentElement.querySelectorAll('.segment-btn');
+    buttons.forEach(btn => btn.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+    displayCommands(deviceName);
+};
     
     let isAutoResetEnabled = false; 
     
@@ -62,15 +71,11 @@ let lastGeneratedLogin = ''; // Зберігатиме останній зген
             document.querySelector('.tab-content-wrapper').style.minHeight = defaultHeight;
             
             if (tabId === 'gpon-commands') {
-                 const deviceSelect = document.getElementById('device-type');
-                 const commandOutput = document.getElementById('command-output');
-                 
-                 // ЗМІНА: Перевіряємо, чи список пустий. 
-                 // Якщо там вже є команди — НЕ перемальовуємо їх, щоб зберегти відкриті стани.
-                 if (deviceSelect && commandOutput && commandOutput.children.length === 0) {
-                    displayCommands(deviceSelect.value);
-                 }
-            }
+     const commandOutput = document.getElementById('command-output');
+     if (commandOutput && commandOutput.children.length === 0) {
+        displayCommands(getActiveDeviceType());
+     }
+}
         }
         if (activeButton) {
             activeButton.classList.add('active');
@@ -667,10 +672,9 @@ function loadCommandsFromFile() {
             });
 
             const activeTab = localStorage.getItem('activeTab');
-            if (activeTab === 'gpon-commands') {
-                const deviceSelect = document.getElementById('device-type');
-                if (deviceSelect) displayCommands(deviceSelect.value);
-            }
+if (activeTab === 'gpon-commands') {
+    displayCommands(getActiveDeviceType());
+}
         })
         .catch(err => {
             // ... (помилка залишається як була)
@@ -3358,11 +3362,10 @@ if (importFileInput) importFileInput.addEventListener('change', handleFileImport
 if (clearAllButton) clearAllButton.onclick = clearAllTemplates;
 
     const initialTab = localStorage.getItem('activeTab') || 'login-generator';
-    if (initialTab === 'login-generator') generateLogins(); 
-    if (initialTab === 'gpon-commands') {
-         const deviceSelect = document.getElementById('device-type');
-         if (deviceSelect) displayCommands(deviceSelect.value);
-    }
+if (initialTab === 'login-generator') generateLogins(); 
+if (initialTab === 'gpon-commands') {
+     displayCommands(getActiveDeviceType());
+}
 	
 // === ВИПРАВЛЕНИЙ РОЗУМНИЙ СНІГОПАД ===
     function createSnowflakes() {
