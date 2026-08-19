@@ -1854,10 +1854,10 @@ z-index: 3;
 /* === СЕГМЕНТОВАНИЙ ПЕРЕМИКАЧ (СВІТЛА ТЕМА) === */
 .segmented-control {
     display: inline-flex;
-    background-color: var(--bg-second-color); /* Світло-сірий фон плашки */
+    background-color: var(--bg-second-color);
     border-radius: 12px;
     padding: 4px;
-    gap: 2px;
+    gap: 4px;
     border: 1px solid var(--input-border-color);
 }
 
@@ -1888,25 +1888,24 @@ z-index: 3;
     min-height: min-content !important;
 }
 
-/* Темна тема: static clarification message */
-body.dark #static-clarification-message {
-    color: #20be00;
-}
-
 #controls-and-clarification {
     display: flex;
     justify-content: center;
     margin-bottom: 15px;
-        flex-shrink: 0 !important;
+    flex-shrink: 0 !important;
     min-height: min-content !important;
 }
 
-
+/* --- КНОПКИ ПЕРЕМИКАЧА --- */
 .segment-btn {
+    /* Використовуємо flex для ідеального центрування тексту по вертикалі та горизонталі */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
     width: 76px;
     height: 28px;
-    text-align: center;  /* Текст всередині кнопок по центру */
-    padding: 0; 
+    padding: 0;
 
     background: transparent;
     border: none;
@@ -1915,41 +1914,69 @@ body.dark #static-clarification-message {
     font-weight: 600;
     color: #495057;
     cursor: pointer;
-    transition: all 0.2s ease;
     
-    -webkit-font-smoothing: antialiased; /* Фіксує згладжування шрифту */
-    transform: translateZ(0);            /* Апаратне прискорення (забирає мікро-сіпання) */
-    box-sizing: border-box;              /* Щоб рамки і тіні не міняли розмір */
+    /* Оптимізована транзиція (без all для кращої продуктивності) */
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.1s ease;
+    
+    -webkit-font-smoothing: antialiased;
+    transform: translateZ(0);            
+    box-sizing: border-box;  
+    
+    /* Прибираємо стандартне підсвічування при тапі на мобільних пристроях */
+    -webkit-tap-highlight-color: transparent;
 }
 
-.segment-btn:hover {
+/* НАВЕДЕННЯ НА НЕАКТИВНУ вкладку (Світла тема) */
+.segment-btn:not(.active):hover {
     color: #212529;
+    background-color: rgba(0, 0, 0, 0.05); /* Легкий сірий фон */
 }
 
+/* НАВІГАЦІЯ З КЛАВІАТУРИ (доступність) */
+.segment-btn:focus-visible {
+    outline: 2px solid var(--primary-accent-color, #007bff);
+    outline-offset: -2px;
+}
+
+/* АКТИВНА ВКЛАДКА (Світла тема) */
 .segment-btn.active {
     background-color: var(--primary-accent-color, #007bff);
     border-color: var(--primary-accent-color, #007bff);
     color: #fff;
+    cursor: default; /* Показуємо, що кнопка вже натиснута і більше не клікабельна */
 }
 
-/* === СЕГМЕНТОВАНИЙ ПЕРЕМИКАЧ (ТЕМНА ТЕМА) === */
+
+/* === ТЕМНА ТЕМА === */
+body.dark #static-clarification-message {
+    color: #20be00;
+}
+
 body.dark .segmented-control {
-    background-color: var(--bg-second-color); /* Темний фон плашки (адаптовано під ваші кольори) */
+    background-color: var(--bg-second-color);
     border: 1px solid var(--input-border-color);
 }
 
 body.dark .segment-btn {
-    color: var(--tab-inactive-text, #8892b0); /* Сірий текст у темній темі */
+    color: var(--tab-inactive-text, #8892b0);
 }
 
-body.dark .segment-btn:hover {
-    color: var(--text-color, #ccd6f6); /* Світліший при наведенні */
+/* НАВЕДЕННЯ НА НЕАКТИВНУ вкладку (Темна тема) */
+body.dark .segment-btn:not(.active):hover {
+    color: var(--text-color, #ccd6f6);
+    background-color: rgba(255, 255, 255, 0.08); /* Легке висвітлення фону */
 }
 
+/* НАВІГАЦІЯ З КЛАВІАТУРИ (Темна тема) */
+body.dark .segment-btn:focus-visible {
+    outline-color: var(--secondary-accent-color, #ff9800);
+}
+
+/* АКТИВНА ВКЛАДКА (Темна тема) */
 body.dark .segment-btn.active {
     background-color: var(--secondary-accent-color, #ff9800);
     border-color: var(--secondary-accent-color, #ff9800);
-    color: #121212; /* або var(--bg-color) */
+    color: #121212;
 }
 
 /* command list */
@@ -5453,6 +5480,7 @@ body.dark .history-copy-btn:hover { background: var(--secondary-accent-color); c
 }
 
 /* === ЕФЕКТ ФІЗИЧНОГО НАТИСКАННЯ ДЛЯ ШИРОКИХ КНОПОК === */
+.segment-btn:not(.active):active,
 #auto-reset-button:active,
 .stepper-btn:active,
 .calc-action-button:active,
@@ -5481,7 +5509,7 @@ body.dark .history-copy-btn:hover { background: var(--secondary-accent-color); c
 .login-generator-container .result-item .regenerate-login-btn:hover:active,
 .login-generator-container .result-item .copy-login-btn:hover:active,
 .scroll-nav-btn.visible:hover:active {
-    transform: translateY(1px) scale(0.95);
+    transform: translateY(1px) scale(0.96);
     box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
     filter: brightness(0.9);
     transition: all 0.05s ease-out;
