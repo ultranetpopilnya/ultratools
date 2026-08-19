@@ -2246,7 +2246,7 @@ body.dark .command-item.has-subcommands .command-text:hover {
     margin: 0 auto;
     
     /* Створюємо змінну зі значенням за замовчуванням */
-    --dynamic-width: 54%; 
+    --dynamic-width: 94%; 
     max-width: var(--dynamic-width);
     
     /* Анімуємо саме max-width. Важливо: без !important на самій властивості, інакше глючить */
@@ -2256,8 +2256,8 @@ body.dark .command-item.has-subcommands .command-text:hover {
 }
 
 /* container */
-.container.gpon-commands-container:has(.segment-btn.active[onclick*="'gpon'"])  { --dynamic-width: 93%; }
-.container.gpon-commands-container:has(.segment-btn.active[onclick*="'epon'"])  { --dynamic-width: 50%; }
+.container.gpon-commands-container:has(.segment-btn.active[onclick*="'gpon'"])  { --dynamic-width: 96%; }
+.container.gpon-commands-container:has(.segment-btn.active[onclick*="'epon'"])  { --dynamic-width: 56%; }
 .container.gpon-commands-container:has(.segment-btn.active[onclick*="'bdcom'"]) { --dynamic-width: 56%; }
 .container.gpon-commands-container:has(.segment-btn.active[onclick*="'mx80'"])  { --dynamic-width: 48%; }
 
@@ -2307,8 +2307,8 @@ body.dark #command-output.two-columns::after {
     break-inside: avoid;          
     page-break-inside: avoid;     
     -webkit-column-break-inside: avoid; 
-    display: block;               /* ← виправлено: block замість inline-block */
-    overflow: hidden;             /* ← це замінює inline-block у ролі "не розривай" */
+    display: block;            
+    overflow: hidden;             
     width: 100%;                  
     margin-bottom: 4px;           
 }
