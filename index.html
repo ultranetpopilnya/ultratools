@@ -352,19 +352,28 @@
             
 <div class="container gpon-commands-container" data-content="gpon-commands">
     <div class="content-card">
-        <h2 style="margin-top: 0; margin-bottom: 4px; text-align: center;">💻 Команди GPON/EPON/BDCOM/MX80</h2>
-
-        <p id="static-clarification-message">
-            ℹ️ Натисніть на будь-яку команду для автоматичного копіювання!
-        </p>
+        <h2 style="margin-top: 0; margin-bottom: 16px; text-align: center;">💻 Команди GPON/EPON/BDCOM/MX80</h2>
 
         <!-- Блок перемикачів -->
         <div id="controls-and-clarification">
-            <div class="segmented-control">
-                <button class="segment-btn active" onclick="changeDeviceType(event, 'gpon')">GPON</button>
-                <button class="segment-btn" onclick="changeDeviceType(event, 'epon')">EPON</button>
-                <button class="segment-btn" onclick="changeDeviceType(event, 'bdcom')">BDCOM</button>
-                <button class="segment-btn" onclick="changeDeviceType(event, 'mx80')">MX80</button>
+            <!-- НОВА ОБГОРТКА: Тримає разом кнопки та іконку по центру -->
+            <div class="switch-with-info">
+                
+                <div class="segmented-control">
+                    <button class="segment-btn active" onclick="changeDeviceType(event, 'gpon')">GPON</button>
+                    <button class="segment-btn" onclick="changeDeviceType(event, 'epon')">EPON</button>
+                    <button class="segment-btn" onclick="changeDeviceType(event, 'bdcom')">BDCOM</button>
+                    <button class="segment-btn" onclick="changeDeviceType(event, 'mx80')">MX80</button>
+                </div>
+                
+                <!-- ІКОНКА З ПІДКАЗКОЮ -->
+                <div class="info-tooltip-wrapper" title="">
+                    <i class="fa-solid fa-circle-info info-icon"></i>
+                    <div class="info-tooltip-text">
+                        Натисніть на будь-яку команду для автоматичного копіювання!
+                    </div>
+                </div>
+
             </div>
         </div>
 
