@@ -151,7 +151,7 @@ function toggleLoginAutoClear() {
     const btn = document.getElementById('login-autoclear-btn');
     if (btn) btn.classList.toggle('active', isAutoClearLoginEnabled);
     
-    showNotification(isAutoClearLoginEnabled ? "Автоочищення ПІБ увімкнено" : "Автоочищення ПІБ вимкнено");
+    showNotification(isAutoClearLoginEnabled ? "Автоочищення текстового поля увімкнено" : "Автоочищення текстового поля вимкнено");
 }
 
 document.addEventListener('DOMContentLoaded', () => {
