@@ -31,31 +31,31 @@ select {
 --primary-accent-color: #3b82f6;
 --primary-accent-shadow: rgba(59, 130, 246, 0.35);
 --secondary-accent-color: #e0a83f;
---success-color: #10b981;
---danger-color: #ef4444;
+ --success-color: #059669; 
+--danger-color: #dc2626;
 --description-color: #4a5568;
 
 --input-bg-color: #fff;
---input-border-color: #d1d5db;
+ --input-border-color: #cbd5e1;
 --input-focus-border-color: var(--primary-accent-color);
 
 --template-bg-color: #fdfdfd;
---template-border-color: #e2e8f0;
+--template-border-color: #cbd5e1;
 --template-handle-bg: #f1f5f9;
 --template-handle-border: #e2e8f0;
 
---tab-strip-bg: #edf2f7;
---tab-inactive-text: #64748b;
+--tab-strip-bg: rgba(184, 187, 161, 0.137);
+--tab-inactive-text: #5b6b83;
 
---scrollbar-thumb: #cbd5e1;
+--scrollbar-thumb: #94a3b8;
 --scrollbar-track: transparent;
 
 --calc-duration-color: var(--primary-accent-color);
---calc-days-color: #f97316;
---calc-hours-color: #8b5cf6;
+--calc-days-color: #ea580c;
+--calc-hours-color: #7c3aed;
 --button-paste-bg: #0891b2;
---resize-handle-color: rgba(0, 0, 0, 0.25);
---highlight-bg-color: rgba(255, 224, 130, 0.6);
+--resize-handle-color: rgba(0, 0, 0, 0.35);
+--highlight-bg-color: rgba(253, 224, 71, 0.8);
 --snow-color: #7dd3fc;
 --bg-color: #f8fafc;
 --bg-second-color: #ffffff;
@@ -118,7 +118,6 @@ body.dark {
 body {
     position: relative;
     min-height: 100vh;
-    background: var(--page-bg);
 }
 
 body::before {
@@ -275,7 +274,7 @@ body::after {
 
 /* Ефект при наведенні або активності */
 *::-webkit-scrollbar-thumb:hover {
-    background-color: var(--accent-color, #888); /* Колір стає яскравішим */
+    background-color: #888; /* Колір стає яскравішим */
 }
 
 /* 2. Для Firefox (підтримка стандартів) */
@@ -567,7 +566,7 @@ body.dark .page-title .isp-e-color-p {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #e4e6eb;
+    background-color: var(--tab-strip-bg);
     padding: 4px; 
     border-radius: 9999px;
     margin: -11px auto 0 auto;
@@ -1064,14 +1063,14 @@ body.dark .add-tab-item:active {
 
 /* drag handle — ховер */
 .drag-handle:hover { 
-    color: var(--accent-color);
+    color: var(--primary-accent-color);
 }
 
 /* Ефект при натисненні (утриманні) */
 .drag-handle:active,
 .drag-handle.is-dragging { 
     cursor: grabbing; 
-    color: var(--accent-color);
+    color: var(--primary-accent-color);
     transform: translateY(1px) scale(0.92);
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15)); /* М'яка тінь */
 }
@@ -1780,8 +1779,8 @@ body.holiday-mode #snow-container {
             position: fixed;
             bottom: 20px;
             right: 20px;
-            background-color: #38c172; 
-            color: white;
+            background-color: var(--success-color); 
+            color: #fff;
             padding: 10px 20px;
             border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
@@ -1805,7 +1804,7 @@ body.holiday-mode #snow-container {
 /* === СЕГМЕНТОВАНИЙ ПЕРЕМИКАЧ (СВІТЛА ТЕМА) === */
 .segmented-control {
     display: inline-flex;
-    background-color: rgba(0, 0, 0, 0.03); 
+    background-color: rgba(0, 0, 0, 0.068); 
     border: 1px solid rgba(0, 0, 0, 0.06);
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.04);
     border-radius: 10px;
@@ -1992,17 +1991,15 @@ body.dark .info-tooltip-wrapper:hover .info-icon {
     color: var(--secondary-accent-color);
 }
 
-/* Бульбашка в темній темі */
 body.dark .info-tooltip-text {
-    background-color: var(--input-bg-color);
-    color: var(--text-color);
-    border: 1px solid var(--input-border-color);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+    background-color: #4a4a4b; /* Світліший сірий, щоб відірвати від фону */
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.7);
 }
 
-/* Хвостик в темній темі */
 body.dark .info-tooltip-text::after {
-    border-color: var(--input-bg-color) transparent transparent transparent;
+    border-color: #4a4a4b transparent transparent transparent; /* Хвостик того ж кольору */
 }
 
 /* Рамка для хвостика в темній темі, щоб не зливався */
@@ -2088,13 +2085,13 @@ body.dark .command-item {
 
 /* command item — ховер */
 .command-item:hover {
-            background-color: #fff; 
+            background-color: var(--input-bg-color); 
             box-shadow: none; 
         }
 
 /* Темна тема: command item — ховер */
 body.dark .command-item:hover {
-            background-color: #333333; 
+            background-color: var(--input-bg-color); 
         }
 
 /* command item — активний стан */
@@ -2280,7 +2277,7 @@ body.dark .sub-command-item .command-text {
     margin-left: 10px;
     font-size: 0.8em;
     transition: transform 0.3s ease;
-    color: #888;
+    color: var(--tab-inactive-text);
 }
 
 /* Поворот стрілочки при відкритті */
@@ -2491,7 +2488,7 @@ body.dark .command-item.static-header .command-text:hover {
 
 /* highlighter backdrop */
 .highlighter-backdrop mark {
-    background-color: #85e07d;
+    background-color: var(--highlight-bg-color);
     color: transparent; /* Не змінюємо колір тексту, лише фон */
     border-radius: 4px;
 }
@@ -2721,14 +2718,9 @@ select:focus,
 /* 2. Кнопки Імпорт/Експорт - СВІТЛА ТЕМА */
 #import-templates-button,
 #export-templates-button {
-    /* Білий фон робить кнопку чіткою на сірому фоні сайту */
-    background-color: #ffffff; 
-    
-    /* Тонка рамка для чіткості */
-    border: 1px solid #d1d5db; 
-    
-    /* Темно-сіра іконка (майже чорна) для гарного контрасту */
-    color: #4b5563; 
+    background-color: var(--input-bg-color); 
+    border: 1px solid var(--input-border-color); 
+    color: var(--description-color);
     
     /* Легка тінь знизу, щоб кнопка "відривалася" від фону */
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
@@ -2745,9 +2737,9 @@ select:focus,
 
 /* 3. Кнопка Очистити - СВІТЛА ТЕМА */
 #clear-all-templates-button {
-    background-color: #ffffff;
-    border: 1px solid #e5e7eb; /* Світліша рамка, ніж у інших */
-    color: #dc3545; /* Червона іконка одразу */
+    background-color: var(--input-bg-color); 
+    border: 1px solid var(--input-border-color); 
+    color: var(--danger-color);
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
@@ -2794,8 +2786,8 @@ body.dark #export-templates-button:hover {
 
 /* 3. Кнопка Очистити - ТЕМНА */
 body.dark #clear-all-templates-button {
-    background-color: rgba(220, 53, 69, 0.05);
-    border: 1px solid rgba(220, 53, 69, 0.4);
+    background-color: rgba(220, 53, 69, 0.15); /* Трохи більше заливки */
+    border: 1px solid rgba(255, 107, 107, 0.6); /* Яскравіша рамка */
     color: #ff6b6b;
     box-shadow: none;
 }
@@ -2838,7 +2830,7 @@ body.dark #clear-all-templates-button:hover {
 
 /* Порожнє місце (заглушка), куди впаде картка */
 .template-drag-placeholder {
-    border: 2px dashed var(--accent-color);
+    border: 2px dashed var(--input-border-color);
     background-color: rgba(0, 0, 0, 0.03);
     border-radius: 12px;
     pointer-events: none; /* Щоб мишка крізь нього бачила інші елементи */
@@ -2870,8 +2862,8 @@ body.dark .template-drag-placeholder {
             border: 1px solid var(--input-border-color);
             border-radius: 12px;
             font-size: 16px;
-            color: #333;
-            background-color: #f0f0f0;
+            color: var(--text-color); 
+            background-color: var(--tab-strip-bg);
             min-width: 150px;	
         }
 
@@ -2879,7 +2871,6 @@ body.dark .template-drag-placeholder {
 body.dark .template-name-input {
     background-color: var(--input-bg-color);
     border-color: var(--input-border-color);
-    color: var(--text-color);
 }
 
 /* template actions */
@@ -2904,7 +2895,7 @@ body.dark .template-name-input {
     border: none;
     border-radius: 6px; /* Замість круглого робимо м'який квадрат (більш сучасно) */
     background-color: transparent; /* ПРИБИРАЄМО ФОН */
-    color: #888888; /* Нейтральний сірий колір іконки */
+    color: var(--tab-inactive-text);
     box-shadow: none; /* Прибираємо тінь */
     cursor: pointer;
     
@@ -4177,7 +4168,7 @@ body.dark .speed-select option {
     font-size: 0.75rem; 
     text-transform: uppercase; 
     font-weight: 700; /* Робимо жирнішим */
-    color: var(--primary-accent-color); /* Використовуємо ваш фірмовий синій колір */
+    color: var(--text-color); /* Використовуємо ваш фірмовий синій колір */
     letter-spacing: 0.8px;
     margin-bottom: 4px;
 }
@@ -4194,7 +4185,7 @@ body.dark .speed-select option {
 
 /* === Темна тема для підпису === */
 body.dark .actions-block-title {
-    color: var(--secondary-accent-color); /* Фірмовий помаранчевий/жовтий для темної теми */
+    color: var(--text-color)
 }
 
 body.dark .actions-block-title::after {
@@ -4320,7 +4311,7 @@ body.dark #login-autoclear-btn:hover:not(.active) i {
     padding: 10px 10px 10px 10px; 
     border: 1px solid var(--input-border-color); 
     border-radius: 12px;
-    background-color: #ffffff; 
+    background-color: var(--bg-second-color); 
     min-height: 52px; 
 }
 
@@ -4358,7 +4349,7 @@ body.dark .login-generator-container .result-type-badge {
 /* --- ЗЕЛЕНИЙ ЛОГІН --- */
 .login-generator-container .result-item span.login-text {
     font-weight: bold;
-    color: #28a745; /* Світла тема: зелений */
+    color: var(--text-color);
     font-size: 1.05em;
     margin: 0;
     padding-right: 10px; /* Відступ від кнопок */
@@ -4366,11 +4357,6 @@ body.dark .login-generator-container .result-type-badge {
     white-space: normal; 
     word-break: break-all; /* Переносить довгий текст */
     flex-grow: 1; /* Займає весь вільний простір зліва */
-}
-
-/* --- ТЕМНА ТЕМА ДЛЯ ТЕКСТУ (робимо яскравішим) --- */
-body.dark .login-generator-container .result-item span.login-text {
-    color: #2ecc71; /* Яскравіший зелений, щоб добре читався на чорному */
 }
 
 /* Ховаємо оригінальне ім'я */
@@ -5278,7 +5264,7 @@ body.dark .calc-display-container {
 /* calc prev operation */
 #calc-prev-operation {
     font-size: 14px; 
-    color: #888;
+    color: var(--tab-inactive-text);
     height: 20px;
     margin-bottom: 4px;
     
@@ -5521,7 +5507,7 @@ body.dark .hist-item:hover {
 }
 
 /* hist op */
-.hist-op { font-size: 12px; color: #888; margin-bottom: 3px; }
+.hist-op { font-size: 12px; color: var(--tab-inactive-text); margin-bottom: 3px; }
 
 /* hist res */
 .hist-res { font-size: 18px; font-weight: 600; color: var(--text-color); }
@@ -6047,7 +6033,7 @@ body.dark .qn-item {
 
 /* qn drag handle — ховер */
 .qn-drag-handle:hover {
-    color: #888;
+    color: var(--tab-inactive-text);
 }
 
 /* qn drag handle — активний стан */
@@ -6140,6 +6126,22 @@ body.dark .qn-item {
 
 /* Темна тема: qn edit btn — ховер */
 body.dark .qn-edit-btn:hover { color: var(--secondary-accent-color); background-color: rgba(230, 162, 46, 0.15); }
+
+/* Темна тема: плейсхолдер та перетягування нотаток */
+body.dark .qn-placeholder {
+    border-color: var(--secondary-accent-color);
+    background: rgba(230, 162, 46, 0.08);
+}
+
+body.dark .qn-item.qn-dragging {
+    background: rgba(230, 162, 46, 0.08) !important;
+    border-color: var(--secondary-accent-color) !important; 
+}
+
+body.dark .qn-item.qn-drag-over {
+    border-color: var(--secondary-accent-color);
+    background: rgba(230, 162, 46, 0.08);
+}
 
 /* Повідомлення про порожній список */
 .qn-empty {
