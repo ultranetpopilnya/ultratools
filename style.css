@@ -25,40 +25,40 @@ select {
     --c3: #f1f1f1;
     --c4: #f6fcff;
 
-    /* Світла тема */
-    --text-color: #333;
-    --header-color: #444;
-    --primary-accent-color: #007bff;
-    --primary-accent-shadow: rgba(0, 123, 255, 0.4);
-    --secondary-accent-color: #E6A22E;
-    --success-color: #38c172;
-    --danger-color: #dc3545;
-    --description-color: #444;
-    
-    --input-bg-color: #fff;
-    --input-border-color: #ccc;
-    --input-focus-border-color: var(--primary-accent-color);
-    
-    --template-bg-color: #fdfdfd;
-    --template-border-color: #ccc;
-    --template-handle-bg: #f0f0f0;
-    --template-handle-border: #ddd;
-    
-    --tab-strip-bg: #E8E8E8;
-    --tab-inactive-text: #555;
-    
---scrollbar-thumb: #c1c1c1;
-    --scrollbar-track: transparent;
-	
-	--calc-duration-color: var(--primary-accent-color);
---calc-days-color: #ff5722;
---calc-hours-color: #6a0dad;
---button-paste-bg: #17a2b8;
---resize-handle-color: rgba(0,0,0,0.3);
---highlight-bg-color: rgba(255, 229, 100, 0.7);
-    --snow-color: #46d1ff;  /* Обов'язково 6 символів і крапка з комою */
+/* Світла тема */
+--text-color: #2d3748;
+--header-color: #1a202c;
+--primary-accent-color: #3b82f6;
+--primary-accent-shadow: rgba(59, 130, 246, 0.35);
+--secondary-accent-color: #e0a83f;
+--success-color: #10b981;
+--danger-color: #ef4444;
+--description-color: #4a5568;
+
+--input-bg-color: #fff;
+--input-border-color: #d1d5db;
+--input-focus-border-color: var(--primary-accent-color);
+
+--template-bg-color: #fdfdfd;
+--template-border-color: #e2e8f0;
+--template-handle-bg: #f1f5f9;
+--template-handle-border: #e2e8f0;
+
+--tab-strip-bg: #edf2f7;
+--tab-inactive-text: #64748b;
+
+--scrollbar-thumb: #cbd5e1;
+--scrollbar-track: transparent;
+
+--calc-duration-color: var(--primary-accent-color);
+--calc-days-color: #f97316;
+--calc-hours-color: #8b5cf6;
+--button-paste-bg: #0891b2;
+--resize-handle-color: rgba(0, 0, 0, 0.25);
+--highlight-bg-color: rgba(255, 224, 130, 0.6);
+--snow-color: #7dd3fc;
 --bg-color: #f8fafc;
---bg-second-color: #fcfcfc;
+--bg-second-color: #ffffff;
 
     --glass-white-lg: rgba(255, 255, 255, 0.9);
         --glass-white: rgba(255, 255, 255, 0.3);
@@ -84,35 +84,35 @@ body.dark {
     --c3: #141a18;
     --c4: #11131d;
 
-    /* Темна тема (перевизначення) */
+/* Темна тема (перевизначення) */
 --text-color: #e0e0e0;
-    --header-color: #e0e0e0;
-    --description-color: #dfdfdf;
-    
-    --input-bg-color: #333333;
-    --input-border-color: #555555;
-    --input-focus-border-color: var(--secondary-accent-color);
-    --primary-accent-shadow: rgba(230, 162, 46, 0.4);
+--header-color: #e0e0e0;
+--description-color: #dfdfdf;
 
-    --template-bg-color: #2b2b2b;
-    --template-border-color: #555;
-    --template-handle-bg: #4a4a4a;
-    --template-handle-border: #555;
-    
-    --tab-strip-bg: #2b2b2b;
-    --tab-inactive-text: #e0e0e0;
-    
+--input-bg-color: #333333;
+--input-border-color: #555555;
+--input-focus-border-color: var(--secondary-accent-color);
+--primary-accent-shadow: rgba(230, 162, 46, 0.4);
+
+--template-bg-color: #2b2b2b;
+--template-border-color: #555;
+--template-handle-bg: #4a4a4a;
+--template-handle-border: #555;
+
+--tab-strip-bg: #2b2b2b;
+--tab-inactive-text: #e0e0e0;
+
 --scrollbar-thumb: #4a4a4a;
-    --scrollbar-track: transparent;
+--scrollbar-track: transparent;
 
---calc-duration-color: #00d4ff;
+--calc-duration-color: #38bdf8;
 --calc-days-color: #ff9800;
 --calc-hours-color: #9370db;
---resize-handle-color: rgba(255,255,255,0.3);
+--resize-handle-color: rgba(255, 255, 255, 0.3);
 --highlight-bg-color: rgba(230, 162, 46, 0.5);
-    --snow-color: #ffffff;
-    --bg-color: #191919;
-    --bg-second-color: #2c2c2e;
+--snow-color: #ffffff;
+--bg-color: #191919;
+--bg-second-color: #2c2c2e;
 }
 
 body {
@@ -2018,7 +2018,7 @@ body.dark .info-tooltip-text::before {
 }
 
 body.dark .segmented-control {
-    background-color: rgba(0, 0, 0, 0.25);
+    background-color: var(--bg-second-color);
     border: 1px solid rgba(255, 255, 255, 0.05);
     box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.4);
 }
@@ -4152,6 +4152,143 @@ body.dark .speed-select option {
    Вкладка генератора логінів: картки результатів, бейдж типу
    логіна, кнопки перегенерувати/скопіювати.
    ================================================================ */
+/* === ПАНЕЛЬ КНОПОК НАД ПОЛЕМ ВВОДУ ПІБ === */
+.login-actions-block {
+    display: flex;
+    flex-direction: column; /* Тепер елементи йдуть зверху вниз (Текст -> Кнопки) */
+    gap: 8px; /* Відстань між текстом і кнопками */
+    
+    padding: 10px 14px; 
+    border-radius: 12px; 
+    background-color: var(--bg-second-color); 
+    border: 1px solid var(--input-border-color); 
+    
+    width: 90%; 
+    box-sizing: border-box;
+    margin: 0 auto 20px auto; /* Вирівнювання по центру */
+}
+
+/* === Стиль для підпису блоку (з лінією та іконкою) === */
+.actions-block-title {
+    display: flex;
+    align-items: center; /* Вирівнюємо іконку, текст і лінію по центру */
+    gap: 8px; /* Відстань між іконкою та текстом */
+    
+    font-size: 0.75rem; 
+    text-transform: uppercase; 
+    font-weight: 700; /* Робимо жирнішим */
+    color: var(--primary-accent-color); /* Використовуємо ваш фірмовий синій колір */
+    letter-spacing: 0.8px;
+    margin-bottom: 4px;
+}
+
+/* Створюємо красиву лінію справа від тексту */
+.actions-block-title::after {
+    content: '';
+    flex-grow: 1; /* Лінія займає весь вільний простір до правого краю */
+    height: 1px;
+    /* Градієнт: від напівпрозорого синього до повністю прозорого */
+    background: linear-gradient(to right, rgba(0, 123, 255, 0.3), transparent);
+    border-radius: 2px;
+}
+
+/* === Темна тема для підпису === */
+body.dark .actions-block-title {
+    color: var(--secondary-accent-color); /* Фірмовий помаранчевий/жовтий для темної теми */
+}
+
+body.dark .actions-block-title::after {
+    /* Градієнт лінії в темній темі (під колір тексту) */
+    background: linear-gradient(to right, rgba(230, 162, 46, 0.3), transparent);
+}
+
+/* Контейнер для самих кнопок */
+.actions-block-buttons {
+    display: flex;
+    flex-direction: row; 
+    align-items: center;
+    justify-content: flex-start;
+    gap: 12px; 
+    flex-wrap: wrap; /* Якщо кнопок буде багато, вони гарно перенесуться на новий рядок */
+}
+
+/* Темна тема */
+body.dark .login-actions-block {
+    background-color: var(--bg-second-color);
+    border-color: var(--input-border-color);
+}
+
+   /* === КНОПКА ТУМБЛЕР: АВТООЧИЩЕННЯ ЛОГІНІВ === */
+#login-autoclear-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background-color: #f9f9f9; 
+    border: 1px solid var(--input-border-color);
+    border-radius: 6px;
+    padding: 4px 12px; /* Підлаштував трохи товщину для комфортного кліку */
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--text-color);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;
+}
+
+#login-autoclear-btn i {
+    transition: color 0.2s ease;
+}
+
+/* Стан ACTIVE (коли автоочищення увімкнено) */
+#login-autoclear-btn.active {
+    background-color: var(--primary-accent-color);
+    border-color: var(--primary-accent-color);
+    color: white;
+}
+#login-autoclear-btn.active i {
+    color: white;
+}
+
+/* Ховер (тільки коли кнопка НЕ активна) */
+#login-autoclear-btn:hover:not(.active) {
+    background-color: var(--primary-accent-color);
+    border-color: var(--primary-accent-color);
+    color: white;
+    box-shadow: 0 3px 8px rgba(0, 123, 255, 0.2);
+}
+#login-autoclear-btn:hover:not(.active) i { 
+    color: white; 
+}
+
+/* === ТЕМНА ТЕМА === */
+body.dark #login-autoclear-btn {
+    background-color: #3a3b3c;
+    border-color: var(--input-border-color);
+    color: var(--text-color);
+}
+
+/* Темна тема: Стан ACTIVE */
+body.dark #login-autoclear-btn.active {
+    background-color: var(--secondary-accent-color);
+    border-color: var(--secondary-accent-color);
+    color: var(--bg-color);
+}
+body.dark #login-autoclear-btn.active i {
+    color: var(--bg-color);
+}
+
+/* Темна тема: Ховер (коли кнопка НЕ активна) */
+body.dark #login-autoclear-btn:hover:not(.active) {
+    background-color: var(--secondary-accent-color);
+    border-color: var(--secondary-accent-color);
+    color: var(--bg-color);
+    box-shadow: 0 3px 8px rgba(230, 162, 46, 0.2);
+}
+body.dark #login-autoclear-btn:hover:not(.active) i { 
+    color: var(--bg-color); 
+}
 
 /* --- СІТКА ДЛЯ 2-х КОЛОНОК --- */
 .login-generator-container #results-container {
@@ -4164,7 +4301,7 @@ body.dark .speed-select option {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 16px 10px; /* 16px по вертикалі (щоб було місце для бейджа), 10px по горизонталі */
-    margin: 10px 0 20px 0;
+    margin: 0px 0 20px 0;
     width: 100%;
 }
 
@@ -4181,7 +4318,7 @@ body.dark .speed-select option {
     justify-content: space-between; 
     align-items: center;
     padding: 10px 10px 10px 10px; 
-    border: 1px solid #dee2e6; 
+    border: 1px solid var(--input-border-color); 
     border-radius: 12px;
     background-color: #ffffff; 
     min-height: 52px; 
@@ -4190,7 +4327,7 @@ body.dark .speed-select option {
 /* --- ТЕМНА ТЕМА ДЛЯ КАРТКИ --- */
 body.dark .login-generator-container .result-item {
     background-color: var(--bg-second-color);
-    border-color: #3f4145;
+    border-color: var(--input-border-color);
 }
 
 /* --- ПІДПИС (БЕЙДЖ) ВРІЗАНИЙ В РАМКУ --- */
@@ -4561,7 +4698,6 @@ body.dark .date-calculator-container #result-section h2 {
 .calculator-actions-block {
     display: flex;
     flex-direction: column;
-    align-items: center;
     gap: 12px; 
     
     padding: 14px 20px; 
@@ -4569,6 +4705,11 @@ body.dark .date-calculator-container #result-section h2 {
     background-color: var(--bg-second-color); 
     border: 1px solid var(--input-border-color); 
     width: 420px; 
+}
+
+/* Додатковий клас, щоб кнопки в калькуляторі стояли по центру */
+.calc-buttons-center {
+    justify-content: center;
 }
 
 /* Темна тема: calculator actions block */
@@ -5603,6 +5744,7 @@ body.dark .history-copy-btn:hover { background: var(--secondary-accent-color); c
 }
 
 /* === ЕФЕКТ ФІЗИЧНОГО НАТИСКАННЯ ДЛЯ ШИРОКИХ КНОПОК === */
+#login-autoclear-btn:active,
 .segment-btn:not(.active):active,
 #auto-reset-button:active,
 .stepper-btn:active,

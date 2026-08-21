@@ -140,7 +140,27 @@ window.changeDeviceType = function(event, deviceName) {
     }
     return result;
 }
-	
+
+// === ТУМБЛЕР: АВТООЧИЩЕННЯ ПОЛЯ ПІБ ===
+let isAutoClearLoginEnabled = localStorage.getItem('loginAutoClear') !== 'false'; // За замовчуванням увімкнено
+
+function toggleLoginAutoClear() {
+    isAutoClearLoginEnabled = !isAutoClearLoginEnabled;
+    localStorage.setItem('loginAutoClear', isAutoClearLoginEnabled);
+    
+    const btn = document.getElementById('login-autoclear-btn');
+    if (btn) btn.classList.toggle('active', isAutoClearLoginEnabled);
+    
+    showNotification(isAutoClearLoginEnabled ? "Автоочищення ПІБ увімкнено" : "Автоочищення ПІБ вимкнено");
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById('login-autoclear-btn');
+    if (btn && isAutoClearLoginEnabled) {
+        btn.classList.add('active'); // Робимо кнопку візуально активною при завантаженні
+    }
+});
+
 function generateAlternativeLogin(buttonElement) {
     const resultItem = buttonElement.closest('.result-item');
     const loginSpan = resultItem.querySelector('span');
@@ -184,8 +204,10 @@ function generateAlternativeLogin(buttonElement) {
     loginSpan.textContent = newLogin;
     lastGeneratedLogin = newLogin;
 
-    // Очищуємо поле вводу
-    document.getElementById('fullNameInput').value = '';
+    // Очищуємо поле вводу ТІЛЬКИ якщо ввімкнено тумблер
+    if (isAutoClearLoginEnabled) {
+        document.getElementById('fullNameInput').value = '';
+    }
 
     // === НОВЕ: ПОВІДОМЛЕННЯ ТА АНІМАЦІЯ ===
     
@@ -219,7 +241,10 @@ function generateAlternativeLogin(buttonElement) {
         // === ДОДАЄМО В ІСТОРІЮ ===
         addToHistory(loginText, originalName);
 
-        document.getElementById('fullNameInput').value = '';
+        // Очищуємо поле вводу ТІЛЬКИ якщо ввімкнено тумблер
+        if (isAutoClearLoginEnabled) {
+            document.getElementById('fullNameInput').value = '';
+        }
 
         document.querySelectorAll('.config-login-input').forEach(input => {
             input.value = loginText;
@@ -1745,7 +1770,7 @@ updateOnuModeUI();
     btnReplaceMode.classList.toggle('active', isReplaceMode);
     fieldGroup.dataset.replaceMode = isReplaceMode;
     saveTemplates();
-    showNotification(isReplaceMode ? "Режим ЗАМІНИ увімкнено" : "Режим ДОДАВАННЯ увімкнено");
+    showNotification(isReplaceMode ? "Режим: ПОВНЕ ОЧИЩЕННЯ ТА ВСТАВКА" : "Режим: ДОДАВАННЯ ДО ТЕКСТУ");
 });
 
 // === ТУМБЛЕР: PON-ONU ===
@@ -1943,57 +1968,24 @@ if (!oltObj) {
             }
         }
 
-        // 3. НАДІЙНА ЛОГІКА ЗАМІНИ ТЕКСТУ (позиція + текстовий пошук + курсор)
-const textarea   = fieldGroup.querySelector('textarea');
-const cursorStart = textarea.selectionStart;
-const cursorEnd   = textarea.selectionEnd;
+        // 3. НОВА ЛОГІКА ВСТАВКИ КОНФІГУ
+        const textarea = fieldGroup.querySelector('textarea');
+        const cursorStart = textarea.selectionStart;
+        const cursorEnd = textarea.selectionEnd;
+        let currentText = textarea.value;
 
-let currentText = textarea.value.replace(/\r\n/g, '\n');
-let oldConfig   = (fieldGroup.dataset.lastGeneratedConfig || '').replace(/\r\n/g, '\n');
-let inserted    = false;
-
-if (isReplaceMode && oldConfig) {
-
-    // Спосіб 1: позиція збережена і текст на ній збігається
-    const savedStart = parseInt(fieldGroup.dataset.lastConfigStart ?? '-1', 10);
-    const savedEnd   = parseInt(fieldGroup.dataset.lastConfigEnd   ?? '-1', 10);
-
-    if (savedStart >= 0 && savedEnd > savedStart && savedEnd <= currentText.length) {
-        if (currentText.substring(savedStart, savedEnd) === oldConfig) {
-            textarea.value = currentText.substring(0, savedStart)
-                           + finalConfig
-                           + currentText.substring(savedEnd);
-            fieldGroup.dataset.lastConfigStart = savedStart;
-            fieldGroup.dataset.lastConfigEnd   = savedStart + finalConfig.length;
-            inserted = true;
+        if (isReplaceMode) {
+            // === РЕЖИМ ЗАМІНИ: Просто стираємо весь текст і вставляємо новий ===
+            textarea.value = finalConfig;
+        } else {
+            // === РЕЖИМ ДОДАВАННЯ: Вставляємо там, де стоїть курсор ===
+            const before = currentText.substring(0, cursorStart);
+            const after = currentText.substring(cursorEnd);
+            const separator = (before.length > 0 && !before.endsWith('\n')) ? '\n' : '';
+            textarea.value = before + separator + finalConfig + '\n' + after;
         }
-    }
 
-    // Спосіб 2: шукаємо старий конфіг по всьому тексту
-    if (!inserted) {
-        const idx = currentText.indexOf(oldConfig);
-        if (idx !== -1) {
-            textarea.value = currentText.substring(0, idx)
-                           + finalConfig
-                           + currentText.substring(idx + oldConfig.length);
-            fieldGroup.dataset.lastConfigStart = idx;
-            fieldGroup.dataset.lastConfigEnd   = idx + finalConfig.length;
-            inserted = true;
-        }
-    }
-}
-
-// Спосіб 3: вставляємо на позицію курсору (fallback)
-if (!inserted) {
-    const before    = currentText.substring(0, cursorStart);
-    const after     = currentText.substring(cursorEnd);
-    const separator = (before.length > 0 && !before.endsWith('\n')) ? '\n' : '';
-    textarea.value  = before + separator + finalConfig + '\n' + after;
-    fieldGroup.dataset.lastConfigStart = cursorStart + separator.length;
-    fieldGroup.dataset.lastConfigEnd   = cursorStart + separator.length + finalConfig.length;
-}
-
-fieldGroup.dataset.lastGeneratedConfig = finalConfig;
+        fieldGroup.dataset.lastGeneratedConfig = finalConfig;
 
         const savedScroll = textarea.scrollTop;
         const highlighter = fieldGroup.querySelector('.highlighter-backdrop');

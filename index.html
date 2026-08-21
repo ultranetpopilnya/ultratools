@@ -129,7 +129,24 @@
 			<div class="content-card">
                 <h2 style="margin-top: 0; text-align: center;">🔐 Генератор логінів</h2>
                 <p style="text-align: center;">Введіть повністю одне або декілька ПІБ, кожне — з нового рядка.<br>Також можливий трансліт: ФОП, ТОВ, ТзОВ, ПП, АТ, ПрАТ, ПАТ, ВАТ, ЗАТ, ТДВ, КБ, ГО, <br>ГС, КП, ДП, ФГ, СФГ, ОСББ, ЖБК, БФ, НВП, ЗОШ, НВК, ДНЗ, ЦРЛ.</p>
+
                 <textarea id="fullNameInput" rows="1" placeholder="Прізвище, Ім'я, та по Батькові"></textarea>
+
+                <div class="login-actions-block">
+    <!-- Підпис блоку -->
+    <div class="actions-block-title">
+    <i class="fa-solid fa-sliders"></i> Налаштування генерації
+</div>
+    
+    <!-- Контейнер для самих кнопок -->
+    <div class="actions-block-buttons">
+        <button id="login-autoclear-btn" onclick="toggleLoginAutoClear()" title="Очищення поля вводу тексту після генерації логіна">
+            <i class="fa-solid fa-eraser"></i> Автоочищення
+        </button>
+        <!-- Майбутні кнопки додаватимете сюди -->
+    </div>
+</div>
+
                 <div id="results-container"></div>
 				<div class="history-section">
     <!-- Верхня панель: Кнопка відкриття + Кнопка очистки -->
@@ -211,6 +228,12 @@
                 </div>
 
                     <div class="calculator-actions-block">
+                        <div class="actions-block-title">
+        <i class="fa-solid fa-sliders"></i> Керування розрахунком
+    </div>
+    
+    <!-- 2. Обгортаємо всі ваші кнопки таймера/скидання у цей контейнер -->
+    <div class="actions-block-buttons calc-buttons-center">
                         <div class="actions-floor">
                             <button id="set-start-now-btn" class="calc-action-button" title="Встановити початкову дату на сьогодні">
                                 <i class="fa-solid fa-calendar-check"></i> <span>Поточна дата</span>
@@ -255,7 +278,8 @@
         </button>
     </div>
 </div>
-                    </div> <!-- ВАЖЛИВО: цей тег закриває calculator-actions-block -->
+</div>
+</div> <!-- ВАЖЛИВО: цей тег закриває calculator-actions-block -->
 
                     <div id="result-section">
                         <h2>⏱️ Результат дати</h2>
