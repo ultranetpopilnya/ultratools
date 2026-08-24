@@ -240,6 +240,8 @@ end
 write
 show pon power attenuation gpon-onu_{PORT}
 
+
 [WRITE-SHOW-PON-POWER EPON]
 write
 show pon power attenuation epon-onu_{PORT}
+
