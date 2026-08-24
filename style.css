@@ -4584,6 +4584,7 @@ body.dark .history-toggle-btn {
     max-height: 400px; /* достатньо велике значення для плавної анімації розкриття */
     opacity: 1;
     transform: translateY(0);
+    width: 100%;
 }
 
 /* #history-list — тут реальний скрол */
@@ -4591,8 +4592,7 @@ body.dark .history-toggle-btn {
     /* Тепер він завжди має фіксовану максимальну висоту, а не анімується від 0 */
     max-height: 320px;
     overflow-y: auto;
-    scrollbar-gutter: stable both-edges;
-    padding: 0 8px;
+    padding: 0px;
 
     /* Сітка на 2 стовпці */
     display: grid;
