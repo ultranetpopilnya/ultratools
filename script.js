@@ -1905,16 +1905,14 @@ if (!oltObj) {
                 .replace(/{PORT_BASE}/g, portBase)
                 .replace(/{ONU_ID}/g, onuId)
                 .replace(/{SN}/g, snMacVal)
-                .replace(/{MAC}/g, snMacVal)
-                .trim() + '\n';
+                .replace(/{MAC}/g, snMacVal) + '\n';
         } else if (isSwitchMode && ponType && SWITCH_TEMPLATES[ponType]) {
             prependConfig = SWITCH_TEMPLATES[ponType]
                 .replace(/{PORT}/g, portVal)
                 .replace(/{PORT_BASE}/g, portBase)
                 .replace(/{ONU_ID}/g, onuId)
                 .replace(/{SN}/g, snMacVal)
-                .replace(/{MAC}/g, snMacVal)
-                .trim() + '\n';
+                .replace(/{MAC}/g, snMacVal) + '\n';
         }
 
         // 2. Створюємо базовий конфіг (додаємо префікс на початок)
@@ -1926,8 +1924,7 @@ if (!oltObj) {
             .replace(/{ONU_ID}/g, onuId)
             .replace(/{SN}/g, snMacVal) 
             .replace(/{MAC}/g, snMacVal) 
-            .replace(/{VLAN}/g, finalVlan)
-            .trim(); 
+            .replace(/{VLAN}/g, finalVlan); 
 
         // 3. Додаємо PON-ONU, якщо тумблер увімкнений
         if (isPonOnuMode) {
@@ -1944,8 +1941,7 @@ if (!oltObj) {
                     .replace(/{LOGIN}/g, loginVal || 'UNKNOWN_LOGIN')
                     .replace(/{SPEED}/g, speedVal)
                     .replace(/{SN}/g, snMacVal) 
-                    .replace(/{MAC}/g, snMacVal) 
-                    .trim(); 
+                    .replace(/{MAC}/g, snMacVal); 
                 finalConfig += '\n' + finalExtraConfig;
             }
         }
@@ -1962,8 +1958,7 @@ if (!oltObj) {
                     .replace(/{PORT_BASE}/g, portBase) 
                     .replace(/{ONU_ID}/g, onuId)
                     .replace(/{SN}/g, snMacVal) 
-                    .replace(/{MAC}/g, snMacVal) 
-                    .trim();
+                    .replace(/{MAC}/g, snMacVal);
                 finalConfig += '\n' + signalConfig; 
             }
         }
@@ -2808,18 +2803,22 @@ function loadOltConfigs() {
             OLT_TEMPLATES = {};
             PON_ONU_TEMPLATES = { gpon: "", epon: "" }; 
             SIGNAL_TEMPLATES = { gpon: "", epon: "" };
-            REG_TEMPLATES = { gpon: "", epon: "" };    // ДОДАНО
-            SWITCH_TEMPLATES = { gpon: "", epon: "" }; // ДОДАНО
+            REG_TEMPLATES = { gpon: "", epon: "" };    
+            SWITCH_TEMPLATES = { gpon: "", epon: "" }; 
             
             let currentSection = null; 
             let currentTemplateName = null;
 
-            const lines = text.split('\n');
+            // Вирізаємо системні символи Windows, розбиваємо на рядки
+            const lines = text.replace(/\r/g, '').split('\n');
+            
             lines.forEach(line => {
                 const trimmed = line.trim();
-                if (!trimmed || trimmed.startsWith('#')) return; 
+                
+                // Ігноруємо коментарі
+                if (trimmed.startsWith('#')) return; 
 
-                // 1. Шукаємо шаблони базових конфігів
+                // 1. Шукаємо заголовки
                 const templateMatch = trimmed.match(/^\[TEMPLATE:\s*(.+)\]$/i);
                 if (templateMatch) {
                     currentSection = 'template';
@@ -2828,23 +2827,24 @@ function loadOltConfigs() {
                     return;
                 }
 
-                // 2. Шукаємо секції PON-ONU
                 if (trimmed.toUpperCase() === '[GPON PON-ONU]') { currentSection = 'gpon_pon_onu'; return; }
                 if (trimmed.toUpperCase() === '[EPON PON-ONU]') { currentSection = 'epon_pon_onu'; return; }
-
                 if (trimmed.toUpperCase() === '[WRITE-SHOW-PON-POWER GPON]') { currentSection = 'gpon_signal'; return; }
-if (trimmed.toUpperCase() === '[WRITE-SHOW-PON-POWER EPON]') { currentSection = 'epon_signal'; return; }
-
+                if (trimmed.toUpperCase() === '[WRITE-SHOW-PON-POWER EPON]') { currentSection = 'epon_signal'; return; }
                 if (trimmed.toUpperCase() === '[GPON ONU REG]') { currentSection = 'gpon_reg'; return; }
                 if (trimmed.toUpperCase() === '[EPON ONU REG]') { currentSection = 'epon_reg'; return; }
                 if (trimmed.toUpperCase() === '[GPON ONU SWITCH]') { currentSection = 'gpon_switch'; return; }
                 if (trimmed.toUpperCase() === '[EPON ONU SWITCH]') { currentSection = 'epon_switch'; return; }
-
-                // 3. Шукаємо списки комутаторів
                 if (trimmed === '[Ultranet]') { currentSection = 'ultranet'; return; } 
                 else if (trimmed === '[ISP Energy]') { currentSection = 'energy'; return; }
 
-                // Записуємо дані у відповідні місця
+                // Якщо рядок порожній, пропускаємо його лише для списків ОЛТ. 
+                // Для команд (шаблонів) ми порожні рядки ЗБЕРІГАЄМО!
+                if (!trimmed) {
+                    if (['ultranet', 'energy', null].includes(currentSection)) return;
+                }
+
+                // Записуємо рядки (БЕРЕМО line, А НЕ trimmed, ЩОБ ЗБЕРЕГТИ ПРОБІЛИ!)
                 if (currentSection === 'template' && currentTemplateName) {
                     OLT_TEMPLATES[currentTemplateName] += line + '\n';
                 } else if (currentSection === 'gpon_pon_onu') {
@@ -2887,6 +2887,20 @@ if (trimmed.toUpperCase() === '[WRITE-SHOW-PON-POWER EPON]') { currentSection = 
                     }
                 }
             });
+
+            // Видаляємо технічний перенос '\n', який додавався до останнього рядка кожної секції.
+            // Але якщо ви спеціально залишили пустий рядок у файлі - він залишиться!
+            const trimLastNewline = (str) => str.replace(/\n$/, '');
+            
+            for (let key in OLT_TEMPLATES) OLT_TEMPLATES[key] = trimLastNewline(OLT_TEMPLATES[key]);
+            PON_ONU_TEMPLATES.gpon = trimLastNewline(PON_ONU_TEMPLATES.gpon);
+            PON_ONU_TEMPLATES.epon = trimLastNewline(PON_ONU_TEMPLATES.epon);
+            SIGNAL_TEMPLATES.gpon = trimLastNewline(SIGNAL_TEMPLATES.gpon);
+            SIGNAL_TEMPLATES.epon = trimLastNewline(SIGNAL_TEMPLATES.epon);
+            REG_TEMPLATES.gpon = trimLastNewline(REG_TEMPLATES.gpon);
+            REG_TEMPLATES.epon = trimLastNewline(REG_TEMPLATES.epon);
+            SWITCH_TEMPLATES.gpon = trimLastNewline(SWITCH_TEMPLATES.gpon);
+            SWITCH_TEMPLATES.epon = trimLastNewline(SWITCH_TEMPLATES.epon);
         })
         .catch(err => console.log("Помилка завантаження конфігів ОЛТ:", err));
 }
