@@ -4156,7 +4156,7 @@ body.dark .speed-select option {
     
     width: 90%; 
     box-sizing: border-box;
-    margin: 0 auto 20px auto; /* Вирівнювання по центру */
+    margin: 0 auto 16px auto; /* Вирівнювання по центру */
 }
 
 /* === Стиль для підпису блоку (з лінією та іконкою) === */
@@ -4292,7 +4292,7 @@ body.dark #login-autoclear-btn:hover:not(.active) i {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 16px 10px; /* 16px по вертикалі (щоб було місце для бейджа), 10px по горизонталі */
-    margin: 0px 0 20px 0;
+    margin: 0px 0 16px 0;
     width: 100%;
 }
 
@@ -4487,9 +4487,164 @@ body.dark .login-generator-container .result-item .regenerate-login-btn {
 /* login generator container */
 .login-generator-container #results-container {
     margin-top: 0px;
-    margin-bottom: 6px;
+    margin-bottom: 0px;
     height: auto;
     overflow: visible !important;
+}
+
+/* Сам блок історії */
+.history-section {
+    width: 92%;
+    margin: 0px auto 0 auto;
+    flex-shrink: 0;
+    border-top: 1px solid var(--input-border-color);
+}
+
+/* history header row */
+.history-header-row {
+    display: flex;
+    justify-content: space-between; /* Розносить елементи по краях */
+    align-items: center;
+    width: 100%;
+    border-bottom: 1px solid transparent; /* Резерв місця */
+}
+
+/* Кнопка відкриття (Ліва частина) */
+.history-toggle-btn {
+    flex-grow: 1; /* Займає все вільне місце */
+    background: transparent;
+    border: none;
+    padding: 12px 0;
+    cursor: pointer;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    color: var(--primary-accent-color);
+    font-weight: 600;
+    font-size: 1.1rem;
+    outline: none;
+    transition: color 0.2s;
+}
+
+/* Темна тема: history toggle btn */
+body.dark .history-toggle-btn {
+    color: var(--secondary-accent-color);
+}
+
+/* clear history header btn */
+.clear-history-header-btn {
+    background: transparent;
+    border: none;
+    color: var(--tab-inactive-text); /* Неяскравий колір */
+    cursor: pointer;
+    padding: 10px;
+    font-size: 1rem;
+    transition: color 0.2s, transform 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* empty history msg */
+.empty-history-msg {
+    text-align: center;
+    color: var(--tab-inactive-text);
+    padding: 15px;
+    font-style: italic;
+    font-size: 0.9em;
+}
+
+/* clear history header btn — ховер */
+.clear-history-header-btn:hover {
+    color: var(--danger-color); /* Червоний при наведенні */
+    transform: scale(1.1);
+}
+
+/* history toggle btn — ховер */
+.history-toggle-btn:hover { color: var(--primary-accent-color); }
+
+/* history arrow */
+#history-arrow { margin-right: 10px; transition: transform 0.3s ease; font-size: 0.8em; }
+
+/* history toggle btn — активний стан */
+.history-toggle-btn.active #history-arrow { transform: rotate(90deg); }
+
+.history-content-wrapper {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: max-height 0.4s ease-out, opacity 0.3s ease-out, transform 0.3s ease-out;
+    display: block;
+    padding-bottom: 0px;
+}
+
+/* history content wrapper — відкритий стан */
+.history-content-wrapper.open {
+    max-height: 1200px; /* достатньо велике значення для плавної анімації розкриття */
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* #history-list — тут реальний скрол */
+#history-list {
+    max-height: 0;
+    overflow-y: hidden;
+    transition: max-height 0.3s ease-out;
+    scrollbar-gutter: stable both-edges;
+
+    padding: 0 8px;
+}
+
+.history-content-wrapper.open #history-list {
+    max-height: 320px; /* реальна видима висота списку — підберіть під дизайн */
+    overflow-y: auto;
+}
+
+/* history item */
+.history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    border: 1px solid var(--input-border-color);
+    border-radius: 12px;
+    margin-bottom: 6px;
+    background-color: var(--bg-color);
+}
+
+/* history item */
+.history-item span { font-family: 'Fira Code', monospace; font-weight: 600; }
+
+/* history copy btn */
+.history-copy-btn {
+    background: transparent; border: 1px solid var(--input-border-color); color: var(--text-color);
+    border-radius: 50%; width: 28px; height: 28px; cursor: pointer;
+    display: flex; justify-content: center; align-items: center; transition: all 0.2s;
+}
+
+/* history copy btn — ховер */
+.history-copy-btn:hover { background: var(--primary-accent-color); color: white; border-color: var(--primary-accent-color); }
+
+/* Темна тема: history copy btn — ховер */
+body.dark .history-copy-btn:hover { background: var(--secondary-accent-color); color: white; border-color: var(--secondary-accent-color); }
+
+/* clear history footer btn */
+.clear-history-footer-btn {
+    width: 100%; margin-top: 10px; padding: 8px; background: transparent;
+    border: 1px dashed var(--danger-color); color: var(--danger-color);
+    border-radius: 8px; cursor: pointer; transition: all 0.2s;
+}
+
+/* clear history footer btn — ховер */
+.clear-history-footer-btn:hover { background: var(--danger-color); color: white; }
+
+/* 4. Результати та Історія: рівно по центру */
+.login-generator-container #results-container,
+.login-generator-container .history-section {
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 /* ================================================================
@@ -5550,168 +5705,6 @@ body.dark #calc-auto-clear-btn.active {
 /* Стан "Тільки що стерто" (Зелена галочка) */
 #calc-auto-clear-btn.just-cleared {
     color: var(--success-color) !important;
-}
-
-
-/* ================================================================
-   15. ЗАГАЛЬНА ПАНЕЛЬ ІСТОРІЇ (ЛОГІНИ / ШАБЛОНИ)
-   Спільний для генератора логінів і шаблонів блок "Історія":
-   заголовок з кнопкою розгортання, список записів, кнопки очистки.
-   ================================================================ */
-
-/* Сам блок історії */
-.history-section {
-    width: 92%;
-    margin: 0px auto 0 auto;
-    flex-shrink: 0;
-    border-top: 1px solid var(--input-border-color);
-}
-
-/* history header row */
-.history-header-row {
-    display: flex;
-    justify-content: space-between; /* Розносить елементи по краях */
-    align-items: center;
-    width: 100%;
-    border-bottom: 1px solid transparent; /* Резерв місця */
-}
-
-/* Кнопка відкриття (Ліва частина) */
-.history-toggle-btn {
-    flex-grow: 1; /* Займає все вільне місце */
-    background: transparent;
-    border: none;
-    padding: 14px 0;
-    cursor: pointer;
-    text-align: left;
-    display: flex;
-    align-items: center;
-    color: var(--primary-accent-color);
-    font-weight: 600;
-    font-size: 1.1rem;
-    outline: none;
-    transition: color 0.2s;
-}
-
-/* Темна тема: history toggle btn */
-body.dark .history-toggle-btn {
-    color: var(--secondary-accent-color);
-}
-
-/* clear history header btn */
-.clear-history-header-btn {
-    background: transparent;
-    border: none;
-    color: var(--tab-inactive-text); /* Неяскравий колір */
-    cursor: pointer;
-    padding: 10px;
-    font-size: 1rem;
-    transition: color 0.2s, transform 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-/* empty history msg */
-.empty-history-msg {
-    text-align: center;
-    color: var(--tab-inactive-text);
-    padding: 15px;
-    font-style: italic;
-    font-size: 0.9em;
-}
-
-/* clear history header btn — ховер */
-.clear-history-header-btn:hover {
-    color: var(--danger-color); /* Червоний при наведенні */
-    transform: scale(1.1);
-}
-
-/* history toggle btn — ховер */
-.history-toggle-btn:hover { color: var(--primary-accent-color); }
-
-/* history arrow */
-#history-arrow { margin-right: 10px; transition: transform 0.3s ease; font-size: 0.8em; }
-
-/* history toggle btn — активний стан */
-.history-toggle-btn.active #history-arrow { transform: rotate(90deg); }
-
-.history-content-wrapper {
-    max-height: 0;
-    overflow: hidden;
-    opacity: 0;
-    transform: translateY(-10px);
-    transition: max-height 0.4s ease-out, opacity 0.3s ease-out, transform 0.3s ease-out;
-    display: block;
-    padding-bottom: 0px;
-}
-
-/* history content wrapper — відкритий стан */
-.history-content-wrapper.open {
-    max-height: 1200px; /* достатньо велике значення для плавної анімації розкриття */
-    opacity: 1;
-    transform: translateY(0);
-}
-
-/* #history-list — тут реальний скрол */
-#history-list {
-    max-height: 0;
-    overflow-y: hidden;
-    transition: max-height 0.3s ease-out;
-    scrollbar-gutter: stable both-edges;
-
-    padding: 0 8px;
-}
-
-.history-content-wrapper.open #history-list {
-    max-height: 300px; /* реальна видима висота списку — підберіть під дизайн */
-    overflow-y: auto;
-}
-
-/* history item */
-.history-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 12px;
-    border: 1px solid var(--input-border-color);
-    border-radius: 12px;
-    margin-bottom: 6px;
-    background-color: var(--bg-color);
-}
-
-/* history item */
-.history-item span { font-family: 'Fira Code', monospace; font-weight: 600; }
-
-/* history copy btn */
-.history-copy-btn {
-    background: transparent; border: 1px solid var(--input-border-color); color: var(--text-color);
-    border-radius: 50%; width: 28px; height: 28px; cursor: pointer;
-    display: flex; justify-content: center; align-items: center; transition: all 0.2s;
-}
-
-/* history copy btn — ховер */
-.history-copy-btn:hover { background: var(--primary-accent-color); color: white; border-color: var(--primary-accent-color); }
-
-/* Темна тема: history copy btn — ховер */
-body.dark .history-copy-btn:hover { background: var(--secondary-accent-color); color: white; border-color: var(--secondary-accent-color); }
-
-/* clear history footer btn */
-.clear-history-footer-btn {
-    width: 100%; margin-top: 10px; padding: 8px; background: transparent;
-    border: 1px dashed var(--danger-color); color: var(--danger-color);
-    border-radius: 8px; cursor: pointer; transition: all 0.2s;
-}
-
-/* clear history footer btn — ховер */
-.clear-history-footer-btn:hover { background: var(--danger-color); color: white; }
-
-/* 4. Результати та Історія: рівно по центру */
-.login-generator-container #results-container,
-.login-generator-container .history-section {
-    width: 90%;
-    margin-left: auto;
-    margin-right: auto;
 }
 
 /* ================================================================
