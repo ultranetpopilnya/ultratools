@@ -2316,8 +2316,8 @@ body.dark .command-item.has-subcommands .command-text:hover {
 .container.gpon-commands-container {
     /* Висота "авто" (по контенту), але не більше екрана */
     height: auto !important; 
-    max-height: calc(100% - 5px) !important; 
-    min-height: 0 !important;
+    max-height: 100%; 
+    min-height: 0;
     
     display: flex !important;
     flex-direction: column;
@@ -4437,7 +4437,7 @@ body.dark .login-generator-container .result-item .regenerate-login-btn {
 .container.gpon-commands-container.active,
 .container.login-generator-container.active {
     height: auto !important;                 /* Висота залежить від контенту */
-    max-height: calc(100% - 5px); /* Зупиняємось за 5px до низу */
+    max-height: 100%;
     min-height: 0 !important;                /* Дозволяємо бути маленькими */
     
     display: flex !important;
@@ -4458,9 +4458,6 @@ body.dark .login-generator-container .result-item .regenerate-login-btn {
     
     /* ЗАМОВЧУВАННЯ: Скрол прихований (прибирає миготіння смуги при закритті) */
     overflow: hidden !important; 
-    
-    scrollbar-gutter: stable both-edges;
-
 }
 
 /* container — активний стан: скрол більше НЕ на картці */
@@ -4568,23 +4565,23 @@ body.dark .date-calculator-container #result-section {
 
 /* date calculator container */
 .date-calculator-container .date-input-group input[type="date"],
-        .date-calculator-container .date-input-group input[type="time"] { 
-            padding: 10px;
-            border: 2px solid #ccc; /* Це лише для світлої теми, якщо немає фокусу */
-            border-radius: 12px; 
-            font-size: 1em;
-            cursor: pointer;
-            width: 100%;
-            margin-bottom: 5px; 
-        }
+.date-calculator-container .date-input-group input[type="time"] { 
+    padding: 10px;
+    border: 2px solid #ccc; /* Це лише для світлої теми, якщо немає фокусу */
+    border-radius: 12px; 
+    font-size: 1em;
+    cursor: pointer;
+    width: 100%;
+    margin-bottom: 5px; 
+}
 
 /* date calculator container — ховер */
 .date-calculator-container .date-input-group input[type="date"]:hover,
-        .date-calculator-container .date-input-group input[type="time"]:hover, 
-        .date-calculator-container .date-input-group input[type="date"]:focus,
-        .date-calculator-container .date-input-group input[type="time"]:focus { 
-            outline: none;
-        }
+.date-calculator-container .date-input-group input[type="time"]:hover, 
+.date-calculator-container .date-input-group input[type="date"]:focus,
+.date-calculator-container .date-input-group input[type="time"]:focus { 
+    outline: none;
+}
 
 /* date calculator container */
 .date-calculator-container #result-section {
@@ -5639,22 +5636,36 @@ body.dark .history-toggle-btn {
 /* history toggle btn — активний стан */
 .history-toggle-btn.active #history-arrow { transform: rotate(90deg); }
 
-/* history content wrapper */
 .history-content-wrapper {
-    max-height: 0; /* Приховано за замовчуванням */
-    overflow: hidden; /* Обрізаємо все, що виходить за max-height */
-    opacity: 0; /* Приховано (прозорість) */
-    transform: translateY(-10px); /* Трохи посунуто вгору для ефекту появи */
-    transition: max-height 0.4s ease-out, opacity 0.3s ease-out, transform 0.3s ease-out; /* Плавний перехід */
-    display: block; /* Залишаємо block, але керуємо видимістю через max-height */
-	padding-bottom: 0px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: max-height 0.4s ease-out, opacity 0.3s ease-out, transform 0.3s ease-out;
+    display: block;
+    padding-bottom: 0px;
 }
 
 /* history content wrapper — відкритий стан */
 .history-content-wrapper.open {
-    max-height: 1200px; /* Достатньо велике значення, щоб показати весь вміст. Можете збільшити, якщо історія дуже довга. */
-    opacity: 1; /* Повністю видно */
-    transform: translateY(0); /* Повертаємо на місце */
+    max-height: 1200px; /* достатньо велике значення для плавної анімації розкриття */
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* #history-list — тут реальний скрол */
+#history-list {
+    max-height: 0;
+    overflow-y: hidden;
+    transition: max-height 0.3s ease-out;
+    scrollbar-gutter: stable both-edges;
+
+    padding: 0 8px;
+}
+
+.history-content-wrapper.open #history-list {
+    max-height: 300px; /* реальна видима висота списку — підберіть під дизайн */
+    overflow-y: auto;
 }
 
 /* history item */
@@ -5702,7 +5713,6 @@ body.dark .history-copy-btn:hover { background: var(--secondary-accent-color); c
     margin-left: auto;
     margin-right: auto;
 }
-
 
 /* ================================================================
    16. ШВИДКІ НОТАТКИ (QUICK NOTES)
@@ -6164,7 +6174,7 @@ body.dark .qn-item.qn-drag-over {
 /* ========================================= */
 @media (max-width: 1366px) {
     /* Знаходимо всі контейнери, чий data-content містить слово "-commands" */
-    .container[data-content$="-commands"] {
+    .container.gpon-commands-container {
         width: 100% !important;
         max-width: 100% !important;
         --local-width: 100% !important;
@@ -6214,7 +6224,6 @@ body.dark .qn-item.qn-drag-over {
         }
     }
 
-/* === ФІНАЛЬНИЙ ВАРІАНТ (НИЗЬКЕ РОЗШИРЕННЯ) === */
 @media (max-height: 768px) {
         
         /* 1. Компактна шапка */
@@ -6317,5 +6326,14 @@ body.dark .qn-item.qn-drag-over {
             margin-right: auto !important;
             width: 90% !important;
         }
-    }
 
+        .container.gpon-commands-container.active {
+        position: absolute !important;
+    }
+    .container.gpon-commands-container.active .content-card {
+        display: flex !important;
+        flex-direction: column !important;
+        overflow: hidden !important;
+        width: 100% !important;
+    }
+}
