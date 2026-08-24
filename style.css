@@ -4597,7 +4597,7 @@ body.dark .history-toggle-btn {
     /* Сітка на 2 стовпці */
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 8px 12px;
+    gap: 8px 10px;
     align-content: start;
 }
 
