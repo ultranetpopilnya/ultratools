@@ -4608,19 +4608,30 @@ body.dark .history-toggle-btn {
     padding: 8px 12px;
     border: 1px solid var(--input-border-color);
     border-radius: 12px;
-    /* margin-bottom видалено, бо його тепер контролює gap у сітці */
     background-color: var(--bg-color);
     min-width: 0; /* Гарантує, що довгий текст не розірве колонку */
 }
 
 /* history item */
-.history-item span { font-family: 'Fira Code', monospace; font-weight: 600; }
+.history-item span { 
+    font-family: 'Fira Code', monospace; 
+    font-weight: 600;
+}
 
 /* history copy btn */
 .history-copy-btn {
-    background: transparent; border: 1px solid var(--input-border-color); color: var(--text-color);
-    border-radius: 50%; width: 28px; height: 28px; cursor: pointer;
-    display: flex; justify-content: center; align-items: center; transition: all 0.2s;
+    background: transparent; 
+    border: 1px solid var(--input-border-color); 
+    color: var(--text-color);
+    border-radius: 50%; 
+    width: 28px; 
+    height: 28px;
+    cursor: pointer;
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    transition: all 0.2s;
+    margin: 0 0 0 4px;
 }
 
 /* history copy btn — ховер */
