@@ -292,7 +292,7 @@ function generateLogins() {
         if (/[a-z]/i.test(fullName)) {
             const errorElement = document.createElement('div');
             errorElement.className = 'result-item error-item';
-            errorElement.innerHTML = `<span style="color: #dc3545; font-weight: bold; font-size: 1em; text-align: center">Трансліт тільки з української!</span>`;
+            errorElement.innerHTML = `<span style="color: #dc3545; font-weight: bold; font-size: 1em; text-align: center;">Трансліт тільки з української!</span>`;
             resultsContainer.appendChild(errorElement);
             return;
         }
@@ -2724,7 +2724,7 @@ function addToHistory(login, originalName) {
     let history = JSON.parse(localStorage.getItem('loginHistory') || '[]');
     history = history.filter(item => item.login !== login);
     history.unshift({ login, originalName });
-    if (history.length > 10) history = history.slice(0, 10);
+    if (history.length > 8) history = history.slice(0, 8);
     localStorage.setItem('loginHistory', JSON.stringify(history));
     renderHistory(history);
 }

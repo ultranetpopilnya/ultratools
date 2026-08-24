@@ -4292,7 +4292,6 @@ body.dark #login-autoclear-btn:hover:not(.active) i {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 16px 10px; /* 16px по вертикалі (щоб було місце для бейджа), 10px по горизонталі */
-    margin: 0px 0 16px 0;
     width: 100%;
 }
 
@@ -4312,7 +4311,8 @@ body.dark #login-autoclear-btn:hover:not(.active) i {
     border: 1px solid var(--input-border-color); 
     border-radius: 12px;
     background-color: var(--bg-second-color); 
-    min-height: 52px; 
+    min-height: 52px;
+    margin: 0 0 16px 0; 
 }
 
 /* --- ТЕМНА ТЕМА ДЛЯ КАРТКИ --- */
@@ -4514,7 +4514,7 @@ body.dark .login-generator-container .result-item .regenerate-login-btn {
     flex-grow: 1; /* Займає все вільне місце */
     background: transparent;
     border: none;
-    padding: 12px 0;
+    padding: 14px 0;
     cursor: pointer;
     text-align: left;
     display: flex;
@@ -4545,13 +4545,13 @@ body.dark .history-toggle-btn {
     justify-content: center;
 }
 
-/* empty history msg */
 .empty-history-msg {
     text-align: center;
     color: var(--tab-inactive-text);
     padding: 15px;
     font-style: italic;
     font-size: 0.9em;
+    grid-column: 1 / -1; /* НОВЕ: Розтягує повідомлення на обидва стовпці */
 }
 
 /* clear history header btn — ховер */
@@ -4581,27 +4581,26 @@ body.dark .history-toggle-btn {
 
 /* history content wrapper — відкритий стан */
 .history-content-wrapper.open {
-    max-height: 1200px; /* достатньо велике значення для плавної анімації розкриття */
+    max-height: 400px; /* достатньо велике значення для плавної анімації розкриття */
     opacity: 1;
     transform: translateY(0);
 }
 
 /* #history-list — тут реальний скрол */
 #history-list {
-    max-height: 0;
-    overflow-y: hidden;
-    transition: max-height 0.3s ease-out;
-    scrollbar-gutter: stable both-edges;
-
-    padding: 0 8px;
-}
-
-.history-content-wrapper.open #history-list {
-    max-height: 320px; /* реальна видима висота списку — підберіть під дизайн */
+    /* Тепер він завжди має фіксовану максимальну висоту, а не анімується від 0 */
+    max-height: 320px;
     overflow-y: auto;
+    scrollbar-gutter: stable both-edges;
+    padding: 0 8px;
+
+    /* Сітка на 2 стовпці */
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 12px;
+    align-content: start;
 }
 
-/* history item */
 .history-item {
     display: flex;
     justify-content: space-between;
@@ -4609,8 +4608,9 @@ body.dark .history-toggle-btn {
     padding: 8px 12px;
     border: 1px solid var(--input-border-color);
     border-radius: 12px;
-    margin-bottom: 6px;
+    /* margin-bottom видалено, бо його тепер контролює gap у сітці */
     background-color: var(--bg-color);
+    min-width: 0; /* Гарантує, що довгий текст не розірве колонку */
 }
 
 /* history item */
@@ -6328,5 +6328,10 @@ body.dark .qn-item.qn-drag-over {
         flex-direction: column !important;
         overflow: hidden !important;
         width: 100% !important;
+    }
+
+    .container.login-generator-container.active .content-card {
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
     }
 }
