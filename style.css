@@ -1697,10 +1697,16 @@ body.dark .theme-pill:hover {
    ========================================= */
 .theme-emoji {
     position: absolute;
-    font-size: 26px;
-    line-height: 1;
-    margin-left: 1px;
-    /* Сучасна анімація незалежних властивостей */
+    width: 32px;
+    height: 32px;
+    
+    margin-left: 0px; /* Якщо кнопка з'їхала, можете змінити на 0, залежно від ширини вашого контейнера */
+    
+    object-fit: contain;
+    user-select: none;
+    -webkit-user-drag: none; /* Щоб картинка не "тягнулась" мишкою при натисканні */
+    
+    /* Ваша сучасна анімація (залишилась без змін) */
     transition: translate 0.5s cubic-bezier(0.34, 1.2, 0.64, 1), 
                 scale 0.5s cubic-bezier(0.34, 1.2, 0.64, 1), 
                 rotate 0.5s cubic-bezier(0.34, 1.2, 0.64, 1), 
