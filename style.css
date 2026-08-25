@@ -4627,7 +4627,7 @@ body.dark .history-toggle-btn.active #history-arrow {
 }
 
 .history-content-wrapper.open {
-    max-height: 1000px; /* Вкажіть значення з запасом, більше за можливу висоту списку */
+    max-height: 400px; /* Вкажіть значення з запасом, більше за можливу висоту списку */
     visibility: visible;
     opacity: 1;
     transform: translateY(0);
