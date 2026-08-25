@@ -4461,13 +4461,15 @@ body.dark .login-generator-container .result-item .regenerate-login-btn {
     overflow: hidden !important;
 }
 
+.login-generator-container .content-card {
+    padding-bottom: 0px;
+    overflow-y: auto !important;
+    scrollbar-gutter: stable both-edges; 
+}
+
 .container.login-generator-container.active .content-card {
     overflow-y: auto !important;
     scrollbar-gutter: stable both-edges;
-}
-
-.login-generator-container .content-card {
-    padding-bottom: 0px; 
 }
 
 /* 3. Оновлений стиль для поля вводу (Велике і по центру) */
