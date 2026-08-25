@@ -369,7 +369,7 @@ body.dark .qn-list::-webkit-scrollbar-thumb { background-color: rgba(255, 255, 2
     box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.04); 
 
     /* Відступи всередині картки, щоб контент не прилипав до країв */
-    padding: 1rem 0;
+    padding: 16px 0;
     
     /* Дозволяємо скролінг всередині картки */
     overflow: auto;
@@ -417,11 +417,6 @@ h1 {
             font-size: 2.5rem;
 			line-height: 1.2; 
         }
-
-/* container */
-.container h2 {
-    color: var(--header-color);
-}
 
 /* main content wrapper */
 .main-content-wrapper {
@@ -531,7 +526,7 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 0;
-    padding-bottom: 22px;
+    padding-bottom: 16px;
 }
 
 /* Клас для миттєвої появи без анімації */
@@ -2370,7 +2365,6 @@ body.dark .command-item.has-subcommands .command-text:hover {
     /* Центруємо надійно, без зсувів, щоб уникнути конфлікту з шириною */
     left: 0;
     right: 0;
-    margin: 0 auto;
     
     /* Залишаємо тільки scale для закритого стану (без translateX) */
     transform: scale(0.97); 
@@ -2381,6 +2375,10 @@ body.dark .command-item.has-subcommands .command-text:hover {
     transition: max-width 0.4s cubic-bezier(0.25, 1, 0.5, 1),
                 opacity 0.3s ease-in-out, 
                 transform 0.3s ease-in-out !important;
+}
+
+.gpon-commands-container h2 {
+    padding-bottom: 21px;
 }
 
 /* Обов'язково перевизначаємо відкритий стан, щоб не повернувся translateX */
@@ -2663,7 +2661,7 @@ select:focus,
     margin-top: 0;   /* Прибираємо відступ зверху */
     padding-top: 0;  /* Гарантуємо відсутність внутрішнього відступу */
     min-height: 32px;           /* Висота рівно під розмір кнопок/тексту */
-    margin-bottom: 14px;        /* Відступ знизу (як було раніше) */
+    margin-bottom: 21px;        /* Відступ знизу (як було раніше) */
     
     padding-left: 10px;
     padding-right: 5px;
@@ -2704,7 +2702,7 @@ select:focus,
 #export-templates-button,
 #clear-all-templates-button {
     position: relative;
-    top: 2px;
+    top: 5px;
     padding: 0;
     border-radius: 9999px; /* Капсула */
     font-size: 1.1rem;
@@ -4461,9 +4459,8 @@ body.dark .login-generator-container .result-item .regenerate-login-btn {
     align-items: center;
 }
 
-/* login generator container */
-.login-generator-container h2 {
-    margin-bottom: 0px; 
+.login-generator-container .content-card > p {
+    margin-top: 0;
 }
 
 /* 1. Налаштування контейнерів: стискаються і розширюються, але не більше екрану */
