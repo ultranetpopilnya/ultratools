@@ -4461,6 +4461,11 @@ body.dark .login-generator-container .result-item .regenerate-login-btn {
     overflow: hidden !important;
 }
 
+.container.login-generator-container.active .content-card {
+    overflow-y: auto !important;
+    scrollbar-gutter: stable both-edges;
+}
+
 .login-generator-container .content-card {
     padding-bottom: 0px; 
 }
@@ -4492,7 +4497,7 @@ body.dark .login-generator-container .result-item .regenerate-login-btn {
 }
 
 /* ================================================================
-   БЛОК ІСТОРІЇ ЛОГІНІВ — редизайн (сучасна картка з тінню)
+   БЛОК ІСТОРІЇ ЛОГІНІВ — редизайн
    ================================================================ */
 
 .history-section {
@@ -4509,7 +4514,7 @@ body.dark .login-generator-container .result-item .regenerate-login-btn {
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    padding: 2px 8px 2px 18px;
+    padding: 2px 10px 2px 18px;
 }
 
 .history-toggle-btn {
@@ -4603,28 +4608,37 @@ body.dark .history-toggle-btn.active #history-arrow {
 }
 
 .history-content-wrapper {
-    max-height: 0;
+    display: flex;
+    flex-direction: column;
+    max-height: 0; /* Замість grid-template-rows: 0fr */
+    visibility: hidden; /* Повністю вимикає блок, щоб відступи всередині не розтягували висоту */
     overflow: hidden;
     opacity: 0;
     transform: translateY(-10px);
     padding: 0 14px;
-    transition: max-height 0.4s ease-out, opacity 0.3s ease-out, transform 0.3s ease-out, border-color 0.3s ease, padding 0.4s ease-out;
-    display: block;
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
+                opacity 0.3s ease-out, 
+                transform 0.3s ease-out, 
+                padding 0.4s ease-out, 
+                visibility 0.4s;
     border-top: 1px solid transparent;
 }
 
 .history-content-wrapper.open {
-    max-height: 500px;
+    max-height: 1000px; /* Вкажіть значення з запасом, більше за можливу висоту списку */
+    visibility: visible;
     opacity: 1;
     transform: translateY(0);
     width: 100%;
     padding: 14px;
     border-top: 1px solid var(--input-border-color);
+    transition: max-height 0.4s ease-in-out, 
+                opacity 0.3s ease-out, 
+                transform 0.3s ease-out, 
+                padding 0.4s ease-out;
 }
 
 #history-list {
-    max-height: 300px;
-    overflow-y: auto;
     padding: 2px 2px 2px 0;
     display: grid;
     grid-template-columns: 1fr 1fr;
