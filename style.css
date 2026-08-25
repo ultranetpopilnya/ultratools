@@ -415,25 +415,45 @@ h1 {
 			line-height: 1.2; 
         }
 
+.container h2 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding-top: 16px;
+    padding-bottom: 16px;
+}
 .login-generator-container h2 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     margin: 0;
     padding-top: 16px;
     padding-bottom: 16px;
 }
 
 .date-calculator-container h2 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     margin: 0;
     padding-top: 16px;
     padding-bottom: 16px;
 }
 
 .gpon-commands-container h2 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     margin: 0;
     padding-top: 16px;
     padding-bottom: 16px;
 }
 
 .container[data-content="text-templates"] h2 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     margin: 0;
     padding-top: 16px;
     padding-bottom: 16px;
@@ -2692,7 +2712,7 @@ select:focus,
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-bottom: 26px;
+    margin-bottom: 10px;
 }
 
 /* Базові налаштування для всіх кнопок */
