@@ -20,9 +20,9 @@
 
     <div class="theme-pill-container">
     <div class="theme-pill" id="themeToggle" title="Змінити тему">
-        <span class="theme-emoji sun-icon">☀️</span>
-        <span class="theme-emoji moon-icon">🌙</span>
-    </div>
+    <img src="imgs/sun_3d.png" class="theme-emoji sun-icon emoji-png">
+    <img src="imgs/crescent_moon_3d.png" class="theme-emoji moon-icon emoji-png">
+</div>
 </div>
  
     <div class="side-pills-container"> 
@@ -96,19 +96,19 @@
 
     <!-- 2. Текстовий простір (перемістили сюди) -->
     <div class="tab-button" data-tab="text-templates">
-        <i class="fa-solid fa-file-lines"></i> Текстовий простір
+        <i class="fa-solid fa-file-lines"></i>Текстовий простір
         <span class="close-tab-btn" title="Закрити вкладку"><i class="fa-solid fa-xmark"></i></span>
     </div>
 
     <!-- 3. Калькулятор -->
     <div class="tab-button" data-tab="date-calculator">
-        <i class="fa-solid fa-calendar-days"></i> Калькулятор
+        <i class="fa-solid fa-calendar-days"></i>Калькулятор
         <span class="close-tab-btn" title="Закрити вкладку"><i class="fa-solid fa-xmark"></i></span>
     </div>
 
     <!-- 4. Команди -->
     <div class="tab-button" data-tab="gpon-commands">
-        <i class="fa-solid fa-network-wired"></i> Команди
+        <i class="fa-solid fa-network-wired"></i>Команди
         <span class="close-tab-btn" title="Закрити вкладку"><i class="fa-solid fa-xmark"></i></span>
     </div>
 
@@ -127,21 +127,21 @@
 
             <div class="container login-generator-container active" data-content="login-generator" data-default-width="770px">
 			<div class="content-card">
-                <h2 style="margin-top: 0; text-align: center;">🔐 Генератор логінів</h2>
+                <h2 style="margin-top: 0; text-align: center;"><img src="imgs/locked_with_key_3d.png" class="emoji-png">Генератор логінів</h2>
                 <p style="text-align: center;">Введіть повністю одне або декілька ПІБ, кожне — з нового рядка.<br>Також можливий трансліт: ФОП, ТОВ, ТзОВ, ПП, АТ, ПрАТ, ПАТ, ВАТ, ЗАТ, ТДВ, КБ, ГО, <br>ГС, КП, ДП, ФГ, СФГ, ОСББ, ЖБК, БФ, НВП, ЗОШ, НВК, ДНЗ, ЦРЛ.</p>
 
                 <textarea id="fullNameInput" rows="1" placeholder="Прізвище, Ім'я, та по Батькові"></textarea>
 
                 <div class="login-actions-block">
     <!-- Підпис блоку -->
-    <div class="actions-block-title">
-    <i class="fa-solid fa-sliders"></i> Налаштування генерації
-</div>
+        <div class="actions-block-title">
+        <img src="imgs/level_slider_3d.png" class="emoji-png" alt="settings">Налаштування генерації
+    </div>
     
     <!-- Контейнер для самих кнопок -->
     <div class="actions-block-buttons">
         <button id="login-autoclear-btn" onclick="toggleLoginAutoClear()" title="Очищення поля вводу тексту після генерації логіна">
-            <i class="fa-solid fa-eraser"></i> Автоочищення
+            <i class="fa-solid fa-eraser"></i>Автоочищення
         </button>
         <!-- Майбутні кнопки додаватимете сюди -->
     </div>
@@ -153,9 +153,9 @@
     <div class="history-header-row">
         <button id="history-toggle-btn" class="history-toggle-btn" onclick="toggleHistory()">
             <span class="history-title">
-                <i class="fa-solid fa-angle-right" id="history-arrow"></i> 
-                🕒 Історія логінів (<span id="history-count">0</span>)
-            </span>
+    <i class="fa-solid fa-angle-right" id="history-arrow"></i> 
+    <img src="imgs/receipt_3d.png" class="emoji-png">Історія логінів (<span id="history-count">0</span>)
+             </span>
         </button>
         
         <button id="clear-history-btn" class="clear-history-header-btn" title="Очистити всю історію">
@@ -174,7 +174,7 @@
             <div class="container" data-content="text-templates">
 			<div class="content-card">
 <div class="templates-header-wrapper">
-    <h2 class="template-main-title">📝 Текстовий простір</h2>
+    <h2 class="template-main-title"><img src="imgs/bookmark_tabs_3d.png" class="emoji-png">Текстовий простір</h2>
 
     <div class="template-global-actions">
         <button id="add-template-button" title="Додати текстовий шаблон"><i class="fa-regular fa-square-plus"></i></button>
@@ -206,7 +206,7 @@
         <!-- === ПОЧАТОК ЗМІНЕНОГО БЛОКУ DATE CALCULATOR === -->
 <div class="container date-calculator-container" data-content="date-calculator" data-default-width="830px">
     <div class="content-card">
-        <h2 style="margin-top: 0; text-align: center; width: 100%;">🗓️ Комбінований калькулятор</h2>
+        <h2 style="margin-top: 0; text-align: center; width: 100%;"><img src="imgs/spiral_calendar_3d.png" class="emoji-png">Комбінований калькулятор</h2>
         
         <!-- ГНУЧКА ОБГОРТКА ДЛЯ ДВОХ КОЛОНОК -->
         <div class="calc-flex-wrapper">
@@ -215,13 +215,13 @@
             <div class="date-calc-column">
                 <div class="date-inputs-row">
                     <div class="date-input-group">
-                        <label for="start-date">🗓️ Початкова дата:</label>
+                        <label for="start-date"><img src="imgs/calendar_3d.png" class="emoji-png">Початкова дата:</label>
                         <input type="date" id="start-date" name="start-date" onchange="handleInputAndTimer()" required>
                         <input type="time" id="start-time" name="start-time" onchange="handleInputAndTimer()" value="00:00" required>
                     </div>
 
                     <div class="date-input-group">
-                        <label for="end-date">➡️ Кінцева дата:</label>
+                        <label for="end-date"><img src="imgs/hourglass_done_3d.png" class="emoji-png">Кінцева дата:</label>
                         <input type="date" id="end-date" name="end-date" onchange="handleInputAndTimer()" required>
                         <input type="time" id="end-time" name="end-time" onchange="handleInputAndTimer()" value="00:00" required>
                     </div>
@@ -229,8 +229,8 @@
 
                     <div class="calculator-actions-block">
                         <div class="actions-block-title">
-        <i class="fa-solid fa-sliders"></i> Керування датами і часом
-    </div>
+        <img src="imgs/control_knobs_3d.png" class="emoji-png" alt="settings">Керування датами і часом
+                       </div>
     
     <!-- 2. Обгортаємо всі ваші кнопки таймера/скидання у цей контейнер -->
     <div class="actions-block-buttons calc-buttons-center">
@@ -282,7 +282,7 @@
 </div> <!-- ВАЖЛИВО: цей тег закриває calculator-actions-block -->
 
                     <div id="result-section">
-                        <h2>⏱️ Результат дати</h2>
+                        <h2><img src="imgs/stopwatch_3d.png" class="emoji-png">Результат дати</h2>
                         <div id="result-display">Оберіть дати...</div>
                     </div>
             </div> <!-- ВАЖЛИВО: цей тег закриває date-calc-column (ЛІВУ КОЛОНКУ) -->
@@ -376,7 +376,9 @@
             
 <div class="container gpon-commands-container" data-content="gpon-commands">
     <div class="content-card">
-        <h2 style="margin-top: 0; margin-bottom: 16px; text-align: center;">💻 Команди GPON/EPON/BDCOM/MX80</h2>
+        <h2 style="margin-top: 0; margin-bottom: 16px; text-align: center;">
+    <img src="imgs/desktop_computer_3d.png" class="emoji-png">Команди GPON/EPON/BDCOM/MX80
+</h2>
 
         <!-- Блок перемикачів -->
         <div id="controls-and-clarification">
