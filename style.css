@@ -3333,7 +3333,7 @@ body.dark .scroll-nav-btn.visible:hover {
     color: var(--text-color); /* Використовуємо основний колір тексту */
     opacity: 0.6; /* Робимо трохи тьмянішим, коли не наведено */
     cursor: pointer;
-    border-radius: 50%;
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -4633,7 +4633,7 @@ body.dark .history-toggle-btn:hover { color: var(--secondary-accent-color); }
     width: 23px;
     height: 23px;
     flex-shrink: 0;
-    border-radius: 50%;
+    border-radius: 8px;
     background: var(--primary-accent-shadow);
     color: var(--primary-accent-color);
     font-size: 1em;
@@ -4784,7 +4784,7 @@ body.dark .history-item:hover {
     background: var(--bg-second-color);
     border: 1px solid var(--input-border-color);
     color: var(--text-color);
-    border-radius: 50%;
+    border-radius: 8px;
     width: 28px;
     height: 28px;
     flex-shrink: 0;
@@ -5496,7 +5496,7 @@ body.dark .calc-title { color: var(--text-color); }
     box-shadow: none;
     width: 30px;
     height: 30px;
-    border-radius: 50%;
+    border-radius: 8px;
     display: flex;
     justify-content: center;
     align-items: center;
