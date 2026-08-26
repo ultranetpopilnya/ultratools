@@ -4193,7 +4193,7 @@ body.dark .speed-select option {
    Вкладка генератора логінів: картки результатів, бейдж типу
    логіна, кнопки перегенерувати/скопіювати.
    ================================================================ */
-/* === ПАНЕЛЬ КНОПОК НАД ПОЛЕМ ВВОДУ ПІБ === */
+/* === ПАНЕЛЬ КНОПОК ПІД ПОЛЕМ ВВОДУ ПІБ === */
 .login-actions-block {
     display: flex;
     flex-direction: column; /* Тепер елементи йдуть зверху вниз (Текст -> Кнопки) */
@@ -4259,76 +4259,101 @@ body.dark .login-actions-block {
     border-color: var(--input-border-color);
 }
 
-   /* === КНОПКА ТУМБЛЕР: АВТООЧИЩЕННЯ ЛОГІНІВ === */
+/* === КНОПКА ТУМБЛЕР: АВТООЧИЩЕННЯ ЛОГІНІВ === */
 #login-autoclear-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
-    background-color: #f9f9f9; 
+    gap: 8px; /* Відстань між іконкою та текстом */
+    
+    background-color: var(--bg-second-color);
     border: 1px solid var(--input-border-color);
-    border-radius: 6px;
-    padding: 4px 12px; /* Підлаштував трохи товщину для комфортного кліку */
+    border-radius: 8px; /* Сучасне заокруглення */
+    
+    /* Відступи як у кнопок дій (калькулятор дат) */
+    padding: 6px 12px; 
+    
     cursor: pointer;
     font-family: inherit;
-    font-size: 13.5px;
-    font-weight: 600;
+    /* Шрифт як у кнопок дій */
+    font-size: 14px; 
+    font-weight: 500; 
     color: var(--text-color);
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    transition: all 0.2s ease;
     white-space: nowrap;
+    user-select: none; /* Забороняє виділення тексту при кліку */
+
+    transform: translateZ(0); /* Примусово вмикає GPU-рендеринг на постійній основі */
+    will-change: transform; /* Каже браузеру заздалегідь, що кнопка буде анімуватись */
 }
 
 #login-autoclear-btn i {
-    transition: color 0.2s ease;
+    font-size: 15px; /* Трохи більша іконка для балансу з текстом 14px */
+    transition: inherit;
 }
 
-/* Стан ACTIVE (коли автоочищення увімкнено) */
+/* --- СТАН: HOVER (При наведенні, коли кнопка ВИМКНЕНА) --- */
+/* Ледь помітно підсвічуємо фон, щоб показати, що це кнопка */
+#login-autoclear-btn:hover:not(.active) {
+    background-color: rgba(0, 0, 0, 0.03); 
+    border-color: #bbb;
+}
+
+#login-autoclear-btn:hover:not(.active) i {
+    color: var(--primary-accent-color);
+}
+
+/* --- СТАН: ACTIVE (Коли автоочищення УВІМКНЕНО) --- */
 #login-autoclear-btn.active {
-    background-color: var(--primary-accent-color);
+    /* Кольоровий контур */
     border-color: var(--primary-accent-color);
-    color: white;
+    
+    /* Напівпрозорий фон (12% непрозорості від синього кольору) */
+    background-color: rgba(0, 123, 255, 0.12); 
+    
+    /* Текст і іконка в колір акценту */
+    color: var(--primary-accent-color);
 }
 #login-autoclear-btn.active i {
-    color: white;
+    color: var(--primary-accent-color);
 }
 
-/* Ховер (тільки коли кнопка НЕ активна) */
-#login-autoclear-btn:hover:not(.active) {
-    background-color: var(--primary-accent-color);
-    border-color: var(--primary-accent-color);
-    color: white;
-    box-shadow: 0 3px 8px rgba(0, 123, 255, 0.2);
-}
-#login-autoclear-btn:hover:not(.active) i { 
-    color: white; 
-}
 
-/* === ТЕМНА ТЕМА === */
+/* =========================================
+   === ТЕМНА ТЕМА ===
+   ========================================= */
+
+/* Базовий стан у темній темі */
 body.dark #login-autoclear-btn {
-    background-color: #3a3b3c;
     border-color: var(--input-border-color);
     color: var(--text-color);
+    background-color: var(--bg-second-color);
 }
 
-/* Темна тема: Стан ACTIVE */
+/* HOVER у темній темі (коли ВИМКНЕНО) */
+body.dark #login-autoclear-btn:hover:not(.active) {
+    background-color: rgba(255, 255, 255, 0.05); /* Легка біла підсвітка фону */
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* ACTIVE у темній темі (коли УВІМКНЕНО) */
 body.dark #login-autoclear-btn.active {
-    background-color: var(--secondary-accent-color);
+    /* Контур оранжевий/акцентний */
     border-color: var(--secondary-accent-color);
-    color: var(--bg-color);
+    
+    /* Напівпрозорий фон (15% непрозорості від оранжевого кольору 230, 162, 46) */
+    background-color: rgba(230, 162, 46, 0.15); 
+    
+    /* Текст і іконка акцентного кольору */
+    color: var(--secondary-accent-color);
 }
 body.dark #login-autoclear-btn.active i {
-    color: var(--bg-color);
+    color: var(--secondary-accent-color);
 }
 
-/* Темна тема: Ховер (коли кнопка НЕ активна) */
-body.dark #login-autoclear-btn:hover:not(.active) {
-    background-color: var(--secondary-accent-color);
-    border-color: var(--secondary-accent-color);
-    color: var(--bg-color);
-    box-shadow: 0 3px 8px rgba(230, 162, 46, 0.2);
-}
-body.dark #login-autoclear-btn:hover:not(.active) i { 
-    color: var(--bg-color); 
+body.dark #login-autoclear-btn:hover:not(.active) i {
+    color: var(--secondary-accent-color);
 }
 
 /* --- СІТКА ДЛЯ 2-х КОЛОНОК --- */
@@ -4614,6 +4639,7 @@ body.dark .history-toggle-btn:hover { color: var(--secondary-accent-color); }
     line-height: 22px;
     margin-right: 10px;   /* ← відступ саме тут, а не через gap */
     transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.25s ease, color 0.25s ease;
+    will-change: transform;
 }
 
 body.dark #history-arrow {
@@ -5013,171 +5039,143 @@ body.dark .date-calculator-container #result-section h2 {
 }
 
 /* Додатковий клас, щоб кнопки в калькуляторі стояли по центру */
-.calc-buttons-center {
-    justify-content: center;
-}
-
-/* Темна тема: calculator actions block */
-body.dark .calculator-actions-block {
-    background-color: var(--bg-second-color);
-    border-color: var(--input-border-color);
-}
+.calc-buttons-center { justify-content: center; }
 
 /* Обгортки (Flexbox) */
 .quick-add-container { display: flex; flex-direction: column; gap: 12px; width: 100%; }
+.quick-add-row { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; align-items: center; width: 100%; }
+.actions-floor { display: flex; justify-content: center; align-items: center; gap: 6px; row-gap: 12px; width: 344px; }
 
-/* quick add row */
-.quick-add-row { 
-    display: flex; 
-    gap: 6px; 
-    flex-wrap: wrap; 
-    justify-content: center; 
-    align-items: center; 
-    width: 100%;
-}
-
-/* actions floor */
-.actions-floor { 
-    display: flex; 
-    justify-content: center; 
-    align-items: center; 
-    gap: 6px; 
-    row-gap: 12px;
-    width: 344px; 
-}
-
-/* --- РОЗДІЛЮВАЧІ (Елегантні та акуратні) --- */
+/* --- РОЗДІЛЮВАЧІ --- */
 .action-divider {
     width: 1px;
-    height: 16px; /* Зробили трішки коротшими, виглядає як акуратна зарубка */
+    height: 16px; 
     background-color: var(--input-border-color);
     opacity: 0.7;
     margin: 0 2px;
     border-radius: 1px;
 }
-
-/* horizontal divider */
 .horizontal-divider { 
-    width: 90%; /* Не торкається країв - виглядає елегантніше */
+    width: 90%; 
     height: 1px; 
     background-color: var(--input-border-color); 
     opacity: 0.5; 
     margin: 0 auto;
 }
 
-/* Темна тема: action divider */
+/* Темна тема: Рамка та розділювачі */
+body.dark .calculator-actions-block {
+    background-color: var(--bg-second-color);
+    border-color: var(--input-border-color);
+}
 body.dark .action-divider,
 body.dark .horizontal-divider { 
     background-color: rgba(255, 255, 255, 0.15); 
 }
 
-/* --- 2. СТАНДАРТНІ КНОПКИ */
+/* =========================================================
+   --- 2. СТАНДАРТНІ КНОПКИ (ДІЇ) ---
+   ========================================================= */
 .calc-action-button {
     display: flex; 
     flex: 1; 
     justify-content: center;
     align-items: center;
-    gap: 8px; /* Іконка ближче до тексту */
+    gap: 8px;
     
-    padding: 6px 10px; /* Компактні відступи */
+    padding: 6px 12px; /* Збільшені сучасні відступи */
     
+    background-color: transparent; /* Прозорий фон */
     border: 1px solid var(--input-border-color);
-    border-radius: 6px; /* М'які квадрати замість пігулок - виглядає зібраніше */
-    background-color: #f9f9f9;
+    border-radius: 8px; /* Сучасне заокруглення 8px */
     
     color: var(--text-color);
-    font-weight: 600;
+    font-family: inherit;
+    font-size: 14px; /* Оновлений розмір */
+    font-weight: 500; /* Тонший, елегантніший шрифт */
     cursor: pointer;
-    font-size: 13.5px;
+    user-select: none;
     
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.2s ease;
 }
 
-/* calc action button */
 .calc-action-button i { 
-    font-size: 14.5px; 
+    font-size: 15px; 
     color: var(--tab-inactive-text); 
-    transition: color 0.2s; 
+    transition: color 0.2s ease; 
 }
 
-/* Темна тема: calc action button */
-body.dark .calc-action-button {
-    background-color: #3a3b3c;
-}
-
-/* Ховер */
+/* Стан HOVER (Світла тема) - Легке підсвічування замість заливки */
 .calc-action-button:hover {
-    background-color: var(--primary-accent-color);
-    border-color: var(--primary-accent-color);
-    color: white;
-    box-shadow: 0 3px 8px rgba(0, 123, 255, 0.2);
+    background-color: rgba(0, 0, 0, 0.03);
+    border-color: #bbb;
+}
+.calc-action-button:hover i {
+    color: var(--primary-accent-color); /* Іконка стає акцентною при наведенні */
 }
 
-/* calc action button — ховер */
-.calc-action-button:hover i { color: white; }
+/* Ефект кліку (трохи зменшується) */
+.calc-action-button:active { transform: scale(0.97); }
 
-/* Темна тема */
+/* Темна тема: Стандартні кнопки */
+body.dark .calc-action-button {
+    border-color: var(--input-border-color);
+    color: var(--text-color);
+}
 body.dark .calc-action-button:hover {
-    background-color: var(--secondary-accent-color);
-    border-color: var(--secondary-accent-color);
-    color: var(--bg-color);
-    box-shadow: 0 3px 8px rgba(230, 162, 46, 0.2);
+    background-color: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+body.dark .calc-action-button:hover i {
+    color: var(--secondary-accent-color);
 }
 
-/* Темна тема: calc action button — ховер */
-body.dark .calc-action-button:hover i { color: var(--bg-color); }
-
-/* --- 3. РОЗДІЛЕНИЙ ПЕРЕМИКАЧ (УНІВЕРСАЛЬНИЙ ДЛЯ 2+ КНОПОК) --- */
+/* =========================================================
+   --- 3. РОЗДІЛЕНИЙ ПЕРЕМИКАЧ (+1, -1, +3 місяці) ---
+   ========================================================= */
 .month-stepper {
-    display: flex; /* Змінено з inline-flex */
-    width: 100%; /* Контейнер кнопок займає всю ширину */
+    display: flex;
+    width: 100%; 
     background-color: transparent; 
     border: none;
     box-shadow: none;
     overflow: visible; 
 }
 
-/* stepper btn */
 .stepper-btn {
     flex: 1;
-    background-color: #f9f9f9;
-    padding: 6px 16px; /* Трохи зменшив відступ для 3-х кнопок, щоб гарно вміщалися */
-    font-size: 13.5px; 
-    font-weight: 600;
+    background-color: transparent;
+    padding: 6px 12px; /* Відступи як у всіх кнопок */
+    font-family: inherit;
+    font-size: 14px; 
+    font-weight: 500;
     color: var(--text-color);
     cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    user-select: none;
+    transition: all 0.2s ease;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     position: relative; 
     
-    /* Спільні рамки для всіх (зверху і знизу) */
     border-top: 1px solid var(--input-border-color);
     border-bottom: 1px solid var(--input-border-color);
     border-left: none;
     border-right: none;
-    border-radius: 0; /* Середні кнопки будуть квадратними */
+    border-radius: 0; 
 }
 
-/* Темна тема: stepper btn */
-body.dark .stepper-btn {
-    background-color: #3a3b3c;
-}
-
-/* Перша кнопка (лівий край) */
+/* Перша і остання кнопка мають радіус 8px */
 .stepper-btn:first-child {
     border-left: 1px solid var(--input-border-color);
-    border-radius: 6px 0 0 6px;
+    border-radius: 8px 0 0 8px;
 }
-
-/* Остання кнопка (правий край) */
 .stepper-btn:last-child {
     border-right: 1px solid var(--input-border-color);
-    border-radius: 0 6px 6px 0; 
+    border-radius: 0 8px 8px 0; 
 }
 
-/* Центральний розділювач (після кожної кнопки, крім останньої) */
+/* Внутрішні розділювачі */
 .stepper-btn:not(:last-child)::after {
     content: '';
     position: absolute;
@@ -5189,93 +5187,90 @@ body.dark .stepper-btn {
     pointer-events: none;
     z-index: 1;
 }
-
-/* Темна тема: stepper btn — псевдоелемент ::after */
 body.dark .stepper-btn:not(:last-child)::after {
     background-color: rgba(255, 255, 255, 0.15);
 }
 
-/* stepper btn — ховер */
+/* HOVER для перемикачів */
 .stepper-btn:hover {
-    background-color: var(--primary-accent-color);
-    border-color: var(--primary-accent-color);
-    color: white;
-    box-shadow: 0 3px 8px rgba(0, 123, 255, 0.2);
+    background-color: rgba(0, 0, 0, 0.03);
+    border-color: #bbb;
     z-index: 2; 
 }
+.stepper-btn:active { transform: scale(0.97); }
 
-/* Ховаємо ВСІ внутрішні лінії при наведенні на блок, щоб не псували колір */
-.month-stepper:hover .stepper-btn::after { display: none; }
-
-/* Темна тема для рамок */
-body.dark .stepper-btn {
-    border-color: var(--input-border-color);
-}
-
-/* Темна тема: stepper btn — ховер */
+body.dark .stepper-btn { border-color: var(--input-border-color); }
 body.dark .stepper-btn:hover {
-    background-color: var(--secondary-accent-color);
-    border-color: var(--secondary-accent-color);
-    color: var(--bg-color);
-    box-shadow: 0 3px 8px rgba(230, 162, 46, 0.2);
+    background-color: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.3);
 }
 
-/* === РОЗМІЩЕННЯ ТА ДИЗАЙН КНОПКИ === */
+/* =========================================================
+   --- 4. КНОПКА-ТУМБЛЕР АВТОСКИДАННЯ З ТАЙМЕРОМ ---
+   ========================================================= */
 .reset-toggle-container {
     width: 100%;
     display: flex;
     justify-content: center;
 }
 
-/* auto reset button */
 #auto-reset-button {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #f9f9f9; /* Колір як у кнопок вище */
+    
+    background-color: transparent; 
     border: 1px solid var(--input-border-color);
-    border-radius: 6px;
-    padding: 2px 12px;
+    border-radius: 8px;
+    
+    padding: 4px 12px;
     cursor: pointer;
     font-family: inherit;
-    font-size: 13.5px;
-    font-weight: 600;
+    font-size: 14px;
+    font-weight: 500;
     color: var(--text-color);
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    user-select: none;
+    transition: all 0.2s ease;
+
+    transform: translateZ(0); /* Примусово вмикає GPU-рендеринг на постійній основі */
+    will-change: transform; /* Каже браузеру заздалегідь, що кнопка буде анімуватись */
 }
 
-/* Темна тема: auto reset button */
+/* Ховер (НЕ активна) */
+#auto-reset-button:hover:not(.active) {
+    background-color: rgba(0, 0, 0, 0.03);
+    border-color: #bbb;
+}
 body.dark #auto-reset-button {
-    background-color: #3a3b3c;
     border-color: var(--input-border-color);
     color: var(--text-color);
 }
-
-/* Ховер для кнопки автоскидання (тільки коли вона НЕ активна) */
-#auto-reset-button:hover:not(.active) {
-    background-color: var(--primary-accent-color);
-    border-color: var(--primary-accent-color);
-    color: white;
-    box-shadow: 0 3px 8px rgba(0, 123, 255, 0.2);
-}
-
-/* auto reset button — ховер */
-#auto-reset-button:hover:not(.active) .timer-icon { 
-    color: white; 
-}
-
-/* Темна тема: auto reset button — ховер */
+/* Ховер у темній темі (коли кнопка ВИМКНЕНА) */
 body.dark #auto-reset-button:hover:not(.active) {
-    background-color: var(--secondary-accent-color);
-    border-color: var(--secondary-accent-color);
-    color: var(--bg-color);
-    box-shadow: 0 3px 8px rgba(230, 162, 46, 0.2);
+    background-color: rgba(255, 255, 255, 0.05); /* Легкий світлий фон замість суцільного оранжевого */
+    border-color: rgba(255, 255, 255, 0.3);
+    color: var(--text-color); /* Зберігаємо білий текст */
+    box-shadow: none; /* Прибираємо тінь від старого коду, якщо вона була */
 }
 
-/* Темна тема: auto reset button — ховер */
-body.dark #auto-reset-button:hover:not(.active) .timer-icon { color: var(--bg-color); }
+/* Гарантуємо, що іконку видно при наведенні */
+body.dark #auto-reset-button:hover:not(.active) .timer-icon { 
+    color: var(--text-color); 
+}
 
-/* Обгортка для іконки та таймера */
+/* === АКТИВНИЙ СТАН ("Soft Active" стиль) === */
+#auto-reset-button.active {
+    border-color: var(--primary-accent-color);
+    background-color: rgba(0, 123, 255, 0.12); /* Напівпрозорий синій */
+    color: var(--primary-accent-color);
+}
+body.dark #auto-reset-button.active {
+    border-color: var(--secondary-accent-color);
+    background-color: rgba(230, 162, 46, 0.15); /* Напівпрозорий оранжевий */
+    color: var(--secondary-accent-color);
+}
+
+/* Обгортка таймера */
 .timer-wrapper {
     position: relative;
     width: 26px;
@@ -5283,96 +5278,57 @@ body.dark #auto-reset-button:hover:not(.active) .timer-icon { color: var(--bg-co
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-right: 8px; /* Відступ від тексту */
+    margin-right: 8px; 
 }
-
-/* Сама іконка */
 #auto-reset-button .timer-icon {
     font-size: 13px;
-    transition: transform 0.4s ease;
+    transition: all 0.3s ease;
     z-index: 2;
+    color: var(--text-color);
 }
+/* Іконка в активному стані */
+#auto-reset-button.active .timer-icon { color: var(--primary-accent-color); }
+body.dark #auto-reset-button.active .timer-icon { color: var(--secondary-accent-color); }
 
 /* --- SVG АНІМАЦІЯ КІЛЬЦЯ --- */
 .progress-ring {
     position: absolute;
-    top: 0;
-    left: 0;
-    transform: rotate(-90deg); /* Початок зверху */
+    top: 0; left: 0;
+    transform: rotate(-90deg);
     pointer-events: none;
     z-index: 1;
 }
-
-/* progress ring */
 .progress-ring circle {
     fill: transparent;
     stroke-width: 2px;
     transition: stroke-dashoffset 0.5s;
 }
 
-/* Кольори кільця в стані спокою */
-.progress-ring-bg {
-    stroke: rgba(128, 128, 128, 0.25);
-}
-
-/* progress ring fg */
+/* Спокійний стан кільця */
+.progress-ring-bg { stroke: rgba(128, 128, 128, 0.25); }
 .progress-ring-fg {
-    stroke: var(--success-color, #28a745); /* Колір заповнення */
+    stroke: var(--success-color, #28a745);
     stroke-dasharray: 69.1; 
     stroke-dashoffset: 69.1;
 }
 
-/* Темна тема: progress ring fg */
-body.dark .progress-ring-fg {
-    stroke: var(--text-color, #fff);
-}
+/* Кільце в активному стані (колір підлаштовується під кнопку) */
+#auto-reset-button.active .progress-ring-bg { stroke: rgba(0, 123, 255, 0.2); }
+#auto-reset-button.active .progress-ring-fg { stroke: var(--primary-accent-color); }
 
-/* --- СТАН: ФУНКЦІЯ АКТИВНА (Натиснуто, чекає кліків) --- */
-#auto-reset-button.active {
-    background-color: var(--primary-accent-color, #007bff);
-    border-color: var(--primary-accent-color, #007bff);
-    color: #fff;
-}
+body.dark #auto-reset-button.active .progress-ring-bg { stroke: rgba(230, 162, 46, 0.2); }
+body.dark #auto-reset-button.active .progress-ring-fg { stroke: var(--secondary-accent-color); }
 
-/* auto reset button — активний стан */
-#auto-reset-button.active .timer-icon { color: #fff; }
-
-/* auto reset button — активний стан */
-#auto-reset-button.active .progress-ring-bg { stroke: rgba(255, 255, 255, 0.3); }
-
-/* auto reset button — активний стан */
-#auto-reset-button.active .progress-ring-fg { stroke: #fff; }
-
-/* Темна тема для активного стану */
-body.dark #auto-reset-button.active {
-    background-color: var(--secondary-accent-color, #ff9800);
-    border-color: var(--secondary-accent-color, #ff9800);
-    color: #121212; /* або var(--bg-color) */
-}
-
-/* Темна тема: auto reset button — активний стан */
-body.dark #auto-reset-button.active .timer-icon { color: #121212; }
-
-/* Темна тема: auto reset button — активний стан */
-body.dark #auto-reset-button.active .progress-ring-bg { stroke: rgba(0, 0, 0, 0.2); }
-
-/* Темна тема: auto reset button — активний стан */
-body.dark #auto-reset-button.active .progress-ring-fg { stroke: #121212; }
-
-/* --- СТАН: ТАЙМЕР ЗАПУЩЕНО (Відлік) --- */
+/* Таймер запущено */
 #auto-reset-button.timer-running .progress-ring-fg {
     stroke-dashoffset: 0;
-    transition: stroke-dashoffset 7s linear; /* Час таймера (7 секунд) */
+    transition: stroke-dashoffset 7s linear;
 }
-
-/* @keyframes tickTock */
 @keyframes tickTock {
     0%, 100% { transform: rotate(0deg); }
     25% { transform: rotate(15deg); }
     75% { transform: rotate(-15deg); }
 }
-
-/* auto reset button */
 #auto-reset-button.timer-running .timer-icon {
     animation: tickTock 1s infinite ease-in-out;
 }
@@ -5389,17 +5345,20 @@ body.dark #auto-reset-button.active .progress-ring-fg { stroke: #121212; }
 
 /* 3. Ховер у ВКЛЮЧЕНОМУ (активному) стані — Світла тема */
 #auto-reset-button.active:hover {
-        background-color: var(--primary-accent-color);
+    /* Робимо фон трошки темнішим за звичайний активний стан (18% замість 12%), але НЕ суцільним */
+    background-color: rgba(0, 123, 255, 0.18); 
     border-color: var(--primary-accent-color);
-    box-shadow: 0 3px 8px rgba(0, 123, 255, 0.2);
+    color: var(--primary-accent-color); /* Текст залишається синім */
+    box-shadow: none; /* Забираємо стару тінь, щоб кнопка виглядала плоскішою і сучаснішою */
 }
 
 /* Ховер у ВКЛЮЧЕНОМУ (активному) стані — Темна тема */
 body.dark #auto-reset-button.active:hover {
-     background-color: var(--secondary-accent-color);
+    /* Робимо фон трошки яскравішим (25% замість 15%), але НЕ суцільним */
+    background-color: rgba(230, 162, 46, 0.25); 
     border-color: var(--secondary-accent-color);
-    color: var(--bg-color);
-    box-shadow: 0 3px 8px rgba(230, 162, 46, 0.2);
+    color: var(--secondary-accent-color); /* Текст залишається оранжевим */
+    box-shadow: none;
 }
 
 /* 4. Фокус при навігації з клавіатури (доступність / Accessibility) */
