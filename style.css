@@ -4222,7 +4222,7 @@ body.dark .speed-select option {
     font-weight: 700; /* Робимо жирнішим */
     color: var(--text-color); /* Використовуємо ваш фірмовий синій колір */
     letter-spacing: .8px;
-    margin-bottom: 4px;
+    margin-bottom: 0px;
 }
 
 /* Створюємо красиву лінію справа від тексту */
