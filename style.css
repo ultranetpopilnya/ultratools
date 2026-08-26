@@ -4345,11 +4345,7 @@ body.dark #login-autoclear-btn:hover:not(.active) {
 body.dark #login-autoclear-btn.active {
     /* Контур оранжевий/акцентний */
     border-color: var(--secondary-accent-color);
-    
-    /* Напівпрозорий фон (15% непрозорості від оранжевого кольору 230, 162, 46) */
     background-color: rgba(230, 162, 46, 0.15); 
-    
-    /* Текст і іконка акцентного кольору */
     color: var(--secondary-accent-color);
 }
 body.dark #login-autoclear-btn.active i {
@@ -5101,6 +5097,7 @@ body.dark .horizontal-divider {
     user-select: none;
     
     transition: all 0.2s ease;
+    will-change: transform;
 }
 
 .calc-action-button i { 
