@@ -1057,7 +1057,7 @@ body.dark .add-tab-btn.menu-open:active {
     gap: 12px;
     padding: 8px 12px;
     cursor: pointer;
-    border-radius: 8px;
+    border-radius: 6px;
     color: var(--text-color);
     font-size: 13.5px;
     font-weight: 500;
@@ -1535,7 +1535,7 @@ body.dark .version-number {
 .extension-download-btn {
     display: inline-flex; align-items: center; gap: 6px;
     background-color: var(--primary-accent-color); color: white;
-    padding: 6px 14px; border-radius: 8px; font-size: 13px; font-weight: 600;
+    padding: 6px 14px; border-radius: 6px; font-size: 13px; font-weight: 600;
     text-decoration: none; transition: all 0.2s ease-in-out;
     box-shadow: 0 2px 4px rgba(0, 123, 255, 0.2);
 }
@@ -1547,7 +1547,7 @@ body.dark .version-number {
 .extension-info-btn {
     display: inline-flex; align-items: center; justify-content: center;
     padding: 6px 10px; background-color: transparent; color: var(--tab-inactive-text);
-    border: 1px solid var(--input-border-color); border-radius: 8px;
+    border: 1px solid var(--input-border-color); border-radius: 6px;
     text-decoration: none; transition: all 0.2s ease-in-out; font-size: 14px;
 }
 
@@ -3275,7 +3275,7 @@ body.dark .scroll-nav-btn.visible:hover {
 .speed-select {
     padding: 3px 8px;
     height: 28px; 
-    border-radius: 8px; 
+    border-radius: 6px; 
     border: 1px solid var(--input-border-color);
     background-color: var(--input-bg-color); 
     color: var(--text-color);
@@ -3485,7 +3485,7 @@ body.dark .swap-inputs-btn:hover {
     color: white;
     
     border: none;
-    border-radius: 8px;
+    border-radius: 6px;
     cursor: pointer;
     
     display: flex;
@@ -3996,7 +3996,7 @@ body.dark .config-onu-mode-btn.is-switch:hover {
 
     background: var(--input-bg-color);
     border: 1px solid var(--input-border-color);
-    border-radius: 8px;
+    border-radius: 6px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.08);
 
     max-height: 300px;
@@ -4272,7 +4272,7 @@ body.dark .login-actions-block {
     
     background-color: var(--bg-btn);
     border: 1px solid var(--input-border-color);
-    border-radius: 8px; /* Сучасне заокруглення */
+    border-radius: 6px; /* Сучасне заокруглення */
     
     /* Відступи як у кнопок дій (калькулятор дат) */
     padding: 6px 12px; 
@@ -4916,7 +4916,7 @@ body.dark .date-calculator-container #result-section {
 .date-calculator-container .date-input-group input[type="time"] { 
     padding: 10px;
     border: 2px solid #ccc; /* Це лише для світлої теми, якщо немає фокусу */
-    border-radius: 12px; 
+    border-radius: 6px; 
     font-size: 1em;
     cursor: pointer;
     width: 100%;
@@ -5087,7 +5087,7 @@ body.dark .horizontal-divider {
     
     background-color: var(--bg-btn);
     border: 1px solid var(--input-border-color);
-    border-radius: 8px; /* Сучасне заокруглення 8px */
+    border-radius: 6px; /* Сучасне заокруглення 8px */
     
     color: var(--text-color);
     font-family: inherit;
@@ -5170,7 +5170,7 @@ body.dark .calc-action-button:hover i {
 /* Перша і остання кнопка мають радіус 8px */
 .stepper-btn:first-child {
     border-left: 1px solid var(--input-border-color);
-    border-radius: 8px 0 0 8px;
+    border-radius: 6px 0 0 6px;
 }
 .stepper-btn:last-child {
     border-right: 1px solid var(--input-border-color);
@@ -5228,7 +5228,7 @@ body.dark .stepper-btn:hover {
     
     background-color: var(--bg-btn);
     border: 1px solid var(--input-border-color);
-    border-radius: 8px;
+    border-radius: 6px;
     
     padding: 4px 12px;
     cursor: pointer;
@@ -5630,7 +5630,7 @@ body.dark .calc-display-container {
 .c-btn {
     height: 46px; /* Збільшено висоту кнопок (було 42px) */
     border: 1px solid var(--input-border-color);
-    border-radius: 12px;
+    border-radius: 6px;
     font-size: 20px; /* Збільшено шрифт цифр (було 18px) */
     cursor: pointer;
     background-color: #f9f9f9;
@@ -5806,7 +5806,7 @@ body.dark .hist-item:hover {
     padding: 10px;
     background: transparent;
     border: 1px dashed var(--input-border-color);
-    border-radius: 12px;
+    border-radius: 6px;
     color: var(--text-color);
     font-size: 14px;
     cursor: pointer;
@@ -5884,8 +5884,7 @@ body.dark #calc-auto-clear-btn.active {
 #clear-all-templates-button:active,
 .search-cmd-btn:active,
 .clear-history-footer-btn:active,
-.hist-close-btn:active,
-.qn-add-btn:active {          
+.hist-close-btn:active {          
     transform: translateY(1px) scale(0.96);
     box-shadow: inset 0 2px 5px rgba(0,0,0,0.15);
     filter: brightness(0.9);
@@ -6103,7 +6102,7 @@ body.dark #qn-input:focus {
     background: var(--primary-accent-color);
     color: #fff;
     border: none;
-    border-radius: 8px;
+    border-radius: 9999px;
     cursor: pointer;
     font-size: 13px;
     font-weight: 600;
