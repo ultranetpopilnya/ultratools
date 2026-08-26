@@ -3256,7 +3256,7 @@ body.dark .scroll-nav-btn.visible:hover {
     flex: 0 0 110px; /* Залізно тримає 95px ширини */
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 6px;
     padding-left: 15px;
     border-left: 1px dashed var(--input-border-color); 
 }
@@ -3318,9 +3318,8 @@ body.dark .scroll-nav-btn.visible:hover {
     color: var(--tab-inactive-text);
     font-weight: 700;
     text-transform: uppercase;
-    line-height: 1;
-    margin-bottom: 0px;
-    margin-left: 2px;
+    line-height: 1;  
+    margin: 0 0 0px 6px;
 }
 
 /* Кнопка SWAP (стрілочки) */
