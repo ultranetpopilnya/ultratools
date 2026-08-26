@@ -60,6 +60,8 @@ select {
 --bg-color: #f8fafc;
 --bg-second-color: #ffffff;
 
+--bg-btn: #fff;
+
     --glass-white-lg: rgba(255, 255, 255, 0.9);
         --glass-white: rgba(255, 255, 255, 0.3);
     --glass-white-md: rgba(255, 255, 255, 0.8);
@@ -113,6 +115,8 @@ body.dark {
 --snow-color: #ffffff;
 --bg-color: #191919;
 --bg-second-color: #2c2c2e;
+
+--bg-btn: #2c2c2c;
 }
 
 body {
@@ -4266,7 +4270,7 @@ body.dark .login-actions-block {
     justify-content: center;
     gap: 8px; /* Відстань між іконкою та текстом */
     
-    background-color: var(--bg-second-color);
+    background-color: var(--bg-btn);
     border: 1px solid var(--input-border-color);
     border-radius: 8px; /* Сучасне заокруглення */
     
@@ -4328,12 +4332,12 @@ body.dark .login-actions-block {
 body.dark #login-autoclear-btn {
     border-color: var(--input-border-color);
     color: var(--text-color);
-    background-color: var(--bg-second-color);
+    background-color: var(--bg-btn);
 }
 
 /* HOVER у темній темі (коли ВИМКНЕНО) */
 body.dark #login-autoclear-btn:hover:not(.active) {
-    background-color: rgba(255, 255, 255, 0.05); /* Легка біла підсвітка фону */
+    background-color: rgba(255, 255, 255, 0.096); /* Легка біла підсвітка фону */
     border-color: rgba(255, 255, 255, 0.3);
 }
 
@@ -5085,7 +5089,7 @@ body.dark .horizontal-divider {
     
     padding: 6px 12px; /* Збільшені сучасні відступи */
     
-    background-color: transparent; /* Прозорий фон */
+    background-color: var(--bg-btn);
     border: 1px solid var(--input-border-color);
     border-radius: 8px; /* Сучасне заокруглення 8px */
     
@@ -5107,7 +5111,7 @@ body.dark .horizontal-divider {
 
 /* Стан HOVER (Світла тема) - Легке підсвічування замість заливки */
 .calc-action-button:hover {
-    background-color: rgba(0, 0, 0, 0.03);
+    background-color: rgba(0, 0, 0, 0.03); 
     border-color: #bbb;
 }
 .calc-action-button:hover i {
@@ -5121,9 +5125,10 @@ body.dark .horizontal-divider {
 body.dark .calc-action-button {
     border-color: var(--input-border-color);
     color: var(--text-color);
+    background-color: var(--bg-btn);
 }
 body.dark .calc-action-button:hover {
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: rgba(255, 255, 255, 0.096); /* Легка біла підсвітка фону */
     border-color: rgba(255, 255, 255, 0.3);
 }
 body.dark .calc-action-button:hover i {
@@ -5144,7 +5149,7 @@ body.dark .calc-action-button:hover i {
 
 .stepper-btn {
     flex: 1;
-    background-color: transparent;
+    background-color: var(--bg-btn);
     padding: 6px 12px; /* Відступи як у всіх кнопок */
     font-family: inherit;
     font-size: 14px; 
@@ -5193,15 +5198,20 @@ body.dark .stepper-btn:not(:last-child)::after {
 
 /* HOVER для перемикачів */
 .stepper-btn:hover {
-    background-color: rgba(0, 0, 0, 0.03);
+    background-color: rgba(0, 0, 0, 0.03); 
     border-color: #bbb;
-    z-index: 2; 
+    z-index: 2; /* Потрібно, щоб рамка перекривала сусідні кнопки */
 }
 .stepper-btn:active { transform: scale(0.97); }
 
-body.dark .stepper-btn { border-color: var(--input-border-color); }
+body.dark .stepper-btn { 
+    border-color: var(--input-border-color);
+    color: var(--text-color);
+    background-color: var(--bg-btn);
+}
+
 body.dark .stepper-btn:hover {
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: rgba(255, 255, 255, 0.096); /* Легка біла підсвітка фону */
     border-color: rgba(255, 255, 255, 0.3);
 }
 
@@ -5219,7 +5229,7 @@ body.dark .stepper-btn:hover {
     align-items: center;
     justify-content: center;
     
-    background-color: transparent; 
+    background-color: var(--bg-btn);
     border: 1px solid var(--input-border-color);
     border-radius: 8px;
     
@@ -5238,27 +5248,14 @@ body.dark .stepper-btn:hover {
 
 /* Ховер (НЕ активна) */
 #auto-reset-button:hover:not(.active) {
-    background-color: rgba(0, 0, 0, 0.03);
+    background-color: rgba(0, 0, 0, 0.03); 
     border-color: #bbb;
 }
-body.dark #auto-reset-button {
-    border-color: var(--input-border-color);
-    color: var(--text-color);
-}
-/* Ховер у темній темі (коли кнопка ВИМКНЕНА) */
-body.dark #auto-reset-button:hover:not(.active) {
-    background-color: rgba(255, 255, 255, 0.05); /* Легкий світлий фон замість суцільного оранжевого */
-    border-color: rgba(255, 255, 255, 0.3);
-    color: var(--text-color); /* Зберігаємо білий текст */
-    box-shadow: none; /* Прибираємо тінь від старого коду, якщо вона була */
+
+#auto-reset-button:hover:not(.active) i {
+    color: var(--primary-accent-color);
 }
 
-/* Гарантуємо, що іконку видно при наведенні */
-body.dark #auto-reset-button:hover:not(.active) .timer-icon { 
-    color: var(--text-color); 
-}
-
-/* === АКТИВНИЙ СТАН ("Soft Active" стиль) === */
 #auto-reset-button.active {
     border-color: var(--primary-accent-color);
     background-color: rgba(0, 123, 255, 0.12); /* Напівпрозорий синій */
@@ -5268,6 +5265,22 @@ body.dark #auto-reset-button.active {
     border-color: var(--secondary-accent-color);
     background-color: rgba(230, 162, 46, 0.15); /* Напівпрозорий оранжевий */
     color: var(--secondary-accent-color);
+}
+
+body.dark #auto-reset-button {
+    border-color: var(--input-border-color);
+    color: var(--text-color);
+    background-color: var(--bg-btn);
+}
+/* Ховер у темній темі (коли кнопка ВИМКНЕНА) */
+body.dark #auto-reset-button:hover:not(.active) {
+    background-color: rgba(255, 255, 255, 0.096); /* Легка біла підсвітка фону */
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Гарантуємо, що іконку видно при наведенні */
+body.dark #auto-reset-button:hover:not(.active) .timer-icon { 
+    color: var(--secondary-accent-color); 
 }
 
 /* Обгортка таймера */
