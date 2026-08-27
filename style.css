@@ -2037,7 +2037,7 @@ body.holiday-mode #snow-container {
     position: relative; 
     height: 38px;       
     width: 100%;
-    margin-bottom: 24px; 
+    margin-bottom: 27px; 
     display: block;     
     flex-shrink: 0 !important;   
     min-height: 38px !important; 
@@ -2048,7 +2048,7 @@ body.holiday-mode #snow-container {
 #controls-and-clarification::after {
     content: '';
     position: absolute;
-    bottom: -12px; 
+    bottom: -14px; 
     left: 50%;
     transform: translateX(-50%);
     width: 80%; 
@@ -2066,7 +2066,7 @@ body.holiday-mode #snow-container {
     
     display: flex;
     align-items: center;
-    gap: 15px; /* Відстань між перемикачем і іконкою */
+    gap: 8px; /* Відстань між перемикачем і іконкою */
 }
 
 .info-tooltip-wrapper {
@@ -2078,7 +2078,8 @@ body.holiday-mode #snow-container {
 }
 
 .info-icon {
-    font-size: 18px;
+    margin-bottom: 2px;
+    font-size: 19px;
     color: var(--tab-inactive-text);
     transition: color 0.2s ease, transform 0.2s ease;
 }
