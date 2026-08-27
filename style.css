@@ -1407,9 +1407,10 @@ body.holiday-mode .page-title .isp-e-color-s {
 /* 5. ІКОНКИ */
 .version-emoji, .extension-emoji {
     position: absolute;
-    top: 9px; left: 9px;
-    width: 30px; height: 30px;
+    top: 8px; left: 8px;
+    width: 32px; height: 32px;
     object-fit: contain; font-size: 28px; z-index: 10;
+    will-change: transform;
     transition: all 0.5s cubic-bezier(0.34, 1.2, 0.64, 1);
 }
 
@@ -1736,14 +1737,16 @@ body.dark .theme-pill:hover {
    ========================================= */
 .theme-emoji {
     position: absolute;
-    width: 30px;
-    height: 30px;
+    width: 32px;
+    height: 32px;
     
     margin-left: 0px; /* Якщо кнопка з'їхала, можете змінити на 0, залежно від ширини вашого контейнера */
     
     object-fit: contain;
     user-select: none;
     -webkit-user-drag: none; /* Щоб картинка не "тягнулась" мишкою при натисканні */
+    
+    will-change: transform;
     
     /* Ваша сучасна анімація (залишилась без змін) */
     transition: translate 0.5s cubic-bezier(0.34, 1.2, 0.64, 1), 
