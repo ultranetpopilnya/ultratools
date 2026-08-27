@@ -326,6 +326,42 @@ body::after {
    Кольори фону задаються в індивідуальних класах, тут — лише фізика.
    ================================================================ */
 
+/* --- ГРУПА 0: ПЛАВНЕ ВІДТИСКАННЯ (БАЗОВИЙ СТАН) --- */
+/* Цей блок відповідає за плавне повернення кнопки на місце після кліку чи наведення */
+.extension-info-btn,
+.extension-download-btn,
+#add-template-button,
+#import-templates-button,
+#export-templates-button,
+#clear-all-templates-button,
+.template-actions button,
+.config-replace-mode-btn,
+.config-pon-onu-btn,
+.config-show-signal-btn,
+.config-generate-btn,
+.search-cmd-btn,
+.scroll-nav-btn,
+.login-generator-container .result-item .regenerate-login-btn,
+.login-generator-container .result-item .copy-login-btn,
+.clear-history-footer-btn,
+.calc-action-button,
+.stepper-btn,
+.qn-add-btn,
+.add-tab-btn,
+.add-tab-item,
+.swap-inputs-btn,
+.clear-history-header-btn,
+.calc-head-history-btn,
+.calc-copy-btn,
+.hist-clear-btn,
+.qn-action-btn,
+.qn-drag-handle,
+.segment-btn,
+#login-autoclear-btn,
+#auto-reset-button {
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out, filter 0.2s ease-out !important;
+}
+
 /* --- ГРУПА 1: УНІВЕРСАЛЬНИЙ HOVER (Ефект "спливання" вгору) --- */
 /* Увага: .history-copy-btn тут немає, бо вона має власний rotate! */
 .extension-info-btn:hover,
@@ -344,7 +380,7 @@ body::after {
 .login-generator-container .result-item .regenerate-login-btn:hover,
 .login-generator-container .result-item .copy-login-btn:hover,
 .clear-history-footer-btn:hover,
-.calc-action-button:hover, /* Калькулятор дат */
+.calc-action-button:hover,
 .stepper-btn:hover,
 .qn-add-btn:hover {
     transform: translateY(-1px);
@@ -352,21 +388,18 @@ body::after {
 
 /* --- ГРУПА 2: ПРОЗОРІ КНОПКИ-ІКОНКИ (Active) --- */
 /* При кліку стискаються, БЕЗ внутрішньої тіні, щоб не було брудного квадрата */
-.close-tab-btn:active,
 .add-tab-btn:not(.menu-open):active,
-.add-tab-item:active,
 .swap-inputs-btn:active,
 .clear-history-header-btn:active,
 .calc-head-history-btn:active,
 .calc-copy-btn:active,
-.hist-clear-btn:active,
-.qn-close-btn:active,          
+.hist-clear-btn:active,          
 .qn-action-btn:active,
 .qn-drag-handle:active {  
     transform: translateY(1px) scale(0.92) !important;
     box-shadow: none !important;
     filter: brightness(0.85);
-    transition: all 0.05s ease-out;
+    transition: all 0.05s ease-out !important;
 }
 
 /* --- ГРУПА 3: СУЦІЛЬНІ КНОПКИ (Active - Ефект механічного натискання) --- */
@@ -388,7 +421,7 @@ body::after {
 #login-autoclear-btn:active,
 .login-generator-container .result-item .regenerate-login-btn:active,
 .login-generator-container .result-item .copy-login-btn:active,
-.history-copy-btn:active, /* А от клік для неї тут є, щоб втискалась */
+.history-copy-btn:active,
 .clear-history-footer-btn:active,
 .calc-action-button:active, 
 .stepper-btn:active,
@@ -397,7 +430,7 @@ body::after {
     transform: translateY(1px) scale(0.96) !important;
     box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.2) !important;
     filter: brightness(0.9);
-    transition: all 0.05s ease-out;
+    transition: all 0.05s ease-out !important; /* Швидке натискання */
 }
 
 /* Темна тема: Коригування внутрішньої тіні для суцільних кнопок */
@@ -991,7 +1024,7 @@ body.dark .tab-button.active {
 
 /* Активний стан (клік) - стискається і стає червоним */
 .close-tab-btn:active {
-    transform: scale(0.90); 
+    transform: scale(0.88); 
     background-color: var(--danger-color) !important;
     color: white !important;
     transition: transform 0.05s ease-out, background-color 0s; 
@@ -6011,7 +6044,7 @@ body.dark .qn-header { border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
 
 /* Активний стан (клік) - стискається і стає червоним */
 .qn-close-btn:active {
-    transform: scale(0.85); 
+    transform: scale(0.88); 
     background-color: var(--danger-color) !important;
     color: white !important;
     transition: transform 0.05s ease-out, background-color 0s; 
