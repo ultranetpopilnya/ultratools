@@ -1132,6 +1132,10 @@ body.dark .add-tab-item:active {
     color: var(--primary-accent-color);
 }
 
+body.dark .drag-handle:hover { 
+    color: var(--secondary-accent-color);
+}
+
 /* Ефект при натисненні (утриманні) */
 .drag-handle:active,
 .drag-handle.is-dragging { 
