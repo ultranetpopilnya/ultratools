@@ -306,11 +306,6 @@ body::after {
     box-sizing: border-box;
 }
 
-/* * */
-* {
-            box-sizing: border-box;
-        }
-
 /* === ПРИХОВУВАННЯ СМУГ ПРОКРУТКИ === */
 /* Щоб екран калькулятора був чистим і без потворних повзунків */
 /* Для Chrome, Safari, Opera */
@@ -325,57 +320,14 @@ body::after {
 /* qn list */
 .qn-list::-webkit-scrollbar-track { background: transparent; }
 
-/* qn list */
-.qn-list::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.2);
-    border-radius: 20px;
-}
-
-/* Темна тема: qn list */
-body.dark .qn-list::-webkit-scrollbar-thumb { background-color: rgba(255, 255, 255, 0.2); }
-
 /* ================================================================
    18. УНІВЕРСАЛЬНІ СТИЛІ КНОПОК (HOVER ТА ACTIVE)
    Єдина, оптимізована система анімації для всіх кнопок проєкту.
    Кольори фону задаються в індивідуальних класах, тут — лише фізика.
    ================================================================ */
 
-/* ================================================================
-   ГРУПА 1: УНІВЕРСАЛЬНИЙ HOVER (Ефект "спливання" вгору)
-   Застосовується до суцільних кнопок та кнопок з рамками.
-   ================================================================ */
-.extension-info-btn:hover,
-.extension-download-btn:hover,
-#add-template-button:hover,
-#import-templates-button:hover,
-#export-templates-button:hover,
-#clear-all-templates-button:hover,
-.template-actions button:hover,
-.config-replace-mode-btn:hover,
-.config-pon-onu-btn:hover,
-.config-show-signal-btn:hover,
-.config-generate-btn:hover,
-.search-cmd-btn:hover,
-.scroll-nav-btn.visible:hover,
-.login-generator-container .result-item .regenerate-login-btn:hover,
-.login-generator-container .result-item .copy-login-btn:hover,
-.history-copy-btn:hover,
-.clear-history-footer-btn:hover,
-.calc-action-button:hover,
-.stepper-btn:hover,
-.c-btn:hover,
-.hist-close-btn:hover,
-.qn-add-btn:hover {
-    transform: translateY(-1px);
-    /* Тіні для ховеру залишаються в їхніх рідних класах вище */
-}
-
-/* ================================================================
-   18. УНІВЕРСАЛЬНІ СТИЛІ КНОПОК (HOVER ТА ACTIVE)
-   (Без калькулятора Win11 - він використовує власні стилі)
-   ================================================================ */
-
 /* --- ГРУПА 1: УНІВЕРСАЛЬНИЙ HOVER (Ефект "спливання" вгору) --- */
+/* Увага: .history-copy-btn тут немає, бо вона має власний rotate! */
 .extension-info-btn:hover,
 .extension-download-btn:hover,
 #add-template-button:hover,
@@ -392,18 +344,22 @@ body.dark .qn-list::-webkit-scrollbar-thumb { background-color: rgba(255, 255, 2
 .login-generator-container .result-item .regenerate-login-btn:hover,
 .login-generator-container .result-item .copy-login-btn:hover,
 .clear-history-footer-btn:hover,
-.calc-action-button:hover,
+.calc-action-button:hover, /* Калькулятор дат */
 .stepper-btn:hover,
 .qn-add-btn:hover {
     transform: translateY(-1px);
 }
 
 /* --- ГРУПА 2: ПРОЗОРІ КНОПКИ-ІКОНКИ (Active) --- */
+/* При кліку стискаються, БЕЗ внутрішньої тіні, щоб не було брудного квадрата */
 .close-tab-btn:active,
 .add-tab-btn:not(.menu-open):active,
 .add-tab-item:active,
 .swap-inputs-btn:active,
 .clear-history-header-btn:active,
+.calc-head-history-btn:active,
+.calc-copy-btn:active,
+.hist-clear-btn:active,
 .qn-close-btn:active,          
 .qn-action-btn:active,
 .qn-drag-handle:active {  
@@ -414,6 +370,7 @@ body.dark .qn-list::-webkit-scrollbar-thumb { background-color: rgba(255, 255, 2
 }
 
 /* --- ГРУПА 3: СУЦІЛЬНІ КНОПКИ (Active - Ефект механічного натискання) --- */
+/* Отримують внутрішню тінь (inset) для ефекту глибини */
 .extension-info-btn:active,
 .extension-download-btn:active,
 .segment-btn:not(.active):active,
@@ -431,9 +388,9 @@ body.dark .qn-list::-webkit-scrollbar-thumb { background-color: rgba(255, 255, 2
 #login-autoclear-btn:active,
 .login-generator-container .result-item .regenerate-login-btn:active,
 .login-generator-container .result-item .copy-login-btn:active,
-.history-copy-btn:active,
+.history-copy-btn:active, /* А от клік для неї тут є, щоб втискалась */
 .clear-history-footer-btn:active,
-.calc-action-button:active,
+.calc-action-button:active, 
 .stepper-btn:active,
 #auto-reset-button:active,
 .qn-add-btn:active {          
@@ -443,7 +400,7 @@ body.dark .qn-list::-webkit-scrollbar-thumb { background-color: rgba(255, 255, 2
     transition: all 0.05s ease-out;
 }
 
-/* Темна тема: Коригування внутрішньої тіні */
+/* Темна тема: Коригування внутрішньої тіні для суцільних кнопок */
 body.dark .extension-info-btn:active,
 body.dark .extension-download-btn:active,
 body.dark .segment-btn:not(.active):active,
@@ -469,6 +426,12 @@ body.dark #auto-reset-button:active,
 body.dark .qn-add-btn:active {
     box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.5) !important;
     filter: brightness(0.9);
+}
+
+button:disabled, input:disabled, select:disabled {
+    opacity: 0.6;
+    cursor: not-allowed !important;
+    pointer-events: none; /* Вимикає ховери для вимкнених елементів */
 }
 
 /* ================================================================
@@ -643,6 +606,7 @@ h1 {
     height: 100%;
     display: block;
     scrollbar-gutter: stable;
+    padding-bottom: 22px;
 }
 
 /* ::placeholder */
@@ -673,13 +637,6 @@ body {
     flex-direction: column;
     margin-bottom: 0;
     min-height: 0;          /* Критично важливо для роботи скролу всередині flex */
-}
-
-/* 4. Вмикаємо скрол ТІЛЬКИ всередині карток */
-.container[data-content="text-templates"] .content-card {
-    height: 100%;
-    overflow-y: auto;
-    padding-bottom: 22px;
 }
 
 .container[data-content="gpon-commands"] .content-card {
@@ -850,6 +807,14 @@ body.dark .tabs {
     will-change: transform, opacity;
     
     transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.tab-button:focus-visible {
+    outline: 2px solid var(--primary-accent-color);
+    outline-offset: -2px;
+}
+body.dark .tab-button:focus-visible {
+    outline-color: var(--secondary-accent-color);
 }
 
 /* === СТИЛІ ДЛЯ DRAG & DROP (ВИПРАВЛЕНО) === */
@@ -2460,6 +2425,16 @@ body.dark .sub-command-item:hover {
     background-color: #333333;
 }
 
+/* sub command item — активний стан (імітація кліку/копіювання) */
+.sub-command-item:active {
+    background-color: #e0e0e0;
+}
+
+/* Темна тема: sub command item — активний стан */
+body.dark .sub-command-item:active {
+    background-color: #444444;
+}
+
 /* sub command item */
 .sub-command-item .command-text {
     color: var(--primary-accent-color); /* Інший колір для підкоманд */
@@ -2772,7 +2747,7 @@ body.dark .template-field-group .textarea-wrapper:focus-within {
 /* 1. Забороняємо виділення для всього контейнера шаблону */
 .template-field-group {
     user-select: none;         /* Стандартний синтаксис */
-    contain: layout paint style;
+    contain: layout paint;
 }
 
 /* Додамо клас для активного перетягування, щоб підняти z-index та вимкнути зайве */
@@ -4567,11 +4542,6 @@ body.dark .login-generator-container .result-item .regenerate-login-btn {
 
 /* login generator container — ховер */
 .login-generator-container .result-item .copy-login-btn:hover { box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3); }
-
-/* login generator container */
-.login-generator-container {
-    align-items: center;
-}
 
 .login-generator-container .content-card > p {
     margin-top: 0;
