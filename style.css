@@ -54,7 +54,7 @@ select {
 --header-color: #1a202c;
 --primary-accent-color: #3b82f6;
 --primary-accent-shadow: rgba(59, 130, 246, 0.35);
---secondary-accent-color: #e2a83c;
+--secondary-accent-color: #d6b627;
 --success-color: #08a171; 
 --danger-color: #dc2626;
 --description-color: #4a5568;
@@ -2449,7 +2449,7 @@ body.dark #clear-all-templates-button:hover {
 /* --- СТИЛІ ШАБЛОНУ --- */
 .template-field-group {
     position: relative;
-    border: 2px solid var(--template-border-color);
+    border: 1px solid var(--template-border-color);
     border-radius: 12px;
     background-color: var(--input-bg-color);
     box-shadow: 0 4px 8px rgba(0,0,0,0.05);
@@ -2464,7 +2464,6 @@ body.dark #clear-all-templates-button:hover {
     
     min-height: 90px;
     min-width: 450px;
-    /* Додаємо плавність для переміщення карток */
     transition: box-shadow 0.2s ease, transform 0.2s ease, min-width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -2619,14 +2618,14 @@ body.dark .template-drag-placeholder {
 /* Світла тема: підсвічуємо синім ТІЛЬКИ активне поле вводу */
 .template-field-group .template-name-input:focus,
 .template-field-group .textarea-wrapper:focus-within {
-    border-color: #007bff !important;
+    border-color: var(--primary-accent-color) !important;
     box-shadow: none !important;
 }
 
 /* Темна тема: підсвічуємо оранжевим ТІЛЬКИ активне поле вводу */
 body.dark .template-field-group .template-name-input:focus,
 body.dark .template-field-group .textarea-wrapper:focus-within {
-    border-color: #E6A22E !important;
+    border-color: var(--secondary-accent-color) !important;
 }
 
 /* === СТИЛІ ДЛЯ НОВОЇ ФУНКЦІЇ ПІДСВІТКИ СЛІВ === */
@@ -2721,8 +2720,6 @@ body.dark .line-marker-gutter {
     top: 0;
     left: 0;
     width: 100%;
-    /* Ця властивість дає браузеру підказку, що елемент буде анімовано,
-       що може покращити продуктивність прокрутки. */
     will-change: transform;
 }
 
@@ -2763,7 +2760,6 @@ body.dark .line-marker {
 }
 
 /* === ІДЕАЛЬНИЙ ІНТЕГРОВАНИЙ СТИЛЬ ПОШУКУ (ДВОКОЛОНКОВИЙ) === */
-/* 1. Головний контейнер (Стиль ідентичний до template-config-bar) */
 .template-search-bar {
     position: relative; 
     width: calc(100% - 8px) !important;
@@ -3035,11 +3031,11 @@ body.dark .swap-inputs-btn:hover {
 /* Темна тема: template config bar */
 body.dark .template-config-bar {
     background-color: rgba(0, 0, 0, 0.2);
+    
 }
 
 /* template config bar — активний стан */
 .template-config-bar.active {
-    /* === СУЧАСНА АНІМАЦІЯ (ВІДКРИТО) === */
     max-height: 120px; /* Зроблено з запасом, щоб анімація не обрізалась */
     opacity: 1;
     transform: translateY(0) scale(1); /* Падає на своє місце */
