@@ -2693,7 +2693,7 @@ z-index: 3;
 }
 
 body.dark .textarea-wrapper {
-    border-color: var(--template-border-color);
+    border: 1px solid var(--input-border-color);
 }
 
 .line-marker-gutter {
@@ -3049,10 +3049,8 @@ body.dark .template-config-bar {
     margin-top: 4px;
     margin-bottom: 4px;
     padding: 6px;
-    border-color: var(--input-border-color); /* Плавно проявляємо рамку */
+    border: 1px solid var(--input-border-color); /* Плавно проявляємо рамку */
     
-    
-    /* Важливо для випадаючого списку ОЛТ */
     overflow: visible; 
 }
 
@@ -3060,8 +3058,6 @@ body.dark .template-config-bar {
 .template-field-group:has(.template-config-bar.active) {
     /* Картка вирахує свій ідеальний мінімум автоматично */
     min-width: min-content !important; 
-    
-    /* Дозволяємо їй розтягуватися на всю доступну ширину, якщо є місце */
     width: 100%; 
 }
 
