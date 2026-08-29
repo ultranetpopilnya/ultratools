@@ -142,9 +142,9 @@ color-scheme: dark;
 --bg-btn: #2c2c2c;
 
 --panel-border-dark: rgba(255, 255, 255, 0.08);
---tabstrip-bg-dark: rgba(28, 28, 32, 0.85);
+--tabstrip-bg-dark: rgba(28, 28, 32, 0.712);
 --active-bg-dark: rgba(46, 46, 52, 0.95);
---card-bg-dark: rgba(28, 28, 32, 0.92);
+--card-bg-dark: rgba(28, 28, 32, 0.712);
 }
 
 /* :root */
