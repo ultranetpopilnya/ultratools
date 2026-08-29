@@ -15,21 +15,52 @@ select {
     transition: var(--theme-transition);
 }
 
+/* ================================================================
+   ПІДКЛЮЧЕННЯ ЛОКАЛЬНИХ ШРИФТІВ
+   ================================================================ */
+
+   @font-face {
+    font-family: 'FixelDisplay'; /* Назва, яку ми будемо використовувати далі */
+    src: url('./fonts/FixelDisplay-Light.woff2') format('woff2');
+  
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap; /* Щоб текст не зникав під час завантаження шрифту */
+}
+
+   @font-face {
+    font-family: 'FixelDisplay'; /* Назва, яку ми будемо використовувати далі */
+    src: url('./fonts/FixelDisplay-Regular.woff2') format('woff2');
+  
+    font-weight: 400; /* Нормальна товщина (Regular) */
+    font-style: normal;
+    font-display: swap; /* Щоб текст не зникав під час завантаження шрифту */
+}
+
+@font-face {
+    font-family: 'FixelDisplay';
+    src: url('./fonts/FixelDisplay-Bold.woff2') format('woff2');
+    font-weight: 700; /* Жирна товщина (Bold) */
+    font-style: normal;
+    font-display: swap;
+}
+
 /* === ОСНОВНА ПАЛІТРА ТА ЗМІННІ ТЕМИ === */
 :root {
 --theme-transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease;
+
 /* Світла тема */
 --text-color: #2d3748;
 --header-color: #1a202c;
 --primary-accent-color: #3b82f6;
 --primary-accent-shadow: rgba(59, 130, 246, 0.35);
 --secondary-accent-color: #e2a83c;
- --success-color: #08a171; 
+--success-color: #08a171; 
 --danger-color: #dc2626;
 --description-color: #4a5568;
 
 --input-bg-color: #fff;
- --input-border-color: #cbd5e1;
+--input-border-color: #cbd5e1;
 --input-focus-border-color: var(--primary-accent-color);
 
 --template-bg-color: #fdfdfd;
@@ -55,26 +86,25 @@ select {
 
 --bg-btn: #fff;
 
-    --glass-white-lg: rgba(255, 255, 255, 0.9);
-        --glass-white: rgba(255, 255, 255, 0.3);
-    --glass-white-md: rgba(255, 255, 255, 0.8);
-    --glass-dark: rgba(0, 0, 0, 0.06);
+--glass-white-lg: rgba(255, 255, 255, 0.9);
+--glass-white: rgba(255, 255, 255, 0.3);
+--glass-white-md: rgba(255, 255, 255, 0.8);
+--glass-dark: rgba(0, 0, 0, 0.06);
+--glass-border: rgba(255, 255, 255, 0.15);
+--glass-border-bright: rgba(255, 255, 255, 0.30);
     
-    --glass-border: rgba(255, 255, 255, 0.15);
-    --glass-border-bright: rgba(255, 255, 255, 0.30);
+--shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.1);
+--shadow-float: 0 20px 60px rgba(0, 0, 0, 0.16), 0 4px 16px rgba(0, 0, 0, 0.08);
     
-    --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.1);
-    --shadow-float: 0 20px 60px rgba(0, 0, 0, 0.16), 0 4px 16px rgba(0, 0, 0, 0.08);
-    
-    --reflection-top: linear-gradient(135deg, rgba(255, 255, 255, 0.65) 0%, rgba(255, 255, 255, 0) 50%);
-    --reflection-inner: inset 0 1px 1px rgba(255, 255, 255, 0.95), inset 0 -1px 1px rgba(0, 0, 0, 0.04);
+--reflection-top: linear-gradient(135deg, rgba(255, 255, 255, 0.65) 0%, rgba(255, 255, 255, 0) 50%);
+--reflection-inner: inset 0 1px 1px rgba(255, 255, 255, 0.95), inset 0 -1px 1px rgba(0, 0, 0, 0.04);
 
-        /* === СКЛО ДЛЯ ВКЛАДОК І КОНТЕЙНЕРІВ === */
-    --glass-tabstrip-bg: rgba(255, 255, 255, 0.35);
-    --glass-card-bg: rgba(255, 255, 255, 0.288);
-    --glass-active-bg: rgba(255, 255, 255, 0.75);
-    --glass-panel-border: rgb(255, 255, 255);
-    --glass-blur: blur(20px) saturate(180%);
+/* === СКЛО ДЛЯ ВКЛАДОК І КОНТЕЙНЕРІВ === */
+--glass-tabstrip-bg: rgba(255, 255, 255, 0.35);
+--glass-card-bg: rgba(255, 255, 255, 0.288);
+--glass-active-bg: rgba(255, 255, 255, 0.75);
+--glass-panel-border: rgb(255, 255, 255);
+--glass-blur: blur(20px) saturate(180%);
 }
 
 /* dark */
@@ -113,7 +143,7 @@ color-scheme: dark;
 
 --bg-btn: #2c2c2c;
 
-    /* === СКЛО ДЛЯ ВКЛАДОК І КОНТЕЙНЕРІВ (темна тема) === */
+/* === СКЛО ДЛЯ ВКЛАДОК І КОНТЕЙНЕРІВ (темна тема) === */
 --glass-tabstrip-bg: rgba(255, 255, 255, 0.04);
 --glass-card-bg: rgba(255, 255, 255, 0.07);
 --glass-active-bg: rgba(255, 255, 255, 0.15);
@@ -122,8 +152,8 @@ color-scheme: dark;
 
 /* :root */
 :root {
-            --layout-max-width: 1100px; 
-        }
+--layout-max-width: 1100px; 
+}
 
 /* ================================================================
    2. СКИДАННЯ СТИЛІВ, БАЗОВІ ТЕГИ ТА СКРОЛБАР
@@ -139,20 +169,16 @@ color-scheme: dark;
 
 /* Доріжка (фонова частина) */
 *::-webkit-scrollbar-track {
-    background: transparent; /* Робимо прозорою, щоб було видно фон сайту/скла */
+    background: transparent;
 }
 
 /* Сам повзунок (острівець) */
 *::-webkit-scrollbar-thumb {
-    background-color: var(--scrollbar-thumb); /* Колір зі змінної */
-    border-radius: 20px;                      /* Максимальне закруглення як у пігулки */
-    
-    /* Створюємо ефект відступу від країв (робить повзунок візуально тоншим і акуратнішим) */
+    background-color: var(--scrollbar-thumb);
+    border-radius: 20px;                    
     border: 2px solid transparent;
     background-clip: content-box;
-    
-    /* Плавний перехід кольору при зміні теми */
-    transition: background-color 0.5s ease; 
+    transition: background-color 0.5s ease;
 }
 
 /* Ефект при наведенні або активності */
@@ -171,30 +197,27 @@ color-scheme: dark;
 }
 
 body {
-    font-family: 'Inter', sans-serif; 
+    font-family: 'FixelDisplay', sans-serif; 
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
     min-height: 100vh;
-    margin: 0;
-    padding-top: 2rem; 
-    padding-bottom: 0rem; 
     background-color: var(--bg-color);
     color: var(--text-color);
-    height: 100vh;          /* Рівно висота екрана */
+    height: 100vh;
     overflow: hidden !important;
     position: relative;
+    margin: 0;
 }
 
 /* h1 */
 h1 {
     color: var(--header-color);
-    margin-bottom: 1.5rem;
-    margin-top: -1.5rem;
+    margin: 1rem;
     text-align: center;
     font-size: 2.5rem;
-	line-height: 1.2; 
+	line-height: 1.2;
 }
 
 /* Глобальне вирівнювання для всіх заголовків h2 в контейнерах */
@@ -262,7 +285,6 @@ body.dark ::placeholder {
     align-items: center;
     position: relative;
     min-width: 0; 
-    margin-top: -3px;
     height: 100%;  
 }
 
@@ -273,7 +295,6 @@ body.dark ::placeholder {
     position: relative;
     min-width: 0; 
     margin: 0 auto;
-    margin-top: -3px;
     height: 100%;
     min-height: 0;
 }
@@ -309,7 +330,6 @@ body.dark ::placeholder {
         inset 0 1px 1px 0 rgba(255, 255, 255, 0.9), /* Білий блік зверху */
         0 8px 28px -4px rgba(0, 0, 0, 0.15);
 
-
     overflow: auto;
 }
 
@@ -333,26 +353,22 @@ body.dark .content-card {
     overflow: visible;
     resize: none; 
     
-    /* 2. Твої розміри */
     width: var(--local-width, 100%); 
     min-width: var(--local-width-min, 300px); 
     height: var(--local-height, auto);
     min-height: var(--local-height-min, 0px);
     
-    /* 3. Логіка позиціонування (для накладання вкладок одна на одну) */
     display: flex;
     flex-direction: column;
     position: absolute; 
     top: 0;
     left: 50%; 
     
-    /* 4. Стан ЗАКРИТОЇ вкладки (Замість display: none) */
     opacity: 0;
     visibility: hidden; /* Важливо: вимикає кліки і фокус для невидимої вкладки */
     transform: translateX(-50%) scale(0.97);
     pointer-events: none; 
     
-    /* 5. Твоя плавна анімація */
     transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out, visibility 0.3s;
     transform-origin: center center;
 }
@@ -373,10 +389,11 @@ body.dark .container {
 }
 
 /* Універсальні інпути та їх світіння при фокусі */
-input, textarea, select, .date-input-group input, #fullNameInput {
+input, textarea, select, .date-input-group input, #fullNameInput, button {
     border: 1px solid var(--input-border-color);
     background-color: var(--input-bg-color);
     color: var(--text-color);
+    font-family: inherit;
 }
 
 input:focus:not([type="button"]):not([type="submit"]),
@@ -582,7 +599,7 @@ button:disabled, input:disabled, select:disabled {
     -webkit-backdrop-filter: var(--glass-blur);
     padding: 4px; 
     border-radius: 9999px;
-    margin: -11px auto 0 auto;
+    margin: 0 auto 0 auto;
     cursor: default;
 
     width: fit-content;
@@ -635,7 +652,7 @@ body.dark .tabs {
     border: none;
     border-radius: 9999px;
     font-size: 16px;
-    font-weight: 600;
+    font-weight: 500;
     user-select: none;
     
     isolation: isolate;
@@ -658,7 +675,7 @@ body.dark .tabs {
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     color: var(--primary-accent-color);
-    font-weight: 600; 
+    font-weight: 500; 
     text-shadow: 0 0 0.65px currentColor; 
     -webkit-text-stroke: 0;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.10), inset 0 1px 1px rgba(255,255,255,0.5);
@@ -1109,7 +1126,7 @@ body.dark .drag-handle:hover {
 .extension-pill:hover:not(.is-open) {
     background-color: var(--glass-white-md);
     border-color: var(--glass-white-lg); /* Твій синій акцент */
-    transform: scale(1.05) translateY(-2px); /* Додав легке спливання як у правого перемикача */
+    transform: scale(1.02) translateY(-2px); /* Додав легке спливання як у правого перемикача */
     box-shadow: 
         var(--shadow-float), 
         var(--reflection-inner);
@@ -1204,8 +1221,8 @@ body.dark .drag-handle:hover {
 
 /* Стиль для номера версії (справа) */
 .version-number {
-    font-weight: 700;
-    font-family: 'Fira Code', monospace;
+    font-weight: 300;
+    font-family: 'FixelDisplay', monospace;
     font-size: 14px;
     
     /* Робимо фон для версії, щоб виділялася (світла тема - синій бейдж) */
@@ -1302,7 +1319,7 @@ body.dark .version-number {
 
 /* extension version badge */
 .extension-version-badge {
-    font-weight: 700; font-family: 'Fira Code', monospace; font-size: 13px;
+    font-weight: 300; font-family: 'FixelDisplay', monospace; font-size: 13px;
     background-color: rgba(0, 123, 255, 0.1); color: var(--primary-accent-color);
     padding: 4px 10px; border-radius: 8px;
 }
@@ -1373,8 +1390,8 @@ body.dark .extension-version-badge { background-color: rgba(230, 162, 46, 0.15);
     
     border-bottom: 1px solid var(--input-border-color); 
     
-    font-weight: 800;      
-    font-family: 'Fira Code', monospace; 
+    font-weight: 300;      
+    font-family: 'FixelDisplay', monospace; 
     color: var(--primary-accent-color);          
     font-size: 14px;
     
@@ -1680,8 +1697,7 @@ body.dark .actions-block-title::after {
     border: 1px solid var(--input-border-color);
     border-radius: 8px; /* Сучасне заокруглення */
     
-    /* Відступи як у кнопок дій (калькулятор дат) */
-    padding: 6px 12px; 
+    padding: 4px 6px; 
     
     cursor: pointer;
     font-family: inherit;
@@ -1979,6 +1995,7 @@ body.dark .history-toggle-btn:hover { color: var(--secondary-accent-color); }
 .history-title {
     display: inline-flex;
     align-items: center;
+    font-weight: 600;
 }
 
 #history-arrow {
@@ -2128,7 +2145,7 @@ body.dark .history-item:hover {
 .history-item:hover::before { opacity: 1; }
 
 .history-item span {
-    font-family: 'Fira Code', monospace;
+    font-family: 'FixelDisplay', monospace;
     font-weight: 600;
     font-size: 0.92rem;
     overflow: hidden;
@@ -3889,9 +3906,7 @@ body.dark .date-inputs-row {
     display: flex !important;
     flex-direction: column;
     padding-bottom: 30px !important;
-    
-    /* --- ВИПРАВЛЕННЯ: Ховаємо скрол МИТТЄВО, коли вкладка закривається --- */
-    /* Це прибирає блимання скролу під час анімації opacity */
+
     overflow: hidden !important; 
 }
 
@@ -3952,10 +3967,11 @@ body.dark .date-calculator-container .date-input-group input[type="time"] {
     padding: 10px;
     border: 2px solid #ccc; /* Це лише для світлої теми, якщо немає фокусу */
     border-radius: 8px; 
-    font-size: 1em;
+    font-size: 0.8em;
     cursor: pointer;
     width: 100%;
-    margin-bottom: 5px; 
+    margin-bottom: 5px;
+    font-weight: normal; 
 }
 
 /* date calculator container — ховер */
@@ -4075,7 +4091,7 @@ body.dark .calculator-actions-block {
     align-items: center;
     gap: 8px;
     
-    padding: 6px 12px; /* Збільшені сучасні відступи */
+    padding: 4px 6px;
     
     background-color: var(--bg-btn);
     border: 1px solid var(--input-border-color);
@@ -4133,7 +4149,7 @@ body.dark .calc-action-button:hover i {
 .stepper-btn {
     flex: 1;
     background-color: var(--bg-btn);
-    padding: 6px 12px; /* Відступи як у всіх кнопок */
+    padding: 4px 6px; 
     font-family: inherit;
     font-size: 14px; 
     font-weight: 500;
@@ -4249,7 +4265,7 @@ body.dark .horizontal-divider {
     border: 1px solid var(--input-border-color);
     border-radius: 8px;
     
-    padding: 4px 12px;
+    padding: 4px 8px;
     cursor: pointer;
     font-family: inherit;
     font-size: 14px;
@@ -4890,7 +4906,7 @@ body.dark .hist-close-btn:hover { background-color: rgba(255,255,255,0.05); }
     display: flex;
     flex-direction: column;
     min-height: 0;
-    padding-bottom: 12px;
+    padding-bottom: 13px;
 }
 
 /* Стилі для статичного напису-підказки */
@@ -5200,7 +5216,7 @@ body.dark .command-item:active {
 }
 
 .command-text {
-    font-family: 'Fira Code', monospace;
+    font-family: 'FixelDisplay', monospace;
     font-weight: 600;
     color: var(--text-color); 
     user-select: none; 
@@ -5250,7 +5266,7 @@ body.dark .command-description {
 
 /* sub command list — відкритий стан */
 .sub-command-list.open {
-    max-height: 500px; /* Достатньо велике значення, щоб показати весь вміст. Можете збільшити. */
+    max-height: 600px; /* Достатньо велике значення, щоб показати весь вміст. Можете збільшити. */
     opacity: 1; /* Повністю видно */
     transform: translateY(0); /* Повертаємо на місце */
 }
@@ -5312,6 +5328,11 @@ body.dark .command-item.static-header .command-text:hover {
     margin: 0 10px 0 10px; 
     font-size: 1em;
 }
+
+.sub-command-item .command-description {
+    font-size: 0.9em !important;
+}
+
 
 /* sub command item — ховер */
 .sub-command-item:hover {
