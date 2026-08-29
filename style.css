@@ -119,12 +119,12 @@ color-scheme: dark;
 --input-focus-border-color: var(--secondary-accent-color);
 --primary-accent-shadow: rgba(230, 162, 46, 0.4);
 
---template-bg-color: #2b2b2b;
+--template-bg-color: rgba(46, 46, 52, 0.486);
 --template-border-color: rgba(255, 255, 255, 0.08);
 --template-handle-bg: rgba(255, 255, 255, 0.08);
 --template-handle-border: #555;
 
---tab-strip-bg: #2b2b2b;
+--tab-strip-bg: rgba(46, 46, 52, 0.486);
 --tab-inactive-text: #e0e0e0;
 
 --scrollbar-thumb: #4a4a4a;
@@ -137,7 +137,7 @@ color-scheme: dark;
 --highlight-bg-color: rgb(185, 134, 44);
 --snow-color: #ffffff;
 --bg-color: rgb(22, 22, 22);
---bg-second-color: rgba(46, 46, 52, 0.486);
+--bg-second-color: #2e2e347c;
 
 --bg-btn: rgba(46, 46, 52, 0.932);
 
@@ -1797,7 +1797,7 @@ body.dark #login-autoclear-btn {
 
 /* HOVER у темній темі (коли ВИМКНЕНО) */
 body.dark #login-autoclear-btn:hover:not(.active) {
-    background-color: rgba(255, 255, 255, 0.096); /* Легка біла підсвітка фону */
+    background-color: rgba(255, 255, 255, 0.178);
     border-color: rgba(255, 255, 255, 0.3);
 }
 
@@ -2003,7 +2003,7 @@ body.dark .login-generator-container .result-item .regenerate-login-btn {
    ================================================================ */
 
 .history-section {
-    margin: 0px auto 20px auto;
+    margin: 0px auto 26px auto;
     flex-shrink: 0;
     background-color: var(--bg-second-color);
     border: 1px solid var(--input-border-color);
@@ -3012,7 +3012,7 @@ body.dark .swap-inputs-btn:hover {
     
     background-color: var(--tab-strip-bg);
     border-radius: 12px;
-    border: 1px solid transparent; /* Готуємо рамку для плавної появи */
+    border: 1px solid var(--input-border-color); /* Готуємо рамку для плавної появи */
     
     max-height: 0;
     opacity: 0;
@@ -3721,7 +3721,7 @@ body.dark .select-group-title {
     right: 0;
     min-width: 220px;
 
-    background: var(--input-bg-color);
+    background: var(--bg-second-color);
     border: 1px solid var(--input-border-color);
     border-radius: 8px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.08);
@@ -3739,6 +3739,7 @@ body.dark .select-group-title {
 body.dark .olt-dropdown-list {
     box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45), 0 2px 8px rgba(0, 0, 0, 0.3);
     border-color: #4a4a4a;
+    background: #222229;
 }
 
 /* olt dropdown list — відкритий стан */
@@ -4064,7 +4065,7 @@ body.dark .date-calculator-container #result-section h2 {
 }
 
 body.dark .date-calculator-container #result-section {
-    background-color: var(--bg-second-color) /* Тут можна залишити колір або створити нову змінну, напр. --result-bg-dark */
+    background-color: var(--bg-second-color); /* Тут можна залишити колір або створити нову змінну, напр. --result-bg-dark */
     border-color: var(--input-border-color);
 }
 
@@ -4160,7 +4161,7 @@ body.dark .calc-action-button {
     background-color: var(--bg-btn);
 }
 body.dark .calc-action-button:hover {
-    background-color: rgba(255, 255, 255, 0.096); /* Легка біла підсвітка фону */
+    background-color: rgba(255, 255, 255, 0.178);
     border-color: rgba(255, 255, 255, 0.3);
 }
 body.dark .calc-action-button:hover i {
@@ -4239,7 +4240,7 @@ body.dark .stepper-btn {
 }
 
 body.dark .stepper-btn:hover {
-    background-color: rgba(255, 255, 255, 0.096); /* Легка біла підсвітка фону */
+    background-color: rgba(255, 255, 255, 0.178);
     border-color: rgba(255, 255, 255, 0.3);
 }
 
@@ -4346,7 +4347,7 @@ body.dark #auto-reset-button {
 }
 /* Ховер у темній темі (коли кнопка ВИМКНЕНА) */
 body.dark #auto-reset-button:hover:not(.active) {
-    background-color: rgba(255, 255, 255, 0.096); /* Легка біла підсвітка фону */
+    background-color: rgba(255, 255, 255, 0.178);
     border-color: rgba(255, 255, 255, 0.3);
 }
 
