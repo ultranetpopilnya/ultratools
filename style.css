@@ -114,14 +114,14 @@ color-scheme: dark;
 --header-color: #e0e0e0;
 --description-color: #dfdfdf;
 
---input-bg-color: #333333;
---input-border-color: #555555;
+--input-bg-color: rgba(46, 46, 52, 0.486);
+--input-border-color: rgba(255, 255, 255, 0.08);
 --input-focus-border-color: var(--secondary-accent-color);
 --primary-accent-shadow: rgba(230, 162, 46, 0.4);
 
 --template-bg-color: #2b2b2b;
---template-border-color: #555;
---template-handle-bg: #4a4a4a;
+--template-border-color: rgba(255, 255, 255, 0.08);
+--template-handle-bg: rgba(255, 255, 255, 0.08);
 --template-handle-border: #555;
 
 --tab-strip-bg: #2b2b2b;
@@ -134,12 +134,12 @@ color-scheme: dark;
 --calc-days-color: #ff9800;
 --calc-hours-color: #9370db;
 --resize-handle-color: rgba(255, 255, 255, 0.3);
---highlight-bg-color: rgba(230, 162, 46, 0.5);
+--highlight-bg-color: rgb(185, 134, 44);
 --snow-color: #ffffff;
 --bg-color: rgb(22, 22, 22);
---bg-second-color: #2c2c2e;
+--bg-second-color: rgba(46, 46, 52, 0.486);
 
---bg-btn: #2c2c2c;
+--bg-btn: rgba(46, 46, 52, 0.932);
 
 --panel-border-dark: rgba(255, 255, 255, 0.08);
 --tabstrip-bg-dark: rgba(28, 28, 32, 0.712);
@@ -1834,6 +1834,11 @@ body.dark #login-autoclear-btn:hover:not(.active) i {
     margin-bottom: 16px;
 }
 
+#fullNameInput {
+   font-weight: 400;
+   font-size: 0.9em; 
+}
+
 /* --- СІТКА ДЛЯ 2-х КОЛОНОК --- */
 .login-generator-container #results-container {
     display: flex;
@@ -2681,14 +2686,14 @@ z-index: 3;
     flex-grow: 1; 
     margin: 0px 4px 4px 4px;
     width: calc(100% - 8px);
-     border: 1px solid var(--input-border-color);
+    border: 1px solid var(--input-border-color);
     border-radius: 12px;
     overflow: hidden;
     contain: paint layout;
 }
 
 body.dark .textarea-wrapper {
-    border-color: #555555;
+    border-color: var(--template-border-color);
 }
 
 .line-marker-gutter {
@@ -2700,7 +2705,7 @@ body.dark .textarea-wrapper {
     overflow: hidden; 
     padding-top: 10px; 
     padding-bottom: 10px;
-	background-color: var(--tab-strip-bg); /* Використовуємо колір фону вкладок, він гарно підходить */
+	background-color: var(--tab-strip-bg); 
     border-right: 1px solid var(--input-border-color);
 }
 
@@ -4036,7 +4041,7 @@ body.dark .date-calculator-container .date-input-group input[type="time"] {
 .date-calculator-container #result-section #result-display {
     padding: 15px;
     background-color: var(--bg-second-color);
-	border-radius: 8px; 
+	border-radius: 0px; 
 }
 
 /* Оновлення для темної теми */
@@ -4059,7 +4064,7 @@ body.dark .date-calculator-container #result-section h2 {
 }
 
 body.dark .date-calculator-container #result-section {
-    background-color: #2b2b2b; /* Тут можна залишити колір або створити нову змінну, напр. --result-bg-dark */
+    background-color: var(--bg-second-color) /* Тут можна залишити колір або створити нову змінну, напр. --result-bg-dark */
     border-color: var(--input-border-color);
 }
 
