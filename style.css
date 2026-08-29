@@ -112,7 +112,7 @@ color-scheme: dark;
 /* Темна тема (перевизначення) */
 --text-color: #e0e0e0;
 --header-color: #e0e0e0;
---description-color: #dfdfdf;
+--description-color: #d6d6d6;
 
 --input-bg-color: rgba(46, 46, 52, 0.486);
 --input-border-color: rgba(255, 255, 255, 0.08);
@@ -5253,7 +5253,7 @@ body.dark .command-item:active {
 
 /* Темна тема: command text */
 body.dark .command-text {
-    color: var(--secondary-accent-color);
+    color: var(--text-color); 
 }
 
 .command-description {
@@ -5385,7 +5385,7 @@ body.dark .sub-command-item:active {
 
 /* Темна тема: sub command item */
 body.dark .sub-command-item .command-text {
-    color: #72c7ff;
+    color: var(--secondary-accent-color); /* Інший колір для підкоманд */
 }
 
 /* Іконка стрілочки (Chevron) */
