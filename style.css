@@ -3217,6 +3217,7 @@ body.dark .config-show-signal-btn:hover {
     color: var(--secondary-accent-color);
     box-shadow: 0 2px 4px rgba(255, 196, 0, 0.15);
     z-index: 2;
+    background-color: rgba(255, 255, 255, 0.082);
 }
 
 /* Темна тема: config replace mode btn — активний стан */
@@ -5611,7 +5612,7 @@ body.dark .qn-close-btn:active {
 
 /* Зона введення тексту */
 .qn-input-area {
-    padding: 12px 16px;
+    padding: 12px 26px;
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -5679,11 +5680,12 @@ body.dark .qn-add-btn {
 
 /* Список збережених нотаток */
 .qn-list {
-    padding: 0 16px 16px;
+    padding: 0 16px 26px;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
     gap: 8px;
+    scrollbar-gutter: stable both-edges;
 }
 
 /* Скролбар */
