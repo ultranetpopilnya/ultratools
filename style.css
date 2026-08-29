@@ -30,7 +30,7 @@ select {
 
    @font-face {
     font-family: 'FixelDisplay'; /* Назва, яку ми будемо використовувати далі */
-    src: url('./fonts/FixelDisplay-Regular.woff2') format('woff2');
+    src: url('./fonts/FixelDisplay-Medium.woff2') format('woff2');
   
     font-weight: 400; /* Нормальна товщина (Regular) */
     font-style: normal;
@@ -99,12 +99,10 @@ select {
 --reflection-top: linear-gradient(135deg, rgba(255, 255, 255, 0.65) 0%, rgba(255, 255, 255, 0) 50%);
 --reflection-inner: inset 0 1px 1px rgba(255, 255, 255, 0.95), inset 0 -1px 1px rgba(0, 0, 0, 0.04);
 
-/* === СКЛО ДЛЯ ВКЛАДОК І КОНТЕЙНЕРІВ === */
---glass-tabstrip-bg: rgba(255, 255, 255, 0.35);
---glass-card-bg: rgba(255, 255, 255, 0.288);
---glass-active-bg: rgba(255, 255, 255, 0.75);
---glass-panel-border: rgb(255, 255, 255);
---glass-blur: blur(20px) saturate(180%);
+--panel-border-light: rgba(255, 255, 255, 0.6);
+--tabstrip-bg-light: rgba(255, 255, 255, 0.75);
+--active-bg-light: rgba(255, 255, 255, 0.95);
+--card-bg-light: rgba(255, 255, 255, 0.9);
 }
 
 /* dark */
@@ -143,11 +141,10 @@ color-scheme: dark;
 
 --bg-btn: #2c2c2c;
 
-/* === СКЛО ДЛЯ ВКЛАДОК І КОНТЕЙНЕРІВ (темна тема) === */
---glass-tabstrip-bg: rgba(255, 255, 255, 0.04);
---glass-card-bg: rgba(255, 255, 255, 0.07);
---glass-active-bg: rgba(255, 255, 255, 0.15);
---glass-panel-border: rgba(255, 255, 255, 0.075);
+--panel-border-dark: rgba(255, 255, 255, 0.08);
+--tabstrip-bg-dark: rgba(28, 28, 32, 0.85);
+--active-bg-dark: rgba(46, 46, 52, 0.95);
+--card-bg-dark: rgba(28, 28, 32, 0.92);
 }
 
 /* :root */
@@ -197,10 +194,10 @@ color-scheme: dark;
 }
 
 body {
-    font-family: 'FixelDisplay', sans-serif; 
-    margin: 0; /* Прибираємо відступ браузера */
+    font-family: 'FixelDisplay', sans-serif;
+    margin: 0;
     padding: 0;
-    
+
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -209,58 +206,60 @@ body {
     height: 100vh;
     overflow: hidden !important;
     position: relative;
-    
+
     color: var(--text-color);
 
-    /* --- СВІТЛА ТЕМА: Хаотичний Mesh Gradient --- */
-    background-color: #f8fafc; /* Базовий світлий фон */
-    background-image: 
-        radial-gradient(at 15% 15%, rgba(99, 102, 241, 0.06) 0px, transparent 45%), 
-        radial-gradient(at 85% 10%, rgba(236, 72, 153, 0.04) 0px, transparent 55%), 
-        radial-gradient(at 90% 85%, rgba(234, 179, 8, 0.03) 0px, transparent 40%), 
-        radial-gradient(at 10% 85%, rgba(20, 184, 166, 0.05) 0px, transparent 50%), 
-        radial-gradient(at 50% 50%, rgba(255, 255, 255, 0.8) 0px, transparent 100%);
-    background-attachment: fixed; /* Щоб фон стояв на місці */
+    /* --- СВІТЛА ТЕМА: абстрактне змішування кольорів --- */
+    background-color: #f8fafc;
+background-image:
+    radial-gradient(ellipse 55% 45% at 18% 22%, rgba(99, 102, 241, 0.08) 0%, transparent 65%),
+    radial-gradient(ellipse 65% 50% at 88% 12%, rgba(236, 72, 153, 0.06) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 60% at 92% 82%, rgba(234, 179, 8, 0.05) 0%, transparent 65%),
+    radial-gradient(ellipse 60% 45% at 8% 88%, rgba(20, 184, 166, 0.07) 0%, transparent 68%),
+    radial-gradient(ellipse 40% 40% at 55% 45%, rgba(168, 85, 247, 0.04) 0%, transparent 70%);
+background-blend-mode: screen, multiply, screen, multiply, screen;
+    background-attachment: fixed;
 }
 
 body.dark {
     color-scheme: dark;
 
-    /* --- ТЕМНА ТЕМА: Глибокий космічний Mesh Gradient --- */
-    background-color: #0b0f19; /* Базовий глибокий темний фон */
-    background-image: 
-        radial-gradient(at 20% 15%, rgba(3, 8, 22, 0.07) 0px, transparent 50%), 
-        radial-gradient(at 80% 15%, rgba(126, 34, 206, 0.05) 0px, transparent 55%), 
-        radial-gradient(at 85% 85%, rgba(217, 119, 6, 0.04) 0px, transparent 45%), 
-        radial-gradient(at 15% 90%, rgba(15, 118, 110, 0.06) 0px, transparent 50%), 
-        radial-gradient(at 50% 50%, rgba(0, 0, 0, 0.4) 0px, transparent 100%);
+    /* --- ТЕМНА ТЕМА: глибоке космічне змішування --- */
+    background-color: #0b0f19;
+background-image:
+    radial-gradient(ellipse 55% 45% at 22% 18%, rgba(126, 34, 206, 0.05) 0%, transparent 65%),
+    radial-gradient(ellipse 65% 55% at 85% 15%, rgba(190, 24, 93, 0.035) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 60% at 88% 85%, rgba(180, 83, 9, 0.025) 0%, transparent 65%),
+    radial-gradient(ellipse 60% 45% at 12% 88%, rgba(15, 118, 110, 0.04) 0%, transparent 68%),
+    radial-gradient(ellipse 45% 40% at 50% 50%, rgba(76, 29, 149, 0.03) 0%, transparent 70%);
+background-blend-mode: screen, screen, multiply, screen, screen;
 }
 
 /* ================================================================
-   ШАР ІЗ ЗЕРНИСТІСТЮ (NOISE EFFECT)
+   ШАР ІЗ ЗЕРНИСТІСТЮ (якісний, монохромний, чіткий noise)
    ================================================================ */
-/* Створюємо невидимий шар поверх фону, але ПІД усім контентом */
 body::before {
     content: "";
     position: fixed;
-    top: 0; 
-    left: 0; 
-    width: 100%; 
+    top: 0;
+    left: 0;
+    width: 100%;
     height: 100%;
-    
-    /* SVG-фільтр, який генерує красивий шум напряму через CSS */
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-    
-    opacity: 0.05; /* Інтенсивність зерна (чим більше, тим помітніше) */
-    z-index: 0;    /* Ховаємо під картки (у вас картки мають z-index: 2 або 10) */
-    pointer-events: none; /* Щоб шум не перекривав кліки мишкою! */
+
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 300 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch' result='noise'/%3E%3CfeColorMatrix in='noise' type='matrix' values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0.3 0.3 0.3 0 0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='2.5' intercept='-0.4'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+
+    /* КЛЮЧОВЕ ВИПРАВЛЕННЯ: фіксований розмір тайлу замість розтягування на весь екран */
+    background-size: 180px 180px;
+    background-repeat: repeat;
+
+    opacity: 0.05; /* тепер шум чіткіший/контрастніший, тому опасність можна тримати нижчою */
+    z-index: 0;
+    pointer-events: none;
 }
 
-/* Налаштування яскравості зерна для темної теми */
 body.dark::before {
-    opacity: 0.055; /* У темній темі потрібно трохи більше непрозорості, щоб зерно було видно */
-    /* Додаємо змішування кольорів для м'якшого вигляду */
-    mix-blend-mode: overlay; 
+    opacity: 0.14;
+    mix-blend-mode: overlay;
 }
 
 /* h1 */
@@ -371,27 +370,31 @@ body.dark ::placeholder {
     display: flex;
     flex-direction: column;
 
-    background-color: var(--glass-card-bg);
+    background-color: var(--card-bg-light);
     background-image: var(--reflection-top);
-    backdrop-filter: var(--glass-blur);
-    -webkit-backdrop-filter: var(--glass-blur);
-    border: 1px solid var(--glass-panel-border);
+    border: 1px solid var(--panel-border-light);
     border-radius: 12px;
-    
-    box-shadow: 
-        inset 0 1px 1px 0 rgba(255, 255, 255, 0.9), /* Білий блік зверху */
+
+    box-shadow:
+        inset 0 1px 1px 0 rgba(255, 255, 255, 0.9),
         0 8px 28px -4px rgba(0, 0, 0, 0.15);
 
     overflow: auto;
+
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    backface-visibility: hidden;
 }
 
-/* Покращуємо тінь для темної теми */
 body.dark .content-card {
-    background-color: var(--glass-card-bg);
+    background-color: var(--card-bg-dark);
     background-image: none;
-    border-color: var(--glass-panel-border);
-    
-    box-shadow: 0 8px 28px 0 rgba(0, 0, 0, 0.37);
+    border-color: var(--panel-border-dark);
+
+    box-shadow:
+        inset 0 1px 1px 0 rgba(255, 255, 255, 0.06),
+        inset 0 -1px 1px 0 rgba(0, 0, 0, 0.2),
+        0 8px 28px 0 rgba(0, 0, 0, 0.37);
 }
 
 /* === БАЗОВИЙ КОНТЕЙНЕР ВКЛАДОК === */
@@ -648,11 +651,9 @@ button:disabled, input:disabled, select:disabled {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: var(--glass-tabstrip-bg);
+    background-color: var(--tabstrip-bg-light);
     background-image: var(--reflection-top);
-    backdrop-filter: var(--glass-blur);
-    -webkit-backdrop-filter: var(--glass-blur);
-    padding: 4px; 
+    padding: 4px;
     border-radius: 9999px;
     margin: 0 auto 0 auto;
     cursor: default;
@@ -660,47 +661,41 @@ button:disabled, input:disabled, select:disabled {
     width: fit-content;
     min-width: 60px;
     transition: all 0.4s cubic-bezier(0.34, 1.2, 0.64, 1), background-color 0.5s ease;
-    
+
     box-shadow: var(--shadow-glass), var(--reflection-inner);
     position: relative;
     z-index: 50;
-    border: 1px solid var(--glass-panel-border);
-    overflow: visible !important; 
+    border: 1px solid var(--panel-border-light);
+    overflow: visible !important;
 }
 
-/* Для темної теми */
 body.dark .tabs {
-    background-color: var(--glass-tabstrip-bg);
+    background-color: var(--tabstrip-bg-dark);
     background-image: none;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.35), inset 0 1px 1px rgba(255,255,255,0.04);
-    border: 1px solid var(--glass-panel-border);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--panel-border-dark);
 }
 
-/* Стиль для кожної кнопки-вкладки */
 .tab-button {
-    /* 1. РОЗМІРИ: Задаємо чітку висоту замість вертикальних відступів */
-    height: 40px; 
-    padding: 0 42px 0 19px; /* Тільки бокові відступи (0 зверху/знизу) */
-    
+    height: 40px;
+    padding: 0 42px 0 19px;
+
     cursor: pointer;
     -webkit-user-select: none;
 
     width: max-content;
     max-width: 400px;
     margin: 0 2px 0 4px;
-    
-    /* 2. ІДЕАЛЬНЕ ЦЕНТРУВАННЯ ВМІСТУ */
+
     display: flex;
-    align-items: center; /* Рівняє іконку і текст СУВОРО по центру висоти 40px */
+    align-items: center;
     justify-content: flex-start;
     gap: 8px;
-    
-    /* 3. ОБРІЗКА ТЕКСТУ */
+
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    
-    /* 4. БАЗОВИЙ ДИЗАЙН */
+
     position: relative;
     background-color: transparent;
     color: var(--tab-inactive-text);
@@ -709,45 +704,39 @@ body.dark .tabs {
     font-size: 16px;
     font-weight: 500;
     user-select: none;
-    
+
     isolation: isolate;
     transform: translateZ(0);
     -webkit-transform: translateZ(0);
     will-change: transform, opacity;
-    
+
     transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
-/* Стиль для іконки всередині кнопки */
 .tab-button i {
-    margin-right: 0; /* Прибираємо старий відступ */
+    margin-right: 0;
     font-size: 1.1em;
 }
 
 /* Стиль для АКТИВНОЇ вкладки */
 .tab-button.active {
-    background-color: var(--glass-active-bg);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    background-color: var(--active-bg-light);
     color: var(--primary-accent-color);
-    font-weight: 500; 
-    text-shadow: 0 0 0.65px currentColor; 
+    font-weight: 500;
+    text-shadow: 0 0 0.65px currentColor;
     -webkit-text-stroke: 0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.10), inset 0 1px 1px rgba(255,255,255,0.5);
-    
-    transform: translateZ(0); 
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.10), inset 0 1px 1px rgba(255, 255, 255, 0.5);
+
+    transform: translateZ(0);
     -webkit-transform: translateZ(0);
-    
+
     border-radius: 9999px;
 }
 
-/* Для темної теми */
 body.dark .tab-button.active {
-    background-color: var(--glass-active-bg);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    background-color: var(--active-bg-dark);
     color: var(--secondary-accent-color);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.06);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.06);
 }
 
 .tab-button:focus-visible {
@@ -761,14 +750,13 @@ body.dark .tab-button:focus-visible {
 /* tab button — ховер */
 .tab-button:hover:not(.active) {
     color: var(--text-color);
-    background-color: rgba(0,0,0,0.05); /* Легка реакція */
+    background-color: rgba(0, 0, 0, 0.05);
     border-radius: 9999px;
 }
 
-/* Темна тема: tab button — ховер */
 body.dark .tab-button:hover:not(.active) {
     color: var(--text-color);
-    background-color: rgba(255,255,255,0.05);
+    background-color: rgba(255, 255, 255, 0.05);
 }
 
 /* === СТИЛІ ДЛЯ DRAG & DROP (ВИПРАВЛЕНО) === */
