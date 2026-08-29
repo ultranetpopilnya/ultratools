@@ -54,7 +54,7 @@ select {
 --header-color: #1a202c;
 --primary-accent-color: #3b82f6;
 --primary-accent-shadow: rgba(59, 130, 246, 0.35);
---secondary-accent-color: #d6b627;
+--secondary-accent-color: #bd9a00;
 --success-color: #08a171; 
 --danger-color: #dc2626;
 --description-color: #4a5568;
@@ -3188,6 +3188,15 @@ body.dark .config-generate-btn {
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* config replace mode btn — активний стан */
+.config-replace-mode-btn.active,
+.config-pon-onu-btn.active,
+.config-show-signal-btn.active {
+    background-color: rgba(0, 123, 255, 0.1);
+    color: var(--primary-accent-color);
+    border-color: var(--primary-accent-color);
+}
+
 /* config replace mode btn — ховер */
 .config-replace-mode-btn:hover,
 .config-pon-onu-btn:hover,
@@ -3218,15 +3227,6 @@ body.dark .config-show-signal-btn.active {
     background-color: rgba(230, 162, 46, 0.15);
     color: var(--secondary-accent-color);
     border-color: var(--secondary-accent-color);
-}
-
-/* config replace mode btn — активний стан */
-.config-replace-mode-btn.active,
-.config-pon-onu-btn.active,
-.config-show-signal-btn.active {
-    background-color: rgba(0, 123, 255, 0.1);
-    color: var(--primary-accent-color);
-    border-color: var(--primary-accent-color);
 }
 
 /* === НОВІ СТИЛІ ДЛЯ КНОПКИ MIX (МЕХАНІЧНИЙ ПЕРЕМИКАЧ) === */
