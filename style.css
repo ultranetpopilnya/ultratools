@@ -71,6 +71,8 @@ select {
 --tab-strip-bg: rgba(26, 26, 26, 0.03);
 --tab-inactive-text: #5b6b83;
 
+--text-hover: rgb(240, 240, 240);
+
 --scrollbar-thumb: #94a3b8;
 --scrollbar-track: transparent;
 
@@ -124,8 +126,10 @@ color-scheme: dark;
 --template-handle-bg: rgba(255, 255, 255, 0.08);
 --template-handle-border: #555;
 
---tab-strip-bg: rgba(46, 46, 52, 0.486);
+--tab-strip-bg: #313136;
 --tab-inactive-text: #e0e0e0;
+
+--text-hover: rgba(255, 255, 255, 0.09);
 
 --scrollbar-thumb: #4a4a4a;
 --scrollbar-track: transparent;
@@ -2710,7 +2714,7 @@ body.dark .textarea-wrapper {
 
 /* Темна тема: line marker gutter */
 body.dark .line-marker-gutter {
-    background-color: var(--template-handle-bg); /* Темний фон ручки перетягування */
+    background-color: var(--input-border-color);
     border-right: 1px solid var(--input-border-color);
 }
 
@@ -5220,13 +5224,13 @@ body.dark .command-item {
 
 /* command item — ховер */
 .command-item:hover {
-    background-color: var(--input-bg-color); 
+    background-color: var(--text-hover); 
     box-shadow: none; 
 }
 
 /* Темна тема: command item — ховер */
 body.dark .command-item:hover {
-    background-color: var(--input-bg-color); 
+    background-color: var(--text-hover); 
 }
 
 /* command item — активний стан */
@@ -5314,12 +5318,12 @@ body.dark .command-description {
 
 /* Підсвітка фону при наведенні, як у всіх інших команд */
 .command-item.static-header:hover {
-    background-color: #fff; 
+    background-color: var(--text-hover); 
 }
 
 /* Темна тема: command item — ховер */
 body.dark .command-item.static-header:hover {
-    background-color: #333333;
+    background-color: var(--text-hover);
 }
 
 /* 3. Текст команди: можна копіювати, АЛЕ БЕЗ ПІДКРЕСЛЕННЯ */
@@ -5360,12 +5364,12 @@ body.dark .command-item.static-header .command-text:hover {
 
 /* sub command item — ховер */
 .sub-command-item:hover {
-    background-color: #fff;
+    background-color: var(--text-hover);
 }
 
 /* Темна тема: sub command item — ховер */
 body.dark .sub-command-item:hover {
-    background-color: #333333;
+    background-color: var(--text-hover);
 }
 
 /* sub command item — активний стан (імітація кліку/копіювання) */
