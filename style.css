@@ -4557,10 +4557,10 @@ body.dark #auto-reset-button:focus-visible {
     background-color: var(--bg-second-color);
     border: 1px solid var(--input-border-color);
     border-radius: 12px; 
-    padding: 12px; /* Змінено з 10px */      
+    padding: 12px;     
     display: flex;
     flex-direction: column;
-    box-shadow: var(--shadow-glass); /* НОВЕ */
+    box-shadow: var(--shadow-glass);
 }
 
 /* Темна тема: win11 calc */
