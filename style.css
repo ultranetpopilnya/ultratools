@@ -4722,15 +4722,14 @@ body.dark .calc-display-container {
     background-color: var(--primary-accent-color); 
     color: white; 
     font-weight: 600;
-    margin-top: 4px; /* Змінено з 2px */
+    margin-top: 4px; 
     font-size: 24px;
-    border: none; /* Змінено */
-    box-shadow: 0 4px 12px var(--primary-accent-shadow); /* НОВЕ */
+    border: none;
+    border-radius: 12px;
 }
 
 .c-btn.equal:hover { 
     background-color: #2563eb;
-    box-shadow: 0 6px 16px var(--primary-accent-shadow); 
 }
 
 /* === ТЕМНА ТЕМА ДЛЯ КНОПОК === */
@@ -4768,9 +4767,9 @@ body.dark .c-btn.action-back:hover {
 
 body.dark .c-btn.equal { 
     background-color: var(--secondary-accent-color); 
-    color: #1a1a1a; /* Змінено: чорний текст на жовтому фоні */
-    box-shadow: 0 4px 12px var(--primary-accent-shadow);
+    color: #1a1a1a; 
 }
+
 body.dark .c-btn.equal:hover { 
     background-color: #f59e0b; 
 }
@@ -4783,17 +4782,15 @@ body.dark .c-btn.equal:hover {
     width: 100%;
     height: 100%;
     
-    /* ЗМІНЕНО: Додано ефект скла */
-    background-color: rgba(255, 255, 255, 0.85); 
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(240, 240, 245, 0.95) 100%);
+    box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.1);
     
     transition: bottom 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
     z-index: 20;
     display: flex;
     flex-direction: column;
-    padding: 16px; /* Змінено з 12px */
-    border-radius: 12px;
+    padding: 16px;
+    border-radius: 12px; 
 }
 
 /* calc history panel — відкритий стан */
@@ -4803,8 +4800,16 @@ body.dark .c-btn.equal:hover {
 
 /* Темна тема: calc history panel */
 body.dark .calc-history-panel {
-    background-color: rgba(30, 30, 36, 0.9); /* Змінено */
+    background: linear-gradient(135deg, rgba(35, 35, 42, 0.98) 0%, rgba(25, 25, 30, 0.98) 100%);
+    box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.5);
     border-top: 1px solid var(--input-border-color); /* НОВЕ */
+}
+
+.calc-history-list {
+    flex-grow: 1;
+    overflow-y: auto;
+    margin-bottom: 8px;
+    padding-right: 4px;
 }
 
 /* Шапка історії */
@@ -4827,14 +4832,6 @@ body.dark .calc-history-panel {
 
 /* hist clear btn — ховер */
 .hist-clear-btn:hover { color: var(--danger-color); background-color: rgba(220,53,69,0.1); }
-
-
-.calc-history-list {
-    flex-grow: 1;
-    overflow-y: auto;
-    margin-bottom: 8px;
-    padding-right: 4px;
-}
 
 .hist-empty {
     text-align: center; color: #999; margin-top: 50%; 
