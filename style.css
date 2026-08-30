@@ -218,7 +218,7 @@ color-scheme: dark;
 *::-webkit-scrollbar-button:vertical:start:decrement,
 *::-webkit-scrollbar-button:vertical:end:increment {
     display: block;
-    height: 6px; /* Висота відступу зверху і знизу */
+    height: 5px; /* Висота відступу зверху і знизу */
     background-color: transparent;
 }
 
