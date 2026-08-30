@@ -164,7 +164,7 @@ color-scheme: dark;
     --template-handle-border: rgba(255, 255, 255, 0.04);
 
     /* TABS */
-    --tab-strip-bg: #11161d;
+    --tab-strip-bg: #171d24;
     --tab-inactive-text: #667085;
     --text-hover: rgba(255, 255, 255, 0.06);
 
@@ -2804,7 +2804,7 @@ body.dark .textarea-wrapper {
 
 /* Темна тема: line marker gutter */
 body.dark .line-marker-gutter {
-    background-color: var(--input-border-color);
+    background-color: var(--tab-strip-bg); 
     border-right: 1px solid var(--input-border-color);
 }
 
