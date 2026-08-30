@@ -657,6 +657,8 @@ button:disabled, input:disabled, select:disabled {
     align-items: center;
     background-color: var(--tabstrip-bg-light);
     background-image: var(--reflection-top);
+    backdrop-filter: blur(20px) saturate(150%); 
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
     padding: 4px;
     border-radius: 9999px;
     margin: 0 auto 0 auto;
@@ -726,6 +728,8 @@ body.dark .tabs {
 .tab-button.active {
     background-color: var(--active-bg-light);
     color: var(--primary-accent-color);
+    backdrop-filter: blur(20px) saturate(150%); 
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
     font-weight: 500;
     text-shadow: 0 0 0.65px currentColor;
     -webkit-text-stroke: 0;
@@ -738,6 +742,8 @@ body.dark .tabs {
 }
 
 body.dark .tab-button.active {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     background-color: var(--active-bg-dark);
     color: var(--secondary-accent-color);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.06);
@@ -1475,36 +1481,6 @@ body.dark .history-separator {
     z-index: 2000;
 }
 
-/* Ховер ефект для світлої теми (Скло стає яскравішим і "спливає") */
-.theme-pill:hover {
-    background-color: var(--glass-white-md);
-    border-color: var(--glass-white-lg);
-    box-shadow: var(--shadow-float), var(--reflection-inner);
-    transform: scale(1.05) translateY(-2px);
-}
-
-/* ТЕМНЕ СКЛО ДЛЯ ТЕМНОЇ ТЕМИ */
-body.dark .theme-pill {
-    background-color: rgba(20, 25, 35, 0.5);
-    background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0) 50%);
-    border-color: var(--glass-border);
-    box-shadow: 
-        0 8px 32px rgba(0, 0, 0, 0.5),
-        inset 0 1px 1px rgba(255, 255, 255, 0.15),
-        inset 0 -1px 1px rgba(0, 0, 0, 0.3);
-}
-
-/* Темна тема: theme pill — ховер */
-body.dark .theme-pill:hover {
-    background-color: rgba(30, 35, 45, 0.6);
-    border-color: var(--glass-border-bright);
-    box-shadow: 
-        0 20px 60px rgba(0, 0, 0, 0.6),
-        inset 0 1px 1px rgba(255, 255, 255, 0.2),
-        inset 0 -1px 1px rgba(0, 0, 0, 0.3);
-    transform: scale(1.05) translateY(-2px);
-}
-
 /* theme pill */
 .theme-pill {
     width: 50px; 
@@ -1533,6 +1509,36 @@ body.dark .theme-pill:hover {
     /* Пружиниста анімація самого острівця */
     transition: all 0.5s cubic-bezier(0.34, 1.2, 0.64, 1); 
     user-select: none;
+}
+
+/* Ховер ефект для світлої теми (Скло стає яскравішим і "спливає") */
+.theme-pill:hover {
+    background-color: var(--glass-white-md);
+    border-color: var(--glass-white-lg);
+    box-shadow: var(--shadow-float), var(--reflection-inner);
+    transform: scale(1.05) translateY(-2px);
+}
+
+/* ТЕМНЕ СКЛО ДЛЯ ТЕМНОЇ ТЕМИ */
+body.dark .theme-pill {
+    background-color: rgba(20, 25, 35, 0.5);
+    background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0) 50%);
+    border-color: var(--glass-border);
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.5),
+        inset 0 1px 1px rgba(255, 255, 255, 0.15),
+        inset 0 -1px 1px rgba(0, 0, 0, 0.3);
+}
+
+/* Темна тема: theme pill — ховер */
+body.dark .theme-pill:hover {
+    background-color: rgba(30, 35, 45, 0.6);
+    border-color: var(--glass-border-bright);
+    box-shadow: 
+        0 20px 60px rgba(0, 0, 0, 0.6),
+        inset 0 1px 1px rgba(255, 255, 255, 0.2),
+        inset 0 -1px 1px rgba(0, 0, 0, 0.3);
+    transform: scale(1.05) translateY(-2px);
 }
 
 /* =========================================
@@ -5245,7 +5251,7 @@ body.dark .command-item:active {
 
 .command-text {
     font-family: 'FixelDisplay', monospace;
-    font-weight: 600;
+    font-weight: 400;
     color: var(--text-color); 
     user-select: none; 
     
@@ -5262,6 +5268,7 @@ body.dark .command-text {
 
 .command-description {
     font-size: 0.9em;
+    font-weight: 300;
     color: var(--description-color) !important; 
     
     flex: 1;               
