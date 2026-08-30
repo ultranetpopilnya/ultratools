@@ -5481,7 +5481,6 @@ body.dark .command-item.static-header .command-text:hover {
     font-size: 0.9em !important;
 }
 
-
 /* sub command item — ховер */
 .sub-command-item:hover {
     background-color: var(--text-hover);
@@ -5527,20 +5526,20 @@ body.dark .sub-command-item .command-text {
 
 /* Якщо команда має підпункти, текст команди має показувати курсор копіювання */
 .command-item.has-subcommands .command-text {
-    cursor: copy;
+    cursor: pointer;
     border-bottom: 1px dashed rgba(0,0,0,0.2); /* Підказка, що це окремий елемент */
     transition: color 0.2s;
 }
 
 /* command item — ховер */
 .command-item.has-subcommands .command-text:hover {
-    color: var(--primary-accent-color);
+    color: var(--text-color);
     border-bottom-color: var(--primary-accent-color);
 }
 
 /* Темна тема: command item — ховер */
 body.dark .command-item.has-subcommands .command-text:hover {
-    color: var(--secondary-accent-color);
+    color: var(--text-color);
     border-bottom-color: var(--secondary-accent-color);
 }
 
