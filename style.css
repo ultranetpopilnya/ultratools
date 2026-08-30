@@ -87,10 +87,10 @@ select {
     --scrollbar-thumb-hover: rgba(0, 0, 0, 0.38);
     --scrollbar-thumb-active: rgba(0, 0, 0, 0.52);
 
-    /* CALCULATOR */
-    --calc-duration-color: var(--primary-accent-color);
-    --calc-days-color: #e58b32;
-    --calc-hours-color: #7466d9;
+    /* DATE CALCULATOR */
+    --calc-duration-color: #0d9488;
+  --calc-hours-color: #4f46e5;
+  --calc-days-color: #e11d48;
     --button-paste-bg: #0d9488;
 
     /* MISC */
@@ -102,7 +102,7 @@ select {
     --bg-color: #eef2f7;
     --bg-second-color: #f8fafc;
     
-    /*BUTTON */
+    /* BUTTON */
     --btn-bg-hover: #ffffff;
     --btn-border-hover: #bbb;
     
@@ -177,10 +177,11 @@ color-scheme: dark;
     --scrollbar-thumb-hover: rgba(255, 255, 255, 0.32);
     --scrollbar-thumb-active: rgba(255, 255, 255, 0.48);
 
-    /* CALCULATOR */
-    --calc-duration-color: #5169e4;
-    --calc-days-color: #f0a055;
-    --calc-hours-color: #8c49ca;
+    /* DATE CALCULATOR */
+    --calc-duration-color: #2dd4bf;
+  --calc-hours-color: #818cf8;
+  --calc-days-color: #fb7185;
+    
 
     /* MISC */
     --resize-handle-color: rgba(255, 255, 255, 0.18);
