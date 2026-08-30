@@ -3276,12 +3276,12 @@ body.dark .config-show-signal-btn.active {
     flex: 0 0 auto !important; 
     display: inline-flex;
     align-items: center;
-    width: 74px; 
+    width: 80px; 
     border-radius: 8px !important; 
     border: 1px solid var(--input-border-color);
     background-color: var(--input-bg-color);
     font-size: 13px;
-    font-weight: 600;
+    font-weight: 400;
     cursor: pointer;
     position: relative;
     box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.04);
@@ -3533,7 +3533,7 @@ body.dark .config-mix-toggle-btn.shake-it {
     background-color: var(--input-bg-color);
     
     font-size: 13px;
-    font-weight: 600;
+    font-weight: 400;
     cursor: pointer;
     position: relative;
     overflow: hidden;
