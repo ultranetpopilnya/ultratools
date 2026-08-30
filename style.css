@@ -49,120 +49,174 @@ select {
 :root {
 --theme-transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease;
 
---text-color: #334155;
-    --header-color: #0f172a;
-    --primary-accent-color: #3b82f6;
-    --primary-accent-shadow: rgba(59, 130, 246, 0.35);
-    --secondary-accent-color: #bd9a00;
-    --success-color: #10b981; 
-    --danger-color: #ef4444;
-    --danger-bg-light: rgba(239, 68, 68, 0.1);
+    /* TEXT */
+    --text-color: #334155;
+    --header-color: #172033;
     --description-color: #64748b;
 
+    /* ACCENTS */
+    --primary-accent-color: #4f6df5;
+    --primary-accent-shadow: rgba(79, 109, 245, 0.25);
+    --secondary-accent-color: #d69b2d;
+
+    /* STATUS */
+    --success-color: #16a37a;
+    --danger-color: #e25555;
+    --danger-bg-light: rgba(226, 85, 85, 0.10);
+    --danger-bg-dark: rgba(240, 107, 107, 0.15);
+
+    /* INPUTS */
     --input-bg-color: #f8fafc;
-    --input-border-color: #e2e8f0;
+    --input-border-color: #d9e0ea;
     --input-focus-border-color: var(--primary-accent-color);
 
+    /* TEMPLATES */
     --template-bg-color: #ffffff;
-    --template-border-color: #e2e8f0;
-    --template-handle-bg: #f8fafc;
+    --template-border-color: #d9e0ea;
+    --template-handle-bg: #f1f4f8;
     --template-handle-border: #cbd5e1;
 
-    --tab-strip-bg: #f1f5f9;
+    /* TABS */
+    --tab-strip-bg: #eef2f7;
     --tab-inactive-text: #94a3b8;
+    --text-hover: #eef2f7;
 
-    --text-hover: #f1f5f9;
-
+    /* SCROLLBAR */
     --scrollbar-track: rgba(0, 0, 0, 0.04);
-    --scrollbar-thumb: rgba(0, 0, 0, 0.25);
-    --scrollbar-thumb-hover: rgba(0, 0, 0, 0.45);
-    --scrollbar-thumb-active: rgba(0, 0, 0, 0.65);
+    --scrollbar-thumb: rgba(0, 0, 0, 0.22);
+    --scrollbar-thumb-hover: rgba(0, 0, 0, 0.38);
+    --scrollbar-thumb-active: rgba(0, 0, 0, 0.52);
 
+    /* CALCULATOR */
     --calc-duration-color: var(--primary-accent-color);
-    --calc-days-color: #f97316;
-    --calc-hours-color: #8b5cf6;
-    --button-paste-bg: #06b6d4;
-    
-    --resize-handle-color: rgba(0, 0, 0, 0.25);
-    --highlight-bg-color: rgba(253, 224, 71, 0.8);
+    --calc-days-color: #e58b32;
+    --calc-hours-color: #7466d9;
+    --button-paste-bg: #0d9488;
+
+    /* MISC */
+    --resize-handle-color: rgba(0, 0, 0, 0.22);
+    --highlight-bg-color: rgba(253, 224, 71, 0.75);
     --snow-color: #7dd3fc;
-    
-    --bg-color: #f1f5f9;
-    --bg-second-color: #ffffff;
+
+    /* BACKGROUNDS */
+    --bg-color: #eef2f7;
+    --bg-second-color: #f8fafc;
     --bg-btn: #ffffff;
 
-    /* Ваші стилі для скла (залишено без змін) */
-    --glass-white-lg: rgba(255, 255, 255, 0.9);
-    --glass-white: rgba(255, 255, 255, 0.3);
-    --glass-white-md: rgba(255, 255, 255, 0.8);
-    --glass-dark: rgba(0, 0, 0, 0.06);
-    --glass-border: rgba(255, 255, 255, 0.15);
-    --glass-border-bright: rgba(255, 255, 255, 0.30);
-    
-    --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.1);
-    --shadow-float: 0 20px 60px rgba(0, 0, 0, 0.16), 0 4px 16px rgba(0, 0, 0, 0.08);
-    
-    --reflection-top: linear-gradient(135deg, rgba(255, 255, 255, 0.65) 0%, rgba(255, 255, 255, 0) 50%);
-    --reflection-inner: inset 0 1px 1px rgba(255, 255, 255, 0.95), inset 0 -1px 1px rgba(0, 0, 0, 0.04);
+    /* GLASS */
+    --glass-white-lg: rgba(255, 255, 255, 0.88);
+    --glass-white: rgba(255, 255, 255, 0.28);
+    --glass-white-md: rgba(255, 255, 255, 0.72);
+    --glass-dark: rgba(15, 23, 42, 0.05);
+    --glass-border: rgba(148, 163, 184, 0.20);
+    --glass-border-bright: rgba(148, 163, 184, 0.32);
 
-    /* Ваші стилі панелей (залишено без змін) */
-    --panel-border-light: rgba(255, 255, 255, 0.6);
-    --tabstrip-bg-light: rgba(255, 255, 255, 0.75);
-    --active-bg-light: rgba(255, 255, 255, 0.95);
-    --card-bg-light: rgba(255, 255, 255, 0.9);
+    /* SHADOWS */
+    --shadow-glass: 0 8px 32px rgba(15, 23, 42, 0.08);
+    --shadow-float: 0 20px 60px rgba(15, 23, 42, 0.14), 0 4px 16px rgba(15, 23, 42, 0.06);
+
+    /* REFLECTIONS */
+    --reflection-top: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.58) 0%,
+        rgba(255, 255, 255, 0) 50%
+    );
+
+    --reflection-inner:
+        inset 0 1px 1px rgba(255, 255, 255, 0.85),
+        inset 0 -1px 1px rgba(15, 23, 42, 0.03);
+
+    /* PANELS */
+    --panel-border-light: rgba(148, 163, 184, 0.22);
+    --tabstrip-bg-light: rgba(255, 255, 255, 0.72);
+    --active-bg-light: rgba(255, 255, 255, 0.92);
+    --card-bg-light: rgba(255, 255, 255, 0.84);
 }
 
 /* dark */
 body.dark {
 color-scheme: dark;
 
---text-color: #f1f5f9;
-    --header-color: #ffffff;
-    --description-color: #94a3b8;
+    /* TEXT */
+    --text-color: #e6edf5;
+    --header-color: #f5f7fa;
+    --description-color: #8b96a8;
 
-    --secondary-accent-color: #fbbf24;
-    --primary-accent-shadow: rgba(251, 191, 36, 0.25);
-    --danger-color: #f87171;
-    --danger-bg-dark: rgba(248, 113, 113, 0.15);
-    --success-color: #1aac76;
+    /* ACCENTS */
+    --primary-accent-color: #d69b2d;
+    --primary-accent-shadow: rgba(124, 140, 255, 0.22);
+    --secondary-accent-color: #d69b2d;
 
+    /* STATUS */
+    --danger-color: #f06b6b;
+    --danger-bg-dark: rgba(240, 107, 107, 0.15);
+    --success-color: #39ad83;
 
-    --input-border-color: rgba(255, 255, 255, 0.12);
-    --input-focus-border-color: var(--secondary-accent-color);
+    /* INPUTS */
+    --input-bg-color: #11161d;
+    --input-border-color: rgba(255, 255, 255, 0.11);
+    --input-focus-border-color: var(--primary-accent-color);
 
-    --template-border-color: rgba(255, 255, 255, 0.12);
-    --template-handle-bg: rgba(255, 255, 255, 0.08);
-    --template-handle-border: rgba(255, 255, 255, 0.05);
+    /* TEMPLATES */
+    --template-bg-color: #151a21;
+    --template-border-color: rgba(255, 255, 255, 0.10);
+    --template-handle-bg: rgba(255, 255, 255, 0.06);
+    --template-handle-border: rgba(255, 255, 255, 0.04);
 
-    --tab-inactive-text: #64748b;
+    /* TABS */
+    --tab-strip-bg: #11161d;
+    --tab-inactive-text: #667085;
+    --text-hover: rgba(255, 255, 255, 0.06);
 
-    --text-hover: rgba(255, 255, 255, 0.1);
+    /* SCROLLBAR */
+    --scrollbar-track: rgba(255, 255, 255, 0.035);
+    --scrollbar-thumb: rgba(255, 255, 255, 0.18);
+    --scrollbar-thumb-hover: rgba(255, 255, 255, 0.32);
+    --scrollbar-thumb-active: rgba(255, 255, 255, 0.48);
 
-    --scrollbar-track: rgba(255, 255, 255, 0.04);
-    --scrollbar-thumb: rgba(255, 255, 255, 0.2);
-    --scrollbar-thumb-hover: rgba(255, 255, 255, 0.4);
-    --scrollbar-thumb-active: rgba(255, 255, 255, 0.6);
+    /* CALCULATOR */
+    --calc-duration-color: #5169e4;
+    --calc-days-color: #f0a055;
+    --calc-hours-color: #8c49ca;
 
-    --calc-duration-color: #38bdf8;
-    --calc-days-color: #fb923c;
-    --calc-hours-color: #a78bfa;
-    
-    --resize-handle-color: rgba(255, 255, 255, 0.2);
-    --highlight-bg-color: rgba(217, 119, 6, 0.8);
-    --snow-color: #e2e8f0;
-    
-    --bg-color: #161616;         
-    --bg-second-color: #28282e;   
-    --input-bg-color: #1c1c20;   
-    --template-bg-color: #28282e;
-    --tab-strip-bg: #1c1c20;      
-    --bg-btn: #ffffff0d;
+    /* MISC */
+    --resize-handle-color: rgba(255, 255, 255, 0.18);
+    --highlight-bg-color: rgba(217, 119, 6, 0.75);
+    --snow-color: #cbd5e1;
 
-    /* Ваші стилі панелей (залишено без змін) */
-    --panel-border-dark: rgba(255, 255, 255, 0.08);
-    --tabstrip-bg-dark: rgba(28, 28, 32, 0.712);
-    --active-bg-dark: rgba(46, 46, 52, 0.95);
-    --card-bg-dark: rgba(28, 28, 32, 0.712);
+    /* BACKGROUNDS */
+    --bg-color: #0d1117;
+    --bg-second-color: #151a21;
+    --bg-btn: #1a2029;
+
+    /* GLASS */
+    --glass-white-lg: rgba(255, 255, 255, 0.14);
+    --glass-white: rgba(255, 255, 255, 0.06);
+    --glass-white-md: rgba(255, 255, 255, 0.10);
+    --glass-dark: rgba(0, 0, 0, 0.18);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-border-bright: rgba(255, 255, 255, 0.14);
+
+    /* SHADOWS */
+    --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.28);
+    --shadow-float: 0 20px 60px rgba(0, 0, 0, 0.42), 0 4px 16px rgba(0, 0, 0, 0.24);
+
+    /* REFLECTIONS */
+    --reflection-top: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.08) 0%,
+        rgba(255, 255, 255, 0) 50%
+    );
+
+    --reflection-inner:
+        inset 0 1px 1px rgba(255, 255, 255, 0.05),
+        inset 0 -1px 1px rgba(0, 0, 0, 0.22);
+
+    /* PANELS */
+    --panel-border-dark: rgba(255, 255, 255, 0.07);
+    --tabstrip-bg-dark: rgba(21, 26, 33, 0.82);
+    --active-bg-dark: rgba(31, 37, 47, 0.94);
+    --card-bg-dark: rgba(21, 26, 33, 0.84);
 }
 
 /* :root */
@@ -339,13 +393,13 @@ body.dark .page-title .isp-e-color-p {
 }
 
 ::placeholder {
-    color: #999;
+    color: #94a3b8;
     opacity: 1; /* Firefox вимагає це */
 }
 
 /* Темна тема: ::placeholder */
 body.dark ::placeholder {
-    color: #666; /* Темніший, щоб не різав очі на темному фоні */
+    color: #667085; /* Темніший, щоб не різав очі на темному фоні */
 }
 
 /* ================================================================
@@ -774,7 +828,7 @@ body.dark .tab-button.active {
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     background-color: var(--active-bg-dark);
-    color: var(--secondary-accent-color);
+    color: var(--primary-accent-color);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.06);
 }
 
@@ -783,7 +837,7 @@ body.dark .tab-button.active {
     outline-offset: -2px;
 }
 body.dark .tab-button:focus-visible {
-    outline-color: var(--secondary-accent-color);
+     outline-color: var(--primary-accent-color);
 }
 
 /* tab button — ховер */
@@ -886,7 +940,7 @@ body.dark .tab-button:hover:not(.active) {
 
 /* Ефект фізичного кліку */
 .add-tab-item:active {
-    background-color: rgba(0, 123, 255, 0.15);
+    background-color: rgba(79, 109, 245, 0.15);
     transition: all 0.05s ease-out;
 }
 
@@ -966,7 +1020,7 @@ body.dark .close-tab-btn:hover {
 
 /* Темна тема: close tab btn — активний стан */
 body.dark .close-tab-btn:active {
-    background-color: #ff4d4d !important; 
+    background-color: var(--danger-color) !important; 
 }
 
 /* --- 2. КНОПКА ЗАКРИТТЯ (ХРЕСТИК) --- */
@@ -1233,7 +1287,7 @@ body.dark .drag-handle:hover {
     box-shadow: 
         var(--shadow-float), 
         var(--reflection-inner),
-        0 0 20px rgba(0, 123, 255, 0.05); /* Дуже легке синє світіння навколо */
+        0 0 20px rgba(79, 109, 245, 0.05); /* Дуже легке синє світіння навколо */
 }
 
 /* Розміри контенту залишаються твоїми */
@@ -1389,7 +1443,7 @@ body.dark .version-number {
 
 /* extension download btn — ховер */
 .extension-download-btn:hover { 
-    background-color: #0056b3;
+    background-color: #4058d8;
      color: white; }
 
 /* extension info btn */
@@ -1822,7 +1876,7 @@ body.dark .actions-block-title::after {
     border-color: var(--primary-accent-color);
     
     /* Напівпрозорий фон (12% непрозорості від синього кольору) */
-    background-color: rgba(0, 123, 255, 0.12); 
+    background-color: rgba(79, 109, 245, 0.12); 
     
     /* Текст і іконка в колір акценту */
     color: var(--primary-accent-color);
@@ -2019,12 +2073,12 @@ body.dark .login-generator-container .result-item .regenerate-login-btn {
 
 /* login generator container */
 .login-generator-container .result-item .copy-login-btn {
-    background-color: var(--success-color, #28a745);
+    background-color: var(--success-color);
 }
 
 /* login generator container */
 .login-generator-container .result-item .copy-login-btn.copied {
-    background-color: var(--success-color, #28a745);
+    background-color: var(--success-color);
     filter: brightness(1.2);
 }
 
@@ -2379,7 +2433,7 @@ body.dark .history-copy-btn:hover {
     border-color: var(--primary-accent-color);
     color: var(--primary-accent-color);
     background-color: #f0f7ff; /* Дуже світлий блакитний фон */
-    box-shadow: 0 2px 4px rgba(0, 123, 255, 0.15);
+    box-shadow: 0 2px 4px rgba(79, 109, 245, 0.15);
 }
 
 /* 3. Кнопка Очистити - СВІТЛА ТЕМА */
@@ -2415,8 +2469,8 @@ body.dark .history-copy-btn:hover {
 
 /* add template button — ховер */
 #add-template-button:hover {
-    background-color: #0056b3;
-    border-color: #0056b3;
+    background-color:#4058d8;
+    border-color: #4058d8;
     box-shadow: 0 4px 8px rgba(0, 123, 255, 0.4);
 }
 
@@ -2776,7 +2830,7 @@ body.dark .line-marker-gutter {
     justify-content: center;
     align-items: center;
 
-    color: #007bff;
+    color: var(--primary-accent-color);
     pointer-events: none; 
 }
 
@@ -2888,7 +2942,7 @@ body.dark .template-search-bar.active {
     font-size: 12px;
     font-weight: 600; 
     cursor: pointer;
-    color: white;
+    color: rgb(241, 241, 241);
     transition: filter 0.2s, transform 0.1s;
     display: flex;
     align-items: center;
@@ -2897,7 +2951,7 @@ body.dark .template-search-bar.active {
 }
 
 /* Кольори кнопок */
-.btn-find { background-color: var(--primary-accent-color); }
+.btn-find { background-color: #4f6df5; }
 
 /* btn replace */
 .btn-replace { background-color: var(--secondary-accent-color); }
@@ -2946,7 +3000,7 @@ body.dark .template-search-bar.active {
 .search-inputs-row select:focus,
 .speed-select:focus {
     border-color: var(--primary-accent-color);
-    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.15);
+    box-shadow: 0 0 0 2px rgba(79, 109, 245, 0.15);
 }
 
 /* Темна тема: search inputs row */
@@ -3147,7 +3201,7 @@ body.dark .template-config-bar {
 .config-row input:focus,
 .config-row select:focus {
     border-color: var(--primary-accent-color);
-    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.15);
+    box-shadow: 0 0 0 2px rgba(79, 109, 245, 0.15);
 }
 
 /* --- РОЗПОДІЛ ШИРИНИ (ВЕРХНІЙ РЯД: Залізо) --- */
@@ -3244,7 +3298,7 @@ body.dark .config-generate-btn {
 .config-show-signal-btn:hover {
     border-color: var(--primary-accent-color);
     color: var(--primary-accent-color);
-    box-shadow: 0 2px 4px rgba(0, 123, 255, 0.15);
+    box-shadow: 0 2px 4px rgba(79, 109, 245, 0.15);
     z-index: 2;
 }
 
@@ -3327,7 +3381,7 @@ body.dark .config-show-signal-btn.active {
     padding: 0 6px 0 30px !important; /* Місце для повзунка зліва */
     border-color: var(--primary-accent-color);
     color: var(--primary-accent-color);
-    background-color: rgba(0, 123, 255, 0.05);
+    background-color: rgba(79, 109, 245, 0.05);
 }
 
 /* config mix toggle btn — псевдоелемент ::before */
@@ -3340,7 +3394,7 @@ body.dark .config-show-signal-btn.active {
 
 /* config mix toggle btn — ховер */
 .config-mix-toggle-btn.is-gpon:hover {
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.04), 0 2px 6px rgba(0, 123, 255, 0.15);
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.04), 0 2px 6px rgba(79, 109, 245, 0.15);
 }
 
 /* Темна тема: config mix toggle btn */
@@ -3769,7 +3823,7 @@ body.dark .select-group-title {
 body.dark .olt-dropdown-list {
     box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45), 0 2px 8px rgba(0, 0, 0, 0.3);
     border-color: #4a4a4a;
-    background: #222229;
+    background: var(--bg-second-color);
 }
 
 /* olt dropdown list — відкритий стан */
@@ -3825,7 +3879,7 @@ body.dark .olt-group-header {
 
 /* olt dropdown item — ховер */
 .olt-dropdown-item:hover {
-    background: rgba(0, 123, 255, 0.08);
+    background: rgba(79, 109, 245, 0.08);
     color: var(--primary-accent-color);
 }
 
@@ -4065,7 +4119,7 @@ body.dark .date-calculator-container .date-input-group input[type="time"] {
     /* Світла тема: світло-синій фон, темно-синій текст */
     background-color: rgba(0, 123, 255, 0.1); /* 10% прозорості від основного синього */
     color: var(--primary-accent-color);
-    border-bottom: 1px solid rgba(0, 123, 255, 0.15); /* Ледь помітний роздільник */
+    border-bottom: 1px solid rgba(79, 109, 245, 0.15); /* Ледь помітний роздільник */
 }
 
 /* Область з контентом має свій фон для відділення */
@@ -4350,7 +4404,7 @@ body.dark .horizontal-divider {
 
 #auto-reset-button.active {
     border-color: var(--primary-accent-color);
-    background-color: rgba(0, 123, 255, 0.12); /* Напівпрозорий синій */
+    background-color: rgba(79, 109, 245, 0.12); /* Напівпрозорий синій */
     color: var(--primary-accent-color);
 }
 body.dark #auto-reset-button.active {
@@ -4415,7 +4469,7 @@ body.dark #auto-reset-button.active .progress-ring-fg { stroke: var(--secondary-
 /* 3. Ховер у ВКЛЮЧЕНОМУ (активному) стані — Світла тема */
 #auto-reset-button.active:hover {
     /* Робимо фон трошки темнішим за звичайний активний стан (18% замість 12%), але НЕ суцільним */
-    background-color: rgba(0, 123, 255, 0.18); 
+    background-color: rgba(79, 109, 245, 0.18); 
     border-color: var(--primary-accent-color);
     color: var(--primary-accent-color); /* Текст залишається синім */
     box-shadow: none; /* Забираємо стару тінь, щоб кнопка виглядала плоскішою і сучаснішою */
@@ -4432,7 +4486,7 @@ body.dark #auto-reset-button.active:hover {
 
 /* 4. Фокус при навігації з клавіатури (доступність / Accessibility) */
 #auto-reset-button:focus-visible {
-    outline: 2px solid var(--primary-accent-color, #007bff);
+    outline: 2px solid var(--primary-accent-color);
     outline-offset: 2px;
 }
 
@@ -4476,7 +4530,7 @@ body.dark #auto-reset-button:focus-visible {
 /* Спокійний стан кільця */
 .progress-ring-bg { stroke: rgba(128, 128, 128, 0.25); }
 .progress-ring-fg {
-    stroke: var(--success-color, #28a745);
+    stroke: var(--success-color);
     stroke-dasharray: 69.1; 
     stroke-dashoffset: 69.1;
 }
@@ -4540,7 +4594,7 @@ body.dark .calc-title { color: var(--text-color); }
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    color: #666;
+    color: #667085;
     transition: background-color 0.2s, color 0.2s;
     padding: 0;
     margin: 0;
@@ -4748,13 +4802,13 @@ body.dark .calc-display-container {
 }
 
 .c-btn.equal:hover { 
-    background-color: #2563eb;
+    background-color: color-mix(in srgb, var(--primary-accent-color), #fff 15%);
 }
 
 /* === ТЕМНА ТЕМА ДЛЯ КНОПОК === */
 body.dark .c-btn {
     background-color: var(--bg-btn);
-    color: var(--text-color); /* Змінено */
+    color: var(--text-color);
     border-color: rgba(255, 255, 255, 0.06);
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
@@ -4785,12 +4839,12 @@ body.dark .c-btn.action-back:hover {
 }
 
 body.dark .c-btn.equal { 
-    background-color: var(--secondary-accent-color); 
+    background-color: var(--primary-accent-color); 
     color: #1a1a1a; 
 }
 
 body.dark .c-btn.equal:hover { 
-    background-color: #d4ae03; 
+    background-color: color-mix(in srgb, var(--primary-accent-color), #fff 15%);
 }
 
 /* === ВИСУВНА ПАНЕЛЬ ІСТОРІЇ === */
@@ -4853,7 +4907,7 @@ body.dark .calc-history-panel {
 .hist-clear-btn:hover { color: var(--danger-color); background-color: rgba(220,53,69,0.1); }
 
 .hist-empty {
-    text-align: center; color: #999; margin-top: 50%; 
+    text-align: center; color: #94a3b8; margin-top: 50%; 
     transform: translateY(-50%); font-style: italic; font-size: 14px;
 }
 
@@ -5193,7 +5247,7 @@ body.dark .segmented-control {
     border-radius: 8px;
     font-size: 13.5px; /* Трохи акуратніший шрифт */
     font-weight: 600;
-    color: #666;
+    color: #667085;
     cursor: pointer;
     
     transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
@@ -5207,7 +5261,7 @@ body.dark .segmented-control {
 
 /* НАВІГАЦІЯ З КЛАВІАТУРИ (доступність) */
 .segment-btn:focus-visible {
-    outline: 2px solid var(--primary-accent-color, #007bff);
+    outline: 2px solid var(--primary-accent-color);
     outline-offset: -2px;
 }
 
@@ -5217,11 +5271,11 @@ body.dark .segmented-control {
     color: #fff;
     cursor: default;
     /* Додаємо об'єм і світіння активній кнопці */
-    box-shadow: 0 2px 6px rgba(0, 123, 255, 0.35), 0 1px 2px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 6px rgba(79, 109, 245, 0.35), 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 body.dark .segment-btn {
-    color: #999;
+    color: #94a3b8;
 }
 
 /* НАВЕДЕННЯ НА НЕАКТИВНУ вкладку (Темна тема) */
@@ -5677,7 +5731,7 @@ body.dark .qn-close-btn:hover {
 
 /* Темна тема: qn close btn — активний стан */
 body.dark .qn-close-btn:active {
-    background-color: #ff4d4d !important; 
+    background-color: var(--danger-color) !important; 
 }
 
 /* Зона введення тексту */
@@ -5717,7 +5771,7 @@ body.dark #qn-input {
 #qn-input:focus { 
     background: #fff;
     border-color: var(--primary-accent-color); 
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+    box-shadow: 0 0 0 3px rgba(79, 109, 245, 0.15);
 }
 
 /* Темна тема: qn input — фокус */
@@ -5738,7 +5792,7 @@ body.dark #qn-input:focus {
     font-size: 13px;
     font-weight: 600;
     transition: all 0.2s ease;
-    box-shadow: 0 2px 6px rgba(0, 123, 255, 0.25);
+    box-shadow: 0 2px 6px rgba(79, 109, 245, 0.25);
 }
 
 /* Темна тема: qn add btn */
