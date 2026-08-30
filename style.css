@@ -103,7 +103,7 @@ select {
     --bg-second-color: #f8fafc;
     
     /* BUTTON */
-    --btn-bg-hover: #ffffff;
+    --btn-bg: #fff;
     --btn-border-hover: #bbb;
     
     /* GLASS */
@@ -147,7 +147,7 @@ color-scheme: dark;
 
     /* ACCENTS */
     --primary-accent-color: #d69b2d;
-    --primary-accent-shadow: rgba(124, 140, 255, 0.22);
+    --primary-accent-shadow: #705521;
     --secondary-accent-color: #d69b2d;
 
     /* STATUS */
@@ -189,10 +189,11 @@ color-scheme: dark;
     --snow-color: #cbd5e1;
     
     /*BUTTON */
-    --btn-bg-hover: #1a2029;
+    --btn-bg: #1a2029;
     --btn-border-hover: rgba(255, 255, 255, 0.3);
 
     /* BACKGROUNDS */
+    --bg-color: #1a2029;
     --bg-second-color: #151a21;
 
     /* GLASS */
@@ -935,7 +936,7 @@ body.dark .tab-button:hover:not(.active) {
 /* --- СУЧАСНИЙ ХОВЕР (Без різкої заливки) --- */
 .add-tab-item:hover {
     /* Легкий акцентний фон замість суцільного кольору */
-    background-color: rgba(0, 123, 255, 0.1);
+    background-color: var(--text-hover); 
     color: var(--primary-accent-color);
 }
 
@@ -946,7 +947,7 @@ body.dark .tab-button:hover:not(.active) {
 
 /* Ефект фізичного кліку */
 .add-tab-item:active {
-    background-color: rgba(79, 109, 245, 0.15);
+    background-color: color-mix(in srgb, var(--text-hover), #000 15%);
     transition: all 0.05s ease-out;
 }
 
@@ -955,10 +956,8 @@ body.dark .add-tab-menu {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
-/* В темній темі кольори підтягнуться автоматично з var(--input-bg-color),
-   нам треба налаштувати лише кольори при наведенні (Оранжевий акцент) */
 body.dark .add-tab-item:hover {
-    background-color: rgba(230, 162, 46, 0.15);
+    background-color: var(--text-hover); 
     color: var(--secondary-accent-color);
 }
 
@@ -969,7 +968,7 @@ body.dark .add-tab-item:hover i {
 
 /* Темна тема: add tab item — активний стан */
 body.dark .add-tab-item:active {
-    background-color: rgba(230, 162, 46, 0.25);
+    background-color: color-mix(in srgb, var(--text-hover), #fff 15%);
 }
 
 /* Приховуємо стандартні іконки/текст (якщо є в HTML) */
@@ -1839,7 +1838,7 @@ body.dark .actions-block-title::after {
     justify-content: center;
     gap: 8px; /* Відстань між іконкою та текстом */
     
-    background-color: var(--btn-bg-hover);
+    background-color: var(--btn-bg);
     border: 1px solid var(--input-border-color);
     border-radius: 8px; /* Сучасне заокруглення */
     
@@ -1849,7 +1848,7 @@ body.dark .actions-block-title::after {
     font-family: inherit;
     /* Шрифт як у кнопок дій */
     font-size: 14px; 
-    font-weight: 500; 
+    font-weight: 400; 
     color: var(--text-color);
     
     transition: all 0.2s ease;
@@ -1868,7 +1867,7 @@ body.dark .actions-block-title::after {
 /* --- СТАН: HOVER (При наведенні, коли кнопка ВИМКНЕНА) --- */
 /* Ледь помітно підсвічуємо фон, щоб показати, що це кнопка */
 #login-autoclear-btn:hover:not(.active) {
-    background-color: color-mix(in srgb, var(--btn-bg-hover), #000 7%);
+    background-color: color-mix(in srgb, var(--btn-bg), #000 15%);
     border-color: var(--btn-border-hover);
 }
 
@@ -1895,12 +1894,12 @@ body.dark .actions-block-title::after {
 body.dark #login-autoclear-btn {
     border-color: var(--input-border-color);
     color: var(--text-color);
-    background-color: var(--btn-bg-hover);
+    background-color: var(--btn-bg);
 }
 
 /* HOVER у темній темі (коли ВИМКНЕНО) */
 body.dark #login-autoclear-btn:hover:not(.active) {
-    background-color: color-mix(in srgb, var(--btn-bg-hover), #fff 7%);
+    background-color: color-mix(in srgb, var(--btn-bg), #fff 7%);
     border-color: var(--btn-border-hover);
 }
 
@@ -2320,7 +2319,7 @@ body.dark .history-item:hover {
     background: var(--primary-accent-color);
     color: #fff;
     border-color: var(--primary-accent-color);
-    transform: scale(1.12) rotate(-8deg);
+    transform: scale(1.1) rotate(-5deg);
     box-shadow: 0 4px 10px var(--primary-accent-shadow);
 }
 
@@ -4215,7 +4214,7 @@ body.dark .calculator-actions-block {
     
     padding: 4px 6px;
     
-    background-color: var(--btn-bg-hover);
+    background-color: var(--btn-bg);
     border: 1px solid var(--input-border-color);
     border-radius: 8px; /* Сучасне заокруглення 8px */
     
@@ -4238,7 +4237,7 @@ body.dark .calculator-actions-block {
 
 /* Стан HOVER (Світла тема) - Легке підсвічування замість заливки */
 .calc-action-button:hover {
-    background-color: color-mix(in srgb, var(--btn-bg-hover), #000 7%);
+    background-color: color-mix(in srgb, var(--btn-bg), #000 7%);
     border-color: var(--btn-border-hover);
 }
 .calc-action-button:hover i {
@@ -4249,10 +4248,10 @@ body.dark .calculator-actions-block {
 body.dark .calc-action-button {
     border-color: var(--input-border-color);
     color: var(--text-color);
-    background-color: var(--btn-bg-hover);
+    background-color: var(--btn-bg);
 }
 body.dark .calc-action-button:hover {
-    background-color: color-mix(in srgb, var(--btn-bg-hover), #fff 7%);
+    background-color: color-mix(in srgb, var(--btn-bg), #fff 7%);
     border-color: var(--btn-border-hover);
 }
 body.dark .calc-action-button:hover i {
@@ -4270,7 +4269,7 @@ body.dark .calc-action-button:hover i {
 
 .stepper-btn {
     flex: 1;
-    background-color: var(--btn-bg-hover);
+    background-color: var(--btn-bg);
     padding: 4px 6px; 
     font-family: inherit;
     font-size: 14px; 
@@ -4319,7 +4318,7 @@ body.dark .stepper-btn:not(:last-child)::after {
 
 /* HOVER для перемикачів */
 .stepper-btn:hover {
-    background-color: color-mix(in srgb, var(--btn-bg-hover), #000 7%);
+    background-color: color-mix(in srgb, var(--btn-bg), #000 7%);
     border-color: var(--btn-border-hover);
     z-index: 2; /* Потрібно, щоб рамка перекривала сусідні кнопки */
 }
@@ -4327,11 +4326,11 @@ body.dark .stepper-btn:not(:last-child)::after {
 body.dark .stepper-btn { 
     border-color: var(--input-border-color);
     color: var(--text-color);
-    background-color: var(--btn-bg-hover);
+    background-color: var(--btn-bg);
 }
 
 body.dark .stepper-btn:hover {
-    background-color: color-mix(in srgb, var(--btn-bg-hover), #fff 7%);
+    background-color: color-mix(in srgb, var(--btn-bg), #fff 7%);
     border-color: var(--btn-border-hover);
 }
 
@@ -4372,7 +4371,7 @@ body.dark .horizontal-divider {
 /* reset toggle text */
 .reset-toggle-text {
     font-size: 1em;
-    font-weight: 600;
+    font-weight: 400;
     color: var(--text-color);
     user-select: none; /* Щоб текст не виділявся випадково */
 }
@@ -4382,7 +4381,7 @@ body.dark .horizontal-divider {
     align-items: center;
     justify-content: center;
     
-    background-color: var(--btn-bg-hover);
+    background-color: var(--btn-bg);
     border: 1px solid var(--input-border-color);
     border-radius: 8px;
     
@@ -4401,7 +4400,7 @@ body.dark .horizontal-divider {
 
 /* Ховер (НЕ активна) */
 #auto-reset-button:hover:not(.active) {
-    background-color: color-mix(in srgb, var(--btn-bg-hover), #000 7%);
+    background-color: color-mix(in srgb, var(--btn-bg), #000 7%);
     border-color: var(--btn-border-hover);
 }
 
@@ -4433,11 +4432,11 @@ body.dark #auto-reset-button.active .timer-icon { color: var(--secondary-accent-
 body.dark #auto-reset-button {
     border-color: var(--input-border-color);
     color: var(--text-color);
-    background-color: var(--btn-bg-hover);
+    background-color: var(--btn-bg);
 }
 /* Ховер у темній темі (коли кнопка ВИМКНЕНА) */
 body.dark #auto-reset-button:hover:not(.active) {
-    background-color: color-mix(in srgb, var(--btn-bg-hover), #fff 7%);
+    background-color: color-mix(in srgb, var(--btn-bg), #fff 7%);
     border-color: var(--btn-border-hover);
 }
 
@@ -4751,7 +4750,7 @@ body.dark .calc-display-container {
     border-radius: 8px;
     font-size: 20px; 
     cursor: pointer;
-    background-color: var(--btn-bg-hover);
+    background-color: var(--btn-bg);
     color: #333;
     box-shadow: 0 1px 2px rgba(0,0,0,0.1);
     transition: all 0.15s ease-out;
@@ -4814,7 +4813,7 @@ body.dark .calc-display-container {
 
 /* === ТЕМНА ТЕМА ДЛЯ КНОПОК === */
 body.dark .c-btn {
-    background-color: var(--btn-bg-hover);
+    background-color: var(--btn-bg);
     color: var(--text-color);
     border-color: rgba(255, 255, 255, 0.06);
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
