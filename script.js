@@ -1426,7 +1426,7 @@ let lastConfirmedOltName = null;
                         <div class="olt-dropdown-list"></div>
                     </div>
                     <input type="text" class="config-sn-input" placeholder="SN / MAC" title="Серійний номер або MAC" autocomplete="off">
-                    <input type="text" class="config-port-input" placeholder="Порт" title="Порт (напр. 1/1/1:11)" autocomplete="off">
+                    <input type="text" class="config-port-input" placeholder="Port" title="Port (напр. 1/1/1:11)" autocomplete="off">
                     <select class="config-speed-select" title="Швидкість" autocomplete="off">
                         <option value="10M">10M</option>
                         <option value="20M">20M</option>
@@ -1444,7 +1444,7 @@ let lastConfirmedOltName = null;
 
                 <!-- НИЖНІЙ РЯДОК -->
 <div class="config-row">
-    <input type="text" class="config-login-input" placeholder="Логін" title="Логін" autocomplete="off">
+    <input type="text" class="config-login-input" placeholder="Login" title="Login" autocomplete="off">
     <input type="text" class="config-vlan-input" placeholder="VLAN" title="VLAN (Залиште порожнім, щоб не міняти)" autocomplete="off">
 
     <!-- НОВА КНОПКА MIX (За замовчуванням схована) -->
@@ -1830,10 +1830,10 @@ btnShowSignal.classList.toggle('active', isShowSignalMode); // ДОДАНО
         const portRegex = /^\d{1,2}\/\d{1,2}\/\d{1,2}:\d{1,3}$/;
         
         if (!portVal) {
-            showNotification("Помилка: Введіть Порт!");
+            showNotification("Помилка: Введіть Port!");
             return;
         } else if (!portRegex.test(portVal)) {
-            showNotification("Помилка: Неповний формат порту! Потрібно (X/X/X:X)");
+            showNotification("Помилка: Неповний формат Port! Потрібно (X/X/X:X)");
             return;
         }
         // ================================
@@ -1929,7 +1929,7 @@ if (!oltObj) {
         // 3. Додаємо PON-ONU, якщо тумблер увімкнений
         if (isPonOnuMode) {
             if (!portVal) {
-                showNotification("Вкажіть Порт для команд PON-ONU!");
+                showNotification("Вкажіть Port для команд PON-ONU!");
                 return;
             }
             if (ponType && PON_ONU_TEMPLATES[ponType]) {
@@ -1949,7 +1949,7 @@ if (!oltObj) {
         // 4. Додаємо Сигнал, якщо тумблер увімкнений
         if (isShowSignalMode) {
             if (!portVal) {
-                showNotification("Вкажіть Порт для команди сигналу!");
+                showNotification("Вкажіть Port для команди сигналу!");
                 return;
             }
             if (ponType && SIGNAL_TEMPLATES[ponType]) {
