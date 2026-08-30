@@ -5771,14 +5771,14 @@ body.dark #qn-input {
 #qn-input:focus { 
     background: #fff;
     border-color: var(--primary-accent-color); 
-    box-shadow: 0 0 0 3px rgba(79, 109, 245, 0.15);
+    box-shadow: 0 0 0 2px rgba(79, 109, 245, 0.15);
 }
 
 /* Темна тема: qn input — фокус */
 body.dark #qn-input:focus { 
     background: var(--input-bg-color);
     border-color: var(--secondary-accent-color); 
-    box-shadow: 0 0 0 3px rgba(230, 162, 46, 0.15);
+    box-shadow: 0 0 0 2px rgba(230, 162, 46, 0.15);
 }
 
 .qn-add-btn {
