@@ -73,9 +73,10 @@ select {
 
     --text-hover: #f1f5f9;
 
-    --scrollbar-thumb: #94a3b8; 
-    --scrollbar-thumb-hover: #64748b;
-    --scrollbar-track: transparent;
+    --scrollbar-track: rgba(0, 0, 0, 0.04);
+    --scrollbar-thumb: rgba(0, 0, 0, 0.25);
+    --scrollbar-thumb-hover: rgba(0, 0, 0, 0.45);
+    --scrollbar-thumb-active: rgba(0, 0, 0, 0.65);
 
     --calc-duration-color: var(--primary-accent-color);
     --calc-days-color: #f97316;
@@ -137,9 +138,10 @@ color-scheme: dark;
 
     --text-hover: rgba(255, 255, 255, 0.1);
 
-    --scrollbar-thumb: rgba(255, 255, 255, 0.15); 
-    --scrollbar-thumb-hover: rgba(255, 255, 255, 0.25); 
-    --scrollbar-track: transparent;
+    --scrollbar-track: rgba(255, 255, 255, 0.04);
+    --scrollbar-thumb: rgba(255, 255, 255, 0.2);
+    --scrollbar-thumb-hover: rgba(255, 255, 255, 0.4);
+    --scrollbar-thumb-active: rgba(255, 255, 255, 0.6);
 
     --calc-duration-color: #38bdf8;
     --calc-days-color: #fb923c;
@@ -174,35 +176,50 @@ color-scheme: dark;
    та кастомного скролбару для всіх браузерів.
    ================================================================ */
 
-/* 1. Для Chrome, Edge, Safari (основний стиль) */
+/* 1. Збільшуємо загальну ширину, щоб було місце для відступів */
 *::-webkit-scrollbar {
-    width: 8px;  /* Ширина вертикального скролу */
-    height: 8px; /* Висота горизонтального скролу */
+    width: 10px;  /* Ширина вертикального скролбару */
+    height: 10px; /* Висота горизонтального скролбару */
 }
 
-/* Доріжка (фонова частина) */
+/* 2. ТРЕК */
 *::-webkit-scrollbar-track {
+    background-color: transparent;
+    border-radius: 10px;
+}
+
+/* 3. THUMB (початковий стан) */
+*::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar-thumb);
+    border-radius: 10px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+
+/* 4. HOVER (ОБОВ'ЯЗКОВО дублюємо border та clip) */
+*::-webkit-scrollbar-thumb:hover {
+    background-color: var(--scrollbar-thumb-hover);
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+
+/* 5. ACTIVE (ОБОВ'ЯЗКОВО дублюємо border та clip) */
+*::-webkit-scrollbar-thumb:active {
+    background-color: var(--scrollbar-thumb-active);
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+
+/* 6. КУТОК */
+*::-webkit-scrollbar-corner {
     background: transparent;
 }
 
-/* Сам повзунок (острівець) */
-*::-webkit-scrollbar-thumb {
-    background-color: var(--scrollbar-thumb);
-    border-radius: 20px;                    
-    border: 2px solid transparent;
-    background-clip: content-box;
-    transition: background-color 0.5s ease;
-}
-
-/* Ефект при наведенні або активності */
-*::-webkit-scrollbar-thumb:hover {
-    background-color: var(--scrollbar-thumb-hover);
-}
-
-/* 2. Для Firefox (підтримка стандартів) */
-* {
-    scrollbar-width: thin;
-    scrollbar-color: var(--scrollbar-thumb) transparent;
+*::-webkit-scrollbar-button:vertical:start:decrement,
+*::-webkit-scrollbar-button:vertical:end:increment {
+    display: block;
+    height: 6px; /* Висота відступу зверху і знизу */
+    background-color: transparent;
 }
 
 *, *::before, *::after {
@@ -3742,9 +3759,6 @@ body.dark .select-group-title {
     overflow-y: auto;
     overflow-x: hidden;
     z-index: 9999;
-
-    scrollbar-width: thin;
-    scrollbar-color: var(--scrollbar-thumb) transparent;
 }
 
 /* Темна тема: olt dropdown list */
@@ -5742,10 +5756,13 @@ body.dark .qn-add-btn {
 }
 
 /* Скролбар */
-.qn-list::-webkit-scrollbar { width: 6px; }
+.qn-list::-webkit-scrollbar-button:vertical:start:decrement,
+.qn-list::-webkit-scrollbar-button:vertical:end:increment  { 
+    display: block;
+    height: 2px;
+    background-color: transparent;
+}
 
-/* qn list */
-.qn-list::-webkit-scrollbar-track { background: transparent; }
 
 /* Базовий стиль замітки та її стани */
 .qn-item {
