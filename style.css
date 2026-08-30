@@ -1867,7 +1867,7 @@ body.dark .actions-block-title::after {
 /* --- СТАН: HOVER (При наведенні, коли кнопка ВИМКНЕНА) --- */
 /* Ледь помітно підсвічуємо фон, щоб показати, що це кнопка */
 #login-autoclear-btn:hover:not(.active) {
-    background-color: color-mix(in srgb, var(--btn-bg), #000 15%);
+    background-color: color-mix(in srgb, var(--btn-bg), #000 5%);
     border-color: var(--btn-border-hover);
 }
 
@@ -1899,7 +1899,7 @@ body.dark #login-autoclear-btn {
 
 /* HOVER у темній темі (коли ВИМКНЕНО) */
 body.dark #login-autoclear-btn:hover:not(.active) {
-    background-color: color-mix(in srgb, var(--btn-bg), #fff 7%);
+    background-color: color-mix(in srgb, var(--btn-bg), #fff 5%);
     border-color: var(--btn-border-hover);
 }
 
@@ -4237,7 +4237,7 @@ body.dark .calculator-actions-block {
 
 /* Стан HOVER (Світла тема) - Легке підсвічування замість заливки */
 .calc-action-button:hover {
-    background-color: color-mix(in srgb, var(--btn-bg), #000 7%);
+    background-color: color-mix(in srgb, var(--btn-bg), #000 5%);
     border-color: var(--btn-border-hover);
 }
 .calc-action-button:hover i {
@@ -4251,7 +4251,7 @@ body.dark .calc-action-button {
     background-color: var(--btn-bg);
 }
 body.dark .calc-action-button:hover {
-    background-color: color-mix(in srgb, var(--btn-bg), #fff 7%);
+    background-color: color-mix(in srgb, var(--btn-bg), #fff 5%);
     border-color: var(--btn-border-hover);
 }
 body.dark .calc-action-button:hover i {
@@ -4318,7 +4318,7 @@ body.dark .stepper-btn:not(:last-child)::after {
 
 /* HOVER для перемикачів */
 .stepper-btn:hover {
-    background-color: color-mix(in srgb, var(--btn-bg), #000 7%);
+    background-color: color-mix(in srgb, var(--btn-bg), #000 5%);
     border-color: var(--btn-border-hover);
     z-index: 2; /* Потрібно, щоб рамка перекривала сусідні кнопки */
 }
@@ -4330,7 +4330,7 @@ body.dark .stepper-btn {
 }
 
 body.dark .stepper-btn:hover {
-    background-color: color-mix(in srgb, var(--btn-bg), #fff 7%);
+    background-color: color-mix(in srgb, var(--btn-bg), #fff 5%);
     border-color: var(--btn-border-hover);
 }
 
@@ -4400,7 +4400,7 @@ body.dark .horizontal-divider {
 
 /* Ховер (НЕ активна) */
 #auto-reset-button:hover:not(.active) {
-    background-color: color-mix(in srgb, var(--btn-bg), #000 7%);
+    background-color: color-mix(in srgb, var(--btn-bg), #000 5%);
     border-color: var(--btn-border-hover);
 }
 
@@ -4436,7 +4436,7 @@ body.dark #auto-reset-button {
 }
 /* Ховер у темній темі (коли кнопка ВИМКНЕНА) */
 body.dark #auto-reset-button:hover:not(.active) {
-    background-color: color-mix(in srgb, var(--btn-bg), #fff 7%);
+    background-color: color-mix(in srgb, var(--btn-bg), #fff 5%);
     border-color: var(--btn-border-hover);
 }
 
