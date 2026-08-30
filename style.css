@@ -1129,6 +1129,10 @@ body.dark .add-tab-btn.menu-open:active {
     will-change: transform;
 }
 
+body.dark .drag-handle { 
+    color: var(--text-color);
+}
+
 /* drag handle — ховер */
 .drag-handle:hover { 
     color: var(--primary-accent-color);
