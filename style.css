@@ -4822,54 +4822,55 @@ body.dark .calc-copy-btn:hover {
 }
 
 /* === ТЕМНА ТЕМА ДЛЯ КНОПОК === */
-/* Базові кнопки (Цифри) - М'якший контраст тексту */
+
+/* Базові кнопки (Цифри) - Холодний темно-сірий (з легким синім підтоном) */
 body.dark .c-btn {
-    background-color: #2a2a2a; /* Трохи м'якший темно-сірий */
-    color: #e2e8f0; /* Не чисто білий, а злегка сіруватий */
+    background-color: #272b33; 
+    color: #e2e8f0;
     border-color: rgba(255, 255, 255, 0.04);
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 body.dark .c-btn:hover { 
-    background-color: #353535; 
+    background-color: #323741; 
     border-color: rgba(255, 255, 255, 0.08);
 }
 
-/* Оператори - Приглушений сіро-синій */
+/* Оператори - Глибокий приглушений синій */
 body.dark .c-btn.operator { 
-    background-color: #222f3e; 
-    color: #8da2ba; 
+    background-color: #23354f; 
+    color: #8bb0d9; 
 }
 body.dark .c-btn.operator:hover { 
-    background-color: #2b3a4c; 
+    background-color: #2d4363; 
 }
 
-/* Функції - Спокійний сірий */
+/* Функції - Спокійний синьо-сірий */
 body.dark .c-btn.func { 
-    background-color: #303030; 
-    color: #9ca3af; 
+    background-color: #2f3642; 
+    color: #9ba6b5; 
 }
 body.dark .c-btn.func:hover { 
-    background-color: #3a3a3a; 
+    background-color: #3b4453; 
 }
 
-/* Очищення - Темний приглушений бордовий/червоний */
+/* Очищення (C, CE, <-) - Приглушений індиго (синьо-фіолетовий замість коричневого) */
 body.dark .c-btn.action-clear, 
 body.dark .c-btn.action-back { 
-    background-color: #362020; 
-    color: #c27c7c; 
+    background-color: #2b2e4a; 
+    color: #9b9fda; 
 }
 body.dark .c-btn.action-clear:hover, 
 body.dark .c-btn.action-back:hover { 
-    background-color: #452828; 
+    background-color: #383c61; 
 }
 
-/* Дорівнює - Спокійний синій (менш "кричущий") */
+/* Дорівнює - Джинсово-синій (головний акцент) */
 body.dark .c-btn.equal { 
-    background-color: #325b96; 
+    background-color: #315b96; 
     color: #e2e8f0; 
 }
 body.dark .c-btn.equal:hover { 
-    background-color: #3e6cae;
+    background-color: #3e6eaf;
 }
 
 /* === ВИСУВНА ПАНЕЛЬ ІСТОРІЇ === */
