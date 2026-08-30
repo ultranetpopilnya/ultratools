@@ -3938,7 +3938,7 @@ body.dark .scroll-nav-btn.visible:hover {
     display: flex;
     justify-content: center;
     gap: 20px;
-    width: 420px;
+    width: 410px;
     background-color: var(--bg-second-color); 
     border: 1px solid var(--input-border-color);
     border-radius: 12px;
@@ -4051,7 +4051,7 @@ body.dark .date-calculator-container .date-input-group input[type="time"] {
     border: 1px solid var(--input-border-color);
     border-radius: 12px; 
     
-    width: 420px;
+    width: 410px;
     overflow: hidden; 
 }
 
@@ -4128,7 +4128,7 @@ body.dark .date-calculator-container #result-section {
     border-radius: 12px; 
     background-color: var(--bg-second-color); 
     border: 1px solid var(--input-border-color); 
-    width: 420px; 
+    width: 410px; 
 }
 
 /* Темна тема: Рамка та розділювачі */
@@ -4293,7 +4293,6 @@ body.dark .stepper-btn:hover {
     opacity: 0.5; 
     margin: 0 auto;
 }
-
 
 body.dark .action-divider,
 body.dark .horizontal-divider { 
@@ -4791,7 +4790,7 @@ body.dark .c-btn.equal {
 }
 
 body.dark .c-btn.equal:hover { 
-    background-color: #f59e0b; 
+    background-color: #d4ae03; 
 }
 
 /* === ВИСУВНА ПАНЕЛЬ ІСТОРІЇ === */
