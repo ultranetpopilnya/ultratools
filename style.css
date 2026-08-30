@@ -4149,13 +4149,13 @@ body.dark .date-calculator-container #result-section #result-display {
 /* Темна тема: date calculator container */
 body.dark .date-calculator-container #result-section h2 {
     /* Темна тема: світло-помаранчевий фон, яскраво-помаранчевий текст */
-    background-color: rgba(230, 162, 46, 0.15); /* 15% прозорості від помаранчевого */
+    background-color: rgba(230, 162, 46, 0.15);
     color: var(--secondary-accent-color);
     border-bottom: 1px solid rgba(230, 162, 46, 0.2);
 }
 
 body.dark .date-calculator-container #result-section {
-    background-color: var(--bg-second-color); /* Тут можна залишити колір або створити нову змінну, напр. --result-bg-dark */
+    background-color: var(--bg-second-color); 
     border-color: var(--input-border-color);
 }
 
@@ -4727,7 +4727,12 @@ body.dark .calc-display-container {
 /* calc copy btn — ховер */
 .calc-copy-btn:hover {
     color: var(--primary-accent-color);
-    background-color: rgba(0,0,0,0.05);
+    background-color: rgba(0, 0, 0, 0.08);
+}
+
+body.dark .calc-copy-btn:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: var(--secondary-accent-color);
 }
 
 /* === КНОПКИ (СІТКА) === */
@@ -4744,113 +4749,127 @@ body.dark .calc-display-container {
     padding: 5px 2px; 
 }
 
+/* Базові кнопки (Цифри) */
 .c-btn {
     height: 46px; 
-    border: 1px solid var(--input-border-color);
+    border: 1px solid rgba(0, 0, 0, 0.05);
     border-radius: 8px;
     font-size: 20px; 
     cursor: pointer;
-    background-color: var(--btn-bg);
-    color: #333;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    background-color: #ffffff; /* Чистий білий для цифр */
+    color: #1e293b; /* Глибокий темно-сірий */
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
     transition: all 0.15s ease-out;
     padding: 0;
 }
 
-/* Ефекти кнопок */
 .c-btn:hover {
-    background-color: var(--template-handle-bg);
+    background-color: #f8fafc;
     border-color: #cbd5e1;
     box-shadow: 0 4px 8px rgba(0,0,0,0.06);
     transform: translateY(-2px);
     z-index: 2;
 }
 
-/* c btn — активний стан */
 .c-btn:active {
     transform: translateY(0) scale(0.96);
     box-shadow: 0 1px 2px rgba(0,0,0,0.05);
 }
 
-/* Стилі типів кнопок */
+/* Оператори (+, -, *, /) - Світло-синій акцент */
 .c-btn.operator { 
-    background-color: rgba(59, 130, 246, 0.05); 
-    color: var(--primary-accent-color); 
+    background-color: #f0f9ff; 
+    color: #0284c7; 
     font-weight: 600; 
     font-size: 22px; 
 }
-.c-btn.operator:hover { background-color: rgba(59, 130, 246, 0.12); }
+.c-btn.operator:hover { 
+    background-color: #e0f2fe; 
+}
 
+/* Функції (MC, MR, %, +/-) - Світло-сірий */
 .c-btn.func { 
-    background-color: var(--template-bg-color); 
-    color: var(--description-color); 
+    background-color: #f1f5f9; 
+    color: #475569; 
     font-size: 16px; 
 }
+.c-btn.func:hover { 
+    background-color: #e2e8f0; 
+}
 
+/* Очищення (C, CE, Backspace) - М'який червоний */
 .c-btn.action-clear, .c-btn.action-back { 
-    background-color: var(--danger-bg-light); 
-    color: var(--danger-color); 
+    background-color: #fef2f2; 
+    color: #dc2626; 
 }
 .c-btn.action-clear:hover, .c-btn.action-back:hover { 
-    background-color: rgba(220, 38, 38, 0.15); 
+    background-color: #fee2e2; 
 }
 
-/* c btn */
+/* Дорівнює - Головний акцент */
 .c-btn.equal { 
     grid-column: span 4; 
-    background-color: var(--primary-accent-color); 
-    color: white; 
+    background-color: #3b82f6; 
+    color: #ffffff; 
     font-weight: 600;
     margin-top: 4px; 
     font-size: 24px;
     border: none;
     border-radius: 12px;
 }
-
 .c-btn.equal:hover { 
-    background-color: color-mix(in srgb, var(--primary-accent-color), #fff 15%);
+    background-color: #2563eb;
 }
 
 /* === ТЕМНА ТЕМА ДЛЯ КНОПОК === */
+/* Базові кнопки (Цифри) - М'якший контраст тексту */
 body.dark .c-btn {
-    background-color: var(--btn-bg);
-    color: var(--text-color);
-    border-color: rgba(255, 255, 255, 0.06);
+    background-color: #2a2a2a; /* Трохи м'якший темно-сірий */
+    color: #e2e8f0; /* Не чисто білий, а злегка сіруватий */
+    border-color: rgba(255, 255, 255, 0.04);
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 body.dark .c-btn:hover { 
-    background-color: rgba(255, 255, 255, 0.1); 
-    border-color: rgba(255, 255, 255, 0.15);
+    background-color: #353535; 
+    border-color: rgba(255, 255, 255, 0.08);
 }
 
+/* Оператори - Приглушений сіро-синій */
 body.dark .c-btn.operator { 
-    background-color: rgba(230, 162, 46, 0.08); 
-    color: var(--secondary-accent-color); 
+    background-color: #222f3e; 
+    color: #8da2ba; 
 }
-body.dark .c-btn.operator:hover { background-color: rgba(230, 162, 46, 0.15); }
+body.dark .c-btn.operator:hover { 
+    background-color: #2b3a4c; 
+}
 
+/* Функції - Спокійний сірий */
 body.dark .c-btn.func { 
-    background-color: rgba(255, 255, 255, 0.02); 
-    color: var(--description-color); 
+    background-color: #303030; 
+    color: #9ca3af; 
+}
+body.dark .c-btn.func:hover { 
+    background-color: #3a3a3a; 
 }
 
+/* Очищення - Темний приглушений бордовий/червоний */
 body.dark .c-btn.action-clear, 
 body.dark .c-btn.action-back { 
-    background-color: var(--danger-bg-dark); 
-    color: #f87171; /* Змінено */
+    background-color: #362020; 
+    color: #c27c7c; 
 }
 body.dark .c-btn.action-clear:hover, 
 body.dark .c-btn.action-back:hover { 
-    background-color: rgba(239, 68, 68, 0.25); 
+    background-color: #452828; 
 }
 
+/* Дорівнює - Спокійний синій (менш "кричущий") */
 body.dark .c-btn.equal { 
-    background-color: var(--primary-accent-color); 
-    color: #1a1a1a; 
+    background-color: #325b96; 
+    color: #e2e8f0; 
 }
-
 body.dark .c-btn.equal:hover { 
-    background-color: color-mix(in srgb, var(--primary-accent-color), #fff 15%);
+    background-color: #3e6cae;
 }
 
 /* === ВИСУВНА ПАНЕЛЬ ІСТОРІЇ === */
