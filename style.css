@@ -4825,13 +4825,13 @@ body.dark .calc-copy-btn:hover {
 
 /* Базові кнопки (Цифри) - Холодний темно-сірий (з легким синім підтоном) */
 body.dark .c-btn {
-    background-color: #272b33; 
+    background-color: #333842; 
     color: #e2e8f0;
     border-color: rgba(255, 255, 255, 0.04);
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 body.dark .c-btn:hover { 
-    background-color: #323741; 
+    background-color: #3b414d; 
     border-color: rgba(255, 255, 255, 0.08);
 }
 
