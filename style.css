@@ -1266,12 +1266,11 @@ body.dark .drag-handle:hover {
     user-select: none;
 }
 
-/* Ховер для закритого стану (Піднімається і стає яскравішим) */
 .version-pill:hover:not(.is-open), 
 .extension-pill:hover:not(.is-open) {
     background-color: var(--glass-white-md);
-    border-color: var(--glass-white-lg); /* Твій синій акцент */
-    transform: scale(1.02) translateY(-2px); /* Додав легке спливання як у правого перемикача */
+    border-color: var(--glass-white-lg); 
+    transform: scale(1.02) translateY(-2px);
     box-shadow: 
         var(--shadow-float), 
         var(--reflection-inner);
@@ -1282,17 +1281,16 @@ body.dark .drag-handle:hover {
     width: 358px; 
     border-radius: 16px; 
     
-    /* ЗМІНА: Робимо фон набагато прозорішим (70% замість 90%) */
     background-color: rgba(255, 255, 255, 0.7); 
     
-    /* Додаємо трішки яскравішу рамку, щоб виділити межі скла на світлому фоні */
+   
     border: 1px solid var(--glass-white-lg);
     
     /* Тіні та відблиски */
     box-shadow: 
         var(--shadow-float), 
         var(--reflection-inner),
-        0 0 20px rgba(79, 109, 245, 0.05); /* Дуже легке синє світіння навколо */
+        0 0 20px rgba(79, 109, 245, 0.05); 
 }
 
 /* Розміри контенту залишаються твоїми */
@@ -5644,7 +5642,7 @@ body.dark #command-output.two-columns::after {
 
 /* Темна тема: qn popover */
 body.dark .qn-popover {
-    background-color: rgba(30, 35, 45, 0.75);
+    background-color: rgba(36, 37, 41, 0.5);
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.05);
 }
