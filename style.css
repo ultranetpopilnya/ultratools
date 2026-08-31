@@ -194,7 +194,7 @@ color-scheme: dark;
 
     /* BACKGROUNDS */
 --bg-color: #171a1f;
---bg-second-color: #1c2026;
+--bg-second-color: #1c2026de;
 
     /* GLASS */
     --glass-white-lg: rgba(255, 255, 255, 0.14);
@@ -2910,7 +2910,7 @@ body.dark .line-marker {
 
 /* --- ТЕМНА ТЕМА ДЛЯ ПАНЕЛЕЙ --- */
 body.dark .template-search-bar {
-    background-color: rgba(0, 0, 0, 0.2);
+    background-color: var(--bg-second-color);
 }
 
 /* Темна тема: template search bar — активний стан */
@@ -3127,7 +3127,7 @@ body.dark .swap-inputs-btn:hover {
 
 /* Темна тема: template config bar */
 body.dark .template-config-bar {
-    background-color: rgba(0, 0, 0, 0.2);
+    background-color: var(--bg-second-color);
     
 }
 
