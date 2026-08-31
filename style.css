@@ -151,17 +151,17 @@ color-scheme: dark;
     --secondary-accent-color: #d69b2d;
 
     /* STATUS */
-    --danger-color: #f06b6b;
+    --danger-color: #df3333;
     --danger-bg-dark: rgba(240, 107, 107, 0.15);
     --success-color: #39ad83;
 
     /* INPUTS */
-    --input-bg-color: #202226;
+    --input-bg-color: #2a2c30;
     --input-border-color: rgba(255, 255, 255, 0.12);
     --input-focus-border-color: var(--primary-accent-color);
 
     /* TEMPLATES */
-    --template-bg-color: #26282c;
+    --template-bg-color: #292d33;
     --template-border-color: rgba(255, 255, 255, 0.10);
     --template-handle-bg: rgba(255, 255, 255, 0.07);
     --template-handle-border: rgba(255, 255, 255, 0.05);
@@ -173,8 +173,8 @@ color-scheme: dark;
 
     /* SCROLLBAR */
     --scrollbar-track: rgba(255, 255, 255, 0.035);
-    --scrollbar-thumb: rgba(255, 255, 255, 0.18);
-    --scrollbar-thumb-hover: rgba(255, 255, 255, 0.32);
+    --scrollbar-thumb: rgba(255, 255, 255, 0.137);
+    --scrollbar-thumb-hover: rgba(255, 255, 255, 0.26);
     --scrollbar-thumb-active: rgba(255, 255, 255, 0.48);
 
     /* DATE CALCULATOR */
@@ -189,12 +189,12 @@ color-scheme: dark;
     --snow-color: #cbd5e1;
     
     /*BUTTON */
-    --btn-bg: #26282c;
+    --btn-bg: #36383b;
     --btn-border-hover: rgba(255, 255, 255, 0.32);
 
     /* BACKGROUNDS */
     --bg-color: #2a2c30;
-    --bg-second-color: #232529;
+    --bg-second-color: #2e3035;
 
     /* GLASS */
     --glass-white-lg: rgba(255, 255, 255, 0.14);
@@ -220,7 +220,7 @@ color-scheme: dark;
         inset 0 -1px 1px rgba(0, 0, 0, 0.22);
 
     /* PANELS */
-    --panel-border-dark: rgba(255, 255, 255, 0.08);
+    --panel-border-dark: rgba(46, 37, 37, 0.08);
     --tabstrip-bg-dark: rgba(35, 37, 41, 0.85);
     --active-bg-dark: rgba(46, 48, 53, 0.95);
     --card-bg-dark: rgba(35, 37, 41, 0.88);
@@ -2550,7 +2550,7 @@ body.dark #clear-all-templates-button:hover {
     position: relative;
     border: 1px solid var(--template-border-color);
     border-radius: 12px;
-    background-color: var(--input-bg-color);
+    background-color: var(--template-bg-color);
     box-shadow: 0 4px 8px rgba(0,0,0,0.05);
     display: flex;
     flex-direction: column;
@@ -5255,7 +5255,7 @@ body.dark .info-tooltip-text::before {
 }
 
 body.dark .segmented-control {
-    background-color: var(--bg-second-color);
+    background-color: var(--tabstrip-bg-dark);
     border: 1px solid rgba(255, 255, 255, 0.05);
     box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.4);
 }
