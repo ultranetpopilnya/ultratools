@@ -4823,54 +4823,46 @@ body.dark .calc-copy-btn:hover {
 
 /* === ТЕМНА ТЕМА ДЛЯ КНОПОК === */
 
-/* Базові кнопки (Цифри) - Холодний темно-сірий (з легким синім підтоном) */
+/* Базові кнопки (Цифри) - Лише на крапельку світліші за фон калькулятора */
 body.dark .c-btn {
-    background-color: #333842; 
-    color: #e2e8f0;
-    border-color: rgba(255, 255, 255, 0.04);
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    background-color: #383b40; 
+    color: #f1f2f4;
+    border-color: rgba(255, 255, 255, 0.03);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
 }
 body.dark .c-btn:hover { 
-    background-color: #3b414d; 
-    border-color: rgba(255, 255, 255, 0.08);
+    background-color: #42454a; 
+    border-color: rgba(255, 255, 255, 0.06);
 }
 
-/* Оператори - Глибокий приглушений синій */
-body.dark .c-btn.operator { 
-    background-color: #23354f; 
-    color: #8bb0d9; 
-}
-body.dark .c-btn.operator:hover { 
-    background-color: #2d4363; 
-}
-
-/* Функції - Спокійний синьо-сірий */
-body.dark .c-btn.func { 
-    background-color: #2f3642; 
-    color: #9ba6b5; 
-}
-body.dark .c-btn.func:hover { 
-    background-color: #3b4453; 
-}
-
-/* Очищення (C, CE, <-) - Приглушений індиго (синьо-фіолетовий замість коричневого) */
+/* Всі інші кнопки - Майже того ж кольору, що й цифри (на 1 тон темніші) */
+body.dark .c-btn.operator,
+body.dark .c-btn.func,
 body.dark .c-btn.action-clear, 
-body.dark .c-btn.action-back { 
-    background-color: #2b2e4a; 
-    color: #9b9fda; 
+body.dark .c-btn.action-back {
+    background-color: #313338;
 }
+body.dark .c-btn.operator:hover,
+body.dark .c-btn.func:hover,
 body.dark .c-btn.action-clear:hover, 
-body.dark .c-btn.action-back:hover { 
-    background-color: #383c61; 
+body.dark .c-btn.action-back:hover {
+    background-color: #3a3d42;
 }
 
-/* Дорівнює - Джинсово-синій (головний акцент) */
+/* Кольори тексту для зручності (ніжні, не "кричущі") */
+body.dark .c-btn.operator { color: #8ab4f8; } /* М'який блакитний */
+body.dark .c-btn.func { color: #a8adb5; }     /* Світло-сірий */
+body.dark .c-btn.action-clear, 
+body.dark .c-btn.action-back { color: #e57373; } /* М'який червоний */
+
+/* Дорівнює - Синій акцент */
 body.dark .c-btn.equal { 
-    background-color: #315b96; 
-    color: #e2e8f0; 
+    background-color: #3b71ca; 
+    color: #ffffff; 
+    border-color: transparent;
 }
 body.dark .c-btn.equal:hover { 
-    background-color: #3e6eaf;
+    background-color: #467fd9;
 }
 
 /* === ВИСУВНА ПАНЕЛЬ ІСТОРІЇ === */
@@ -4881,7 +4873,7 @@ body.dark .c-btn.equal:hover {
     width: 100%;
     height: 100%;
     
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(240, 240, 245, 0.95) 100%);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 20%, rgba(240, 240, 245, 0.95) 100%);
     box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.1);
     
     transition: bottom 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
