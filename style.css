@@ -156,20 +156,20 @@ color-scheme: dark;
     --success-color: #39ad83;
 
     /* INPUTS */
-    --input-bg-color: #11161d;
-    --input-border-color: rgba(255, 255, 255, 0.11);
+    --input-bg-color: #202226;
+    --input-border-color: rgba(255, 255, 255, 0.12);
     --input-focus-border-color: var(--primary-accent-color);
 
     /* TEMPLATES */
-    --template-bg-color: #151a21;
+    --template-bg-color: #26282c;
     --template-border-color: rgba(255, 255, 255, 0.10);
-    --template-handle-bg: rgba(255, 255, 255, 0.06);
-    --template-handle-border: rgba(255, 255, 255, 0.04);
+    --template-handle-bg: rgba(255, 255, 255, 0.07);
+    --template-handle-border: rgba(255, 255, 255, 0.05);
 
     /* TABS */
-    --tab-strip-bg: #171d24;
-    --tab-inactive-text: #667085;
-    --text-hover: rgba(255, 255, 255, 0.06);
+    --tab-strip-bg: #2a2c30;
+    --tab-inactive-text: #8a92a0;
+    --text-hover: rgba(255, 255, 255, 0.07);
 
     /* SCROLLBAR */
     --scrollbar-track: rgba(255, 255, 255, 0.035);
@@ -189,12 +189,12 @@ color-scheme: dark;
     --snow-color: #cbd5e1;
     
     /*BUTTON */
-    --btn-bg: #1a2029;
-    --btn-border-hover: rgba(255, 255, 255, 0.3);
+    --btn-bg: #26282c;
+    --btn-border-hover: rgba(255, 255, 255, 0.32);
 
     /* BACKGROUNDS */
-    --bg-color: #1a2029;
-    --bg-second-color: #151a21;
+    --bg-color: #2a2c30;
+    --bg-second-color: #232529;
 
     /* GLASS */
     --glass-white-lg: rgba(255, 255, 255, 0.14);
@@ -220,10 +220,10 @@ color-scheme: dark;
         inset 0 -1px 1px rgba(0, 0, 0, 0.22);
 
     /* PANELS */
-    --panel-border-dark: rgba(255, 255, 255, 0.07);
-    --tabstrip-bg-dark: rgba(21, 26, 33, 0.82);
-    --active-bg-dark: rgba(31, 37, 47, 0.94);
-    --card-bg-dark: rgba(21, 26, 33, 0.84);
+    --panel-border-dark: rgba(255, 255, 255, 0.08);
+    --tabstrip-bg-dark: rgba(35, 37, 41, 0.85);
+    --active-bg-dark: rgba(46, 48, 53, 0.95);
+    --card-bg-dark: rgba(35, 37, 41, 0.88);
 }
 
 /* :root */
