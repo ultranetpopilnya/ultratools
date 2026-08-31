@@ -156,7 +156,7 @@ color-scheme: dark;
     --success-color: #39ad83;
 
     /* INPUTS */
-    --input-bg-color: #2a2c30;
+    --input-bg-color: #1F2329;
     --input-border-color: rgba(255, 255, 255, 0.12);
     --input-focus-border-color: var(--primary-accent-color);
 
@@ -167,7 +167,7 @@ color-scheme: dark;
     --template-handle-border: rgba(255, 255, 255, 0.05);
 
     /* TABS */
-    --tab-strip-bg: #2a2c30;
+    --tab-strip-bg: #30353C;
     --tab-inactive-text: #8a92a0;
     --text-hover: rgba(255, 255, 255, 0.07);
 
@@ -193,8 +193,8 @@ color-scheme: dark;
     --btn-border-hover: rgba(255, 255, 255, 0.32);
 
     /* BACKGROUNDS */
---bg-color: #171a1f;
---bg-second-color: rgb(35, 39, 46);
+   --bg-color: #171a1f;
+   --bg-second-color: rgb(35, 39, 46);
 
     /* GLASS */
     --glass-white-lg: rgba(255, 255, 255, 0.14);
