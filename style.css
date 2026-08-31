@@ -99,7 +99,6 @@ select {
     --snow-color: #7dd3fc;
 
     /* BACKGROUNDS */
-    --bg-color: #eef2f7;
     --bg-second-color: #f8fafc;
     
     /* BUTTON */
@@ -133,7 +132,7 @@ select {
     --panel-border-light: rgba(148, 163, 184, 0.22);
     --tabstrip-bg-light: rgba(255, 255, 255, 0.72);
     --active-bg-light: rgba(255, 255, 255, 0.92);
-    --card-bg-light: rgba(255, 255, 255, 0.84);
+    --card-bg-light: rgba(255, 255, 255, 0.616);
 }
 
 /* dark */
@@ -193,7 +192,6 @@ color-scheme: dark;
     --btn-border-hover: rgba(255, 255, 255, 0.32);
 
     /* BACKGROUNDS */
-   --bg-color: #171a1f;
    --bg-second-color: rgb(35, 39, 46);
 
     /* GLASS */
@@ -2256,10 +2254,14 @@ body.dark .history-toggle-btn.active #history-arrow {
     padding: 10px 10px 10px 14px;
     border: 1px solid var(--input-border-color);
     border-radius: 12px;
-    background-color: var(--bg-color);
+    background-color: var(--input-bg-color);
     min-width: 0;
     overflow: hidden;
     transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+body.dark .history-item {
+    background: var(--input-bg-color);
 }
 
 .history-item::before {
@@ -3715,7 +3717,7 @@ body.dark .config-onu-mode-btn.is-switch:hover {
     left: 0;
     width: 100%;
     max-height: 250px;
-    background: var(--bg-color);
+    background: var(--bg-second-color);
     border: 1px solid var(--border-color);
     border-radius: 8px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
@@ -3828,7 +3830,7 @@ body.dark .select-group-title {
 body.dark .olt-dropdown-list {
     box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45), 0 2px 8px rgba(0, 0, 0, 0.3);
     border-color: #4a4a4a;
-    background: var(--btn-bg);
+    background: var(--bg-second-color);
 }
 
 /* olt dropdown list — відкритий стан */
