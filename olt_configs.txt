@@ -226,7 +226,6 @@ loop-detect ethuni eth_0/1 enable
 gemport 1 flow 1
 vlan gemport 1 mode transparent
 end
-
 [EPON PON-ONU]
 exit
 pon-onu-mng epon-onu_{PORT}
