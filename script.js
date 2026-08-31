@@ -1422,7 +1422,7 @@ let lastConfirmedOltName = null;
                 <!-- ВЕРХНІЙ РЯДОК -->
                 <div class="config-row">
                     <div class="olt-dropdown-wrapper">
-                        <input type="text" class="config-olt-select" placeholder="🔍 Пошук ОЛТ..." autocomplete="off" title="Почніть вводити назву ОЛТ">
+                        <input type="text" class="config-olt-select" placeholder="🔍 Пошук OLT..." autocomplete="off" title="Почніть вводити назву OLT">
                         <div class="olt-dropdown-list"></div>
                     </div>
                     <input type="text" class="config-sn-input" placeholder="SN / MAC" title="Серійний номер або MAC" autocomplete="off">
@@ -1844,14 +1844,14 @@ btnShowSignal.classList.toggle('active', isShowSignalMode); // ДОДАНО
         }
 
         if (!selectedOltObj) {
-            showNotification("Будь ласка, оберіть ОЛТ зі списку!");
+            showNotification("Будь ласка, оберіть OLT зі списку!");
             return;
         }
 
 let oltObj = selectedOltObj;
 
 if (!oltObj) {
-    showNotification("ОЛТ не знайдено в базі!");
+    showNotification("OLT не знайдено в базі!");
     return;
 }
 
@@ -2902,7 +2902,7 @@ function loadOltConfigs() {
             SWITCH_TEMPLATES.gpon = trimLastNewline(SWITCH_TEMPLATES.gpon);
             SWITCH_TEMPLATES.epon = trimLastNewline(SWITCH_TEMPLATES.epon);
         })
-        .catch(err => console.log("Помилка завантаження конфігів ОЛТ:", err));
+        .catch(err => console.log("Помилка завантаження конфігів OLT:", err));
 }
 
 // === ЛОГІКА ПРИХОВУВАННЯ ТА ВІДНОВЛЕННЯ ВКЛАДОК (НАДІЙНА ВЕРСІЯ) ===

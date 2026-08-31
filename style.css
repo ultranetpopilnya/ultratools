@@ -3218,7 +3218,9 @@ body.dark .template-config-bar {
 .config-row .config-sn-input    { flex: 0 0 130px; }
 
 /* config row */
-.config-row .config-port-input  { flex: 0 0 96px; }
+.config-row .config-port-input  { 
+    flex: 0 0 96px;
+}
 
 /* config row */
 .config-row .config-speed-select{ flex: 0 0 96px; cursor: pointer; }
