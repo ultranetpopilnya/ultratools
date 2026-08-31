@@ -1475,7 +1475,7 @@ body.dark .version-number {
 /* Базовий закритий стан */
 body.dark .version-pill,
 body.dark .extension-pill {
-    background-color: rgba(20, 25, 35, 0.5);
+    background-color: rgba(36, 37, 41, 0.5);
     background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0) 50%);
     border-color: var(--glass-border);
     box-shadow: 
@@ -1487,7 +1487,7 @@ body.dark .extension-pill {
 /* Ховер у темній темі */
 body.dark .version-pill:hover:not(.is-open),
 body.dark .extension-pill:hover:not(.is-open) {
-    background-color: rgba(30, 35, 45, 0.6);
+    background-color: rgba(46, 47, 51, 0.6);
     border-color: var(--glass-border-bright); /* Твій оранжевий акцент */
     box-shadow: 
         0 20px 60px rgba(0, 0, 0, 0.6),
@@ -1498,7 +1498,7 @@ body.dark .extension-pill:hover:not(.is-open) {
 /* Відкритий стан у темній темі (трохи щільніший фон для тексту) */
 body.dark .version-pill.is-open,
 body.dark .extension-pill.is-open {
-    background-color: rgba(30, 35, 45, 0.4);
+    background-color: rgba(46, 47, 51, 0.4);
     border-color: var(--glass-border-bright);
     box-shadow: 
         0 20px 60px rgba(0, 0, 0, 0.7),
@@ -1613,7 +1613,7 @@ body.dark .history-separator {
 
 /* ТЕМНЕ СКЛО ДЛЯ ТЕМНОЇ ТЕМИ */
 body.dark .theme-pill {
-    background-color: rgba(20, 25, 35, 0.5);
+    background-color: rgba(36, 37, 41, 0.5);
     background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0) 50%);
     border-color: var(--glass-border);
     box-shadow: 
@@ -1624,7 +1624,7 @@ body.dark .theme-pill {
 
 /* Темна тема: theme pill — ховер */
 body.dark .theme-pill:hover {
-    background-color: rgba(30, 35, 45, 0.6);
+    background-color: rgba(46, 47, 51, 0.6);
     border-color: var(--glass-border-bright);
     box-shadow: 
         0 20px 60px rgba(0, 0, 0, 0.6),
