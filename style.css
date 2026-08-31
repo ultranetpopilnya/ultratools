@@ -82,10 +82,10 @@ select {
     --text-hover: #eef2f7;
 
     /* SCROLLBAR */
-    --scrollbar-track: rgba(0, 0, 0, 0.04);
-    --scrollbar-thumb: rgba(0, 0, 0, 0.22);
-    --scrollbar-thumb-hover: rgba(0, 0, 0, 0.38);
-    --scrollbar-thumb-active: rgba(0, 0, 0, 0.52);
+--scrollbar-track: rgba(0, 0, 0, 0.03);
+--scrollbar-thumb: rgba(0, 0, 0, 0.18);
+--scrollbar-thumb-hover: rgba(0, 0, 0, 0.32);
+--scrollbar-thumb-active: rgba(0, 0, 0, 0.48);
 
     /* DATE CALCULATOR */
     --calc-duration-color: #0d9488;
@@ -172,10 +172,10 @@ color-scheme: dark;
     --text-hover: rgba(255, 255, 255, 0.07);
 
     /* SCROLLBAR */
-    --scrollbar-track: rgba(255, 255, 255, 0.035);
-    --scrollbar-thumb: rgba(255, 255, 255, 0.137);
-    --scrollbar-thumb-hover: rgba(255, 255, 255, 0.26);
-    --scrollbar-thumb-active: rgba(255, 255, 255, 0.48);
+--scrollbar-track: rgba(255, 255, 255, 0.04);
+--scrollbar-thumb: rgba(255, 255, 255, 0.15);
+--scrollbar-thumb-hover: rgba(255, 255, 255, 0.28);
+--scrollbar-thumb-active: rgba(255, 255, 255, 0.45);
 
     /* DATE CALCULATOR */
     --calc-duration-color: #2dd4bf;
@@ -3316,7 +3316,7 @@ body.dark .config-show-signal-btn:hover {
     color: var(--secondary-accent-color);
     box-shadow: 0 2px 4px rgba(255, 196, 0, 0.15);
     z-index: 2;
-    background-color: rgba(255, 255, 255, 0.082);
+    background-color: #282f3b;
 }
 
 /* Темна тема: config replace mode btn — активний стан */
