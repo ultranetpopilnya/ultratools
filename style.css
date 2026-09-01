@@ -196,9 +196,9 @@ color-scheme: dark;
 --btn-bg-hover: #313338;
 
     /* BACKGROUNDS */
-        --second-color-bg: #1e2127;
-    --menu-bg: #292d33;
-    --panel-bg: #22252b;      
+--second-color-bg: #171A1F;
+--panel-bg:        #20242A;
+--menu-bg:         #2B3037;
 
     /* GLASS */
     --glass-white-lg: rgba(255, 255, 255, 0.14);
