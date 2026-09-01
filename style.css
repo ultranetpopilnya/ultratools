@@ -794,8 +794,8 @@ body.dark .segment-btn .ripple {
 /* 5. Унікальні кольори хвиль для окремих станів (за бажанням) */
 /* Якщо автоочищення увімкнене, хвиля при кліку стає червоною, щоб попередити про вимкнення */
 #login-autoclear-btn.active .ripple { background-color: rgba(220, 53, 69, 0.3); }
-
 /* 6. Анімація розширення хвилі */
+
 @keyframes ripple-wave {
     0% { transform: scale(0); opacity: 1; }
     100% { transform: scale(4); opacity: 0; }
