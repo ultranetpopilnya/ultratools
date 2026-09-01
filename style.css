@@ -155,8 +155,8 @@ color-scheme: dark;
     --success-color: #39ad83;
 
     /* INPUTS */
-    --input-bg-color: #1F2329;
-    --input-border-color: rgba(255, 255, 255, 0.12);
+    --input-bg-color: #23272d;
+    --input-border-color: rgba(255, 255, 255, 0.10);
     --input-focus-border-color: var(--primary-accent-color);
 
     /* TEMPLATES */
