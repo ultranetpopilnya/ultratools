@@ -4473,6 +4473,8 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('mousedown', function (e) {
     // Перевіряємо, чи клік був по одному з вказаних класів/ID
     const targetBtn = e.target.closest(`
+        .command-item,
+        .sub-command-item ,
         .tab-button, 
         .olt-dropdown-item, 
         #login-autoclear-btn, 

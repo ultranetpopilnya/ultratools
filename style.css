@@ -737,9 +737,11 @@ body.dark .qn-add-btn:active {
 .calc-action-button,
 .stepper-btn,
 #auto-reset-button,
-.segment-btn {
+.segment-btn,
+.command-item,
+.sub-command-item {
     position: relative;
-    overflow: hidden; /* Критично важливо: не дає хвилі вилізти за межі кнопки */
+    overflow: hidden;
 }
 
 /* 2. Піднімаємо всі внутрішні елементи (текст, іконки), щоб хвиля протікала ПІД ними */
@@ -749,10 +751,12 @@ body.dark .qn-add-btn:active {
 .calc-action-button > *,
 .stepper-btn > *,
 #auto-reset-button > *,
-.segment-btn > * {
+.segment-btn > *,
+.command-item > *,
+.sub-command-item > * {
     position: relative;
     z-index: 2;
-    pointer-events: none; /* Клік проходить наскрізь на саму кнопку */
+    pointer-events: none;
 }
 
 /* Виняток: гарантуємо, що хрестик вкладки залишається клікабельним і над хвилею */
@@ -768,14 +772,15 @@ body.dark .qn-add-btn:active {
 .calc-action-button .ripple,
 .stepper-btn .ripple,
 #auto-reset-button .ripple,
-.segment-btn .ripple {
+.segment-btn .ripple,
+.command-item .ripple,
+.sub-command-item .ripple {
     position: absolute;
     border-radius: 50%;
     transform: scale(0);
-    /* Замість синього акценту ставимо легкий напівпрозорий чорний колір */
-    background-color: rgba(0, 0, 0, 0.12); 
+    background-color: rgba(0, 0, 0, 0.12);
     pointer-events: none;
-    z-index: 1; 
+    z-index: 1;
     animation: ripple-wave 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -786,9 +791,10 @@ body.dark #login-autoclear-btn .ripple,
 body.dark .calc-action-button .ripple,
 body.dark .stepper-btn .ripple,
 body.dark #auto-reset-button .ripple,
-body.dark .segment-btn .ripple {
-    /* Замість оранжевого акценту ставимо легкий напівпрозорий білий колір */
-    background-color: rgba(255, 255, 255, 0.15); 
+body.dark .segment-btn .ripple,
+body.dark .command-item .ripple,
+body.dark .sub-command-item .ripple {
+    background-color: rgba(255, 255, 255, 0.15);
 }
 
 /* 5. Унікальні кольори хвиль для окремих станів (за бажанням) */
