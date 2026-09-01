@@ -66,7 +66,6 @@ select {
     --danger-bg-dark: rgba(240, 107, 107, 0.15);
 
     /* INPUTS */
-    --input-bg-color: #f8fafc;
     --input-border-color: #d9e0ea;
     --input-focus-border-color: var(--primary-accent-color);
 
@@ -82,15 +81,15 @@ select {
     --text-hover: #eef2f7;
 
     /* SCROLLBAR */
---scrollbar-track: rgba(0, 0, 0, 0.03);
---scrollbar-thumb: rgba(0, 0, 0, 0.18);
---scrollbar-thumb-hover: rgba(0, 0, 0, 0.32);
---scrollbar-thumb-active: rgba(0, 0, 0, 0.48);
+    --scrollbar-track: rgba(0, 0, 0, 0.03);
+    --scrollbar-thumb: rgba(0, 0, 0, 0.18);
+    --scrollbar-thumb-hover: rgba(0, 0, 0, 0.32);
+    --scrollbar-thumb-active: rgba(0, 0, 0, 0.48);
 
     /* DATE CALCULATOR */
     --calc-duration-color: #0d9488;
-  --calc-hours-color: #4f46e5;
-  --calc-days-color: #e11d48;
+    --calc-hours-color: #4f46e5;
+    --calc-days-color: #e11d48;
     --button-paste-bg: #0d9488;
 
     /* MISC */
@@ -99,11 +98,15 @@ select {
     --snow-color: #7dd3fc;
 
     /* BACKGROUNDS */
-    --bg-second-color: #f8fafc;
+    --second-color-bg: #F5F7FA;
+--menu-bg: #fff;
+--panel-bg: #fbfdff;
+--input-bg-color: #fff;
     
     /* BUTTON */
-    --btn-bg: #fff;
-    --btn-border-hover: #bbb;
+    --btn-bg: #FFFFFF;
+--btn-border-hover: #4f6df5;
+--btn-bg-hover: #FFFFFF;
     
     /* GLASS */
     --glass-white-lg: rgba(255, 255, 255, 0.88);
@@ -129,10 +132,10 @@ select {
         inset 0 -1px 1px rgba(15, 23, 42, 0.03);
 
     /* PANELS */
-    --panel-border-light: rgba(148, 163, 184, 0.22);
-    --tabstrip-bg-light: rgba(255, 255, 255, 0.72);
-    --active-bg-light: rgba(255, 255, 255, 0.72);
-    --card-bg-light: rgba(255, 255, 255, 0.72);
+    --panel-border: rgba(148, 163, 184, 0.22);
+    --tabstrip-bg: rgba(255, 255, 255, 0.72);
+    --active-bg: rgba(255, 255, 255, 0.72);
+    --card-bg: rgba(255, 255, 255, 0.72);
 }
 
 /* dark */
@@ -171,15 +174,15 @@ color-scheme: dark;
     --text-hover: rgba(255, 255, 255, 0.07);
 
     /* SCROLLBAR */
---scrollbar-track: rgba(255, 255, 255, 0.04);
---scrollbar-thumb: rgba(255, 255, 255, 0.15);
---scrollbar-thumb-hover: rgba(255, 255, 255, 0.28);
---scrollbar-thumb-active: rgba(255, 255, 255, 0.45);
+   --scrollbar-track: rgba(255, 255, 255, 0.04);
+   --scrollbar-thumb: rgba(255, 255, 255, 0.15);
+   --scrollbar-thumb-hover: rgba(255, 255, 255, 0.28);
+   --scrollbar-thumb-active: rgba(255, 255, 255, 0.45);
 
     /* DATE CALCULATOR */
     --calc-duration-color: #2dd4bf;
-  --calc-hours-color: #818cf8;
-  --calc-days-color: #fb7185;
+    --calc-hours-color: #818cf8;
+    --calc-days-color: #fb7185;
     
 
     /* MISC */
@@ -188,11 +191,14 @@ color-scheme: dark;
     --snow-color: #cbd5e1;
     
     /*BUTTON */
-    --btn-bg: #313338;
-    --btn-border-hover: rgba(255, 255, 255, 0.32);
+--btn-bg: #313338;
+--btn-border-hover: #d69b2d;
+--btn-bg-hover: #313338;
 
     /* BACKGROUNDS */
-   --bg-second-color: rgb(35, 39, 46);
+        --second-color-bg: #1e2127;
+    --menu-bg: #191c21;
+    --panel-bg: #22252b;      
 
     /* GLASS */
     --glass-white-lg: rgba(255, 255, 255, 0.14);
@@ -218,10 +224,10 @@ color-scheme: dark;
         inset 0 -1px 1px rgba(0, 0, 0, 0.22);
 
     /* PANELS */
-    --panel-border-dark: rgba(255, 255, 255, 0.10);
-    --tabstrip-bg-dark: rgba(35, 37, 41, 0.85);
-    --active-bg-dark: rgba(46, 48, 53, 0.95);
-    --card-bg-dark: rgba(35, 37, 41, 0.88);
+    --panel-border: rgba(255, 255, 255, 0.10);
+    --tabstrip-bg: rgba(35, 37, 41, 0.85);
+    --active-bg: rgba(46, 48, 53, 0.95);
+    --card-bg: rgba(35, 37, 41, 0.88);
 }
 
 /* :root */
@@ -463,11 +469,11 @@ body.dark ::placeholder {
     display: flex;
     flex-direction: column;
 
-    background-color: var(--card-bg-light);
+    background-color: var(--card-bg);
     backdrop-filter: blur(20px) saturate(160%);
     -webkit-backdrop-filter: blur(20px) saturate(160%);
     background-image: var(--reflection-top);
-    border: 1px solid var(--panel-border-light);
+    border: 1px solid var(--panel-border);
     border-radius: 12px;
  
     box-shadow:
@@ -482,9 +488,9 @@ body.dark ::placeholder {
 }
 
 body.dark .content-card {
-    background-color: var(--card-bg-dark);
+    background-color: var(--card-bg);
     background-image: none;
-    border-color: var(--panel-border-dark);
+    border-color: var(--panel-border);
 
     box-shadow:
         inset 0 1px 1px 0 rgba(255, 255, 255, 0.06),
@@ -539,7 +545,7 @@ body.dark .container {
 }
 
 /* Універсальні інпути та їх світіння при фокусі */
-input, textarea, select, .date-input-group input, #fullNameInput, button {
+input, textarea, select, .date-input-group input, #fullNameInput {
     border: 1px solid var(--input-border-color);
     background-color: var(--input-bg-color);
     color: var(--text-color);
@@ -734,6 +740,7 @@ body.dark .qn-add-btn:active {
    ==================================================================== */
 
 /* 1. Готуємо елементи: позиціонування та обрізка хвилі по краях */
+.add-tab-item,
 .tab-button,
 .olt-dropdown-item,
 #login-autoclear-btn,
@@ -748,6 +755,7 @@ body.dark .qn-add-btn:active {
 }
 
 /* 2. Піднімаємо всі внутрішні елементи (текст, іконки), щоб хвиля протікала ПІД ними */
+.add-tab-item > *,
 .tab-button > :not(.ripple):not(.close-tab-btn),
 .olt-dropdown-item > *,
 #login-autoclear-btn > *,
@@ -769,6 +777,7 @@ body.dark .qn-add-btn:active {
 }
 
 /* 3. Базовий стиль самої хвилі (Світла тема) */
+.add-tab-item .ripple,
 .tab-button .ripple,
 .olt-dropdown-item .ripple,
 #login-autoclear-btn .ripple,
@@ -781,13 +790,14 @@ body.dark .qn-add-btn:active {
     position: absolute;
     border-radius: 50%;
     transform: scale(0);
-    background-color: rgba(0, 0, 0, 0.12);
+    background-color: #dddfe6;
     pointer-events: none;
     z-index: 1;
-    animation: ripple-wave 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: ripple-wave 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* 4. Колір хвилі для Темної теми */
+body.dark .add-tab-item .ripple,
 body.dark .tab-button .ripple,
 body.dark .olt-dropdown-item .ripple,
 body.dark #login-autoclear-btn .ripple,
@@ -797,14 +807,14 @@ body.dark #auto-reset-button .ripple,
 body.dark .segment-btn .ripple,
 body.dark .command-item .ripple,
 body.dark .sub-command-item .ripple {
-    background-color: rgba(255, 255, 255, 0.15);
+    background-color: #8a8a8a;
 }
 
 /* 5. Унікальні кольори хвиль для окремих станів (за бажанням) */
 /* Якщо автоочищення увімкнене, хвиля при кліку стає червоною, щоб попередити про вимкнення */
-#login-autoclear-btn.active .ripple { background-color: rgba(220, 53, 69, 0.3); }
-/* 6. Анімація розширення хвилі */
 
+
+/* 6. Анімація розширення хвилі */
 @keyframes ripple-wave {
     0% { transform: scale(0); opacity: 1; }
     100% { transform: scale(4); opacity: 0; }
@@ -831,7 +841,7 @@ button:disabled, input:disabled, select:disabled {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: var(--tabstrip-bg-light);
+    background-color: var(--tabstrip-bg);
     background-image: var(--reflection-top);
     backdrop-filter: blur(20px) saturate(150%); 
     -webkit-backdrop-filter: blur(20px) saturate(150%);
@@ -847,17 +857,17 @@ button:disabled, input:disabled, select:disabled {
     box-shadow: var(--shadow-glass), var(--reflection-inner);
     position: relative;
     z-index: 50;
-    border: 1px solid var(--panel-border-light);
+    border: 1px solid var(--panel-border);
     overflow: visible !important;
 }
 
 body.dark .tabs {
     backdrop-filter: blur(20px) saturate(150%); 
     -webkit-backdrop-filter: blur(20px) saturate(150%);
-    background-color: var(--tabstrip-bg-dark);
+    background-color: var(--tabstrip-bg);
     background-image: none;
     box-shadow: var(--shadow-glass), var(--reflection-inner);
-    border: 1px solid var(--panel-border-dark);
+    border: 1px solid var(--panel-border);
 }
 
 .tab-button {
@@ -910,7 +920,7 @@ body.dark .tabs {
 
 /* Стиль для АКТИВНОЇ вкладки */
 .tab-button.active {
-    background-color: var(--active-bg-light);
+    background-color: var(--active-bg);
     color: var(--primary-accent-color);
     backdrop-filter: blur(20px) saturate(150%); 
     -webkit-backdrop-filter: blur(20px) saturate(150%);
@@ -928,7 +938,7 @@ body.dark .tabs {
 body.dark .tab-button.active {
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
-    background-color: var(--active-bg-dark);
+    background-color: var(--active-bg);
     color: var(--primary-accent-color);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.06);
 }
@@ -1041,13 +1051,7 @@ body.dark .tab-button:hover:not(.active) {
 
 /* Ефект фізичного кліку */
 .add-tab-item:active {
-    background-color: color-mix(in srgb, var(--text-hover), #000 15%);
     transition: all 0.05s ease-out;
-}
-
-/* --- ТЕМНА ТЕМА ДЛЯ МЕНЮ --- */
-body.dark .add-tab-menu {
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
 body.dark .add-tab-item:hover {
@@ -1058,11 +1062,6 @@ body.dark .add-tab-item:hover {
 /* Темна тема: add tab item — ховер */
 body.dark .add-tab-item:hover i {
     color: var(--secondary-accent-color);
-}
-
-/* Темна тема: add tab item — активний стан */
-body.dark .add-tab-item:active {
-    background-color: color-mix(in srgb, var(--text-hover), #fff 15%);
 }
 
 /* Приховуємо стандартні іконки/текст (якщо є в HTML) */
@@ -1165,8 +1164,6 @@ body.dark .close-tab-btn:active {
     align-items: center;
     font-size: 18px;
     margin: 0 4px 0 2px;
-    
-    /* Проста, рівна анімація без ефекту "желе" */
     transition: all 0.2s ease-out;
 }
 
@@ -1206,7 +1203,7 @@ body.dark .add-tab-btn:hover {
 
 /* Темна тема: add tab btn */
 body.dark .add-tab-btn.menu-open {
-    background-color: var(--secondary-accent-color);
+    background-color: var(--primary-accent-color);
     color: #1b1c1d;
     box-shadow: 0 4px 14px rgba(230, 162, 46, 0.35);
 }
@@ -1248,7 +1245,7 @@ body.dark .add-tab-btn.menu-open:active {
     min-width: 210px;
     
     /* Використовуємо рідні кольори додатку замість "скла" */
-    background-color: var(--input-bg-color); 
+    background-color: var(--menu-bg); 
     border: 1px solid var(--input-border-color);
     border-radius: 12px;
     
@@ -1264,6 +1261,12 @@ body.dark .add-tab-btn.menu-open:active {
     transform: translateY(-10px) scale(0.96);
     transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
     transform-origin: top right;
+}
+
+/* --- ТЕМНА ТЕМА ДЛЯ МЕНЮ --- */
+body.dark .add-tab-menu {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 2px 10px rgba(0, 0, 0, 0.3);
+    background-color: var(--menu-bg);
 }
 
 /* --- КНОПКА-РУЧКА --- */
@@ -1858,18 +1861,12 @@ body.dark .moon-icon {
     
     padding: 10px 14px; 
     border-radius: 12px; 
-    background-color: var(--bg-second-color); 
+    background-color: var(--panel-bg); 
     border: 1px solid var(--input-border-color); 
     
     width: 90%; 
     box-sizing: border-box;
     margin: 0 auto 16px auto; /* Вирівнювання по центру */
-}
-
-/* Темна тема */
-body.dark .login-actions-block {
-    background-color: var(--bg-second-color);
-    border-color: var(--input-border-color);
 }
 
 /* === Стиль для підпису блоку (з лінією та іконкою) === */
@@ -1952,7 +1949,7 @@ body.dark .actions-block-title::after {
 /* --- СТАН: HOVER (При наведенні, коли кнопка ВИМКНЕНА) --- */
 /* Ледь помітно підсвічуємо фон, щоб показати, що це кнопка */
 #login-autoclear-btn:hover:not(.active) {
-    background-color: color-mix(in srgb, var(--btn-bg), #000 5%);
+    background-color: var(--btn-bg-hover);
     border-color: var(--btn-border-hover);
 }
 
@@ -1964,11 +1961,7 @@ body.dark .actions-block-title::after {
 #login-autoclear-btn.active {
     /* Кольоровий контур */
     border-color: var(--primary-accent-color);
-    
-    /* Напівпрозорий фон (12% непрозорості від синього кольору) */
     background-color: rgba(79, 109, 245, 0.12); 
-    
-    /* Текст і іконка в колір акценту */
     color: var(--primary-accent-color);
 }
 #login-autoclear-btn.active i {
@@ -1984,7 +1977,7 @@ body.dark #login-autoclear-btn {
 
 /* HOVER у темній темі (коли ВИМКНЕНО) */
 body.dark #login-autoclear-btn:hover:not(.active) {
-    background-color: color-mix(in srgb, var(--btn-bg), #fff 5%);
+    background-color: var(--btn-bg-hover);
     border-color: var(--btn-border-hover);
 }
 
@@ -2071,15 +2064,9 @@ body.dark #login-autoclear-btn:hover:not(.active) i {
     padding: 10px 10px 10px 10px; 
     border: 1px solid var(--input-border-color); 
     border-radius: 12px;
-    background-color: var(--bg-second-color); 
+    background-color: var(--panel-bg); 
     min-height: 52px;
     margin: 0 0 16px 0; 
-}
-
-/* --- ТЕМНА ТЕМА ДЛЯ КАРТКИ --- */
-body.dark .login-generator-container .result-item {
-    background-color: var(--bg-second-color);
-    border-color: var(--input-border-color);
 }
 
 /* --- ПІДПИС (БЕЙДЖ) ВРІЗАНИЙ В РАМКУ --- */
@@ -2182,6 +2169,24 @@ body.dark .login-generator-container .result-item .regenerate-login-btn {
     margin-top: 0;
 }
 
+.result-item.error-item {
+  display: block !important;
+  width: 100%;
+  text-align: center !important;
+  box-sizing: border-box;
+  
+  color: #dc3545;
+  font-weight: 700;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+/* Примусово центруємо дочірній span */
+.result-item.error-item span {
+  display: block;
+  text-align: center !important;
+}
+
 /* ================================================================
    БЛОК ІСТОРІЇ ЛОГІНІВ — редизайн
    ================================================================ */
@@ -2189,7 +2194,7 @@ body.dark .login-generator-container .result-item .regenerate-login-btn {
 .history-section {
     margin: 0px auto 26px auto;
     flex-shrink: 0;
-    background-color: var(--bg-second-color);
+    background-color: var(--panel-bg);
     border: 1px solid var(--input-border-color);
     border-radius: 12px;
     overflow: hidden;
@@ -2343,14 +2348,10 @@ body.dark .history-toggle-btn.active #history-arrow {
     padding: 10px 10px 10px 14px;
     border: 1px solid var(--input-border-color);
     border-radius: 12px;
-    background-color: var(--input-bg-color);
+    background-color: var(--tab-strip-bg);
     min-width: 0;
     overflow: hidden;
     transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease, border-color 0.2s ease;
-}
-
-body.dark .history-item {
-    background: var(--input-bg-color);
 }
 
 .history-item::before {
@@ -2390,7 +2391,7 @@ body.dark .history-item:hover {
 }
 
 .history-copy-btn {
-    background: var(--bg-second-color);
+    background: var(--btn-bg);
     border: 1px solid var(--input-border-color);
     color: var(--text-color);
     border-radius: 8px;
@@ -2441,6 +2442,74 @@ body.dark .history-copy-btn:hover {
     box-shadow: 0 6px 14px rgba(220, 38, 38, 0.25);
 }
 
+/* ================================================================
+   АНІМАЦІЯ ПОЯВИ ЗГЕНЕРОВАНИХ ЛОГІНІВ ТА ПОМИЛОК (ШВИДКИЙ ВИЇЗД)
+   ================================================================ */
+
+/* 1. Анімація виїзду зліва для логінів */
+@keyframes slideInResult {
+    0% {
+        opacity: 0;
+        transform: translateX(-15px); /* Виїзд зліва направо */
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* 2. Застосовуємо дуже швидку анімацію (0.15s) */
+.login-generator-container .result-item {
+    opacity: 0; 
+    /* Час зменшено до 0.15s, щоб при швидкому друкуванні не було "мигання" */
+    animation: slideInResult 0.15s ease-out forwards;
+    will-change: transform, opacity; 
+}
+/* ЗАУВАЖЕННЯ: Ми навмисно прибрали animation-delay (nth-child), 
+   щоб при зміні кожної букви список оновлювався миттєво і плавно, без ривків */
+
+/* ================================================================
+   АНІМАЦІЯ ДЛЯ ПОМИЛОК
+   ================================================================ */
+
+/* Помилка виїжджатиме зверху вниз */
+@keyframes slideDownError {
+    0% {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ================================================================
+   АНІМАЦІЯ ЗНИКНЕННЯ (ВИЇЗД ВПРАВО)
+   ================================================================ */
+
+@keyframes slideOutResult {
+    0% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(15px); /* Легкий від'їзд вправо і зникнення */
+    }
+}
+
+/* Клас, який скрипт додаватиме перед видаленням */
+.removing {
+    /* forwards заморожує елемент в невидимому стані в кінці анімації */
+    animation: slideOutResult 0.15s ease-in forwards !important;
+    pointer-events: none; /* Блокуємо кліки, поки елемент зникає */
+}
+
+.login-generator-container .result-item.error-item {
+    opacity: 0;
+    animation: slideDownError 0.2s ease-out forwards;
+}
 /* ================================================================
    6. ІНСТРУМЕНТ — ТЕКСТОВИЙ ПРОСТІР (ШАБЛОНИ)
    Сітка карток шаблонів, панелі дій (копіювання, видалення),
@@ -2515,7 +2584,7 @@ body.dark .history-copy-btn:hover {
 /* 2. Кнопки Імпорт/Експорт - СВІТЛА ТЕМА */
 #import-templates-button,
 #export-templates-button {
-    background-color: var(--input-bg-color); 
+    background-color: var(--btn-bg); 
     border: 1px solid var(--input-border-color); 
     color: var(--description-color);
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
@@ -2532,7 +2601,7 @@ body.dark .history-copy-btn:hover {
 
 /* 3. Кнопка Очистити - СВІТЛА ТЕМА */
 #clear-all-templates-button {
-    background-color: var(--input-bg-color); 
+    background-color: var(--btn-bg); 
     border: 1px solid var(--input-border-color); 
     color: var(--danger-color);
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
@@ -2672,13 +2741,8 @@ body.dark #clear-all-templates-button:hover {
     border-radius: 12px;
     font-size: 16px;
     color: var(--text-color); 
-    background-color: var(--tab-strip-bg);
-    min-width: 150px;	
-}
-
-body.dark .template-name-input {
     background-color: var(--input-bg-color);
-    border-color: var(--input-border-color);
+    min-width: 150px;	
 }
 
 .template-actions {
@@ -2959,7 +3023,7 @@ body.dark .line-marker {
     align-items: center; 
     justify-content: center;
     
-    background-color: var(--tab-strip-bg);
+    background-color: var(--panel-bg);
     border-radius: 12px;
     border: 1px solid transparent; 
     
@@ -2997,11 +3061,6 @@ body.dark .line-marker {
     margin-bottom: 4px !important; 
     padding: 10px 4px 14px 4px; 
     border-color: var(--input-border-color) !important; /* Плавно проявляємо рамку */
-}
-
-/* --- ТЕМНА ТЕМА ДЛЯ ПАНЕЛЕЙ --- */
-body.dark .template-search-bar {
-    background-color: var(--bg-second-color);
 }
 
 /* Темна тема: template search bar — активний стан */
@@ -3098,15 +3157,6 @@ body.dark .template-search-bar.active {
 }
 
 /* Темна тема: search inputs row */
-body.dark .search-inputs-row input,
-body.dark .search-inputs-row select,
-body.dark .speed-select {
-    background-color: var(--input-bg-color); 
-    border-color: var(--input-border-color);
-    color: var(--text-color);
-}
-
-/* Темна тема: search inputs row */
 body.dark .search-inputs-row select option,
 body.dark .speed-select option {
     background-color: var(--content-bg-color);
@@ -3194,7 +3244,7 @@ body.dark .swap-inputs-btn:hover {
     width: calc(100% - 8px);
     margin: 0 4px;
     
-    background-color: var(--tab-strip-bg);
+    background-color: var(--panel-bg);
     border-radius: 12px;
     border: 1px solid var(--input-border-color); /* Готуємо рамку для плавної появи */
     
@@ -3214,12 +3264,6 @@ body.dark .swap-inputs-btn:hover {
         margin 0.25s cubic-bezier(0.4, 0, 0.2, 1),
         padding 0.25s cubic-bezier(0.4, 0, 0.2, 1),
         border-color 0.25s ease;
-}
-
-/* Темна тема: template config bar */
-body.dark .template-config-bar {
-    background-color: var(--bg-second-color);
-    
 }
 
 /* template config bar — активний стан */
@@ -3806,7 +3850,7 @@ body.dark .config-onu-mode-btn.is-switch:hover {
     left: 0;
     width: 100%;
     max-height: 250px;
-    background: var(--bg-second-color);
+    background: var(--panel-bg);
     border: 1px solid var(--border-color);
     border-radius: 8px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
@@ -3904,7 +3948,7 @@ body.dark .select-group-title {
     right: 0;
     min-width: 220px;
 
-    background: var(--bg-second-color);
+    background-color: var(--menu-bg);
     border: 1px solid var(--input-border-color);
     border-radius: 8px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.08);
@@ -3919,7 +3963,7 @@ body.dark .select-group-title {
 body.dark .olt-dropdown-list {
     box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45), 0 2px 8px rgba(0, 0, 0, 0.3);
     border-color: #4a4a4a;
-    background: var(--bg-second-color);
+    background-color: var(--menu-bg);
 }
 
 /* olt dropdown list — відкритий стан */
@@ -4090,17 +4134,13 @@ body.dark .scroll-nav-btn.visible:hover {
     justify-content: center;
     gap: 20px;
     width: 410px;
-    background-color: var(--bg-second-color); 
+    background-color: var(--panel-bg); 
     border: 1px solid var(--input-border-color);
     border-radius: 12px;
     padding: 14px 20px;
     margin: 0;
 }
 
-/* Темна тема: date inputs row */
-body.dark .date-inputs-row {
-    background-color: var(--bg-second-color);
-}
 
 /* 1. КОНТЕЙНЕР: Забороняємо "схлопування" висоти при закритті */
 /* Прибираємо .active з селектора, щоб висота лишалась auto під час анімації зникнення */
@@ -4198,7 +4238,7 @@ body.dark .date-calculator-container .date-input-group input[type="time"] {
     margin-top: 0px;
     padding: 0;
     
-    background-color: var(--bg-second-color); 
+    background-color: var(--primary-accent-shadow); 
     border: 1px solid var(--input-border-color);
     border-radius: 12px; 
     
@@ -4206,14 +4246,14 @@ body.dark .date-calculator-container .date-input-group input[type="time"] {
     overflow: hidden; 
 }
 
+
 /* Стилізуємо заголовок-шапку з високим контрастом */
 .date-calculator-container #result-section h2 {
     margin: 0;
     padding: 10px 15px;
     font-size: 1.2em;
     font-weight: 600;
-    
-    /* Світла тема: світло-синій фон, темно-синій текст */
+
     background-color: rgba(0, 123, 255, 0.1); /* 10% прозорості від основного синього */
     color: var(--primary-accent-color);
     border-bottom: 1px solid rgba(79, 109, 245, 0.15); /* Ледь помітний роздільник */
@@ -4222,19 +4262,14 @@ body.dark .date-calculator-container .date-input-group input[type="time"] {
 /* Область з контентом має свій фон для відділення */
 .date-calculator-container #result-section #result-display {
     padding: 15px;
-    background-color: var(--bg-second-color);
+    background-color: var(--panel-bg);
 	border-radius: 0px; 
 }
 
-/* Оновлення для темної теми */
-body.dark .date-calculator-container #result-section {
-    background-color: var(--bg-second-color); /* Темний фон контейнера */
-    border-color: var(--input-border-color);
-}
 
 /* Темна тема: date calculator container */
 body.dark .date-calculator-container #result-section #result-display {
-    background-color: var(--bg-second-color); /* Темний фон для тексту, замість білого */
+    background-color: var(--panel-bg);
 }
 
 /* Темна тема: date calculator container */
@@ -4242,7 +4277,7 @@ body.dark .date-calculator-container #result-section h2 {
     /* Темна тема: світло-помаранчевий фон, яскраво-помаранчевий текст */
     background-color: rgba(230, 162, 46, 0.15);
     color: var(--secondary-accent-color);
-    border-bottom: 1px solid rgba(230, 162, 46, 0.2);
+    border-bottom: 1px solid rgba(230, 163, 46, 0.986);
 }
 
 .date-calculator-container #result-display {
@@ -4272,15 +4307,9 @@ body.dark .date-calculator-container #result-section h2 {
     
     padding: 14px 20px; 
     border-radius: 12px; 
-    background-color: var(--bg-second-color); 
+    background-color: var(--panel-bg); 
     border: 1px solid var(--input-border-color); 
     width: 410px; 
-}
-
-/* Темна тема: Рамка та розділювачі */
-body.dark .calculator-actions-block {
-    background-color: var(--bg-second-color);
-    border-color: var(--input-border-color);
 }
 
 /* Додатковий клас, щоб кнопки в калькуляторі стояли по центру */
@@ -4323,7 +4352,7 @@ body.dark .calculator-actions-block {
 
 /* Стан HOVER (Світла тема) - Легке підсвічування замість заливки */
 .calc-action-button:hover {
-    background-color: color-mix(in srgb, var(--btn-bg), #000 5%);
+    background-color: var(--btn-bg-hover);
     border-color: var(--btn-border-hover);
 }
 .calc-action-button:hover i {
@@ -4337,7 +4366,7 @@ body.dark .calc-action-button {
     background-color: var(--btn-bg);
 }
 body.dark .calc-action-button:hover {
-    background-color: color-mix(in srgb, var(--btn-bg), #fff 5%);
+    background-color: var(--btn-bg);
     border-color: var(--btn-border-hover);
 }
 body.dark .calc-action-button:hover i {
@@ -4404,9 +4433,9 @@ body.dark .stepper-btn:not(:last-child)::after {
 
 /* HOVER для перемикачів */
 .stepper-btn:hover {
-    background-color: color-mix(in srgb, var(--btn-bg), #000 5%);
+    background-color: var(--btn-bg-hover);
     border-color: var(--btn-border-hover);
-    z-index: 2; /* Потрібно, щоб рамка перекривала сусідні кнопки */
+    z-index: 2; 
 }
 
 body.dark .stepper-btn { 
@@ -4416,7 +4445,7 @@ body.dark .stepper-btn {
 }
 
 body.dark .stepper-btn:hover {
-    background-color: color-mix(in srgb, var(--btn-bg), #fff 5%);
+    background-color: var(--btn-bg-hover);
     border-color: var(--btn-border-hover);
 }
 
@@ -4486,7 +4515,7 @@ body.dark .horizontal-divider {
 
 /* Ховер (НЕ активна) */
 #auto-reset-button:hover:not(.active) {
-    background-color: color-mix(in srgb, var(--btn-bg), #000 5%);
+    background-color: var(--btn-bg-hover);
     border-color: var(--btn-border-hover);
 }
 
@@ -4522,7 +4551,7 @@ body.dark #auto-reset-button {
 }
 /* Ховер у темній темі (коли кнопка ВИМКНЕНА) */
 body.dark #auto-reset-button:hover:not(.active) {
-    background-color: color-mix(in srgb, var(--btn-bg), #fff 5%);
+    background-color: var(--btn-bg-hover);
     border-color: var(--btn-border-hover);
 }
 
@@ -4640,19 +4669,13 @@ body.dark #auto-reset-button:focus-visible {
 
 .win11-calc {
     width: 320px; 
-    background-color: var(--bg-second-color);
+    background-color: var(--panel-bg);
     border: 1px solid var(--input-border-color);
     border-radius: 12px; 
     padding: 12px;     
     display: flex;
     flex-direction: column;
     box-shadow: var(--shadow-glass);
-}
-
-/* Темна тема: win11 calc */
-body.dark .win11-calc {
-    background-color: var(--bg-second-color);
-    border-color: var(--input-border-color);
 }
 
 /* Шапка калькулятора */
@@ -4752,7 +4775,6 @@ body.dark #calc-auto-clear-btn.active {
 
 /* Темна тема: calc display container */
 body.dark .calc-display-container {
-    background-color: var(--input-bg-color);
     border-color: var(--input-border-color);
     box-shadow: inset 0 2px 6px rgba(0,0,0,0.2);
 }
@@ -5324,8 +5346,8 @@ body.dark .info-tooltip-text::before {
 /* === СЕГМЕНТОВАНИЙ ПЕРЕМИКАЧ (СВІТЛА ТЕМА) === */
 .segmented-control {
     display: inline-flex;
-    background-color: rgba(0, 0, 0, 0.068); 
-    border: 1px solid rgba(0, 0, 0, 0.06);
+    background-color: var(--panel-bg); 
+    border: 1px solid var(--input-border-color);
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.04);
     border-radius: 12px;
     padding: 4px;
@@ -5333,8 +5355,8 @@ body.dark .info-tooltip-text::before {
 }
 
 body.dark .segmented-control {
-    background-color: var(--tabstrip-bg-dark);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    background-color: var(--panel-bg);
+    border: 1px solid var(--input-border-color);
     box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.4);
 }
 
@@ -5458,12 +5480,12 @@ body.dark .command-item:hover {
 
 /* command item — активний стан */
 .command-item:active {
-    background-color: color-mix(in srgb, var(--text-hover), #000 15%);
+    background-color: var(--btn-bg-hover);
 }
 
 /* Темна тема: command item — активний стан */
 body.dark .command-item:active {
-    background-color: color-mix(in srgb, var(--text-hover), #fff 15%);
+    background-color: var(--btn-bg-hover);
 }
 
 .command-text {
