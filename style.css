@@ -561,21 +561,19 @@ select:focus,
     height: 1.2em;
 
     /* 2. ІДЕАЛЬНЕ ВИРІВНЮВАННЯ */
-    /* Значення -0.15em або -0.2em опускає іконку трохи нижче базової лінії, 
-       що робить її ідеально рівною відносно візуального центру тексту */
     vertical-align: -0.2em; 
 
     /* 3. ВІДСТУПИ */
-    margin-right: 8px; /* Трохи більший відступ (8px замість 6px) зазвичай виглядає краще */
+    margin-right: 8px; 
     
     /* 4. ЗАХИСТ ВІД ДЕФОРМАЦІЙ */
-    object-fit: contain; /* Картинка ніколи не розтягнеться непропорційно */
-    flex-shrink: 0; /* СУПЕР ВАЖЛИВО: якщо іконка стоїть у flex-контейнері, вона не сплюснеться, коли тексту буде забагато */
+    object-fit: contain; 
+    flex-shrink: 0; 
 
     /* 5. ПОКРАЩЕННЯ UX (користувацького досвіду) */
-    user-select: none;         /* Не дає виділяти іконку синім кольором при копіюванні тексту */
-    -webkit-user-select: none; /* Для підтримки Safari/Chrome */
-    -webkit-user-drag: none;   /* Забороняє користувачу випадково "потягнути" картинку мишкою (ghost image) */
+    user-select: none;         
+    -webkit-user-select: none; 
+    -webkit-user-drag: none;  
     
     /* 6. ПЛАВНІСТЬ (опціонально) */
     transition: transform 0.2s ease, filter 0.2s ease;
@@ -586,6 +584,8 @@ select:focus,
     margin-right: 0;
     margin-left: 8px;
 }
+
+
 
 /* --- ГРУПА 0: ПЛАВНЕ ВІДТИСКАННЯ (БАЗОВИЙ СТАН) --- */
 /* Цей блок відповідає за плавне повернення кнопки на місце після кліку чи наведення */
@@ -725,10 +725,89 @@ body.dark .qn-add-btn:active {
     filter: brightness(0.9);
 }
 
+/* ====================================================================
+   --- ГРУПА 4: УНІВЕРСАЛЬНИЙ ЕФЕКТ ХВИЛІ (RIPPLE) ПРИ КЛІКУ ---
+   Застосовується до вкладок, списків та перемикачів по всьому сайту
+   ==================================================================== */
+
+/* 1. Готуємо елементи: позиціонування та обрізка хвилі по краях */
+.tab-button,
+.olt-dropdown-item,
+#login-autoclear-btn,
+.calc-action-button,
+.stepper-btn,
+#auto-reset-button,
+.segment-btn {
+    position: relative;
+    overflow: hidden; /* Критично важливо: не дає хвилі вилізти за межі кнопки */
+}
+
+/* 2. Піднімаємо всі внутрішні елементи (текст, іконки), щоб хвиля протікала ПІД ними */
+.tab-button > :not(.ripple):not(.close-tab-btn),
+.olt-dropdown-item > *,
+#login-autoclear-btn > *,
+.calc-action-button > *,
+.stepper-btn > *,
+#auto-reset-button > *,
+.segment-btn > * {
+    position: relative;
+    z-index: 2;
+    pointer-events: none; /* Клік проходить наскрізь на саму кнопку */
+}
+
+/* Виняток: гарантуємо, що хрестик вкладки залишається клікабельним і над хвилею */
+.tab-button .close-tab-btn {
+    z-index: 3 !important;
+    pointer-events: auto !important;
+}
+
+/* 3. Базовий стиль самої хвилі (Світла тема) */
+.tab-button .ripple,
+.olt-dropdown-item .ripple,
+#login-autoclear-btn .ripple,
+.calc-action-button .ripple,
+.stepper-btn .ripple,
+#auto-reset-button .ripple,
+.segment-btn .ripple {
+    position: absolute;
+    border-radius: 50%;
+    transform: scale(0);
+    /* Замість синього акценту ставимо легкий напівпрозорий чорний колір */
+    background-color: rgba(0, 0, 0, 0.12); 
+    pointer-events: none;
+    z-index: 1; 
+    animation: ripple-wave 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 4. Колір хвилі для Темної теми */
+body.dark .tab-button .ripple,
+body.dark .olt-dropdown-item .ripple,
+body.dark #login-autoclear-btn .ripple,
+body.dark .calc-action-button .ripple,
+body.dark .stepper-btn .ripple,
+body.dark #auto-reset-button .ripple,
+body.dark .segment-btn .ripple {
+    /* Замість оранжевого акценту ставимо легкий напівпрозорий білий колір */
+    background-color: rgba(255, 255, 255, 0.15); 
+}
+
+/* 5. Унікальні кольори хвиль для окремих станів (за бажанням) */
+/* Якщо автоочищення увімкнене, хвиля при кліку стає червоною, щоб попередити про вимкнення */
+#login-autoclear-btn.active .ripple { background-color: rgba(220, 53, 69, 0.3); }
+
+/* 6. Анімація розширення хвилі */
+@keyframes ripple-wave {
+    0% { transform: scale(0); opacity: 1; }
+    100% { transform: scale(4); opacity: 0; }
+}
+/* ==================================================================== */
+
+
+/* --- ГРУПА 5: СТАН DISABLED (Вимкнені елементи) --- */
 button:disabled, input:disabled, select:disabled {
     opacity: 0.6;
     cursor: not-allowed !important;
-    pointer-events: none; /* Вимикає ховери для вимкнених елементів */
+    pointer-events: none; /* Вимикає ховери та хвилі для вимкнених елементів */
 }
 
 /* ================================================================
@@ -772,7 +851,7 @@ body.dark .tabs {
 
 .tab-button {
     height: 40px;
-    padding: 0 42px 0 19px;
+    padding: 0 50px 0 14px; 
 
     cursor: pointer;
     -webkit-user-select: none;
@@ -784,12 +863,12 @@ body.dark .tabs {
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    gap: 8px;
+    gap: 6px;
 
     white-space: nowrap;
-    overflow: hidden;
     text-overflow: ellipsis;
-
+    
+    overflow: hidden;
     position: relative;
     background-color: transparent;
     color: var(--tab-inactive-text);
@@ -809,8 +888,14 @@ body.dark .tabs {
 
 .tab-button i {
     margin-right: 0;
-    font-size: 1.1em;
+    font-size: 18px;
 }
+
+/* Іконка зліва (якщо вона є) */
+.tab-button i:first-child {
+    flex-shrink: 0; /* Щоб іконка ніколи не сплющувалась */
+}
+
 
 /* Стиль для АКТИВНОЇ вкладки */
 .tab-button.active {
@@ -1028,16 +1113,12 @@ body.dark .close-tab-btn:active {
 
 /* --- 2. КНОПКА ЗАКРИТТЯ (ХРЕСТИК) --- */
 .close-tab-btn {
-    position: absolute;
-    right: 15px; 
-    top: 0;
-    bottom: 0;
-    margin: auto; 
+    position: absolute; 
+    right: 14px; 
     
     width: 22px;
     height: 22px;
     border-radius: 50%;
-    flex-shrink: 0;
     
     border: none;
     background: transparent;
@@ -1047,6 +1128,8 @@ body.dark .close-tab-btn:active {
     opacity: 0;
     color: var(--tab-inactive-text);
     transition: transform 0.2s ease, opacity 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+    
+    z-index: 3 !important; 
 }
 
 /* --- 3. КНОПКА ДОДАТИ ВКЛАДКУ (ПЛЮС) --- */
@@ -1723,11 +1806,6 @@ body.dark .moon-icon {
     padding-bottom: 0px;
     overflow-y: auto !important;
     scrollbar-gutter: stable both-edges; 
-}
-
-.container.login-generator-container.active .content-card {
-    overflow-y: auto !important;
-    scrollbar-gutter: stable both-edges;
 }
 
 .container.login-generator-container.active {
@@ -4154,11 +4232,6 @@ body.dark .date-calculator-container #result-section h2 {
     background-color: rgba(230, 162, 46, 0.15);
     color: var(--secondary-accent-color);
     border-bottom: 1px solid rgba(230, 162, 46, 0.2);
-}
-
-body.dark .date-calculator-container #result-section {
-    background-color: var(--bg-second-color); 
-    border-color: var(--input-border-color);
 }
 
 .date-calculator-container #result-display {

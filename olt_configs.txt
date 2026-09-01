@@ -195,7 +195,6 @@ interface gpon-olt_{PORT_BASE}
 onu {ONU_ID} type GPON-1GE sn {SN}
 exit
 interface gpon-onu_{PORT} 
-
 [EPON ONU REG]
 conf t
 interface epon-olt_{PORT_BASE}
@@ -210,7 +209,6 @@ no onu {ONU_ID}
 onu {ONU_ID} type GPON-1GE sn {SN}
 exit
 interface gpon-onu_{PORT} 
-
 [EPON ONU SWITCH]
 conf t
 interface epon-olt_{PORT_BASE}

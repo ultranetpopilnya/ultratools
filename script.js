@@ -1668,32 +1668,35 @@ function renderOltDropdown(filter = '') {
         items.forEach(({ olt, source }) => {
             const item = document.createElement('div');
             item.className = 'olt-dropdown-item';
-            item.textContent = olt.name;
+            
+            // 1. ВИПРАВЛЕНО: Правильна змінна olt.name у span
+            item.innerHTML = `<span>${olt.name}</span>`;
+            
             item.addEventListener('mousedown', (e) => {
-            e.preventDefault();
-            
-            // Перевіряємо, чи це ДІЙСНО інший ОЛТ порівняно з останнім обраним
-            // (якщо lastConfirmedOltName === null, значить вибирають вперше, тому не стираємо)
-            const isDifferentOlt = (lastConfirmedOltName !== null && lastConfirmedOltName !== olt.name);
+                e.preventDefault();
+                
+                const isDifferentOlt = (lastConfirmedOltName !== null && lastConfirmedOltName !== olt.name);
 
-            oltInputNode.value = olt.name;
-            selectedOltObj = olt;
-            selectedOltSource = source;
-            lastConfirmedOltName = olt.name; // Запам'ятовуємо цей вибір
-            
-            oltDropdownList.classList.remove('open');
-            vlanInputNode.placeholder = olt.defaultVlan ? `VLAN (${olt.defaultVlan})` : 'VLAN';
-            
-            // Показуємо кнопку, якщо в назві є (MIX)
-            resetMixButton(true, olt.name.includes('(MIX)'));
+                oltInputNode.value = olt.name;
+                selectedOltObj = olt;
+                selectedOltSource = source;
+                lastConfirmedOltName = olt.name;
+                
+                // 2. ВИПРАВЛЕНО: Даємо 250 мілісекунд затримки, щоб побачити красиву хвилю
+                setTimeout(() => {
+                    oltDropdownList.classList.remove('open');
+                }, 250);
+                
+                vlanInputNode.placeholder = olt.defaultVlan ? `VLAN (${olt.defaultVlan})` : 'VLAN';
+                
+                resetMixButton(true, olt.name.includes('(MIX)'));
 
-            // Стираємо дані ТІЛЬКИ якщо змінили ОЛТ на інший
-            if (isDifferentOlt) {
-                snInputBox.value = '';
-                portInputBox.value = '';
-                vlanInputNode.value = '';
-            }
-        });
+                if (isDifferentOlt) {
+                    snInputBox.value = '';
+                    portInputBox.value = '';
+                    vlanInputNode.value = '';
+                }
+            });
             oltDropdownList.appendChild(item);
         });
     }
@@ -4461,3 +4464,51 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
+// ==========================================
+// УНІВЕРСАЛЬНИЙ ЕФЕКТ ХВИЛІ (RIPPLE EFFECT)
+// ==========================================
+// Додано { capture: true }, щоб хвиля спрацьовувала ДО того, 
+// як інші панелі (наприклад configPanel) заблокують клік через stopPropagation.
+document.addEventListener('mousedown', function (e) {
+    // Перевіряємо, чи клік був по одному з вказаних класів/ID
+    const targetBtn = e.target.closest(`
+        .tab-button, 
+        .olt-dropdown-item, 
+        #login-autoclear-btn, 
+        .calc-action-button, 
+        .stepper-btn, 
+        #auto-reset-button, 
+        .segment-btn
+    `);
+
+    // Якщо клік був по потрібній кнопці
+    if (targetBtn) {
+        // Отримуємо координати кнопки відносно екрану
+        const rect = targetBtn.getBoundingClientRect();
+        
+        // Вираховуємо координати кліку ВНУТРІШНЬО самій кнопці
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        // Створюємо елемент хвилі
+        const ripple = document.createElement('span');
+        ripple.classList.add('ripple');
+
+        // Робимо розмір кола рівним найбільшій стороні елемента
+        const diameter = Math.max(rect.width, rect.height);
+        const radius = diameter / 2;
+
+        ripple.style.width = ripple.style.height = `${diameter}px`;
+        ripple.style.left = `${x - radius}px`;
+        ripple.style.top = `${y - radius}px`;
+
+        // Додаємо хвилю
+        targetBtn.appendChild(ripple);
+
+        // Видаляємо елемент після завершення анімації (600мс)
+        setTimeout(() => {
+            ripple.remove();
+        }, 600);
+    }
+}, true); // <-- ОСЬ ЦЕЙ МАГІЧНИЙ ПАРАМЕТР ВИРІШУЄ ВСЕ
