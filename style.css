@@ -955,14 +955,14 @@ body.dark .tab-button:focus-visible {
 
 /* tab button — ховер */
 .tab-button:hover:not(.active) {
-    color: var(--text-color);
+    color: var(--inactive-text);
     background-color: rgba(0, 0, 0, 0.05);
     border-radius: 9999px;
 }
 
 body.dark .tab-button:hover:not(.active) {
-    color: var(--text-color);
-    background-color: rgba(238, 7, 7, 0.932);
+    color: var(--inactive-text);
+    background-color: rgba(255, 255, 255, 0.05);
 }
 
 /* === СТИЛІ ДЛЯ DRAG & DROP (ВИПРАВЛЕНО) === */
@@ -5514,7 +5514,7 @@ body.dark .segmented-control {
     border-radius: 8px;
     font-size: 13.5px; /* Трохи акуратніший шрифт */
     font-weight: 600;
-    color: #667085;
+    color: var(--inactive-text);
     cursor: pointer;
     
     transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
@@ -5542,7 +5542,7 @@ body.dark .segmented-control {
 }
 
 body.dark .segment-btn {
-    color: #94a3b8;
+    color: var(--inactive-text);
 }
 
 /* НАВЕДЕННЯ НА НЕАКТИВНУ вкладку (Темна тема) */
