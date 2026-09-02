@@ -78,7 +78,7 @@ select {
     /* TABS */
     --template-strip-bg: #fbfbff;
     --inactive-text: #7b97be;
-    --text-hover: #eef2f7;
+    --text-hover: rgb(238, 242, 247);
 
     /* SCROLLBAR */
     --scrollbar-track: rgba(0, 0, 0, 0.03);
@@ -791,7 +791,7 @@ body.dark .qn-add-btn:active {
     position: absolute;
     border-radius: 50%;
     transform: scale(0);
-    background-color: rgba(0, 0, 0, 0.15);
+    background-color: color-mix(in srgb, currentColor 20%, transparent);
     pointer-events: none;
     z-index: 1;
     animation: ripple-wave 0.8s cubic-bezier(0.4, 0, 0.2, 1);
@@ -809,7 +809,7 @@ body.dark #auto-reset-button .ripple,
 body.dark .segment-btn .ripple,
 body.dark .command-item .ripple,
 body.dark .sub-command-item .ripple {
-    background-color: rgba(138, 138, 138, 0.3);
+    background-color: color-mix(in srgb, currentColor 15%, transparent);
 }
 
 /* 5. Унікальні кольори хвиль для окремих станів (за бажанням) */
