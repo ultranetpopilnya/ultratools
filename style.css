@@ -4569,7 +4569,6 @@ body.dark #auto-reset-button.active .progress-ring-fg { stroke: var(--secondary-
 
 /* Ховер у ВКЛЮЧЕНОМУ (активному) стані — Темна тема */
 body.dark #auto-reset-button.active:hover {
-    /* Робимо фон трошки яскравішим (25% замість 15%), але НЕ суцільним */
     background-color: rgba(230, 162, 46, 0.25); 
     border-color: var(--secondary-accent-color);
     color: var(--secondary-accent-color); /* Текст залишається оранжевим */
