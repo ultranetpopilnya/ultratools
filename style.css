@@ -77,7 +77,7 @@ select {
 
     /* TABS */
     --template-strip-bg: #fbfbff;
-    --tab-inactive-text: #94a3b8;
+    --inactive-text: #94a3b8;
     --text-hover: #eef2f7;
 
     /* SCROLLBAR */
@@ -144,6 +144,7 @@ color-scheme: dark;
 
     /* TEXT */
     --text-color: #e6edf5;
+    --inactive-text: #8F8F8F;
     --header-color: #f5f7fa;
     --description-color: #8b96a8;
 
@@ -170,7 +171,6 @@ color-scheme: dark;
 
     /* TABS */
 --template-strip-bg: #2B2B2B; 
-    --tab-inactive-text: #8a92a0;
     --text-hover: rgba(255, 255, 255, 0.07);
 
     /* SCROLLBAR */
@@ -406,12 +406,12 @@ body.dark .page-title .isp-e-color-p {
 
 ::placeholder {
     color: #94a3b8;
-    opacity: 1; /* Firefox вимагає це */
+    opacity: 1;
 }
 
-/* Темна тема: ::placeholder */
 body.dark ::placeholder {
-    color: #667085; /* Темніший, щоб не різав очі на темному фоні */
+    color: #6E6E6E;
+    opacity: 1;
 }
 
 /* ================================================================
@@ -894,7 +894,7 @@ body.dark .tabs {
     overflow: hidden;
     position: relative;
     background-color: transparent;
-    color: var(--tab-inactive-text);
+    color: var(--inactive-text);
     border: none;
     border-radius: 9999px;
     font-size: 16px;
@@ -962,7 +962,7 @@ body.dark .tab-button:focus-visible {
 
 body.dark .tab-button:hover:not(.active) {
     color: var(--text-color);
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: rgba(238, 7, 7, 0.932);
 }
 
 /* === СТИЛІ ДЛЯ DRAG & DROP (ВИПРАВЛЕНО) === */
@@ -1035,7 +1035,7 @@ body.dark .tab-button:hover:not(.active) {
 /* Іконки всередині меню */
 .add-tab-item i {
     font-size: 14px;
-    color: var(--tab-inactive-text);
+    color: var(--inactive-text);
     transition: color 0.2s ease;
 }
 
@@ -1138,7 +1138,7 @@ body.dark .close-tab-btn:active {
     padding: 0;
     
     opacity: 0;
-    color: var(--tab-inactive-text);
+    color: var(--text-color);
     transition: transform 0.2s ease, opacity 0.2s ease, background-color 0.2s ease, color 0.2s ease;
     
     z-index: 3 !important; 
@@ -1159,7 +1159,7 @@ body.dark .close-tab-btn:active {
     border-radius: 50%;
     border: none;
     background: transparent;
-    color: var(--tab-inactive-text);
+    color: var(--text-color);
     cursor: pointer;
     display: none; 
     justify-content: center;
@@ -1275,7 +1275,7 @@ body.dark .add-tab-menu {
 .drag-handle {
     cursor: grab;
     padding: 0 4px;
-    color: var(--tab-inactive-text);
+    color: var(--text-color);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1549,7 +1549,7 @@ body.dark .version-number {
 /* extension info btn */
 .extension-info-btn {
     display: inline-flex; align-items: center; justify-content: center;
-    padding: 6px 10px; background-color: transparent; color: var(--tab-inactive-text);
+    padding: 6px 10px; background-color: transparent; color: var(--text-color);
     border: 1px solid var(--input-border-color); border-radius: 8px;
     text-decoration: none; transition: all 0.2s ease-in-out; font-size: 14px;
 }
@@ -2284,7 +2284,7 @@ body.dark .history-toggle-btn.active #history-arrow {
 .clear-history-header-btn {
     background: transparent;
     border: none;
-    color: var(--tab-inactive-text);
+    color: var(--text-color);
     cursor: pointer;
     width: 32px;
     height: 32px;
@@ -2304,7 +2304,7 @@ body.dark .history-toggle-btn.active #history-arrow {
 
 .empty-history-msg {
     text-align: center;
-    color: var(--tab-inactive-text);
+    color: var(--inactive-text);
     padding: 28px 15px;
     font-style: normal;
     font-size: 0.9em;
@@ -2378,6 +2378,10 @@ body.dark .history-toggle-btn.active #history-arrow {
     transition: opacity 0.2s ease;
 }
 
+body.dark .history-item {
+    background-color: var(--menu-bg);   /* #363636 — світліше за panel-bg, картка "спливає" */
+}
+
 body.dark .history-item::before {
     background: var(--secondary-accent-color);
 }
@@ -2388,7 +2392,7 @@ body.dark .history-item::before {
 }
 
 body.dark .history-item:hover {
-    border-color: var(--secondary-accent-color);
+    background-color: var(--tab-strip-bg); /* #303030 */
 }
 
 .history-item:hover::before { opacity: 1; }
@@ -2403,7 +2407,7 @@ body.dark .history-item:hover {
 }
 
 .history-copy-btn {
-    background: var(--btn-bg);
+    background: var(--input-bg-color);
     border: 1px solid var(--input-border-color);
     color: var(--text-color);
     border-radius: 8px;
@@ -2770,9 +2774,9 @@ body.dark #clear-all-templates-button:hover {
 .template-actions button {
     padding: 0;
     border: none;
-    border-radius: 8px; /* Замість круглого робимо м'який квадрат (більш сучасно) */
-    background-color: transparent; /* ПРИБИРАЄМО ФОН */
-    color: var(--tab-inactive-text);
+    border-radius: 8px; 
+    background-color: transparent; 
+    color: var(--text-color);
     box-shadow: none; /* Прибираємо тінь */
     cursor: pointer;
     
@@ -2791,7 +2795,7 @@ body.dark #clear-all-templates-button:hover {
 
 /* Темна тема: базовий колір іконок */
 body.dark .template-actions button {
-    color: #e2e2e2;
+    color: var(--text-color);
 }
 
 /* 3. ХОВЕР-ЕФЕКТИ (КОЛЬОРИ З'ЯВЛЯЮТЬСЯ ТІЛЬКИ ТУТ) */
@@ -3189,7 +3193,7 @@ body.dark .search-inputs-row select option {
 /* Маленький напис "Швидкість:" */
 .speed-label {
     font-size: 10px;
-    color: var(--tab-inactive-text);
+    color: var(--inactive-text);
     font-weight: 700;
     text-transform: uppercase;
     line-height: 1;  
@@ -3413,7 +3417,7 @@ body.dark .config-generate-btn {
     border: 1px solid var(--input-border-color);
     border-radius: 8px;
     background-color: var(--input-bg-color);
-    color: var(--tab-inactive-text);
+    color: var(--text-color);
     
     cursor: pointer;
     display: flex;
@@ -3867,7 +3871,7 @@ body.dark .config-onu-mode-btn.is-switch:hover {
 .olt-no-results {
     padding: 14px 12px;
     font-size: 12px;
-    color: var(--tab-inactive-text);
+    color: var(--inactive-text);
     text-align: center;
     font-style: italic;
 }
@@ -3897,7 +3901,7 @@ body.dark .config-onu-mode-btn.is-switch:hover {
     padding: 6px 10px;
     font-size: 0.75rem;
     font-weight: bold;
-    color: var(--tab-inactive-text);
+    color: var(--inactive-text);
     background: rgba(0, 0, 0, 0.03);
     text-transform: uppercase;
 }
@@ -4484,7 +4488,7 @@ body.dark .date-calculator-container #result-section h2 {
 
 .calc-action-button i { 
     font-size: 15px; 
-    color: var(--tab-inactive-text); 
+    color: var(--text-color); 
     transition: color 0.2s ease; 
 }
 
@@ -4918,7 +4922,7 @@ body.dark .calc-display-container {
 
 #calc-prev-operation {
     font-size: 14px; 
-    color: var(--tab-inactive-text);
+    color: var(--inactive-text);
     height: 20px;
     margin-bottom: 4px;
     
@@ -5136,9 +5140,9 @@ body.dark .c-btn.equal:hover {
 
 /* Темна тема: calc history panel */
 body.dark .calc-history-panel {
-    background: linear-gradient(135deg, rgba(35, 35, 42, 0.98) 0%, rgba(25, 25, 30, 0.98) 100%);
+    background: linear-gradient(135deg, rgba(42, 42, 42, 0.98) 0%, rgba(28, 28, 28, 0.98) 100%);
     box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.5);
-    border-top: 1px solid var(--input-border-color); /* НОВЕ */
+    border-top: 1px solid var(--panel-border);
 }
 
 .calc-history-list {
@@ -5162,7 +5166,7 @@ body.dark .calc-history-panel {
 .hist-header span { font-weight: bold; font-size: 16px; color: var(--text-color); }
 
 .hist-clear-btn {
-    background: none; border: none; cursor: pointer; color: var(--tab-inactive-text);
+    background: none; border: none; cursor: pointer; color: var(--inactive-text);
     padding: 6px; border-radius: 8px; transition: color 0.2s; font-size: 15px;
 }
 
@@ -5219,7 +5223,7 @@ body.dark .hist-item:hover {
 /* Темна тема: hist close btn — ховер */
 body.dark .hist-close-btn:hover { background-color: rgba(255,255,255,0.05); }
 
-.hist-op { font-size: 12px; color: var(--tab-inactive-text); margin-bottom: 3px; }
+.hist-op { font-size: 12px; color: var(--inactive-text); margin-bottom: 3px; }
 
 .hist-res { font-size: 18px; font-weight: 600; color: var(--text-color); }
 
@@ -5400,7 +5404,7 @@ body.dark #controls-and-clarification::after {
 .info-icon {
     margin-bottom: 2px;
     font-size: 19px;
-    color: var(--tab-inactive-text);
+    color: var(--inactive-text);
     transition: color 0.2s ease, transform 0.2s ease;
 }
 
@@ -5779,7 +5783,7 @@ body.dark .sub-command-item .command-text {
     margin-left: 10px;
     font-size: 0.8em;
     transition: transform 0.3s ease;
-    color: var(--tab-inactive-text);
+    color: var(--inactive-text);
 }
 
 /* Поворот стрілочки при відкритті */
@@ -5927,7 +5931,7 @@ body.dark .qn-header { border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
 }
 
 .qn-close-btn {
-    position: relative; /* Обов'язково для хрестика всередині */
+    position: relative; 
     left: 2px;
 
     width: 22px;
@@ -5941,7 +5945,7 @@ body.dark .qn-header { border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
     padding: 0;
     
     opacity: 0.6; /* Завжди видно, але напівпрозоро */
-    color: var(--tab-inactive-text);
+    color: var(--text-color);
     transition: transform 0.2s ease, opacity 0.2s ease, background-color 0.2s ease, color 0.2s ease;
 }
 
@@ -6140,7 +6144,7 @@ body.dark .qn-item.qn-drag-over {
 /* Повідомлення про порожній список */
 .qn-empty {
     text-align: center;
-    color: var(--tab-inactive-text);
+    color: var(--inactive-text);
     font-size: 13px;
     padding: 25px 0;
     font-style: italic;
@@ -6160,7 +6164,7 @@ body.dark .qn-item.qn-drag-over {
 
 /* qn drag handle — ховер */
 .qn-drag-handle:hover {
-    color: var(--tab-inactive-text);
+    color: var(--primary-accent-color);
 }
 
 /* qn drag handle — активний стан */
@@ -6211,7 +6215,7 @@ body.dark .qn-placeholder {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--tab-inactive-text);
+    color: var(--text-color);
     transition: all 0.2s ease;
 }
 
