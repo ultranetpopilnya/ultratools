@@ -76,7 +76,7 @@ select {
     --template-handle-border: #cbd5e1;
 
     /* TABS */
-    --tab-strip-bg: #fbfbff;
+    --template-strip-bg: #fbfbff;
     --tab-inactive-text: #94a3b8;
     --text-hover: #eef2f7;
 
@@ -158,18 +158,18 @@ color-scheme: dark;
     --success-color: #38A17B;
 
     /* INPUTS */
-    --input-bg-color: #292d33;
+--input-bg-color:    #2D2D2D;
     --input-border-color: rgba(255, 255, 255, 0.10);
     --input-focus-border-color: var(--primary-accent-color);
 
     /* TEMPLATES */
-    --template-bg-color: #292d33;
+--template-bg-color: #2D2D2D;
     --template-border-color: rgba(255, 255, 255, 0.10);
     --template-handle-bg: rgba(255, 255, 255, 0.07);
     --template-handle-border: rgba(255, 255, 255, 0.05);
 
     /* TABS */
-    --tab-strip-bg: #30353C;
+--template-strip-bg: #2B2B2B; 
     --tab-inactive-text: #8a92a0;
     --text-hover: rgba(255, 255, 255, 0.07);
 
@@ -191,14 +191,14 @@ color-scheme: dark;
     --snow-color: #cbd5e1;
     
     /*BUTTON */
---btn-bg: #313338;
---btn-border-hover: #d69b2d;
---btn-bg-hover: #313338;
+--btn-bg:          #3A3A3A;   
+--btn-bg-hover:     #3A3A3A;   
+--btn-border-hover: #d69b2d; 
 
     /* BACKGROUNDS */
---second-color-bg: #171A1F;
---panel-bg:        #20242A;
---menu-bg:         #2B3037;
+--second-color-bg:  #141414;
+--panel-bg:          #262626;
+--menu-bg:           #2A2A2A;
 
     /* GLASS */
     --glass-white-lg: rgba(255, 255, 255, 0.14);
@@ -224,10 +224,10 @@ color-scheme: dark;
         inset 0 -1px 1px rgba(0, 0, 0, 0.22);
 
     /* PANELS */
-    --panel-border: rgba(255, 255, 255, 0.10);
-    --tabstrip-bg: rgba(35, 37, 41, 0.85);
-    --active-bg: rgba(46, 48, 53, 0.95);
-    --card-bg: rgba(35, 37, 41, 0.85);
+--panel-border: rgba(255, 255, 255, 0.10);
+--tabstrip-bg:  rgba(38, 38, 38, 0.85);
+--card-bg:      rgba(38, 38, 38, 0.85);
+--active-bg:    rgba(53, 53, 53, 0.95);  
 }
 
 /* :root */
@@ -2968,13 +2968,13 @@ body.dark .textarea-wrapper {
     overflow: hidden; 
     padding-top: 10px; 
     padding-bottom: 10px;
-	background-color: var(--tab-strip-bg); 
+	background-color: var(--template-strip-bg); 
     border-right: 1px solid var(--input-border-color);
 }
 
 /* Темна тема: line marker gutter */
 body.dark .line-marker-gutter {
-    background-color: var(--tab-strip-bg); 
+    background-color: var(--template-strip-bg); 
     border-right: 1px solid var(--input-border-color);
 }
 
