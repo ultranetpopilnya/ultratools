@@ -155,7 +155,7 @@ color-scheme: dark;
     /* STATUS */
     --danger-color: #df3333;
     --danger-bg-dark: rgba(240, 107, 107, 0.15);
-    --success-color: #39ad83;
+    --success-color: #38A17B;
 
     /* INPUTS */
     --input-bg-color: #292d33;
@@ -2130,7 +2130,7 @@ body.dark .login-generator-container .result-type-badge {
     border-radius: 9999px;
     cursor: pointer;
     transition: filter 0.2s;
-    width: 44px; /* Зробив трохи вужчими, щоб економити місце */
+    width: 44px; 
     height: 28px;
     display: flex;
     justify-content: center;
@@ -2140,32 +2140,42 @@ body.dark .login-generator-container .result-type-badge {
     padding: 0;
 }
 
-/* login generator container */
 .login-generator-container .result-item .regenerate-login-btn {
     background-color: var(--primary-accent-color, #6f42c1);
 }
 
-/* Темна тема: login generator container */
 body.dark .login-generator-container .result-item .regenerate-login-btn {
     background-color: var(--secondary-accent-color, #8a5ad4);
 }
 
-/* login generator container */
 .login-generator-container .result-item .copy-login-btn {
     background-color: var(--success-color);
 }
 
-/* login generator container */
 .login-generator-container .result-item .copy-login-btn.copied {
     background-color: var(--success-color);
     filter: brightness(1.2);
 }
 
-/* login generator container — ховер */
-.login-generator-container .result-item .regenerate-login-btn:hover { box-shadow: 0 2px 8px rgba(230, 162, 46, 0.25); }
+/* Regenerate — тінь під колір кнопки (світла тема, --primary-accent-color) */
+.login-generator-container .result-item .regenerate-login-btn:hover {
+    box-shadow: 0 2px 8px rgba(79, 109, 245, 0.35);
+}
 
-/* login generator container — ховер */
-.login-generator-container .result-item .copy-login-btn:hover { box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3); }
+/* Regenerate — тінь під колір кнопки (темна тема, --secondary-accent-color) */
+body.dark .login-generator-container .result-item .regenerate-login-btn:hover {
+    box-shadow: 0 2px 8px rgba(214, 155, 45, 0.4);
+}
+
+/* Copy — тінь під колір кнопки (світла тема, --success-color) */
+.login-generator-container .result-item .copy-login-btn:hover {
+    box-shadow: 0 4px 8px rgba(22, 163, 122, 0.35);
+}
+
+/* Copy — тінь під колір кнопки (темна тема, --success-color) */
+body.dark .login-generator-container .result-item .copy-login-btn:hover {
+    box-shadow: 0 4px 8px rgba(57, 173, 131, 0.45);
+}
 
 .login-generator-container .content-card > p {
     margin-top: 0;
