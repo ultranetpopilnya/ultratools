@@ -2260,7 +2260,8 @@ body.dark .history-toggle-btn:hover { color: var(--secondary-accent-color); }
     color: var(--primary-accent-color);
     font-size: 1em;
     line-height: 22px;
-    margin-right: 10px;   /* ← відступ саме тут, а не через gap */
+    margin-right: 8px;
+    margin-left: -4px;
     transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.25s ease, color 0.25s ease;
     will-change: transform;
 }
@@ -2288,6 +2289,7 @@ body.dark .history-toggle-btn.active #history-arrow {
     cursor: pointer;
     width: 32px;
     height: 32px;
+    margin: 0 7px 0 0;
     border-radius: 8px;
     font-size: 1rem;
     display: flex;
@@ -2341,6 +2343,7 @@ body.dark .history-toggle-btn.active #history-arrow {
                 opacity 0.3s ease-out, 
                 transform 0.3s ease-out, 
                 padding 0.4s ease-out;
+    background-color: var(--input-bg-color);            
 }
 
 #history-list {
