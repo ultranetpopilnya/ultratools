@@ -264,140 +264,182 @@ function generateLogins() {
     const fullNameInput = document.getElementById('fullNameInput');
     const fullNames = fullNameInput.value.trim();
     const resultsContainer = document.getElementById('results-container');
-    resultsContainer.innerHTML = '';
     
     lastGeneratedLogin = '';
 
-    if (!fullNames) return;
+    // Якщо поле пусте — плавно видаляємо всі елементи, що зараз на екрані
+    if (!fullNames) {
+        const activeChildren = Array.from(resultsContainer.children).filter(c => !c.classList.contains('removing'));
+        activeChildren.forEach(child => {
+            child.classList.add('removing'); // Запускаємо CSS-анімацію зникнення
+            setTimeout(() => {
+                if (child.parentNode) child.remove(); // Видаляємо з HTML через 150 мілісекунд
+            }, 150);
+        });
+        return;
+    }
 
     const lines = fullNames.split('\n');
     
     const companyRegex = /(^|\s)(фоп|тов|тзов|пп|ат|прат|пат|ват|зат|тдв|кб|го|гс|кп|дп|фг|сфг|осбб|жбк|бф|нвп|зош|нвк|днз|црл)(\s|$)/i;
     const strictCompanyKeyword = /^(фоп|тов|тзов|пп|ат|прат|пат|ват|зат|тдв|кб|го|гс|кп|дп|фг|сфг|осбб|жбк|бф|нвп|зош|нвк|днз|црл)$/i;
 
+    // --- ЕТАП 1: ЗБИРАЄМО НОВІ ДАНІ ---
+    const parsedData = [];
+
     lines.forEach(line => {
         const fullName = line.trim();
         if (fullName === '') return;
 
-        // Валідація на "Тільки цифри"
+        // Валідація
         if (/^[\d\s]+$/.test(fullName)) {
-            const errorElement = document.createElement('div');
-            errorElement.className = 'result-item error-item';
-            errorElement.innerHTML = `<span style="color: #dc3545; font-weight: bold; font-size: 1em; text-align: center">Вхідні дані не можуть бути лише цифрами!</span>`;
-            resultsContainer.appendChild(errorElement);
+            parsedData.push({ type: 'error', message: 'Вхідні дані не можуть бути лише цифрами!' });
             return;
         }
-        
-        // Валідація на латиницю
         if (/[a-z]/i.test(fullName)) {
-            const errorElement = document.createElement('div');
-            errorElement.className = 'result-item error-item';
-            errorElement.innerHTML = `<span style="color: #dc3545; font-weight: bold; font-size: 1em; text-align: center;">Трансліт тільки з української!</span>`;
-            resultsContainer.appendChild(errorElement);
+            parsedData.push({ type: 'error', message: 'Транслітерація лише з української мови.<br>Можливо в тексті присутні латинські літери.' });
             return;
         }
 
-        // Створюємо групу для результатів саме цього рядка (щоб вони стояли поруч)
-        const groupDiv = document.createElement('div');
-        groupDiv.className = 'result-group';
-
-        // Локальна функція для додавання картки в групу
-        function appendResult(login, typeLabel, dataset, originalFullName) {
-            if (!login) return;
-            const resultItem = document.createElement('div');
-            resultItem.className = 'result-item';
-
-            for (const key in dataset) {
-                resultItem.dataset[key] = dataset[key];
-            }
-
-            if (!lastGeneratedLogin) lastGeneratedLogin = login;
-
-            // HTML картки (додано бейдж зверху, а спан з логіном отримав клас login-text)
-            resultItem.innerHTML = `
-                <div class="result-type-badge">${typeLabel}</div>
-                <span class="login-text">${login}</span>
-                <div class="original-name" title="${originalFullName}">${originalFullName}</div>
-                <div class="actions-wrapper">
-                    <button class="regenerate-login-btn" onclick="generateAlternativeLogin(this)" title="Згенерувати наступний варіант">
-                        <i class="fas fa-sync-alt"></i>
-                    </button>
-                    <button class="copy-login-btn" onclick="copyLogin(this)" title="Копіювати логін">
-                        <i class="fas fa-copy"></i>
-                    </button>
-                </div>
-            `;
-            groupDiv.appendChild(resultItem);
-        }
+        const items = [];
+        const pushItem = (login, typeLabel, dataset, originalFullName) => {
+            if (login) items.push({ login, typeLabel, dataset, originalFullName });
+        };
 
         const parts = fullName.split(/\s+/).filter(p => p.length > 0);
-        
-        const isCompany = companyRegex.test(fullName.toLowerCase()) || 
-              parts.length > 3 || 
-              /\d/.test(fullName) || 
-              /["“”«»]/.test(fullName);
+        const isCompany = companyRegex.test(fullName.toLowerCase()) || parts.length > 3 || /\d/.test(fullName) || /["“”«»]/.test(fullName);
         
         if (isCompany) {
             let loginFull = transliterate(fullName).replace(/[^a-z0-9]/g, '');
-            appendResult(loginFull, 'Повний', { isCompany: 'true', baseLogin: loginFull, suffixCounter: '1' }, fullName);
+            pushItem(loginFull, 'Повний', { isCompany: 'true', baseLogin: loginFull, suffixCounter: '1' }, fullName);
 
             let abbrLogin = '';
             parts.forEach(part => {
-                // Очищаємо слово від дужок, лапок та спецсимволів перед обробкою
                 let cleanPart = part.replace(/[^a-zA-Zа-яА-ЯіїєґІЇЄҐ0-9]/g, '');
-                
-                // Якщо після очищення нічого не залишилося (наприклад, був символ "-"), пропускаємо
                 if (!cleanPart) return; 
-
                 if (strictCompanyKeyword.test(cleanPart) || /\d/.test(cleanPart)) {
                     abbrLogin += transliterate(cleanPart).replace(/[^a-z0-9]/g, '');
                 } else {
                     abbrLogin += transliterate(cleanPart.charAt(0)).replace(/[^a-z0-9]/g, '');
                 }
             });
-            
-            if (abbrLogin && abbrLogin !== loginFull) {
-                appendResult(abbrLogin, 'Скорочений', { isCompany: 'true', baseLogin: abbrLogin, suffixCounter: '1' }, fullName);
-            }
-
+            if (abbrLogin && abbrLogin !== loginFull) pushItem(abbrLogin, 'Скорочений', { isCompany: 'true', baseLogin: abbrLogin, suffixCounter: '1' }, fullName);
         } else {
             if (parts.length < 3) {
                 let loginFull = parts.map(part => transliterate(part)).join('').replace(/[^a-z0-9]/g, '');
-                appendResult(loginFull, 'Повний', { isCompany: 'true', baseLogin: loginFull, suffixCounter: '1' }, fullName);
+                pushItem(loginFull, 'Повний', { isCompany: 'true', baseLogin: loginFull, suffixCounter: '1' }, fullName);
                 
                 let loginAbbr = parts.map(part => {
                     let cleanPart = part.replace(/[^a-zA-Zа-яА-ЯіїєґІЇЄҐ0-9]/g, '');
                     return cleanPart ? transliterate(cleanPart.charAt(0)) : '';
                 }).join('').replace(/[^a-z0-9]/g, '');
-                if (loginAbbr && loginAbbr !== loginFull) {
-                    appendResult(loginAbbr, 'Скорочений', { isCompany: 'true', baseLogin: loginAbbr, suffixCounter: '1' }, fullName);
-                }
+                if (loginAbbr && loginAbbr !== loginFull) pushItem(loginAbbr, 'Скорочений', { isCompany: 'true', baseLogin: loginAbbr, suffixCounter: '1' }, fullName);
             } else {
                 let surname = transliterate(parts[0]).replace(/[^a-z0-9]/g, '');
                 let nameFull = transliterate(parts[1]).replace(/[^a-z0-9]/g, '');
                 let patronymicFull = transliterate(parts[2]).replace(/[^a-z0-9]/g, '');
-
                 let nameInitial = nameFull.charAt(0);
                 let patronymicInitial = patronymicFull.charAt(0);
 
                 let loginStandard = surname + nameInitial + patronymicInitial;
-                appendResult(loginStandard, 'Прізвище + ініціали', { 
-                    isCompany: 'false', surname: surname, nameInitial: nameInitial, patronymicFull: patronymicFull, patrIndex: '1' 
-                }, fullName);
+                pushItem(loginStandard, 'Прізвище + ініціали', { isCompany: 'false', surname: surname, nameInitial: nameInitial, patronymicFull: patronymicFull, patrIndex: '1' }, fullName);
 
                 let loginFullVariant = surname + nameFull + patronymicFull;
-                appendResult(loginFullVariant, 'Повний', { 
-                    isCompany: 'true', baseLogin: loginFullVariant, suffixCounter: '1' 
-                }, fullName);
+                pushItem(loginFullVariant, 'Повний', { isCompany: 'true', baseLogin: loginFullVariant, suffixCounter: '1' }, fullName);
             }
         }
 
-        // Додаємо групу з картками в основний контейнер
-        if (groupDiv.children.length > 0) {
-            resultsContainer.appendChild(groupDiv);
+        if (items.length > 0) parsedData.push({ type: 'group', items });
+    });
+
+    // --- ЕТАП 2: МАЛЮЄМО І ВИДАЛЯЄМО З АНІМАЦІЄЮ ---
+    
+    // Беремо тільки ті групи, які зараз активні (не в процесі зникнення)
+    const existingNodes = Array.from(resultsContainer.children).filter(c => !c.classList.contains('removing'));
+    
+    parsedData.forEach((data, index) => {
+        let node = existingNodes[index];
+        
+        if (data.type === 'error') {
+            if (!node || !node.classList.contains('error-item')) {
+                const newNode = document.createElement('div');
+                newNode.className = 'result-item error-item';
+                newNode.innerHTML = `<span style="color: #dc3545; font-weight: bold; font-size: 1em; text-align: center">${data.message}</span>`;
+                if (node) resultsContainer.replaceChild(newNode, node);
+                else resultsContainer.appendChild(newNode);
+                existingNodes[index] = newNode;
+            } else {
+                const span = node.querySelector('span');
+                if (span.innerHTML !== data.message) span.innerHTML = data.message;
+            }
+        } else if (data.type === 'group') {
+            if (!node || !node.classList.contains('result-group')) {
+                const newNode = document.createElement('div');
+                newNode.className = 'result-group';
+                if (node) resultsContainer.replaceChild(newNode, node);
+                else resultsContainer.appendChild(newNode);
+                node = newNode;
+                existingNodes[index] = node;
+            }
+            
+            // Беремо картки логінів всередині групи (ігноруючи ті, що зникають)
+            const existingItems = Array.from(node.children).filter(c => !c.classList.contains('removing'));
+            
+            data.items.forEach((itemData, itemIndex) => {
+                let itemNode = existingItems[itemIndex];
+                if (!itemNode) {
+                    itemNode = document.createElement('div');
+                    itemNode.className = 'result-item';
+                    itemNode.innerHTML = `
+                        <div class="result-type-badge">${itemData.typeLabel}</div>
+                        <span class="login-text">${itemData.login}</span>
+                        <div class="original-name" title="${itemData.originalFullName}">${itemData.originalFullName}</div>
+                        <div class="actions-wrapper">
+                            <button class="regenerate-login-btn" onclick="generateAlternativeLogin(this)" title="Згенерувати наступний варіант">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                            <button class="copy-login-btn" onclick="copyLogin(this)" title="Копіювати логін">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                    `;
+                    for (const key in itemData.dataset) itemNode.dataset[key] = itemData.dataset[key];
+                    node.appendChild(itemNode);
+                } else {
+                    const loginTextNode = itemNode.querySelector('.login-text');
+                    const badgeNode = itemNode.querySelector('.result-type-badge');
+                    const originalNameNode = itemNode.querySelector('.original-name');
+                    
+                    if (loginTextNode.textContent !== itemData.login) loginTextNode.textContent = itemData.login;
+                    if (badgeNode.textContent !== itemData.typeLabel) badgeNode.textContent = itemData.typeLabel;
+                    if (originalNameNode.textContent !== itemData.originalFullName) {
+                        originalNameNode.textContent = itemData.originalFullName;
+                        originalNameNode.title = itemData.originalFullName;
+                    }
+                    for (const key in itemData.dataset) {
+                        if (itemNode.dataset[key] !== itemData.dataset[key]) itemNode.dataset[key] = itemData.dataset[key];
+                    }
+                }
+                if (!lastGeneratedLogin) lastGeneratedLogin = itemData.login;
+            });
+            
+            // ПЛАВНЕ ВИДАЛЕННЯ ЗАЙВИХ КАРТОК (Якщо ви стерли частину тексту)
+            for (let i = data.items.length; i < existingItems.length; i++) {
+                const itemToRemove = existingItems[i];
+                itemToRemove.classList.add('removing');
+                setTimeout(() => { if (itemToRemove.parentNode) itemToRemove.remove(); }, 150);
+            }
         }
     });
+
+    // ПЛАВНЕ ВИДАЛЕННЯ ЗАЙВИХ ГРУП (Якщо ви стерли цілий рядок)
+    for (let i = parsedData.length; i < existingNodes.length; i++) {
+        const groupToRemove = existingNodes[i];
+        groupToRemove.classList.add('removing');
+        setTimeout(() => { if (groupToRemove.parentNode) groupToRemove.remove(); }, 150);
+    }
     
+    // Скрол догори
     const scrollCard = document.querySelector('.login-generator-container .content-card');
     if (scrollCard) scrollCard.scrollTop = 0;
 }
@@ -4473,6 +4515,7 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('mousedown', function (e) {
     // Перевіряємо, чи клік був по одному з вказаних класів/ID
     const targetBtn = e.target.closest(`
+        .add-tab-item,
         .command-item,
         .sub-command-item ,
         .tab-button, 
