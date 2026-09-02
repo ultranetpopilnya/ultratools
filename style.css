@@ -5380,7 +5380,7 @@ body.dark .segmented-control {
 /* НАВЕДЕННЯ НА НЕАКТИВНУ вкладку (Світла тема) */
 .segment-btn:not(.active):hover {
     color: var(--text-color);
-    background-color: rgba(0,0,0,0.05);
+    background-color: var(--text-hover); 
 }
 
 /* НАВІГАЦІЯ З КЛАВІАТУРИ (доступність) */
@@ -5405,7 +5405,7 @@ body.dark .segment-btn {
 /* НАВЕДЕННЯ НА НЕАКТИВНУ вкладку (Темна тема) */
 body.dark .segment-btn:not(.active):hover {
     color: #fff;
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: var(--text-hover); 
 }
 
 /* НАВІГАЦІЯ З КЛАВІАТУРИ (Темна тема) */
