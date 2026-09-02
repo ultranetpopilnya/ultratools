@@ -738,6 +738,7 @@ body.dark .qn-add-btn:active {
    ==================================================================== */
 
 /* 1. Готуємо елементи: позиціонування та обрізка хвилі по краях */
+.speed-dropdown-item,
 .add-tab-item,
 .tab-button,
 .olt-dropdown-item,
@@ -753,6 +754,7 @@ body.dark .qn-add-btn:active {
 }
 
 /* 2. Піднімаємо всі внутрішні елементи (текст, іконки), щоб хвиля протікала ПІД ними */
+.speed-dropdown-item > *,
 .add-tab-item > *,
 .tab-button > :not(.ripple):not(.close-tab-btn),
 .olt-dropdown-item > *,
@@ -775,6 +777,7 @@ body.dark .qn-add-btn:active {
 }
 
 /* 3. Базовий стиль самої хвилі (Світла тема) */
+.speed-dropdown-item .ripple,
 .add-tab-item .ripple,
 .tab-button .ripple,
 .olt-dropdown-item .ripple,
@@ -795,6 +798,7 @@ body.dark .qn-add-btn:active {
 }
 
 /* 4. Колір хвилі для Темної теми */
+body.dark .speed-dropdown-item .ripple,
 body.dark .add-tab-item .ripple,
 body.dark .tab-button .ripple,
 body.dark .olt-dropdown-item .ripple,
@@ -3066,6 +3070,10 @@ body.dark .template-search-bar.active {
     border: 1px solid rgba(255, 255, 255, 0.15); /* Чітка видима рамка для темної теми */
 }
 
+.template-search-bar:has(.speed-dropdown.open) {
+    overflow: visible;
+}
+
 .search-panel-columns {
     display: flex;
     width: fit-content; 
@@ -3120,8 +3128,7 @@ body.dark .template-search-bar.active {
 
 /* ІНПУТИ ТА СЕЛЕКТ (однаковий стиль) */
 .search-inputs-row input,
-.search-inputs-row select,
-.speed-select {
+.search-inputs-row select {
     padding: 3px 8px;
     height: 28px; 
     border-radius: 8px; 
@@ -3148,15 +3155,13 @@ body.dark .template-search-bar.active {
 
 /* search inputs row — фокус */
 .search-inputs-row input:focus,
-.search-inputs-row select:focus,
-.speed-select:focus {
+.search-inputs-row select:focus {
     border-color: var(--primary-accent-color);
     box-shadow: 0 0 0 2px rgba(79, 109, 245, 0.15);
 }
 
 /* Темна тема: search inputs row */
-body.dark .search-inputs-row select option,
-body.dark .speed-select option {
+body.dark .search-inputs-row select option {
     background-color: var(--content-bg-color);
     color: var(--text-color);
 }
@@ -3169,13 +3174,6 @@ body.dark .speed-select option {
     gap: 6px;
     padding-left: 15px;
     border-left: 1px dashed var(--input-border-color); 
-}
-
-/* speed select */
-.speed-select {
-    width: 100%;
-    cursor: pointer;
-    padding: 0 4px; 
 }
 
 /* Маленький напис "Швидкість:" */
@@ -3354,9 +3352,6 @@ body.dark .swap-inputs-btn:hover {
 .config-row .config-port-input  { 
     flex: 0 0 96px;
 }
-
-/* config row */
-.config-row .config-speed-select{ flex: 0 0 96px; cursor: pointer; }
 
 /* --- РОЗПОДІЛ ШИРИНИ (НИЖНІЙ РЯД: Сервіс) --- */
 .config-row .config-login-input { 
@@ -3944,7 +3939,6 @@ body.dark .select-group-title {
     top: calc(100% + 5px);
     left: 0;
     right: 0;
-    min-width: 220px;
 
     background-color: var(--menu-bg);
     border: 1px solid var(--input-border-color);
@@ -3999,6 +3993,29 @@ body.dark .olt-group-header {
     border-top: 1px solid var(--input-border-color);
     margin-top: 4px;
     padding-top: 10px;
+}
+
+/* Стрілка ОЛТ-дропдауна */
+.olt-dropdown-arrow {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 10px;
+    color: var(--text-color);
+    opacity: 0.5;
+    pointer-events: none;
+    transition: transform 0.2s;
+}
+
+/* Обертання стрілки, коли список відкритий */
+.olt-dropdown-wrapper:has(.olt-dropdown-list.open) .olt-dropdown-arrow {
+    transform: translateY(-50%) rotate(180deg);
+}
+
+/* Місце під стрілку, щоб текст в інпуті не наїжджав на неї */
+.config-olt-select {
+    padding-right: 26px !important;
 }
 
 /* Рядок з назвою ОЛТ */
@@ -4098,6 +4115,120 @@ body.dark .scroll-nav-btn.visible:hover {
     color: var(--secondary-accent-color);
 }
 
+/* =============================================
+   КАСТОМНИЙ ДРОПДАУН ШВИДКОСТЕЙ
+   ============================================= */
+.speed-dropdown {
+    position: relative;
+    width: 100%;
+    user-select: none;
+}
+
+.speed-dropdown-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+    width: 100%;
+    height: 28px;
+    padding: 3px 8px;
+    border-radius: 8px;
+    border: 1px solid var(--input-border-color);
+    background-color: var(--input-bg-color);
+    color: var(--text-color);
+    font-size: 13px;
+    font-family: inherit;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.03);
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.speed-dropdown-value {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.speed-dropdown-arrow {
+    font-size: 10px;
+    opacity: 0.55;
+    flex: none;
+    transition: transform 0.2s;
+}
+
+.speed-dropdown.open .speed-dropdown-toggle {
+    border-color: var(--primary-accent-color);
+    box-shadow: 0 0 3px var(--primary-accent-shadow);
+}
+
+.speed-dropdown.open .speed-dropdown-arrow {
+    transform: rotate(180deg);
+}
+
+.speed-dropdown-list {
+    display: none;
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    right: 0;
+    padding: 6px;
+    background-color: var(--menu-bg);
+    border: 1px solid var(--input-border-color);
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.08);
+    max-height: 240px;
+    overflow-y: auto;
+    z-index: 9999;
+}
+
+.speed-dropdown-list::-webkit-scrollbar {
+    display: none;
+}
+
+body.dark .speed-dropdown-list {
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45), 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.speed-dropdown.open .speed-dropdown-list {
+    display: block;
+    animation: oltDropdownFade 0.15s ease;
+}
+
+.speed-dropdown-item {
+    padding: 7px 12px;
+    font-size: 13px;
+    cursor: pointer;
+    color: var(--text-color);
+    border-radius: 8px;
+    margin: 1px 0;
+    transition: background 0.12s, color 0.12s;
+    white-space: nowrap;
+}
+
+.speed-dropdown-item:hover,
+.speed-dropdown-item.active {
+    background-color: var(--text-hover);
+    color: var(--primary-accent-color);
+}
+
+body.dark .speed-dropdown-item:hover,
+body.dark .speed-dropdown-item.active {
+    background-color: var(--text-hover);
+    color: var(--secondary-accent-color);
+}
+
+/* Ширина під конкретні місця використання */
+.config-row .speed-dropdown.config-speed-dropdown {
+    flex: 0 0 96px;
+}
+
+.config-row .config-speed-dropdown .speed-dropdown-toggle {
+    background-color: var(--menu-bg);
+}
+
+.search-col-right .speed-dropdown.search-speed-dropdown {
+    width: 100%;
+}
 
 /* ================================================================
    7. ІНСТРУМЕНТ — КОМБІНОВАНИЙ КАЛЬКУЛЯТОР
@@ -4145,7 +4276,6 @@ body.dark .scroll-nav-btn.visible:hover {
 .container.date-calculator-container {
     height: auto !important;       
     display: flex !important;
-    /* Гарантуємо, що він не стане меншим за контент під час фейду */
     min-height: 0px; 
 }
 

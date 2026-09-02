@@ -1464,24 +1464,31 @@ let lastConfirmedOltName = null;
                 <!-- ВЕРХНІЙ РЯДОК -->
                 <div class="config-row">
                     <div class="olt-dropdown-wrapper">
-                        <input type="text" class="config-olt-select" placeholder="🔍 Пошук OLT..." autocomplete="off" title="Почніть вводити назву OLT">
-                        <div class="olt-dropdown-list"></div>
-                    </div>
+    <input type="text" class="config-olt-select" placeholder="🔍 Пошук OLT..." autocomplete="off" title="Почніть вводити назву OLT">
+    <i class="fa-solid fa-chevron-down olt-dropdown-arrow"></i>
+    <div class="olt-dropdown-list"></div>
+</div>
                     <input type="text" class="config-sn-input" placeholder="SN / MAC" title="Серійний номер або MAC" autocomplete="off">
                     <input type="text" class="config-port-input" placeholder="Port" title="Port (напр. 1/1/1:11)" autocomplete="off">
-                    <select class="config-speed-select" title="Швидкість" autocomplete="off">
-                        <option value="10M">10M</option>
-                        <option value="20M">20M</option>
-                        <option value="30M">30M</option>
-                        <option value="40M">40M</option>
-                        <option value="50M">50M</option>
-                        <option value="60M">60M</option>
-                        <option value="100M" selected>100M</option>
-                        <option value="200M">200M</option>
-                        <option value="300M">300M</option>
-                        <option value="500M">500M</option>
-                        <option value="1G">1G</option>
-                    </select>
+                    <div class="speed-dropdown config-speed-dropdown" data-value="100M" title="Швидкість">
+    <button type="button" class="speed-dropdown-toggle">
+        <span class="speed-dropdown-value">100M</span>
+        <i class="fa-solid fa-chevron-down speed-dropdown-arrow"></i>
+    </button>
+    <div class="speed-dropdown-list">
+        <div class="speed-dropdown-item" data-value="10M">10M</div>
+        <div class="speed-dropdown-item" data-value="20M">20M</div>
+        <div class="speed-dropdown-item" data-value="30M">30M</div>
+        <div class="speed-dropdown-item" data-value="40M">40M</div>
+        <div class="speed-dropdown-item" data-value="50M">50M</div>
+        <div class="speed-dropdown-item" data-value="60M">60M</div>
+        <div class="speed-dropdown-item active" data-value="100M">100M</div>
+        <div class="speed-dropdown-item" data-value="200M">200M</div>
+        <div class="speed-dropdown-item" data-value="300M">300M</div>
+        <div class="speed-dropdown-item" data-value="500M">500M</div>
+        <div class="speed-dropdown-item" data-value="1G">1G</div>
+    </div>
+</div>
                 </div>
 
                 <!-- НИЖНІЙ РЯДОК -->
@@ -1620,6 +1627,30 @@ if (!isDeleting) {
     const oltInputNode = configPanel.querySelector('.config-olt-select');
 const vlanInputNode = configPanel.querySelector('.config-vlan-input');
 const oltDropdownList = configPanel.querySelector('.olt-dropdown-list');
+
+const speedDropdownNode = configPanel.querySelector('.config-speed-dropdown');
+const speedToggleBtn = speedDropdownNode.querySelector('.speed-dropdown-toggle');
+const speedValueLabel = speedDropdownNode.querySelector('.speed-dropdown-value');
+const speedItems = speedDropdownNode.querySelectorAll('.speed-dropdown-item');
+
+speedToggleBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    speedDropdownNode.classList.toggle('open');
+});
+
+speedItems.forEach(item => {
+    item.addEventListener('click', () => {
+        speedItems.forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+        speedDropdownNode.dataset.value = item.dataset.value;
+        speedValueLabel.textContent = item.textContent;
+        speedDropdownNode.classList.remove('open');
+    });
+});
+
+document.addEventListener('click', (e) => {
+    if (!speedDropdownNode.contains(e.target)) speedDropdownNode.classList.remove('open');
+});
 
 // === ЛОГІКА КНОПКИ MIX ===
 let currentMixState = null; // За замовчуванням вибору немає
@@ -1855,7 +1886,7 @@ btnShowSignal.classList.toggle('active', isShowSignalMode); // ДОДАНО
         e.preventDefault();
         const select = configPanel.querySelector('.config-olt-select');
         const loginVal = configPanel.querySelector('.config-login-input').value.trim();
-        const speedVal = configPanel.querySelector('.config-speed-select').value;
+        const speedVal = configPanel.querySelector('.config-speed-dropdown').dataset.value;
         const portVal = configPanel.querySelector('.config-port-input').value.trim();
         const snVal = configPanel.querySelector('.config-sn-input').value.trim(); 
         const vlanVal = configPanel.querySelector('.config-vlan-input').value.trim();
@@ -2087,19 +2118,25 @@ if (!oltObj) {
             <!-- Права колонка: Заміна швидкості -->
             <div class="search-col-right">
                 <span class="speed-label">Швидкість:</span>
-                <select class="speed-select">
-                    <option value="10M">10M</option>
-                    <option value="20M">20M</option>
-                    <option value="30M">30M</option>
-                    <option value="40M">40M</option>
-                    <option value="50M">50M</option>
-                    <option value="60M">60M</option>
-                    <option value="100M" selected>100M</option>
-                    <option value="200M">200M</option>
-                    <option value="300M">300M</option>
-                    <option value="500M">500M</option>
-                    <option value="1G">1G</option>
-                </select>
+                <div class="speed-dropdown search-speed-dropdown" data-value="100M">
+    <button type="button" class="speed-dropdown-toggle">
+        <span class="speed-dropdown-value">100M</span>
+        <i class="fa-solid fa-chevron-down speed-dropdown-arrow"></i>
+    </button>
+    <div class="speed-dropdown-list">
+        <div class="speed-dropdown-item" data-value="10M">10M</div>
+        <div class="speed-dropdown-item" data-value="20M">20M</div>
+        <div class="speed-dropdown-item" data-value="30M">30M</div>
+        <div class="speed-dropdown-item" data-value="40M">40M</div>
+        <div class="speed-dropdown-item" data-value="50M">50M</div>
+        <div class="speed-dropdown-item" data-value="60M">60M</div>
+        <div class="speed-dropdown-item active" data-value="100M">100M</div>
+        <div class="speed-dropdown-item" data-value="200M">200M</div>
+        <div class="speed-dropdown-item" data-value="300M">300M</div>
+        <div class="speed-dropdown-item" data-value="500M">500M</div>
+        <div class="speed-dropdown-item" data-value="1G">1G</div>
+    </div>
+</div>
                 <button class="search-cmd-btn btn-replace-speed" title="Автоматично знайти стару швидкість і замінити">
                     <i class="fa-solid fa-bolt"></i> Замінити
                 </button>
@@ -2116,13 +2153,35 @@ if (!oltObj) {
 
     // Підтягуємо нові елементи швидкості
     const btnReplaceSpeed = searchPanel.querySelector('.btn-replace-speed');
-    const speedSelect = searchPanel.querySelector('.speed-select');
+    const speedSelect = searchPanel.querySelector('.search-speed-dropdown');
+const speedToggleBtnSearch = speedSelect.querySelector('.speed-dropdown-toggle');
+const speedValueLabelSearch = speedSelect.querySelector('.speed-dropdown-value');
+const speedItemsSearch = speedSelect.querySelectorAll('.speed-dropdown-item');
+
+speedToggleBtnSearch.addEventListener('click', (e) => {
+    e.stopPropagation();
+    speedSelect.classList.toggle('open');
+});
+
+speedItemsSearch.forEach(item => {
+    item.addEventListener('click', () => {
+        speedItemsSearch.forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+        speedSelect.dataset.value = item.dataset.value;
+        speedValueLabelSearch.textContent = item.textContent;
+        speedSelect.classList.remove('open');
+    });
+});
+
+document.addEventListener('click', (e) => {
+    if (!speedSelect.contains(e.target)) speedSelect.classList.remove('open');
+});
 
     // === РОЗУМНА ЗАМІНА ШВИДКОСТІ ===
     btnReplaceSpeed.onclick = () => {
         const textarea = fieldGroup.querySelector('textarea');
         const text = textarea.value;
-        const targetSpeed = speedSelect.value;
+        const targetSpeed = speedSelect.dataset.value;
         
         // Магічний Regex: шукає старі швидкості (10M, 50M, 100M, 1000M, 1G) як окремі слова
         const speedRegex = /\b(?:10|20|30|40|50|60|100|200|300|500|1000)M\b|\b1G\b/gi;
@@ -4515,6 +4574,7 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('mousedown', function (e) {
     // Перевіряємо, чи клік був по одному з вказаних класів/ID
     const targetBtn = e.target.closest(`
+        .speed-dropdown-item,
         .add-tab-item,
         .command-item,
         .sub-command-item ,
