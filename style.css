@@ -2194,11 +2194,11 @@ body.dark .login-generator-container .result-type-badge {
 }
 
 .login-generator-container .result-item .regenerate-login-btn {
-    background-color: var(--primary-accent-color, #6f42c1);
+    background-color: var(--primary-accent-color);
 }
 
 body.dark .login-generator-container .result-item .regenerate-login-btn {
-    background-color: var(--secondary-accent-color, #8a5ad4);
+    background-color: var(--secondary-accent-color);
 }
 
 .login-generator-container .result-item .copy-login-btn {
@@ -3473,7 +3473,7 @@ body.dark .config-generate-btn {
 .config-replace-mode-btn.active,
 .config-pon-onu-btn.active,
 .config-show-signal-btn.active {
-    background-color: rgba(0, 123, 255, 0.1);
+    background-color: var(--primary-accent-shadow);
     color: var(--primary-accent-color);
     border-color: var(--primary-accent-color);
 }
