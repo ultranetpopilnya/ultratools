@@ -159,7 +159,6 @@ color-scheme: dark;
     --success-color: #38A17B;
 
     /* INPUTS */
---input-bg-color:    #2D2D2D;
     --input-border-color: rgba(255, 255, 255, 0.10);
     --input-focus-border-color: var(--primary-accent-color);
 
@@ -199,6 +198,7 @@ color-scheme: dark;
 --second-color-bg:  #141414;
 --panel-bg:          #262626;
 --menu-bg:           #2A2A2A;
+--input-bg-color:    #2D2D2D;
 
     /* GLASS */
     --glass-white-lg: rgba(255, 255, 255, 0.14);
@@ -5426,12 +5426,10 @@ body.dark #controls-and-clarification::after {
     position: absolute;
     top: 0;
     left: 50%;
-    /* Саме тут відбувається плавне центрування без тремтіння! */
     transform: translateX(-50%); 
-    
     display: flex;
     align-items: center;
-    gap: 8px; /* Відстань між перемикачем і іконкою */
+    gap: 8px; 
 }
 
 .info-tooltip-wrapper {
@@ -5443,8 +5441,8 @@ body.dark #controls-and-clarification::after {
 }
 
 .info-icon {
-    margin-bottom: 2px;
-    font-size: 19px;
+    margin-bottom: 0px;
+    font-size: 21px;
     color: var(--inactive-text);
     transition: color 0.2s ease, transform 0.2s ease;
 }
@@ -5457,7 +5455,7 @@ body.dark #controls-and-clarification::after {
 /* Показуємо при наведенні */
 .info-tooltip-wrapper:hover .info-tooltip-text {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translate(0, -50%) scale(1);
 }
 
 body.dark .info-tooltip-wrapper:hover .info-icon {
@@ -5467,14 +5465,14 @@ body.dark .info-tooltip-wrapper:hover .info-icon {
 /* Сама бульбашка з текстом */
 .info-tooltip-text {
     position: absolute;
-    bottom: calc(100% + 12px); /* Висота над іконкою */
-    right: -10px; /* Зміщуємо, щоб хвостик вказував рівно на іконку */
+    left: calc(100% + 14px); /* Відстань від іконки зправа */
+    top: 50%; 
     
     width: max-content;
     max-width: 220px;
     
-    background-color: #333; /* Темний фон для світлої теми */
-    color: #fff;
+    background-color: var(--input-bg-color);
+    color: var(--text-color);
     font-size: 12px;
     font-weight: 500;
     text-align: center;
@@ -5482,11 +5480,12 @@ body.dark .info-tooltip-wrapper:hover .info-icon {
     padding: 8px 12px;
     border-radius: 8px;
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+    border: 1px solid var(--input-border-color);
     
-    /* Сховано за замовчуванням */
     pointer-events: none;
     opacity: 0;
-    transform: translateY(8px) scale(0.95);
+    /* ЗМІНЕНО: Початкова позиція зміщена вліво (translate X: -8px) для плавної появи, по осі Y центровано (-50%) */
+    transform: translate(-8px, -50%) scale(0.95);
     transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
     z-index: 999;
 }
@@ -5495,33 +5494,37 @@ body.dark .info-tooltip-wrapper:hover .info-icon {
 .info-tooltip-text::after {
     content: '';
     position: absolute;
-    top: 100%;
-    right: 14px; 
+    right: 100%; 
+    top: 50%;
+    transform: translateY(-50%);
+    
     border-width: 6px;
     border-style: solid;
-    border-color: #333 transparent transparent transparent;
+    border-color: transparent var(--input-bg-color) transparent transparent;
 }
 
 body.dark .info-tooltip-text {
-    background-color: #4a4a4b; /* Світліший сірий, щоб відірвати від фону */
-    color: #ffffff;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background-color: var(--input-bg-color);
+    color: var(--text-color);
+    border: 1px solid var(--input-border-color);
     box-shadow: 0 4px 25px rgba(0, 0, 0, 0.6);
 }
 
 body.dark .info-tooltip-text::after {
-    border-color: #4a4a4b transparent transparent transparent; /* Хвостик того ж кольору */
+    border-color: transparent var(--input-bg-color) transparent transparent;
 }
 
 /* Рамка для хвостика в темній темі, щоб не зливався */
 body.dark .info-tooltip-text::before {
     content: '';
     position: absolute;
-    top: 100%;
-    right: 13px;
+    right: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    
     border-width: 7px;
     border-style: solid;
-    border-color: var(--input-border-color) transparent transparent transparent;
+    border-color: transparent var(--input-border-color) transparent transparent;
     z-index: -1;
 }
 
