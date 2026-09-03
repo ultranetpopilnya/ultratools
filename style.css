@@ -81,10 +81,10 @@ select {
     --text-hover: rgb(238, 242, 247);
 
     /* SCROLLBAR */
-    --scrollbar-track: rgba(0, 0, 0, 0.03);
-    --scrollbar-thumb: rgba(0, 0, 0, 0.18);
-    --scrollbar-thumb-hover: rgba(0, 0, 0, 0.32);
-    --scrollbar-thumb-active: rgba(0, 0, 0, 0.48);
+--scrollbar-track: #e0e0e0;
+--scrollbar-thumb: #c2c2c2;
+--scrollbar-thumb-hover: #a8a8a8;
+--scrollbar-thumb-active: #8f8f8f;
 
     /* DATE CALCULATOR */
    --calc-duration-color: #188038;
@@ -174,10 +174,10 @@ color-scheme: dark;
     --text-hover: rgba(255, 255, 255, 0.07);
 
     /* SCROLLBAR */
-   --scrollbar-track: rgba(255, 255, 255, 0.04);
-   --scrollbar-thumb: rgba(255, 255, 255, 0.15);
-   --scrollbar-thumb-hover: rgba(255, 255, 255, 0.28);
-   --scrollbar-thumb-active: rgba(255, 255, 255, 0.45);
+--scrollbar-track: #3a3a3a;
+--scrollbar-thumb: #5a5a5a;
+--scrollbar-thumb-hover: #6e6e6e;
+--scrollbar-thumb-active: #838383;
 
     /* DATE CALCULATOR */
 --calc-duration-color: #34A853;
@@ -232,7 +232,12 @@ color-scheme: dark;
 
 /* :root */
 :root {
---layout-max-width: 1100px; 
+--layout-max-width: 1100px;
+    --scrollbar-corridor: 16px;          /* Загальна ширина зони скролу */
+    --scrollbar-thumb-width: 6px;        /* Ширина повзунка (краще парне число) */
+    --scrollbar-thumb-width-hover: 8px; /* Ширина при наведенні (краще парне число) */
+    --scrollbar-line: 2px;               /* Товщина лінії треку (змінено на 2px для чіткості) */
+    --scrollbar-edge-gap: 0px;           /* Відступ зверху та знизу */
 }
 
 /* ================================================================
@@ -241,49 +246,97 @@ color-scheme: dark;
    та кастомного скролбару для всіх браузерів.
    ================================================================ */
 
-/* 1. Збільшуємо загальну ширину, щоб було місце для відступів */
+/* 1. Ширина та висота скролбару */
 *::-webkit-scrollbar {
-    width: 10px;  /* Ширина вертикального скролбару */
-    height: 10px; /* Висота горизонтального скролбару */
+    width: var(--scrollbar-corridor);
+    height: var(--scrollbar-corridor);
 }
 
-/* 2. ТРЕК */
+/* 2. ТРЕК — лінія ідеально по центру коридору (50%) */
 *::-webkit-scrollbar-track {
-    background-color: transparent;
-    border-radius: 10px;
+    background-image: linear-gradient(
+        to right,
+        transparent 0,
+        transparent calc(50% - (var(--scrollbar-line) / 2)),
+        var(--scrollbar-track) calc(50% - (var(--scrollbar-line) / 2)),
+        var(--scrollbar-track) calc(50% + (var(--scrollbar-line) / 2)),
+        transparent calc(50% + (var(--scrollbar-line) / 2)),
+        transparent 100%
+    );
+    /* ВИПРАВЛЕННЯ: Відступ треку зверху і знизу тепер точно дорівнює відступу повзунка */
+    border-top: calc((var(--scrollbar-corridor) - var(--scrollbar-thumb-width)) / 2) solid transparent;
+    border-bottom: calc((var(--scrollbar-corridor) - var(--scrollbar-thumb-width)) / 2) solid transparent;
+    background-clip: padding-box;
 }
 
-/* 3. THUMB (початковий стан) */
+/* Горизонтальний трек */
+*::-webkit-scrollbar-track:horizontal {
+    background-image: linear-gradient(
+        to bottom,
+        transparent 0,
+        transparent calc(50% - (var(--scrollbar-line) / 2)),
+        var(--scrollbar-track) calc(50% - (var(--scrollbar-line) / 2)),
+        var(--scrollbar-track) calc(50% + (var(--scrollbar-line) / 2)),
+        transparent calc(50% + (var(--scrollbar-line) / 2)),
+        transparent 100%
+    );
+    border-top: none;
+    border-bottom: none;
+    /* Синхронізуємо бокові відступи для горизонтального скролу */
+    border-left: calc((var(--scrollbar-corridor) - var(--scrollbar-thumb-width)) / 2) solid transparent;
+    border-right: calc((var(--scrollbar-corridor) - var(--scrollbar-thumb-width)) / 2) solid transparent;
+}
+
+/* 3. THUMB (Повзунок) — звичайний стан */
 *::-webkit-scrollbar-thumb {
     background-color: var(--scrollbar-thumb);
-    border-radius: 10px;
-    border: 2px solid transparent;
-    background-clip: padding-box;
+    border-radius: 100px !important;
+    
+    background-clip: padding-box !important; 
+    
+    /* ВИПРАВЛЕННЯ: Однакова невидима рамка з УСІХ сторін. 
+       Це змушує браузер малювати ідеально круглі кінці (таблетку). */
+    border: calc((var(--scrollbar-corridor) - var(--scrollbar-thumb-width)) / 2) solid transparent !important;
+    
+    transition: background-color 0.2s ease; 
+    min-height: 40px;
 }
 
-/* 4. HOVER (ОБОВ'ЯЗКОВО дублюємо border та clip) */
+/* 4. HOVER — розширюється */
 *::-webkit-scrollbar-thumb:hover {
     background-color: var(--scrollbar-thumb-hover);
-    border: 2px solid transparent;
-    background-clip: padding-box;
+    /* Зменшуємо рамку з усіх боків, щоб повзунок рівномірно став товщим */
+    border: calc((var(--scrollbar-corridor) - var(--scrollbar-thumb-width-hover)) / 2) solid transparent !important;
 }
 
-/* 5. ACTIVE (ОБОВ'ЯЗКОВО дублюємо border та clip) */
+/* 5. ACTIVE */
 *::-webkit-scrollbar-thumb:active {
     background-color: var(--scrollbar-thumb-active);
-    border: 2px solid transparent;
-    background-clip: padding-box;
+    border: calc((var(--scrollbar-corridor) - var(--scrollbar-thumb-width-hover)) / 2) solid transparent !important;
 }
 
-/* 6. КУТОК */
+/* =======================================
+   Адаптація для ГОРИЗОНТАЛЬНОГО скролу
+   ======================================= */
+*::-webkit-scrollbar-thumb:horizontal {
+    /* Для горизонтального тепер діє та сама логіка рівних рамок, 
+       залишається тільки задати мінімальну ширину */
+    min-width: 40px;
+}
+
+/* 6. КУТОК ТА КНОПКИ (Стрілочки) */
 *::-webkit-scrollbar-corner {
     background: transparent;
+}
+
+*::-webkit-scrollbar-button {
+    display: none; /* Приховуємо стандартні стрілочки для чистоти дизайну */
 }
 
 *::-webkit-scrollbar-button:vertical:start:decrement,
 *::-webkit-scrollbar-button:vertical:end:increment {
     display: block;
-    height: 5px; /* Висота відступу зверху і знизу */
+    height: var(--scrollbar-edge-gap);
     background-color: transparent;
 }
 
@@ -826,7 +879,7 @@ body.dark .sub-command-item .ripple {
 
 /* --- ГРУПА 5: СТАН DISABLED (Вимкнені елементи) --- */
 button:disabled, input:disabled, select:disabled {
-    opacity: 0.6;
+    opacity: 0.7;
     cursor: not-allowed !important;
     pointer-events: none; /* Вимикає ховери та хвилі для вимкнених елементів */
 }
@@ -2812,6 +2865,10 @@ body.dark .template-actions button {
 
 /* copy template btn — ховер */
 .copy-template-btn:hover { background-color: var(--success-color); }
+
+.copy-template-btn:disabled i {
+  color: var(--text-color);
+}
 
 /* paste login btn — ховер */
 .paste-login-btn:hover { background-color: var(--button-paste-bg); }
@@ -4939,8 +4996,8 @@ body.dark .calc-display-container {
 /* Для Firefox, IE, Edge */
 #calc-prev-operation,
 #calc-current-result {
-    -ms-overflow-style: none;  /* IE та Edge */
-    scrollbar-width: none;  /* Firefox */
+    -ms-overflow-style: none; 
+    scrollbar-width: none; 
 }
 
 #calc-prev-operation::-webkit-scrollbar,
@@ -6079,15 +6136,6 @@ body.dark .qn-add-btn {
     gap: 8px;
     scrollbar-gutter: stable both-edges;
 }
-
-/* Скролбар */
-.qn-list::-webkit-scrollbar-button:vertical:start:decrement,
-.qn-list::-webkit-scrollbar-button:vertical:end:increment  { 
-    display: block;
-    height: 2px;
-    background-color: transparent;
-}
-
 
 /* Базовий стиль замітки та її стани */
 .qn-item {
