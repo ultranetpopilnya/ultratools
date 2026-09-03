@@ -3989,14 +3989,14 @@ body.dark .select-group-title {
     padding: 6px;
     display: none;
     position: absolute;
-    top: calc(100% + 5px);
+    top: calc(100% + 1px);
     left: 0;
     right: 0;
 
     background-color: var(--menu-bg);
     border: 1px solid var(--input-border-color);
     border-radius: 8px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.08);
+     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04);
 
     max-height: 300px;
     overflow-y: auto;
@@ -4006,7 +4006,7 @@ body.dark .select-group-title {
 
 /* Темна тема: olt dropdown list */
 body.dark .olt-dropdown-list {
-    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45), 0 2px 8px rgba(0, 0, 0, 0.3);
+     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25), 0 1px 4px rgba(0, 0, 0, 0.15);
     border: 1px solid var(--input-border-color);
     background-color: var(--menu-bg);
 }
@@ -4228,7 +4228,8 @@ body.dark .scroll-nav-btn.visible:hover {
     background-color: var(--menu-bg);
     border: 1px solid var(--input-border-color);
     border-radius: 8px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.08);
+    /* Зменшено радіус розмиття та прозорість (було 0.12 та 0.08) */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04);
     max-height: 240px;
     overflow-y: auto;
     z-index: 9999;
@@ -4239,7 +4240,8 @@ body.dark .scroll-nav-btn.visible:hover {
 }
 
 body.dark .speed-dropdown-list {
-    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45), 0 2px 8px rgba(0, 0, 0, 0.3);
+    /* Зменшено радіус розмиття та прозорість (було 0.45 та 0.3) */
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25), 0 1px 4px rgba(0, 0, 0, 0.15);
 }
 
 .speed-dropdown.open .speed-dropdown-list {
