@@ -119,6 +119,15 @@ select {
     /* SHADOWS */
     --shadow-glass: 0 8px 32px rgba(15, 23, 42, 0.08);
     --shadow-float: 0 20px 60px rgba(15, 23, 42, 0.14), 0 4px 16px rgba(15, 23, 42, 0.06);
+    --glass-shadow-outer: 
+        0 8px 24px rgba(0, 0, 0, 0.08), 
+        0 2px 6px rgba(0, 0, 0, 0.04), 
+        inset 0 1px 1px rgba(255, 255, 255, 0.6);
+    --glass-shadow-inner: 
+        inset 0 2px 10px rgba(0, 0, 0, 0.06), 
+        inset 0 1px 1px rgba(255, 255, 255, 0.8);
+    --glass-shadow-input: inset 0 2px 6px rgba(0, 0, 0, 0.05), inset 0 -1px 1px rgba(255, 255, 255, 0.7);
+    --glass-shadow-input-focus: inset 0 1px 2px rgba(0, 0, 0, 0.03), 0 0 0 3px rgba(0, 0, 0, 0.04), 0 4px 15px rgba(0, 0, 0, 0.08);    
 
     /* REFLECTIONS */
     --reflection-top: linear-gradient(
@@ -211,6 +220,15 @@ color-scheme: dark;
     /* SHADOWS */
     --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.28);
     --shadow-float: 0 20px 60px rgba(0, 0, 0, 0.42), 0 4px 16px rgba(0, 0, 0, 0.24);
+    --glass-shadow-outer: 
+        0 6px 18px rgba(0, 0, 0, 0.25),  
+        0 2px 5px rgba(0, 0, 0, 0.15),   
+        inset 0 1px 1px rgba(255, 255, 255, 0.06);
+    --glass-shadow-inner: 
+        inset 0 2px 15px rgba(0, 0, 0, 0.35), 
+        inset 0 1px 1px rgba(255, 255, 255, 0.08);
+    --glass-shadow-input: inset 0 2px 10px rgba(0, 0, 0, 0.35), inset 0 -1px 1px rgba(255, 255, 255, 0.07);
+    --glass-shadow-input-focus: inset 0 1px 2px rgba(0, 0, 0, 0.2), 0 0 0 3px rgba(255, 255, 255, 0.08), 0 4px 15px rgba(0, 0, 0, 0.25);
 
     /* REFLECTIONS */
     --reflection-top: linear-gradient(
@@ -1911,17 +1929,24 @@ body.dark .moon-icon {
 /* === ПАНЕЛЬ КНОПОК ПІД ПОЛЕМ ВВОДУ ПІБ === */
 .login-actions-block {
     display: flex;
-    flex-direction: column; /* Тепер елементи йдуть зверху вниз (Текст -> Кнопки) */
-    gap: 8px; /* Відстань між текстом і кнопками */
-    
+    flex-direction: column;
+    gap: 8px;
     padding: 10px 14px; 
     border-radius: 12px; 
+    
     background-color: var(--panel-bg); 
     border: 1px solid var(--input-border-color); 
-    
     width: 90%; 
     box-sizing: border-box;
-    margin: 0 auto 16px auto; /* Вирівнювання по центру */
+    margin: 0 auto 16px auto;
+    
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: var(--glass-shadow-outer); 
+}
+
+body.dark .login-actions-block {
+    box-shadow: var(--glass-shadow-outer);
 }
 
 /* === Стиль для підпису блоку (з лінією та іконкою) === */
@@ -2064,6 +2089,17 @@ body.dark #login-autoclear-btn:hover:not(.active) i {
     margin-left: auto;
     margin-right: auto;
     margin-bottom: 16px;
+    background-color: var(--input-bg-color);
+
+        outline: none;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: var(--glass-shadow-input);
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.login-generator-container textarea:focus {
+    box-shadow: var(--glass-shadow-input-focus);
 }
 
 #fullNameInput {
@@ -2121,7 +2157,15 @@ body.dark #login-autoclear-btn:hover:not(.active) i {
     border-radius: 12px;
     background-color: var(--panel-bg); 
     min-height: 52px;
-    margin: 0 0 16px 0; 
+    margin: 0 0 16px 0;
+    
+        backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: var(--glass-shadow-outer);
+}
+
+body.dark .login-generator-container .result-item {
+    box-shadow: var(--glass-shadow-outer);
 }
 
 /* --- ПІДПИС (БЕЙДЖ) ВРІЗАНИЙ В РАМКУ --- */
@@ -2243,6 +2287,14 @@ body.dark .login-generator-container .result-item .regenerate-login-btn {
     border: 1px solid var(--input-border-color);
     border-radius: 12px;
     overflow: hidden;
+
+            backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: var(--glass-shadow-outer);
+}
+
+body.dark .history-section {
+    box-shadow: var(--glass-shadow-outer);
 }
 
 .history-header-row {
@@ -2365,8 +2417,7 @@ body.dark .history-toggle-btn.active #history-arrow {
 }
 
 .history-content-wrapper.open {
-    max-height: 400px; /* Вкажіть значення з запасом, більше за можливу висоту списку */
-    visibility: visible;
+    max-height: 400px;
     opacity: 1;
     transform: translateY(0);
     width: 100%;
@@ -2742,7 +2793,7 @@ body.dark #clear-all-templates-button:hover {
     flex-wrap: wrap;
     align-content: flex-start;
     align-items: flex-start;
-    gap: 4px; /* Чітка відстань між шаблонами (Сітка) */
+    gap: 6px; /* Чітка відстань між шаблонами (Сітка) */
     width: 100%;
     padding-bottom: 150px;
 }
@@ -2795,6 +2846,16 @@ body.dark #clear-all-templates-button:hover {
     color: var(--text-color); 
     background-color: var(--input-bg-color);
     min-width: 150px;	
+    
+    outline: none;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: var(--glass-shadow-input);
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.template-name-input:focus {
+    box-shadow: var(--glass-shadow-input-focus);
 }
 
 .template-actions {
@@ -2997,6 +3058,12 @@ z-index: 3;
     border-radius: 12px;
     overflow: hidden;
     contain: paint layout;
+
+        outline: none;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: var(--glass-shadow-input);
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
 body.dark .textarea-wrapper {
@@ -3104,24 +3171,28 @@ body.dark .line-marker {
         border-color 0.25s ease;
 }
 
-/* template search bar — активний стан */
 .template-search-bar.active {
     /* === СУЧАСНА АНІМАЦІЯ (ВІДКРИТО) === */
-    max-height: 120px; /* Зроблено з запасом */
+    max-height: 120px; 
     min-height: 65px;
     opacity: 1;
-    transform: translateY(0) scale(1); /* Падає на своє місце */
-    pointer-events: auto; /* Вмикаємо кліки */
+    transform: translateY(0) scale(1); 
+    pointer-events: auto; 
     
     margin-top: 4px !important; 
     margin-bottom: 4px !important; 
     padding: 10px 4px 14px 4px; 
-    border-color: var(--input-border-color) !important; /* Плавно проявляємо рамку */
+    border-color: var(--input-border-color) !important; 
+    
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: var(--glass-shadow-inner); 
 }
 
 /* Темна тема: template search bar — активний стан */
 body.dark .template-search-bar.active {
-    border: 1px solid rgba(255, 255, 255, 0.15); /* Чітка видима рамка для темної теми */
+    border-color: var(--input-border-color);
+    box-shadow: var(--glass-shadow-inner); 
 }
 
 .template-search-bar:has(.speed-dropdown.open) {
@@ -3193,6 +3264,11 @@ body.dark .template-search-bar.active {
     box-shadow: inset 0 1px 2px rgba(0,0,0,0.03);
     outline: none;
     font-family: inherit;
+
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: var(--glass-shadow-input);
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
 /* Налаштування ширини */
@@ -3296,15 +3372,15 @@ body.dark .swap-inputs-btn:hover {
     
     background-color: var(--panel-bg);
     border-radius: 12px;
-    border: 1px solid var(--input-border-color); /* Готуємо рамку для плавної появи */
+    border: 1px solid var(--input-border-color); 
     
     max-height: 0;
     opacity: 0;
     overflow: hidden;
     padding-top: 0;
     padding-bottom: 0;
-    transform: translateY(-10px) scale(0.98); /* Легкий зсув вгору */
-    pointer-events: none; /* Забороняємо кліки, коли закрито */
+    transform: translateY(-10px) scale(0.98); 
+    pointer-events: none;
     
     /* Універсальний плавний таймінг (0.25s) */
     transition: 
@@ -3318,10 +3394,10 @@ body.dark .swap-inputs-btn:hover {
 
 /* template config bar — активний стан */
 .template-config-bar.active {
-    max-height: 120px; /* Зроблено з запасом, щоб анімація не обрізалась */
+    max-height: 120px; 
     opacity: 1;
-    transform: translateY(0) scale(1); /* Падає на своє місце */
-    pointer-events: auto; /* Вмикаємо кліки */
+    transform: translateY(0) scale(1); 
+    pointer-events: auto; 
     z-index: 2000;
 
     margin-top: 4px;
@@ -3329,7 +3405,16 @@ body.dark .swap-inputs-btn:hover {
     padding: 6px;
     border: 1px solid var(--input-border-color); /* Плавно проявляємо рамку */
     
-    overflow: visible; 
+    overflow: visible;
+    
+        backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: var(--glass-shadow-inner);
+}
+
+body.dark .template-config-bar.active {
+    border-color: var(--input-border-color);
+    box-shadow: var(--glass-shadow-inner);
 }
 
 /* --- ЗАХИСТ ВІД ЗЛАМУ КАРТКИ --- */
@@ -4323,8 +4408,15 @@ body.dark .speed-dropdown-item.active {
     border-radius: 12px;
     padding: 14px 20px;
     margin: 0;
+
+                backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: var(--glass-shadow-outer); 
 }
 
+body.dark .date-inputs-row {
+    box-shadow: var(--glass-shadow-outer);
+}
 
 /* 1. КОНТЕЙНЕР: Забороняємо "схлопування" висоти при закритті */
 /* Прибираємо .active з селектора, щоб висота лишалась auto під час анімації зникнення */
@@ -4423,11 +4515,22 @@ body.dark .date-calculator-container .date-input-group input[type="time"] {
     border: 1px solid var(--input-border-color);
     border-radius: 12px; 
     width: 410px;
-    overflow: hidden; 
+    overflow: hidden;
+    
+        backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 
+        0 8px 24px rgba(0, 0, 0, 0.08),  
+        0 2px 6px rgba(0, 0, 0, 0.04),  
+        inset 0 1px 1px rgba(255, 255, 255, 0.6); 
 }
 
 body.dark .date-calculator-container #result-section {
     border: 1px solid var(--input-border-color);
+        box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.5),  
+        0 2px 8px rgba(0, 0, 0, 0.3),  
+        inset 0 1px 1px rgba(255, 255, 255, 0.08);
 }
 
 /* Стилізуємо заголовок-шапку з високим контрастом */
@@ -4492,7 +4595,15 @@ body.dark .date-calculator-container #result-section h2 {
     border-radius: 12px; 
     background-color: var(--panel-bg); 
     border: 1px solid var(--input-border-color); 
-    width: 410px; 
+    width: 410px;
+
+                backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: var(--glass-shadow-outer); 
+}
+
+body.dark .calculator-actions-block {
+    box-shadow: var(--glass-shadow-outer);
 }
 
 /* Додатковий клас, щоб кнопки в калькуляторі стояли по центру */
@@ -4952,13 +5063,12 @@ body.dark #calc-auto-clear-btn.active {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); /* Змінено */
+    box-shadow: var(--glass-shadow-input);
 }
 
 /* Темна тема: calc display container */
 body.dark .calc-display-container {
     border-color: var(--input-border-color);
-    box-shadow: inset 0 2px 6px rgba(0,0,0,0.2);
 }
 
 #calc-prev-operation {
@@ -5537,12 +5647,16 @@ body.dark .info-tooltip-text::before {
     border-radius: 12px;
     padding: 4px;
     gap: 4px;
+
+            backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: var(--glass-shadow-inner);
 }
 
 body.dark .segmented-control {
     background-color: var(--panel-bg);
     border: 1px solid var(--input-border-color);
-    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.4);
+    box-shadow: var(--glass-shadow-inner); 
 }
 
 /* --- КНОПКИ ПЕРЕМИКАЧА --- */
