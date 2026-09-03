@@ -3148,7 +3148,7 @@ body.dark .template-search-bar.active {
 /* ВСІ КНОПКИ ДІЙ */
 .search-cmd-btn {
     flex: 1; /* Робить кнопки Знайти/Замінити широкими */
-    height: 24px; 
+    height: 30px; 
     padding: 0;
     border: none;
     border-radius: 8px; 
@@ -3184,7 +3184,7 @@ body.dark .template-search-bar.active {
 .search-inputs-row input,
 .search-inputs-row select {
     padding: 3px 8px;
-    height: 28px; 
+    height: 30px; 
     border-radius: 8px; 
     border: 1px solid var(--input-border-color);
     background-color: var(--input-bg-color); 
@@ -4183,7 +4183,7 @@ body.dark .scroll-nav-btn.visible:hover {
     justify-content: space-between;
     gap: 4px;
     width: 100%;
-    height: 28px;
+    height: 30px;
     padding: 3px 8px;
     border-radius: 8px;
     border: 1px solid var(--input-border-color);
@@ -4221,7 +4221,7 @@ body.dark .scroll-nav-btn.visible:hover {
 .speed-dropdown-list {
     display: none;
     position: absolute;
-    top: calc(100% + 5px);
+    top: calc(100% + 1px);
     left: 0;
     right: 0;
     padding: 6px;
@@ -5545,7 +5545,7 @@ body.dark .segmented-control {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 76px;
+    width: 90px;
     height: 28px;
     padding: 0;
     background: transparent;

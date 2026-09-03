@@ -1160,6 +1160,27 @@ function initDraggableAndResizable(element) {
         highlighter.innerHTML = highlightedText + '\n';
     }
 	
+// === ФУНКЦІЯ ЦЕНТРУВАННЯ АКТИВНОГО ЕЛЕМЕНТА В DROPDOWN ===
+function centerActiveDropdownItem(dropdownNode) {
+    const list = dropdownNode.querySelector('.speed-dropdown-list');
+    const activeItem = list.querySelector('.speed-dropdown-item.active');
+
+    if (list && activeItem) {
+        // Використовуємо 0 мс. Браузер встигне застосувати клас .open (display: block),
+        // але ще не встигне відмалювати кадр на екрані, тому миттєвий скрол буде непомітним.
+        setTimeout(() => {
+            const listHeight = list.clientHeight;
+            const itemTop = activeItem.offsetTop;
+            const itemHeight = activeItem.clientHeight;
+
+            const scrollPos = itemTop - (listHeight / 2) + (itemHeight / 2);
+
+            // Миттєво встановлюємо позицію без анімації
+            list.scrollTop = scrollPos; 
+        }, 0); 
+    }
+}
+
     function createTemplateField(data = {}) {
     // 1. Деструктуризація (твоя стара частина)
     const {
@@ -1635,7 +1656,10 @@ const speedItems = speedDropdownNode.querySelectorAll('.speed-dropdown-item');
 
 speedToggleBtn.addEventListener('click', (e) => {
     e.stopPropagation();
-    speedDropdownNode.classList.toggle('open');
+    const isOpen = speedDropdownNode.classList.toggle('open');
+    if (isOpen) {
+        centerActiveDropdownItem(speedDropdownNode);
+    }
 });
 
 speedItems.forEach(item => {
@@ -2160,7 +2184,10 @@ const speedItemsSearch = speedSelect.querySelectorAll('.speed-dropdown-item');
 
 speedToggleBtnSearch.addEventListener('click', (e) => {
     e.stopPropagation();
-    speedSelect.classList.toggle('open');
+    const isOpen = speedSelect.classList.toggle('open');
+    if (isOpen) {
+        centerActiveDropdownItem(speedSelect);
+    }
 });
 
 speedItemsSearch.forEach(item => {
