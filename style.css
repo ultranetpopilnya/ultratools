@@ -2210,26 +2210,6 @@ body.dark .login-generator-container .result-item .regenerate-login-btn {
     filter: brightness(1.2);
 }
 
-/* Regenerate — тінь під колір кнопки (світла тема, --primary-accent-color) */
-.login-generator-container .result-item .regenerate-login-btn:hover {
-    box-shadow: 0 2px 8px rgba(79, 109, 245, 0.35);
-}
-
-/* Regenerate — тінь під колір кнопки (темна тема, --secondary-accent-color) */
-body.dark .login-generator-container .result-item .regenerate-login-btn:hover {
-    box-shadow: 0 2px 8px rgba(214, 155, 45, 0.4);
-}
-
-/* Copy — тінь під колір кнопки (світла тема, --success-color) */
-.login-generator-container .result-item .copy-login-btn:hover {
-    box-shadow: 0 4px 8px rgba(22, 163, 122, 0.35);
-}
-
-/* Copy — тінь під колір кнопки (темна тема, --success-color) */
-body.dark .login-generator-container .result-item .copy-login-btn:hover {
-    box-shadow: 0 4px 8px rgba(57, 173, 131, 0.45);
-}
-
 .login-generator-container .content-card > p {
     margin-top: 0;
 }
