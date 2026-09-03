@@ -4077,7 +4077,7 @@ body.dark .select-group-title {
     background-color: var(--menu-bg);
     border: 1px solid var(--input-border-color);
     border-radius: 8px;
-     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04);
 
     max-height: 300px;
     overflow-y: auto;
@@ -4289,8 +4289,6 @@ body.dark .scroll-nav-btn.visible:hover {
     flex: none;
     transition: transform 0.2s;
 }
-
-
 
 .speed-dropdown.open .speed-dropdown-arrow {
     transform: rotate(180deg);
