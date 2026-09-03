@@ -2417,16 +2417,13 @@ body.dark .history-toggle-btn.active #history-arrow {
 }
 
 .history-content-wrapper.open {
-    max-height: 400px;
+    visibility: visible; 
+    max-height: 1000px;  
     opacity: 1;
     transform: translateY(0);
     width: 100%;
     padding: 14px;
     border-top: 1px solid var(--input-border-color);
-    transition: max-height 0.4s ease-in-out, 
-                opacity 0.3s ease-out, 
-                transform 0.3s ease-out, 
-                padding 0.4s ease-out;
     background-color: var(--input-bg-color);            
 }
 
