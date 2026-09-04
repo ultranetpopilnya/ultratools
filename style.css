@@ -3199,9 +3199,8 @@ body.dark .line-marker {
     transform: translateY(0) scale(1); 
     pointer-events: auto; 
     
-    margin-top: 0px !important; 
-    margin-bottom: 5px !important; 
-    padding: 10px 4px 14px 4px; 
+    margin: 0 5px 5px 5px !important;
+    padding: 6px; 
     border-color: var(--input-border-color) !important;
     border-width: 1px; 
     
@@ -3414,14 +3413,13 @@ body.dark .swap-inputs-btn:hover {
 
 /* template config bar — активний стан */
 .template-config-bar.active {
-    max-height: 120px; 
+    max-height: 100%; 
     opacity: 1;
     transform: translateY(0) scale(1); 
     pointer-events: auto; 
     z-index: 2000;
 
-    margin-top: 4px;
-    margin-bottom: 2px;
+    margin: 0 5px 5px 5px !important;
     padding: 6px;
     border-width: 1px;
     
@@ -3450,7 +3448,7 @@ body.dark .template-config-bar.active {
     flex-direction: row;
     gap: 5px;
     width: 100%;
-    height: 64px;
+    height: 100%;
 }
 
 /* Ліва колонка з полями вводу */
