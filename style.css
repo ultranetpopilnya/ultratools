@@ -2836,7 +2836,7 @@ body.dark #clear-all-templates-button:hover {
     align-items: center;
     gap: 4px;
     flex-shrink: 0; 
-    padding: 5px 5px 1px 5px;
+    padding: 5px;
     user-select: none;
 }
 
@@ -3048,7 +3048,7 @@ z-index: 3;
     position: relative;
     display: flex;
     flex-grow: 1; 
-    margin: 1px 5px 5px 5px;
+    margin: 0px 5px 5px 5px;
     width: calc(100% - 10px);
     border: 1px solid var(--input-border-color);
     border-radius: 12px;
@@ -3168,7 +3168,7 @@ body.dark .line-marker {
     
     background-color: var(--panel-bg);
     border-radius: 12px;
-    border: 1px solid transparent; 
+    border: 0px solid transparent;
     
     /* === СУЧАСНА АНІМАЦІЯ (ЗАКРИТО) === */
     max-height: 0;
@@ -3199,10 +3199,11 @@ body.dark .line-marker {
     transform: translateY(0) scale(1); 
     pointer-events: auto; 
     
-    margin-top: 4px !important; 
-    margin-bottom: 4px !important; 
+    margin-top: 0px !important; 
+    margin-bottom: 5px !important; 
     padding: 10px 4px 14px 4px; 
-    border-color: var(--input-border-color) !important; 
+    border-color: var(--input-border-color) !important;
+    border-width: 1px; 
     
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
@@ -3387,11 +3388,11 @@ body.dark .swap-inputs-btn:hover {
 .template-config-bar {
     position: relative;
     width: calc(100% - 10px);
-    margin: 0 5px;
+    margin: 0 5px !important;
     
     background-color: var(--panel-bg);
     border-radius: 12px;
-    border: 1px solid var(--input-border-color); 
+    border: 0px solid var(--input-border-color);
     
     max-height: 0;
     opacity: 0;
@@ -3422,7 +3423,7 @@ body.dark .swap-inputs-btn:hover {
     margin-top: 4px;
     margin-bottom: 2px;
     padding: 6px;
-    border: 1px solid var(--input-border-color); /* Плавно проявляємо рамку */
+    border-width: 1px;
     
     overflow: visible;
     
