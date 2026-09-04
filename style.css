@@ -3238,7 +3238,7 @@ body.dark .template-search-bar.active {
     width: 380px; /* БУЛО 250px. Тепер 300px — кнопки і поля будуть широкими! */
     display: flex;
     flex-direction: column;
-    gap: 6px; 
+    gap: 5px; 
 }
 
 /* ВСІ КНОПКИ ДІЙ */
@@ -3273,7 +3273,7 @@ body.dark .template-search-bar.active {
 .search-buttons-row {
     display: flex;
     width: 100%;
-    gap: 6px;
+    gap: 5px;
 }
 
 /* ІНПУТИ ТА СЕЛЕКТ (однаковий стиль) */
