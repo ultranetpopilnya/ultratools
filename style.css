@@ -3120,13 +3120,43 @@ body.dark .line-marker {
     position: absolute;
     bottom: 0;
     right: 0;
-    width: 18px; /* Збільшена область для зручності */
-    height: 18px;
-    cursor: nwse-resize; /* Діагональний курсор */
+    width: 20px; 
+    height: 20px;
+    cursor: nwse-resize; 
     z-index: 10;
-    background:
-        linear-gradient(135deg, transparent 60%, var(--resize-handle-color) 61%, var(--resize-handle-color) 70%, transparent 71%),
-        linear-gradient(135deg, transparent 80%, var(--resize-handle-color) 81%, var(--resize-handle-color) 90%, transparent 91%);
+}
+
+.resize-handle::before,
+.resize-handle::after {
+    content: '';
+    position: absolute;
+    background-color: var(--resize-handle-color);
+    border-radius: 2px; /* Робить кінці ліній круглими */
+    transform: rotate(-45deg);
+    opacity: 0.6;
+    transition: background-color 0.2s ease, opacity 0.2s ease;
+}
+
+/* Довга лінія */
+.resize-handle::before {
+    right: 1px;
+    bottom: 9px;
+    width: 14px;
+    height: 2px;
+}
+
+/* Коротка лінія */
+.resize-handle::after {
+    right: 2px;
+    bottom: 4px;
+    width: 6px;
+    height: 2px;
+}
+
+.resize-handle:hover::before,
+.resize-handle:hover::after {
+    opacity: 1;
+    background-color: var(--primary-accent-color); /* Світиться акцентним кольором */
 }
 
 /* === ІДЕАЛЬНИЙ ІНТЕГРОВАНИЙ СТИЛЬ ПОШУКУ (ДВОКОЛОНКОВИЙ) === */
@@ -3395,7 +3425,7 @@ body.dark .swap-inputs-btn:hover {
     z-index: 2000;
 
     margin-top: 4px;
-    margin-bottom: 4px;
+    margin-bottom: 2px;
     padding: 6px;
     border: 1px solid var(--input-border-color); /* Плавно проявляємо рамку */
     
