@@ -3512,8 +3512,14 @@ body.dark .template-config-bar.active {
 .config-row .config-sn-input    { flex: 0 0 130px; }
 
 /* config row */
-.config-row .config-port-input  { 
-    flex: 0 0 96px;
+.config-row .config-port-input { 
+    flex: 0 0 120px;
+    letter-spacing: 2px;
+    font-variant-numeric: tabular-nums; /* Робить всі цифри однакової ширини, щоб вони виглядали рівно */
+}
+
+.config-row .config-port-input::placeholder {
+    letter-spacing: normal;
 }
 
 /* --- РОЗПОДІЛ ШИРИНИ (НИЖНІЙ РЯД: Сервіс) --- */
