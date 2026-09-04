@@ -626,12 +626,12 @@ input, textarea, select, .date-input-group input, #fullNameInput {
 }
 
 .speed-dropdown.open .speed-dropdown-toggle,
+.template-field-group:focus-within,
 #qn-input:focus,
 input:focus:not([type="button"]):not([type="submit"]),
 textarea:focus,
 select:focus,
 .textarea-wrapper:focus,
-.template-field-group:focus-within,
 .date-input-group input:focus,
 #fullNameInput:focus {
     border-color: var(--input-focus-border-color) !important;
@@ -2967,11 +2967,9 @@ body.dark .template-drag-placeholder {
     position: relative;
     z-index: 2;
     background: transparent; 
-    color: var(--text-color); 
-    -webkit-text-fill-color: var(--text-color);
+    color: var(--text-color);
     resize: none !important;
 }
-
 
 /* 2. Але ПОВЕРТАЄМО можливість виділення для полів вводу всередині нього */
 .template-field-group textarea,
@@ -3023,6 +3021,10 @@ body.dark .highlighter-backdrop mark {
 background-color: var(--highlight-bg-color);
 color: transparent;
 z-index: 3;
+}
+
+.template-field-group .highlighting-container textarea:focus {
+    box-shadow: none !important;
 }
 
 .highlighter-backdrop, .template-field-group textarea {
