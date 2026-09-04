@@ -71,7 +71,7 @@ select {
 
     /* TEMPLATES */
     --template-bg-color: #ffffff;
-    --template-border-color: #d9e0ea;
+    --template-border-color: #dae0e7;
     --template-handle-bg: #f1f4f8;
     --template-handle-border: #cbd5e1;
 
@@ -2791,7 +2791,7 @@ body.dark #clear-all-templates-button:hover {
     flex-wrap: wrap;
     align-content: flex-start;
     align-items: flex-start;
-    gap: 6px; /* Чітка відстань між шаблонами (Сітка) */
+    gap: 6px; 
     width: 100%;
     padding-bottom: 150px;
 }
