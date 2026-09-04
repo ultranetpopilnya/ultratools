@@ -2836,7 +2836,7 @@ body.dark #clear-all-templates-button:hover {
     align-items: center;
     gap: 4px;
     flex-shrink: 0; 
-    padding: 5px 5px 0 5px;
+    padding: 5px 5px 1px 5px;
     user-select: none;
 }
 
@@ -3048,7 +3048,7 @@ z-index: 3;
     position: relative;
     display: flex;
     flex-grow: 1; 
-    margin: 0px 5px 5px 5px;
+    margin: 1px 5px 5px 5px;
     width: calc(100% - 10px);
     border: 1px solid var(--input-border-color);
     border-radius: 12px;
@@ -3158,7 +3158,7 @@ body.dark .line-marker {
 .template-search-bar {
     position: relative; 
     width: calc(100% - 10px) !important;
-    margin: 0 4px !important;
+    margin: 0 5px !important;
     z-index: 5; 
     
     display: flex;
@@ -3387,7 +3387,7 @@ body.dark .swap-inputs-btn:hover {
 .template-config-bar {
     position: relative;
     width: calc(100% - 10px);
-    margin: 0 4px;
+    margin: 0 5px;
     
     background-color: var(--panel-bg);
     border-radius: 12px;
@@ -3426,7 +3426,7 @@ body.dark .swap-inputs-btn:hover {
     
     overflow: visible;
     
-        backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     box-shadow: var(--glass-shadow-inner);
 }
