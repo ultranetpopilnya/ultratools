@@ -3195,7 +3195,7 @@ body.dark .line-marker {
 
 .template-search-bar.active {
     /* === СУЧАСНА АНІМАЦІЯ (ВІДКРИТО) === */
-    max-height: 120px; 
+    max-height: 220px; 
     min-height: 65px;
     opacity: 1;
     transform: translateY(0) scale(1); 
@@ -3245,8 +3245,8 @@ body.dark .template-search-bar.active {
     padding: 0;
     border: none;
     border-radius: 8px; 
-    font-size: 12px;
-    font-weight: 600; 
+    font-size: 13px;
+    font-weight: 400; 
     cursor: pointer;
     color: rgb(241, 241, 241);
     transition: filter 0.2s, transform 0.1s;
@@ -3329,9 +3329,9 @@ body.dark .search-inputs-row select option {
 
 /* Маленький напис "Швидкість:" */
 .speed-label {
-    font-size: 10px;
+    font-size: 11px;
     color: var(--inactive-text);
-    font-weight: 700;
+    font-weight: 500;
     text-transform: uppercase;
     line-height: 1;  
     margin: 0 0 0px 6px;
@@ -3354,8 +3354,8 @@ body.dark .search-inputs-row select option {
 /* Кнопка SWAP (стрілочки) */
 .swap-inputs-btn {
     flex: 0 0 auto;
-    width: 28px;
-    height: 28px;
+    width: 30px;
+    height: 30px;
     border: none;
     background: transparent;
     color: var(--text-color); /* Використовуємо основний колір тексту */
@@ -3366,7 +3366,7 @@ body.dark .search-inputs-row select option {
     align-items: center;
     justify-content: center;
     transition: all 0.2s ease;
-    font-size: 12px;
+    font-size: 14px;
 }
 
 /* Наведення у СВІТЛІЙ темі (чорний напівпрозорий круг) */
