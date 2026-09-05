@@ -4643,4 +4643,64 @@ document.addEventListener('mousedown', function (e) {
             ripple.remove();
         }, 600);
     }
-}, true); // <-- ОСЬ ЦЕЙ МАГІЧНИЙ ПАРАМЕТР ВИРІШУЄ ВСЕ
+}, true); 
+
+document.addEventListener('DOMContentLoaded', () => {
+    const listContainer = document.querySelector('.command-list');
+    const outputContainer = document.getElementById('command-output');
+    
+    if (!listContainer || !outputContainer) return;
+
+    // Створюємо фізичний елемент для лінії
+    const divider = document.createElement('div');
+    divider.id = 'dynamic-center-divider';
+    divider.className = 'dynamic-center-divider';
+    
+    // Робимо контейнер зі скролом відносним, щоб лінія горталась разом з ним
+    listContainer.style.position = 'relative';
+
+    function updateDivider() {
+        // Перевіряємо, чи включені 2 колонки і чи ми не на мобільному
+        if (outputContainer.classList.contains('two-columns') && window.innerWidth > 1366) {
+            
+            // Якщо лінії ще немає в DOM - додаємо
+            if (!divider.parentElement) {
+                listContainer.appendChild(divider);
+            }
+            
+            // Задаємо висоту = загальна висота всього контенту всередині скролу мінус відступ 16px
+            divider.style.height = `${listContainer.scrollHeight - 16}px`;
+            
+        } else {
+            // Видаляємо лінію на мобільних пристроях або якщо це 1 колонка
+            if (divider.parentElement) {
+                divider.remove();
+            }
+        }
+    }
+
+    // 1. Слідкуємо за будь-якими змінами всередині списку (відкриття/закриття команд)
+    const observer = new MutationObserver(() => {
+        // Використовуємо requestAnimationFrame, щоб браузер встиг перерахувати висоту
+        requestAnimationFrame(updateDivider);
+    });
+
+    observer.observe(listContainer, { 
+        childList: true, 
+        subtree: true, 
+        attributes: true 
+    });
+    
+    // 2. Слідкуємо за зміною розміру вікна
+    window.addEventListener('resize', updateDivider);
+    
+    // 3. Додаткова перестраховка при кліках (оскільки акордеон має CSS-анімацію ~0.4с)
+    listContainer.addEventListener('click', (e) => {
+        if (e.target.closest('.command-item')) {
+            setTimeout(updateDivider, 450); // Оновлюємо лінію після завершення анімації
+        }
+    });
+    
+    // Початковий виклик
+    updateDivider();
+});

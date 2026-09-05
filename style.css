@@ -2650,22 +2650,29 @@ body.dark .history-copy-btn:hover {
     flex-shrink: 0; 
 }
 
-/* Градієнтний розділювач знизу шапки */
-.templates-header-wrapper::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
+/* =========================================================
+   УНІВЕРСАЛЬНИЙ ГРАДІЄНТНИЙ РОЗДІЛЮВАЧ (В ПОТОЦІ)
+   ========================================================= */
+.fancy-divider {
+    display: block;
     width: 80%;
     height: 1px;
+    border: none;
+    margin: 0;
     background: linear-gradient(90deg, transparent, var(--input-border-color), transparent);
-    opacity: 0.6;
+    opacity: 0.9;
+
 }
 
-/* Темна тема для розділювача шапки */
-body.dark .templates-header-wrapper::after {
+body.dark .fancy-divider {
     background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+}
+
+/* Специфічний стиль для лінії всередині сітки шапки шаблонів */
+.template-divider {
+    grid-column: 1 / -1; /* Розтягуємо лінію на всі 3 колонки шапки */
+    margin: 0;
+    justify-self: center;
 }
 
 .template-main-title {
@@ -2821,8 +2828,8 @@ body.dark #clear-all-templates-button:hover {
     align-items: flex-start;
     gap: 5px; 
     width: 100%;
-    
-    padding: 15px 6px 150px 6px; 
+ 
+    padding: 16px 6px 150px 6px;
 }
 
 #templates-grid-wrapper .template-field-group .highlighting-container textarea,
@@ -5493,10 +5500,10 @@ body.dark .hist-close-btn:hover { background-color: rgba(255,255,255,0.05); }
 }
 
 /* container */
-.container.gpon-commands-container:has(.segment-btn.active[onclick*="'gpon'"])  { --dynamic-width: 96%; }
-.container.gpon-commands-container:has(.segment-btn.active[onclick*="'epon'"])  { --dynamic-width: 56%; }
-.container.gpon-commands-container:has(.segment-btn.active[onclick*="'bdcom'"]) { --dynamic-width: 56%; }
-.container.gpon-commands-container:has(.segment-btn.active[onclick*="'mx80'"])  { --dynamic-width: 48%; }
+.container.gpon-commands-container:has(.segment-btn.active[onclick*="'gpon'"])  { --dynamic-width: 98%; }
+.container.gpon-commands-container:has(.segment-btn.active[onclick*="'epon'"])  { --dynamic-width: 58%; }
+.container.gpon-commands-container:has(.segment-btn.active[onclick*="'bdcom'"]) { --dynamic-width: 58%; }
+.container.gpon-commands-container:has(.segment-btn.active[onclick*="'mx80'"])  { --dynamic-width: 50%; }
 
 /* Розширений стан контейнера (на великих моніторах) */
 .container.gpon-commands-container.expanded-layout {
@@ -5546,28 +5553,11 @@ body.dark #static-clarification-message {
     position: relative; 
     height: 38px;       
     width: 100%;
-    margin-bottom: 27px; 
     display: block;     
     flex-shrink: 0 !important;   
     min-height: 38px !important; 
     z-index: 20;
-}
-
-/* 2. Елегантний розділювач під кнопками (візуально "приземляє" панель) */
-#controls-and-clarification::after {
-    content: '';
-    position: absolute;
-    bottom: -14px; 
-    left: 50%;
-    transform: translateX(-50%);
-    width: 80%; 
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--input-border-color), transparent);
-    opacity: 0.6;
-}
-
-body.dark #controls-and-clarification::after {
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+    margin-bottom: 16px;
 }
 
 .switch-with-info {
@@ -5683,7 +5673,7 @@ body.dark .info-tooltip-text::before {
     border: 1px solid var(--input-border-color);
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.04);
     border-radius: 12px;
-    padding: 4px;
+    padding: 5px;
     gap: 4px;
 
             backdrop-filter: blur(12px);
@@ -5757,8 +5747,8 @@ body.dark .segment-btn.active {
     overflow-y: auto;      /* було: visible */
     overflow-x: hidden;
     min-height: 0;          /* критично для скролу всередині flex-колонки */
-    margin: 0 auto;
-    width: 100%;          
+    width: 100%;
+    padding: 16px 0px 0px 0px;
 }
 
 /* Темна тема: command list */
@@ -6000,32 +5990,38 @@ body.dark .command-item.has-subcommands .command-text:hover {
     cursor: pointer;
 }
 
+/* Базові налаштування колонок */
 #command-output.two-columns {
     column-count: 2;
-    column-gap: 0;
+    column-gap: 20px; /* Робимо відстань між колонками трохи більшою для краси */
     position: relative;
+    
+    /* ОЧИЩАЄМО все зайве */
+    background-image: none !important;
+    column-rule: none !important;
 }
 
-/* Роздільник через box-shadow на обгортці — стабільно в Chrome */
 #command-output.two-columns .command-group-wrapper {
     padding: 0;
+    break-inside: avoid;
 }
 
-/* Псевдоелемент на самому контейнері — лінія точно посередині */
-#command-output.two-columns::after {
-    content: '';
+/* === НОВИЙ СТИЛЬ ДЛЯ JS-ЛІНІЇ === */
+.dynamic-center-divider {
     position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
+    top: 16px; /* Відступ зверху */
+    
+    /* Рівно по центру мінус половина ширини скролбару (8px) */
+    left: calc(50% - 8px); 
+    
     width: 2px;
-    height: 100%;
     background-color: var(--input-border-color);
-    pointer-events: none;
+    pointer-events: none; /* Щоб лінія не заважала клікати на текст */
+    z-index: 10;
 }
 
-/* Темна тема: command output — псевдоелемент ::after */
-body.dark #command-output.two-columns::after {
+/* Темна тема для лінії */
+body.dark .dynamic-center-divider {
     background-color: rgba(255, 255, 255, 0.15);
 }
 
