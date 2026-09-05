@@ -2632,13 +2632,12 @@ body.dark .history-copy-btn:hover {
 
 /* Об'єднаний та чистий стиль */
 .container[data-content="text-templates"] .content-card {
-    overflow-y: auto;
-    overflow-x: hidden;	
+    overflow: hidden !important;
+    display: flex;
+    flex-direction: column;
     height: 100%;
-    display: block;
-    scrollbar-gutter: stable;
     padding-bottom: 22px;
-    padding: 0 6px 6px 6px;
+    padding: 0 !important;
 }
 
 /* Контейнер шапки */
@@ -2646,8 +2645,27 @@ body.dark .history-copy-btn:hover {
     display: grid;
     grid-template-columns: 1fr auto 1fr; /* ліва "невидима" колонка | заголовок | кнопки */
     align-items: center;
-    padding-left: 10px;
-    padding-right: 5px;
+    position: relative;
+    z-index: 10;
+    flex-shrink: 0; 
+}
+
+/* Градієнтний розділювач знизу шапки */
+.templates-header-wrapper::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--input-border-color), transparent);
+    opacity: 0.6;
+}
+
+/* Темна тема для розділювача шапки */
+body.dark .templates-header-wrapper::after {
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
 }
 
 .template-main-title {
@@ -2666,6 +2684,7 @@ body.dark .history-copy-btn:hover {
     align-items: center;
     gap: 10px;
     margin-bottom: 10px;
+    padding-right: 16px;
 }
 
 /* Базові налаштування для всіх кнопок */
@@ -2680,8 +2699,8 @@ body.dark .history-copy-btn:hover {
     font-size: 1.1rem;
     cursor: pointer;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    width: 50px;
-    height: 28px;
+    width: 56px;
+    height: 30px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -2727,7 +2746,6 @@ body.dark .history-copy-btn:hover {
     justify-content: center;
     align-items: center;
     font-weight: bold;
-    width: 50px;
     padding: 0;
     background-color: var(--primary-accent-color);
     color: white;
@@ -2790,15 +2808,21 @@ body.dark #clear-all-templates-button:hover {
     color: white;
 }
 
-/* templates grid wrapper */
 #templates-grid-wrapper {
+    flex-grow: 1;           
+    min-height: 0; /* Критично важливо для скролу всередині flex */
+    overflow-y: auto;       
+    overflow-x: hidden;
+    scrollbar-gutter: stable;
+    
     display: flex;
     flex-wrap: wrap;
     align-content: flex-start;
     align-items: flex-start;
     gap: 5px; 
     width: 100%;
-    padding-bottom: 150px;
+    
+    padding: 15px 6px 150px 6px; 
 }
 
 #templates-grid-wrapper .template-field-group .highlighting-container textarea,
