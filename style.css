@@ -6009,14 +6009,16 @@ body.dark .command-item.has-subcommands .command-text:hover {
 /* === НОВИЙ СТИЛЬ ДЛЯ JS-ЛІНІЇ === */
 .dynamic-center-divider {
     position: absolute;
-    top: 16px; /* Відступ зверху */
+    top: 16px;
     
-    /* Рівно по центру мінус половина ширини скролбару (8px) */
-    left: calc(50% - 8px); 
+    /* Ставимо рівно на 50% (браузер сам розбереться зі скролбаром) */
+    left: 50%; 
+    /* Зсуваємо лінію вліво рівно на половину її власної товщини */
+    transform: translateX(-50%); 
     
     width: 2px;
     background-color: var(--input-border-color);
-    pointer-events: none; /* Щоб лінія не заважала клікати на текст */
+    pointer-events: none;
     z-index: 10;
 }
 

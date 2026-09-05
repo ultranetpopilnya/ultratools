@@ -23,7 +23,6 @@ show vlan summary :: Показати всі номери VLAN на OLT
 show card slotno 1 :: Показати інформацію про OLT (Скільки часу він працює)
 
 
-
 * conf t :: Зайти в налаштування OLT (Далі команди, які вводяться після)
 > ip dhcp snooping clear pon abcd.efgh.1234 vlan 111 gpon-onu_1/1/1:1 vport 1 :: Очистка сесії
 > ip dhcp snooping clear abcd.efgh.1234 vlan 111 :: Очистка сесії
