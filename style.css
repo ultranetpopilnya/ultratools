@@ -5993,7 +5993,7 @@ body.dark .command-item.has-subcommands .command-text:hover {
 /* Базові налаштування колонок */
 #command-output.two-columns {
     column-count: 2;
-    column-gap: 20px; /* Робимо відстань між колонками трохи більшою для краси */
+    column-gap: 0px;
     position: relative;
     
     /* ОЧИЩАЄМО все зайве */
