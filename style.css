@@ -82,7 +82,7 @@ select {
 
     /* SCROLLBAR */
 --scrollbar-track: #e0e0e0;
---scrollbar-thumb: #c2c2c2;
+--scrollbar-thumb: #cacaca;
 --scrollbar-thumb-hover: #a8a8a8;
 --scrollbar-thumb-active: #8f8f8f;
 
