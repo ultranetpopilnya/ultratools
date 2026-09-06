@@ -550,7 +550,7 @@ body.dark ::placeholder {
 .toggle-button-wrapper, 
 .notification { 
     position: relative;
-    z-index: 2; 
+    z-index: 1; 
 }
 
 .content-card {
@@ -952,7 +952,7 @@ button:disabled, input:disabled, select:disabled {
 
     box-shadow: var(--shadow-glass), var(--reflection-inner);
     position: relative;
-    z-index: 50;
+    z-index: 2;
     border: 1px solid var(--panel-border);
     overflow: visible !important;
 }
@@ -962,7 +962,6 @@ body.dark .tabs {
     -webkit-backdrop-filter: blur(20px) saturate(150%);
     background-color: var(--tabstrip-bg);
     background-image: none;
-    box-shadow: var(--reflection-inner);
     border: 1px solid var(--panel-border);
 }
 
