@@ -82,7 +82,7 @@ select {
 
     /* SCROLLBAR */
 --scrollbar-track: #e0e0e0;
---scrollbar-thumb: #cacaca;
+--scrollbar-thumb: #c2c2c2;
 --scrollbar-thumb-hover: #a8a8a8;
 --scrollbar-thumb-active: #8f8f8f;
 
@@ -119,28 +119,15 @@ select {
     /* SHADOWS */
     --shadow-glass: 0 8px 32px rgba(15, 23, 42, 0.08);
     --shadow-float: 0 20px 60px rgba(15, 23, 42, 0.14), 0 4px 16px rgba(15, 23, 42, 0.06);
-    
     --glass-shadow-outer: 
-    0 8px 24px rgba(0, 0, 0, 0.05), 
-    0 2px 6px rgba(0, 0, 0, 0.025), 
-    inset 0 1px 1px rgba(255, 255, 255, 0.6);
-    
+        0 8px 24px rgba(0, 0, 0, 0.08), 
+        0 2px 6px rgba(0, 0, 0, 0.04), 
+        inset 0 1px 1px rgba(255, 255, 255, 0.6);
     --glass-shadow-inner: 
-    inset 0 4px 16px rgba(0, 0, 0, 0.03),   
-    inset 0 1px 4px rgba(255, 255, 255, 0.4);
-    
-    --glass-shadow-input:
-    inset 0 3px 8px rgba(0, 0, 0, 0.03), 
-    inset 0 1px 2px rgba(0, 0, 0, 0.02);
+        inset 0 2px 10px rgba(0, 0, 0, 0.06), 
+        inset 0 1px 1px rgba(255, 255, 255, 0.8);
+    --glass-shadow-input: inset 0 2px 6px rgba(0, 0, 0, 0.05), inset 0 -1px 1px rgba(255, 255, 255, 0.7);
     --glass-shadow-input-focus: inset 0 1px 2px rgba(0, 0, 0, 0.03), 0 0 0 3px rgba(0, 0, 0, 0.04), 0 4px 15px rgba(0, 0, 0, 0.08);    
-    
-    --templates-shadow-inner:
-    inset 0 3px 8px rgba(0, 0, 0, 0.03), 
-    inset 0 1px 2px rgba(0, 0, 0, 0.02);
-    
-    --content-card-shadow:
-        inset 0 1px 1px 0 rgba(255, 255, 255, 0.9),
-        0 8px 28px -4px rgba(0, 0, 0, 0.15);
 
     /* REFLECTIONS */
     --reflection-top: linear-gradient(
@@ -233,30 +220,15 @@ color-scheme: dark;
     /* SHADOWS */
     --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.28);
     --shadow-float: 0 20px 60px rgba(0, 0, 0, 0.42), 0 4px 16px rgba(0, 0, 0, 0.24);
-    
-    --glass-shadow-outer: 
-    0 6px 20px rgba(0, 0, 0, 0.13),  
-    0 2px 6px rgba(0, 0, 0, 0.07),   
+--glass-shadow-outer: 
+    0 6px 18px rgba(0, 0, 0, 0.20),  
+    0 2px 5px rgba(0, 0, 0, 0.12),   
     inset 0 1px 1px rgba(255, 255, 255, 0.06);
-    
-    --glass-shadow-inner: 
-    inset 0 4px 20px rgba(0, 0, 0, 0.12),  
-    inset 0 1px 3px rgba(255, 255, 255, 0.03);
-    
-    --glass-shadow-input:
-    inset 0 3px 8px rgba(0, 0, 0, 0.15), 
-    inset 0 1px 2px rgba(0, 0, 0, 0.1);
-
+--glass-shadow-inner: 
+    inset 0 2px 15px rgba(0, 0, 0, 0.28), 
+    inset 0 1px 1px rgba(255, 255, 255, 0.08);
+    --glass-shadow-input: inset 0 2px 10px rgba(0, 0, 0, 0.35), inset 0 -1px 1px rgba(255, 255, 255, 0.07);
     --glass-shadow-input-focus: inset 0 1px 2px rgba(0, 0, 0, 0.2), 0 0 0 3px rgba(255, 255, 255, 0.08), 0 4px 15px rgba(0, 0, 0, 0.25);
-    
-    --templates-shadow-inner:
-    inset 0 3px 8px rgba(0, 0, 0, 0.15), 
-    inset 0 1px 2px rgba(0, 0, 0, 0.1);
-
-    --content-card-shadow:
-        inset 0 1px 1px 0 rgba(255, 255, 255, 0.06),
-        inset 0 -1px 1px 0 rgba(0, 0, 0, 0.2),
-        0 8px 28px 0 rgba(0, 0, 0, 0.37);
 
     /* REFLECTIONS */
     --reflection-top: linear-gradient(
@@ -559,7 +531,7 @@ body.dark ::placeholder {
 .toggle-button-wrapper, 
 .notification { 
     position: relative;
-    z-index: 1; 
+    z-index: 2; 
 }
 
 .content-card {
@@ -573,7 +545,9 @@ body.dark ::placeholder {
     border: 1px solid var(--panel-border);
     border-radius: 12px;
  
-    box-shadow: var(--content-card-shadow);
+    box-shadow:
+        inset 0 1px 1px 0 rgba(255, 255, 255, 0.9),
+        0 8px 28px -4px rgba(0, 0, 0, 0.15);
 
     overflow: auto;
 
@@ -583,7 +557,14 @@ body.dark ::placeholder {
 }
 
 body.dark .content-card {
+    background-color: var(--card-bg);
     background-image: none;
+    border-color: var(--panel-border);
+
+    box-shadow:
+        inset 0 1px 1px 0 rgba(255, 255, 255, 0.06),
+        inset 0 -1px 1px 0 rgba(0, 0, 0, 0.2),
+        0 8px 28px 0 rgba(0, 0, 0, 0.37);
 }
 
 /* === БАЗОВИЙ КОНТЕЙНЕР ВКЛАДОК === */
@@ -641,12 +622,11 @@ input, textarea, select, .date-input-group input, #fullNameInput {
 }
 
 .speed-dropdown.open .speed-dropdown-toggle,
-.template-field-group:focus-within,
 #qn-input:focus,
 input:focus:not([type="button"]):not([type="submit"]),
 textarea:focus,
 select:focus,
-.textarea-wrapper:focus,
+.template-field-group:focus-within,
 .date-input-group input:focus,
 #fullNameInput:focus {
     border-color: var(--input-focus-border-color) !important;
@@ -952,7 +932,7 @@ button:disabled, input:disabled, select:disabled {
 
     box-shadow: var(--shadow-glass), var(--reflection-inner);
     position: relative;
-    z-index: 2;
+    z-index: 50;
     border: 1px solid var(--panel-border);
     overflow: visible !important;
 }
@@ -962,6 +942,7 @@ body.dark .tabs {
     -webkit-backdrop-filter: blur(20px) saturate(150%);
     background-color: var(--tabstrip-bg);
     background-image: none;
+    box-shadow: var(--reflection-inner);
     border: 1px solid var(--panel-border);
 }
 
@@ -1961,7 +1942,9 @@ body.dark .moon-icon {
     width: 90%; 
     box-sizing: border-box;
     margin: 0 auto 16px auto;
-
+    
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     box-shadow: var(--glass-shadow-outer); 
 }
 
@@ -2028,17 +2011,17 @@ body.dark .actions-block-title::after {
     
     cursor: pointer;
     font-family: inherit;
-
+    /* Шрифт як у кнопок дій */
     font-size: 14px; 
     font-weight: 400; 
     color: var(--text-color);
     
     transition: all 0.2s ease;
     white-space: nowrap;
-    user-select: none;
+    user-select: none; /* Забороняє виділення тексту при кліку */
 
-    transform: translateZ(0); 
-    will-change: transform; 
+    transform: translateZ(0); /* Примусово вмикає GPU-рендеринг на постійній основі */
+    will-change: transform; /* Каже браузеру заздалегідь, що кнопка буде анімуватись */
 }
 
 #login-autoclear-btn i {
@@ -2111,8 +2094,9 @@ body.dark #login-autoclear-btn:hover:not(.active) i {
     margin-bottom: 16px;
     background-color: var(--input-bg-color);
 
-    outline: none;
-
+        outline: none;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     box-shadow: var(--glass-shadow-input);
     transition: box-shadow 0.3s ease, border-color 0.3s ease;
 }
@@ -2175,6 +2159,8 @@ body.dark #login-autoclear-btn:hover:not(.active) i {
     min-height: 52px;
     margin: 0 0 16px 0;
     
+        backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     box-shadow: var(--glass-shadow-outer);
 }
 
@@ -2302,6 +2288,8 @@ body.dark .login-generator-container .result-item .regenerate-login-btn {
     border-radius: 12px;
     overflow: hidden;
 
+            backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     box-shadow: var(--glass-shadow-outer);
 }
 
@@ -2639,12 +2627,13 @@ body.dark .history-copy-btn:hover {
 
 /* Об'єднаний та чистий стиль */
 .container[data-content="text-templates"] .content-card {
-    overflow: hidden !important;
-    display: flex;
-    flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;	
     height: 100%;
+    display: block;
+    scrollbar-gutter: stable;
     padding-bottom: 22px;
-    padding: 0 !important;
+    padding: 0 6px 6px 6px;
 }
 
 /* Контейнер шапки */
@@ -2652,34 +2641,8 @@ body.dark .history-copy-btn:hover {
     display: grid;
     grid-template-columns: 1fr auto 1fr; /* ліва "невидима" колонка | заголовок | кнопки */
     align-items: center;
-    position: relative;
-    z-index: 10;
-    flex-shrink: 0; 
-}
-
-/* =========================================================
-   УНІВЕРСАЛЬНИЙ ГРАДІЄНТНИЙ РОЗДІЛЮВАЧ (В ПОТОЦІ)
-   ========================================================= */
-.fancy-divider {
-    display: block;
-    width: 80%;
-    height: 1px;
-    border: none;
-    margin: 0;
-    background: linear-gradient(90deg, transparent, var(--input-border-color), transparent);
-    opacity: 0.9;
-
-}
-
-body.dark .fancy-divider {
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
-}
-
-/* Специфічний стиль для лінії всередині сітки шапки шаблонів */
-.template-divider {
-    grid-column: 1 / -1; /* Розтягуємо лінію на всі 3 колонки шапки */
-    margin: 0;
-    justify-self: center;
+    padding-left: 10px;
+    padding-right: 5px;
 }
 
 .template-main-title {
@@ -2698,7 +2661,6 @@ body.dark .fancy-divider {
     align-items: center;
     gap: 10px;
     margin-bottom: 10px;
-    padding-right: 16px;
 }
 
 /* Базові налаштування для всіх кнопок */
@@ -2713,8 +2675,8 @@ body.dark .fancy-divider {
     font-size: 1.1rem;
     cursor: pointer;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    width: 56px;
-    height: 30px;
+    width: 50px;
+    height: 28px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -2760,6 +2722,7 @@ body.dark .fancy-divider {
     justify-content: center;
     align-items: center;
     font-weight: bold;
+    width: 50px;
     padding: 0;
     background-color: var(--primary-accent-color);
     color: white;
@@ -2822,21 +2785,15 @@ body.dark #clear-all-templates-button:hover {
     color: white;
 }
 
+/* templates grid wrapper */
 #templates-grid-wrapper {
-    flex-grow: 1;           
-    min-height: 0; /* Критично важливо для скролу всередині flex */
-    overflow-y: auto;       
-    overflow-x: hidden;
-    scrollbar-gutter: stable;
-    
     display: flex;
     flex-wrap: wrap;
     align-content: flex-start;
     align-items: flex-start;
-    gap: 5px; 
+    gap: 6px; 
     width: 100%;
- 
-    padding: 16px 6px 150px 6px;
+    padding-bottom: 150px;
 }
 
 #templates-grid-wrapper .template-field-group .highlighting-container textarea,
@@ -2874,7 +2831,7 @@ body.dark #clear-all-templates-button:hover {
     align-items: center;
     gap: 4px;
     flex-shrink: 0; 
-    padding: 5px;
+    padding: 4px 4px 0px 4px;
     user-select: none;
 }
 
@@ -2887,6 +2844,10 @@ body.dark #clear-all-templates-button:hover {
     color: var(--text-color); 
     background-color: var(--input-bg-color);
     min-width: 150px;	
+    
+    outline: none;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     box-shadow: var(--glass-shadow-input);
     transition: box-shadow 0.3s ease, border-color 0.3s ease;
 }
@@ -3005,10 +2966,9 @@ body.dark .template-drag-placeholder {
     position: relative;
     z-index: 2;
     background: transparent; 
-    color: var(--text-color);
-    resize: none !important;   
-    width: 100%;
-    box-sizing: border-box;
+    color: var(--text-color); 
+    -webkit-text-fill-color: var(--text-color);
+    resize: none !important;
 }
 
 /* 2. Але ПОВЕРТАЄМО можливість виділення для полів вводу всередині нього */
@@ -3044,9 +3004,9 @@ body.dark .template-field-group .textarea-wrapper:focus-within {
     top: 0;
     left: 0;
     z-index: 1;
-    overflow: auto; 
-    pointer-events: none; 
-    color: transparent; 
+    overflow: auto; /* Важливо для синхронізації прокрутки */
+    pointer-events: none; /* Кліки проходять наскрізь до textarea */
+    color: transparent; /* Текст у підкладці невидимий, видно лише фон <mark> */
 }
 
 /* highlighter backdrop */
@@ -3061,10 +3021,6 @@ body.dark .highlighter-backdrop mark {
 background-color: var(--highlight-bg-color);
 color: transparent;
 z-index: 3;
-}
-
-.template-field-group .highlighting-container textarea:focus {
-    box-shadow: none !important;
 }
 
 .highlighter-backdrop, .template-field-group textarea {
@@ -3090,14 +3046,22 @@ z-index: 3;
     position: relative;
     display: flex;
     flex-grow: 1; 
-    margin: 0px 5px 5px 5px;
-    width: calc(100% - 10px);
+    margin: 0px 4px 4px 4px;
+    width: calc(100% - 8px);
     border: 1px solid var(--input-border-color);
     border-radius: 12px;
     overflow: hidden;
     contain: paint layout;
 
-    box-shadow: var(--templates-shadow-inner)
+        outline: none;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: var(--glass-shadow-input);
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+body.dark .textarea-wrapper {
+    border: 1px solid var(--input-border-color);
 }
 
 .line-marker-gutter {
@@ -3111,6 +3075,7 @@ z-index: 3;
     padding-bottom: 10px;
 	background-color: var(--template-strip-bg); 
     border-right: 1px solid var(--input-border-color);
+    box-shadow: var(--glass-shadow-input);
 }
 
 /* Темна тема: line marker gutter */
@@ -3197,8 +3162,8 @@ body.dark .line-marker {
 /* === ІДЕАЛЬНИЙ ІНТЕГРОВАНИЙ СТИЛЬ ПОШУКУ (ДВОКОЛОНКОВИЙ) === */
 .template-search-bar {
     position: relative; 
-    width: calc(100% - 10px) !important;
-    margin: 0 5px !important;
+    width: calc(100% - 8px) !important;
+    margin: 0 4px !important;
     z-index: 5; 
     
     display: flex;
@@ -3208,7 +3173,7 @@ body.dark .line-marker {
     
     background-color: var(--panel-bg);
     border-radius: 12px;
-    border: 0px solid transparent;
+    border: 1px solid transparent; 
     
     /* === СУЧАСНА АНІМАЦІЯ (ЗАКРИТО) === */
     max-height: 0;
@@ -3233,18 +3198,19 @@ body.dark .line-marker {
 
 .template-search-bar.active {
     /* === СУЧАСНА АНІМАЦІЯ (ВІДКРИТО) === */
-    max-height: 220px; 
+    max-height: 120px; 
     min-height: 65px;
     opacity: 1;
     transform: translateY(0) scale(1); 
     pointer-events: auto; 
     
-    margin: 0 5px 5px 5px !important;
-    padding: 6px; 
-    border-color: var(--input-border-color) !important;
-    border-width: 1px; 
+    margin-top: 4px !important; 
+    margin-bottom: 4px !important; 
+    padding: 10px 4px 14px 4px; 
+    border-color: var(--input-border-color) !important; 
     
-    
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     box-shadow: var(--glass-shadow-inner); 
 }
 
@@ -3269,7 +3235,7 @@ body.dark .template-search-bar.active {
 
 /* 3. Ліва колонка (Пошук) */
 .search-col-left {
-    width: 380px; 
+    width: 380px; /* БУЛО 250px. Тепер 300px — кнопки і поля будуть широкими! */
     display: flex;
     flex-direction: column;
     gap: 5px; 
@@ -3282,8 +3248,8 @@ body.dark .template-search-bar.active {
     padding: 0;
     border: none;
     border-radius: 8px; 
-    font-size: 13px;
-    font-weight: 400; 
+    font-size: 12px;
+    font-weight: 600; 
     cursor: pointer;
     color: rgb(241, 241, 241);
     transition: filter 0.2s, transform 0.1s;
@@ -3324,6 +3290,8 @@ body.dark .template-search-bar.active {
     outline: none;
     font-family: inherit;
 
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     box-shadow: var(--glass-shadow-input);
     transition: box-shadow 0.3s ease, border-color 0.3s ease;
 }
@@ -3357,16 +3325,16 @@ body.dark .search-inputs-row select option {
     flex: 0 0 110px; /* Залізно тримає 95px ширини */
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 6px;
     padding-left: 15px;
     border-left: 1px dashed var(--input-border-color); 
 }
 
 /* Маленький напис "Швидкість:" */
 .speed-label {
-    font-size: 11px;
+    font-size: 10px;
     color: var(--inactive-text);
-    font-weight: 500;
+    font-weight: 700;
     text-transform: uppercase;
     line-height: 1;  
     margin: 0 0 0px 6px;
@@ -3389,8 +3357,8 @@ body.dark .search-inputs-row select option {
 /* Кнопка SWAP (стрілочки) */
 .swap-inputs-btn {
     flex: 0 0 auto;
-    width: 30px;
-    height: 30px;
+    width: 28px;
+    height: 28px;
     border: none;
     background: transparent;
     color: var(--text-color); /* Використовуємо основний колір тексту */
@@ -3401,7 +3369,7 @@ body.dark .search-inputs-row select option {
     align-items: center;
     justify-content: center;
     transition: all 0.2s ease;
-    font-size: 14px;
+    font-size: 12px;
 }
 
 /* Наведення у СВІТЛІЙ темі (чорний напівпрозорий круг) */
@@ -3423,12 +3391,12 @@ body.dark .swap-inputs-btn:hover {
    ========================================================= */
 .template-config-bar {
     position: relative;
-    width: calc(100% - 10px);
-    margin: 0 5px !important;
+    width: calc(100% - 8px);
+    margin: 0 4px;
     
     background-color: var(--panel-bg);
     border-radius: 12px;
-    border: 0px solid var(--input-border-color);
+    border: 1px solid var(--input-border-color); 
     
     max-height: 0;
     opacity: 0;
@@ -3450,18 +3418,21 @@ body.dark .swap-inputs-btn:hover {
 
 /* template config bar — активний стан */
 .template-config-bar.active {
-    max-height: 100%; 
+    max-height: 120px; 
     opacity: 1;
     transform: translateY(0) scale(1); 
     pointer-events: auto; 
     z-index: 2000;
 
-    margin: 0 5px 5px 5px !important;
+    margin-top: 4px;
+    margin-bottom: 2px;
     padding: 6px;
-    border-width: 1px;
+    border: 1px solid var(--input-border-color); /* Плавно проявляємо рамку */
     
     overflow: visible;
     
+        backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     box-shadow: var(--glass-shadow-inner);
 }
 
@@ -3483,7 +3454,7 @@ body.dark .template-config-bar.active {
     flex-direction: row;
     gap: 5px;
     width: 100%;
-    height: 100%;
+    height: 64px;
 }
 
 /* Ліва колонка з полями вводу */
@@ -3595,7 +3566,7 @@ body.dark .config-generate-btn {
 .config-mix-toggle-btn,
 .config-show-signal-btn {
     flex: 0 0 40px;
-    height: 30px;
+    height: 100%;
     padding: 0;
     
     border: 1px solid var(--input-border-color);
@@ -4463,6 +4434,8 @@ body.dark .speed-dropdown-item.active {
     padding: 14px 20px;
     margin: 0;
 
+                backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     box-shadow: var(--glass-shadow-outer); 
 }
 
@@ -4566,7 +4539,9 @@ body.dark .date-calculator-container .date-input-group input[type="time"] {
     border-radius: 12px; 
     width: 410px;
     overflow: hidden;
-
+    
+        backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     box-shadow: var(--glass-shadow-outer);
 }
 
@@ -4639,6 +4614,8 @@ body.dark .date-calculator-container #result-section h2 {
     border: 1px solid var(--input-border-color); 
     width: 410px;
 
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     box-shadow: var(--glass-shadow-outer); 
 }
 
@@ -5496,10 +5473,10 @@ body.dark .hist-close-btn:hover { background-color: rgba(255,255,255,0.05); }
 }
 
 /* container */
-.container.gpon-commands-container:has(.segment-btn.active[onclick*="'gpon'"])  { --dynamic-width: 98%; }
-.container.gpon-commands-container:has(.segment-btn.active[onclick*="'epon'"])  { --dynamic-width: 58%; }
-.container.gpon-commands-container:has(.segment-btn.active[onclick*="'bdcom'"]) { --dynamic-width: 58%; }
-.container.gpon-commands-container:has(.segment-btn.active[onclick*="'mx80'"])  { --dynamic-width: 50%; }
+.container.gpon-commands-container:has(.segment-btn.active[onclick*="'gpon'"])  { --dynamic-width: 96%; }
+.container.gpon-commands-container:has(.segment-btn.active[onclick*="'epon'"])  { --dynamic-width: 56%; }
+.container.gpon-commands-container:has(.segment-btn.active[onclick*="'bdcom'"]) { --dynamic-width: 56%; }
+.container.gpon-commands-container:has(.segment-btn.active[onclick*="'mx80'"])  { --dynamic-width: 48%; }
 
 /* Розширений стан контейнера (на великих моніторах) */
 .container.gpon-commands-container.expanded-layout {
@@ -5549,11 +5526,28 @@ body.dark #static-clarification-message {
     position: relative; 
     height: 38px;       
     width: 100%;
+    margin-bottom: 27px; 
     display: block;     
     flex-shrink: 0 !important;   
     min-height: 38px !important; 
     z-index: 20;
-    margin-bottom: 16px;
+}
+
+/* 2. Елегантний розділювач під кнопками (візуально "приземляє" панель) */
+#controls-and-clarification::after {
+    content: '';
+    position: absolute;
+    bottom: -14px; 
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%; 
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--input-border-color), transparent);
+    opacity: 0.6;
+}
+
+body.dark #controls-and-clarification::after {
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
 }
 
 .switch-with-info {
@@ -5669,9 +5663,11 @@ body.dark .info-tooltip-text::before {
     border: 1px solid var(--input-border-color);
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.04);
     border-radius: 12px;
-    padding: 5px;
+    padding: 4px;
     gap: 4px;
 
+            backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     box-shadow: var(--glass-shadow-inner);
 }
 
@@ -5696,6 +5692,7 @@ body.dark .segmented-control {
     font-weight: 600;
     color: var(--inactive-text);
     cursor: pointer;
+    
     transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
@@ -5740,8 +5737,8 @@ body.dark .segment-btn.active {
     overflow-y: auto;      /* було: visible */
     overflow-x: hidden;
     min-height: 0;          /* критично для скролу всередині flex-колонки */
-    width: 100%;
-    padding: 16px 0px 0px 0px;
+    margin: 0 auto;
+    width: 100%;          
 }
 
 /* Темна тема: command list */
@@ -5983,40 +5980,32 @@ body.dark .command-item.has-subcommands .command-text:hover {
     cursor: pointer;
 }
 
-/* Базові налаштування колонок */
 #command-output.two-columns {
     column-count: 2;
-    column-gap: 0px;
+    column-gap: 0;
     position: relative;
-    
-    /* ОЧИЩАЄМО все зайве */
-    background-image: none !important;
-    column-rule: none !important;
 }
 
+/* Роздільник через box-shadow на обгортці — стабільно в Chrome */
 #command-output.two-columns .command-group-wrapper {
     padding: 0;
-    break-inside: avoid;
 }
 
-/* === НОВИЙ СТИЛЬ ДЛЯ JS-ЛІНІЇ === */
-.dynamic-center-divider {
+/* Псевдоелемент на самому контейнері — лінія точно посередині */
+#command-output.two-columns::after {
+    content: '';
     position: absolute;
-    top: 16px;
-    
-    /* Ставимо рівно на 50% (браузер сам розбереться зі скролбаром) */
-    left: 50%; 
-    /* Зсуваємо лінію вліво рівно на половину її власної товщини */
-    transform: translateX(-50%); 
-    
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
     width: 2px;
+    height: 100%;
     background-color: var(--input-border-color);
     pointer-events: none;
-    z-index: 10;
 }
 
-/* Темна тема для лінії */
-body.dark .dynamic-center-divider {
+/* Темна тема: command output — псевдоелемент ::after */
+body.dark #command-output.two-columns::after {
     background-color: rgba(255, 255, 255, 0.15);
 }
 
