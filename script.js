@@ -141,6 +141,64 @@ window.changeDeviceType = function(event, deviceName) {
     return result;
 }
 
+// === ФУНКЦІЯ ОТРИМАННЯ ВАРІАНТІВ ЛОГІНІВ З ПІБ ===
+function getLoginVariants(fullName) {
+    fullName = fullName.trim();
+    if (!fullName) return [];
+    
+    const companyRegex = /(^|\s)(фоп|тов|тзов|пп|ат|прат|пат|ват|зат|тдв|кб|го|гс|кп|дп|фг|сфг|осбб|жбк|бф|нвп|зош|нвк|днз|црл)(\s|$)/i;
+    const strictCompanyKeyword = /^(фоп|тов|тзов|пп|ат|прат|пат|ват|зат|тдв|кб|го|гс|кп|дп|фг|сфг|осбб|жбк|бф|нвп|зош|нвк|днз|црл)$/i;
+
+    const parts = fullName.split(/\s+/).filter(p => p.length > 0);
+    const isCompany = companyRegex.test(fullName.toLowerCase()) || parts.length > 3 || /\d/.test(fullName) || /["“”«»]/.test(fullName);
+    
+    // Використовуємо Map, щоб уникнути дублікатів логінів
+    let variantsMap = new Map(); 
+    const addVariant = (login, label) => {
+        if (login && !variantsMap.has(login)) variantsMap.set(login, label);
+    };
+
+    if (isCompany) {
+        let loginFull = transliterate(fullName).replace(/[^a-z0-9]/g, '');
+        addVariant(loginFull, 'Повний');
+
+        let abbrLogin = '';
+        parts.forEach(part => {
+            let cleanPart = part.replace(/[^a-zA-Zа-яА-ЯіїєґІЇЄҐ0-9]/g, '');
+            if (!cleanPart) return; 
+            if (strictCompanyKeyword.test(cleanPart) || /\d/.test(cleanPart)) {
+                abbrLogin += transliterate(cleanPart).replace(/[^a-z0-9]/g, '');
+            } else {
+                abbrLogin += transliterate(cleanPart.charAt(0)).replace(/[^a-z0-9]/g, '');
+            }
+        });
+        if (abbrLogin !== loginFull) addVariant(abbrLogin, 'Скорочений');
+    } else {
+        if (parts.length < 3) {
+            let loginFull = parts.map(part => transliterate(part)).join('').replace(/[^a-z0-9]/g, '');
+            addVariant(loginFull, 'Повний');
+            
+            let loginAbbr = parts.map(part => {
+                let cleanPart = part.replace(/[^a-zA-Zа-яА-ЯіїєґІЇЄҐ0-9]/g, '');
+                return cleanPart ? transliterate(cleanPart.charAt(0)) : '';
+            }).join('').replace(/[^a-z0-9]/g, '');
+            if (loginAbbr !== loginFull) addVariant(loginAbbr, 'Скорочений');
+        } else {
+            let surname = transliterate(parts[0]).replace(/[^a-z0-9]/g, '');
+            let nameFull = transliterate(parts[1]).replace(/[^a-z0-9]/g, '');
+            let patronymicFull = transliterate(parts[2]).replace(/[^a-z0-9]/g, '');
+            let nameInitial = nameFull.charAt(0);
+            let patronymicInitial = patronymicFull.charAt(0);
+
+            addVariant(surname + nameInitial + patronymicInitial, 'Прізвище + ініціали');
+            addVariant(surname + nameFull + patronymicFull, 'Повний');
+        }
+    }
+    
+    // Перетворюємо Map назад у зручний масив об'єктів
+    return Array.from(variantsMap, ([login, label]) => ({ login, label }));
+}
+
 // === ТУМБЛЕР: АВТООЧИЩЕННЯ ПОЛЯ ПІБ ===
 let isAutoClearLoginEnabled = localStorage.getItem('loginAutoClear') !== 'false'; // За замовчуванням увімкнено
 
@@ -1198,6 +1256,9 @@ function centerActiveDropdownItem(dropdownNode) {
     const fieldGroup = document.createElement('div');
     fieldGroup.className = 'template-field-group';
     
+    // ДОДАНО: Змінна для зберігання останнього поля, де був курсор
+    let lastFocusedElement = null;
+    
     // 2. ДОДАНО: ЗАХИСТ ВІД "ПРИВИДА" (Перевірка коректності розмірів)
     // Якщо розмір прийшов без 'px' або це дивне число - ставимо стандарт
     const safeWidth = (width && String(width).includes('px')) ? width : '450px';
@@ -1320,8 +1381,12 @@ fieldGroup.dataset.onuMode             = onuMode || (switchMode ? 'SWITCH' : 'RE
     copyButton.title = 'Копіювати текст';
     copyButton.className = 'copy-template-btn';
     copyButton.onclick = () => {
-        const textarea = fieldGroup.querySelector('textarea');
-        const textToCopy = textarea.value.substring(textarea.selectionStart, textarea.selectionEnd) || textarea.value;
+        // Беремо останнє активне поле АБО головне текстове поле
+        const target = (lastFocusedElement && document.body.contains(lastFocusedElement)) 
+            ? lastFocusedElement 
+            : fieldGroup.querySelector('textarea');
+            
+        const textToCopy = target.value.substring(target.selectionStart, target.selectionEnd) || target.value;
         if (!textToCopy.trim()) return; 
         navigator.clipboard.writeText(textToCopy).then(() => {
             copyButton.innerHTML = '<i class="fas fa-check"></i>';
@@ -1330,35 +1395,50 @@ fieldGroup.dataset.onuMode             = onuMode || (switchMode ? 'SWITCH' : 'RE
         }).catch(err => console.error('Error:', err));
     };
     
-    // --- СПІЛЬНА ФУНКЦІЯ ДЛЯ ВСТАВКИ (Щоб не дублювати код) ---
-    const insertTextIntoTextarea = (targetText) => {
-        const textarea = fieldGroup.querySelector('textarea');
-        const start = textarea.selectionStart;
-        const end = textarea.selectionEnd;
-        const text = textarea.value;
+    // --- СПІЛЬНА ФУНКЦІЯ ДЛЯ ВСТАВКИ (Розумна) ---
+    const insertTextIntoTarget = (targetText) => {
+        const target = (lastFocusedElement && document.body.contains(lastFocusedElement)) 
+            ? lastFocusedElement 
+            : fieldGroup.querySelector('textarea');
+            
+        const start = target.selectionStart || 0;
+        const end = target.selectionEnd || 0;
+        const text = target.value;
         const selectedText = text.substring(start, end);
 
-        const savedScrollTop = textarea.scrollTop;
+        // ЯКЩО ЦЕ ГОЛОВНЕ ТЕКСТОВЕ ПОЛЕ
+        if (target.tagName === 'TEXTAREA') {
+            const savedScrollTop = target.scrollTop;
+            if (start !== end && selectedText.length > 0) {
+                const escapeRegExp = (string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                const regex = new RegExp(escapeRegExp(selectedText), 'g');
+                target.value = text.replace(regex, targetText);
+                showNotification(`Замінено всі: ${selectedText} ➔ ${targetText}`);
+                target.setSelectionRange(start, start + targetText.length);
+            } else {
+                target.value = text.substring(0, start) + targetText + text.substring(end);
+                const newCursorPos = start + targetText.length;
+                target.setSelectionRange(newCursorPos, newCursorPos);
+            }
 
-        // ДІЯ: Масова заміна АБО звичайна вставка
-        if (start !== end && selectedText.length > 0) {
-            const escapeRegExp = (string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-            const regex = new RegExp(escapeRegExp(selectedText), 'g');
-            textarea.value = text.replace(regex, targetText);
-            showNotification(`Замінено всі: ${selectedText} ➔ ${targetText}`);
-            textarea.setSelectionRange(start, start + targetText.length);
-        } else {
-            textarea.value = text.substring(0, start) + targetText + text.substring(end);
+            target.focus({ preventScroll: true });
+            target.scrollTop = savedScrollTop;
+            const highlighter = fieldGroup.querySelector('.highlighter-backdrop');
+            updateHighlight(target, highlighter); 
+            updateBookmarksOnTextChange(fieldGroup);
+            saveTemplates();
+        } 
+        // ЯКЩО ЦЕ ІНПУТ (Логін, Порт, Пошук тощо)
+        else {
+            target.value = text.substring(0, start) + targetText + text.substring(end);
             const newCursorPos = start + targetText.length;
-            textarea.setSelectionRange(newCursorPos, newCursorPos);
+            target.focus();
+            target.setSelectionRange(newCursorPos, newCursorPos);
+            
+            // Запускаємо подію 'input', щоб спрацювали автоформатування (напр. порту)
+            target.dispatchEvent(new Event('input', { bubbles: true }));
+            saveTemplates();
         }
-
-        textarea.focus({ preventScroll: true });
-        textarea.scrollTop = savedScrollTop;
-        const highlighter = fieldGroup.querySelector('.highlighter-backdrop');
-        updateHighlight(textarea, highlighter); 
-        updateBookmarksOnTextChange(fieldGroup);
-        saveTemplates();
     };
 
     // --- 1. КНОПКА ВСТАВКИ ТІЛЬКИ ЗГЕНЕРОВАНОГО ЛОГІНА ---
@@ -1368,7 +1448,6 @@ fieldGroup.dataset.onuMode             = onuMode || (switchMode ? 'SWITCH' : 'RE
     pasteLoginButton.className = 'paste-login-btn';
     pasteLoginButton.onclick = () => {
         let targetText = ''; 
-
         const history = JSON.parse(localStorage.getItem('loginHistory') || '[]');
         if (history.length > 0) {
             targetText = history[0].login;
@@ -1380,8 +1459,7 @@ fieldGroup.dataset.onuMode             = onuMode || (switchMode ? 'SWITCH' : 'RE
             showNotification('Немає згенерованого логіна для вставки!');
             return;
         }
-        
-        insertTextIntoTextarea(targetText); // Викликаємо спільну функцію
+        insertTextIntoTarget(targetText);
     };
 
     // --- 2. КНОПКА ЗВИЧАЙНОЇ ВСТАВКИ З БУФЕРА ОБМІНУ ---
@@ -1391,22 +1469,19 @@ fieldGroup.dataset.onuMode             = onuMode || (switchMode ? 'SWITCH' : 'RE
     pasteClipboardButton.className = 'paste-clipboard-btn';
     pasteClipboardButton.onclick = async () => {
         let targetText = '';
-
         try {
             const clipText = await navigator.clipboard.readText();
             if (clipText && clipText.trim() !== '') targetText = clipText.trim();
         } catch (err) {
             console.warn("Немає доступу до буфера обміну");
         }
-
         if (!targetText) {
             showNotification('Буфер обміну порожній або недоступний!');
             return;
         }
-
-        insertTextIntoTextarea(targetText); // Викликаємо спільну функцію
+        insertTextIntoTarget(targetText);
     };
-    
+
     const clearButton = document.createElement('button');
     clearButton.innerHTML = '<i class="fas fa-eraser"></i>';
     clearButton.title = 'Очистити текст';
@@ -1513,8 +1588,17 @@ let lastConfirmedOltName = null;
                 </div>
 
                 <!-- НИЖНІЙ РЯДОК -->
-<div class="config-row">
-    <input type="text" class="config-login-input" placeholder="Login" title="Login" autocomplete="off">
+        <div class="config-row">
+    <!-- ДОДАНО: Обгортка для логіна та його випадаючого списку -->
+    <div class="login-dropdown-wrapper" style="position: relative; flex: 1; display: flex; align-items: center;">
+        <input type="text" class="config-login-input" placeholder="Login або ПІБ" title="Введіть логін або ПІБ українською" autocomplete="off" style="width: 100%; padding-right: 32px;">
+        <button type="button" class="config-login-regen-btn" title="Згенерувати наступний варіант" style="display: none;">
+            <i class="fas fa-sync-alt"></i>
+        </button>
+        
+        <div class="login-dropdown-list olt-dropdown-list"></div>
+    </div>
+    
     <input type="text" class="config-vlan-input" placeholder="VLAN" title="VLAN (Залиште порожнім, щоб не міняти)" autocomplete="off">
 
     <!-- НОВА КНОПКА MIX (За замовчуванням схована) -->
@@ -1544,15 +1628,137 @@ let lastConfirmedOltName = null;
 
     configPanel.addEventListener('mousedown', (e) => e.stopPropagation());
 
-    // === ЗАБОРОНА КИРИЛИЦІ ===
+    // === РОЗУМНЕ ПОЛЕ ЛОГІНА (АВТОГЕНЕРАЦІЯ З ПІБ) ===
     const loginInputBox = configPanel.querySelector('.config-login-input');
+    const loginDropdownList = configPanel.querySelector('.login-dropdown-list');
+    
+    // Нова назва змінної для кнопки!
+    const btnConfigRegen = configPanel.querySelector('.config-login-regen-btn'); 
+
     loginInputBox.addEventListener('input', (e) => {
-        const cyrillicRegex = /[а-яА-ЯіїєґІЇЄҐёЁ]/g;
-        if (cyrillicRegex.test(e.target.value)) {
-            e.target.value = e.target.value.replace(cyrillicRegex, '');
-            showNotification("Логін має бути лише латиницею!");
+        const val = e.target.value;
+        const cyrillicRegex = /[а-яА-ЯіїєґІЇЄҐёЁ]/; 
+        
+        // Ховаємо кнопку регенерації, якщо користувач почав писати щось вручну
+        if (btnConfigRegen) btnConfigRegen.style.display = 'none';
+
+        if (cyrillicRegex.test(val)) {
+            const variants = getLoginVariants(val);
+            
+            if (variants.length > 0) {
+                loginDropdownList.innerHTML = '';
+                
+                const header = document.createElement('div');
+                header.className = 'olt-group-header';
+                header.textContent = 'Оберіть варіант логіна:';
+                loginDropdownList.appendChild(header);
+
+                variants.forEach(variant => {
+                    const item = document.createElement('div');
+                    item.className = 'olt-dropdown-item variant-dropdown-item';
+                    item.innerHTML = `
+                        <span class="variant-login-text" title="${variant.login}">${variant.login}</span>
+                        <span class="variant-badge">${variant.label}</span>
+                    `;
+                    
+                    item.addEventListener('mousedown', (evt) => {
+                        evt.preventDefault();
+                        
+                        const originalFullName = loginInputBox.value.trim();
+                        loginInputBox.value = variant.login;
+                        loginDropdownList.classList.remove('open');
+                        
+                        // === ПІДГОТОВКА ДЛЯ КНОПКИ РЕГЕНЕРАЦІЇ ===
+                        const companyRegex = /(^|\s)(фоп|тов|тзов|пп|ат|прат|пат|ват|зат|тдв|кб|го|гс|кп|дп|фг|сфг|осбб|жбк|бф|нвп|зош|нвк|днз|црл)(\s|$)/i;
+                        const parts = originalFullName.split(/\s+/).filter(p => p.length > 0);
+                        const isCompany = companyRegex.test(originalFullName.toLowerCase()) || parts.length > 3 || /\d/.test(originalFullName) || /["“”«»]/.test(originalFullName);
+                        
+                        loginInputBox.dataset.isCompany = isCompany;
+                        loginInputBox.dataset.originalName = originalFullName;
+                        
+                        if (isCompany) {
+                            loginInputBox.dataset.baseLogin = variant.login;
+                            loginInputBox.dataset.suffixCounter = '1';
+                        } else {
+                            loginInputBox.dataset.surname = transliterate(parts[0] || '').replace(/[^a-z0-9]/g, '');
+                            loginInputBox.dataset.nameInitial = parts[1] ? transliterate(parts[1].charAt(0)).replace(/[^a-z0-9]/g, '') : '';
+                            loginInputBox.dataset.patronymicFull = parts[2] ? transliterate(parts[2]).replace(/[^a-z0-9]/g, '') : '';
+                            loginInputBox.dataset.patrIndex = '1';
+                            loginInputBox.dataset.overflowCounter = '0';
+                        }
+
+                        // Показуємо кнопку регенерації
+                        if (btnConfigRegen) btnConfigRegen.style.display = 'flex';
+                        
+                        lastGeneratedLogin = variant.login;
+                        addToHistory(variant.login, originalFullName);
+                        showNotification(`Згенеровано: ${variant.login}`);
+                        saveTemplates();
+                    });
+                    loginDropdownList.appendChild(item);
+                });
+                loginDropdownList.classList.add('open');
+            } else {
+                loginDropdownList.classList.remove('open');
+            }
+        } else {
+            loginDropdownList.classList.remove('open');
+            e.target.value = val.replace(/[^a-zA-Z0-9_-]/g, '');
         }
     });
+
+    loginInputBox.addEventListener('blur', () => {
+        setTimeout(() => loginDropdownList.classList.remove('open'), 150);
+    });
+
+    // === ЛОГІКА КЛИКУ ПО КНОПЦІ РЕГЕНЕРАЦІЇ ===
+    if (btnConfigRegen) {
+        btnConfigRegen.addEventListener('click', (e) => {
+            e.preventDefault();
+
+            // Крутимо іконку
+            const icon = btnConfigRegen.querySelector('i');
+            icon.style.transition = 'transform 0.4s ease';
+            const currentRot = parseInt(btnConfigRegen.dataset.rot || '0', 10) + 360;
+            icon.style.transform = `rotate(${currentRot}deg)`;
+            btnConfigRegen.dataset.rot = currentRot;
+
+            const isCompany = loginInputBox.dataset.isCompany === 'true';
+            let newLogin = '';
+
+            if (isCompany) {
+                const baseLogin = loginInputBox.dataset.baseLogin;
+                let counter = parseInt(loginInputBox.dataset.suffixCounter || '1', 10);
+                counter++;
+                newLogin = baseLogin + counter;
+                loginInputBox.dataset.suffixCounter = counter;
+            } else {
+                const surname = loginInputBox.dataset.surname;
+                const nameInitial = loginInputBox.dataset.nameInitial;
+                const patronymicFull = loginInputBox.dataset.patronymicFull;
+                let currentPatrIndex = parseInt(loginInputBox.dataset.patrIndex || '1', 10);
+
+                if (currentPatrIndex < patronymicFull.length) {
+                    currentPatrIndex++;
+                    const patronymicPart = patronymicFull.substring(0, currentPatrIndex);
+                    newLogin = surname + nameInitial + patronymicPart;
+                    loginInputBox.dataset.patrIndex = currentPatrIndex;
+                } else {
+                    let counter = parseInt(loginInputBox.dataset.overflowCounter || '0', 10);
+                    counter++;
+                    newLogin = surname + nameInitial + patronymicFull + counter;
+                    loginInputBox.dataset.overflowCounter = counter;
+                }
+            }
+
+            loginInputBox.value = newLogin;
+            lastGeneratedLogin = newLogin;
+            
+            addToHistory(newLogin, loginInputBox.dataset.originalName);
+            showNotification(`Новий варіант: ${newLogin}`);
+            saveTemplates();
+        });
+    }
 
     // === РОЗУМНЕ АВТОФОРМАТУВАННЯ ПОРТУ ===
 // Формат: 1/slot(1-99)/port(1-99):onu(1-999)
@@ -2508,6 +2714,14 @@ document.addEventListener('click', (e) => {
     // ДОДАНО: Відкриваємо панелі, якщо вони були відкриті при збереженні
     if (isSearchOpen) searchPanel.classList.add('active');
     if (isConfigOpen) configPanel.classList.add('active');
+    
+    // === ДОДАНО: Відслідковуємо, де стоїть курсор ===
+    fieldGroup.addEventListener('focusin', (e) => {
+        // Якщо курсор потрапив у TEXTAREA або будь-який текстовий INPUT
+        if (e.target.tagName === 'TEXTAREA' || (e.target.tagName === 'INPUT' && e.target.type === 'text')) {
+            lastFocusedElement = e.target;
+        }
+    });
     
     return fieldGroup;
 }

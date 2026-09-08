@@ -690,6 +690,7 @@ select:focus,
 
 /* --- ГРУПА 0: ПЛАВНЕ ВІДТИСКАННЯ (БАЗОВИЙ СТАН) --- */
 /* Цей блок відповідає за плавне повернення кнопки на місце після кліку чи наведення */
+.config-login-regen-btn,
 .extension-info-btn,
 .extension-download-btn,
 #add-template-button,
@@ -725,6 +726,7 @@ select:focus,
 }
 
 /* --- ГРУПА 1: УНІВЕРСАЛЬНИЙ HOVER (Ефект "спливання" вгору) --- */
+.config-login-regen-btn,
 .extension-info-btn:hover,
 .extension-download-btn:hover,
 #add-template-button:hover,
@@ -765,6 +767,7 @@ select:focus,
 
 /* --- ГРУПА 3: СУЦІЛЬНІ КНОПКИ (Active - Ефект механічного натискання) --- */
 /* Отримують внутрішню тінь (inset) для ефекту глибини */
+.config-login-regen-btn,
 .config-mix-toggle-btn:active,
 .config-onu-mode-btn:active,
 .extension-info-btn:active,
@@ -797,8 +800,9 @@ select:focus,
 }
 
 /* Темна тема: Коригування внутрішньої тіні для суцільних кнопок */
-.config-mix-toggle-btn:active,
-.config-onu-mode-btn:active,
+body.dark .config-login-regen-btn,
+body.dark .config-mix-toggle-btn:active,
+body.dark .config-onu-mode-btn:active,
 body.dark .extension-info-btn:active,
 body.dark .extension-download-btn:active,
 body.dark .segment-btn:not(.active):active,
@@ -2116,7 +2120,6 @@ body.dark #login-autoclear-btn:hover:not(.active) i {
     box-shadow: var(--glass-shadow-input);
     transition: box-shadow 0.3s ease, border-color 0.3s ease;
 }
-
 
 #fullNameInput {
    font-weight: 400;
@@ -3555,6 +3558,100 @@ body.dark .template-config-bar.active {
 .config-row .config-login-input { 
     flex: 1; 
     min-width: 150px; /* ЗАМІНЕНО: розумний мінімум для логіна */
+}
+
+.login-dropdown-list {
+    min-width: 100%;
+    width: max-content;
+    
+    max-width: 100%; 
+    
+    left: 0;
+    right: auto !important;  
+    z-index: 100;
+    
+   
+    transition: max-width 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.2s ease, transform 0.2s ease !important;
+}
+
+.login-dropdown-list.open {
+    max-width: 350px; 
+}
+
+/* Стилі для випадаючого списку варіантів логіна */
+.variant-dropdown-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 6px;
+    overflow: hidden;
+}
+
+.variant-login-text {
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; 
+    flex: 1; 
+    min-width: 0; 
+}
+
+/* Базові стилі та стан ЗНИКНЕННЯ */
+.variant-badge {
+    font-size: 0.9em;
+    padding: 3px 6px;
+    background: #e9e4f5;
+    color: #5a32a3;
+    border: 1px solid #d4c5f0;
+    border-radius: 8px;
+    white-space: nowrap;
+    font-weight: 600;
+    flex-shrink: 0;
+
+    opacity: 0;
+    transform: scale(0.8) translateX(15px);
+
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+/* Стан ПОЯВИ (коли список має клас .open) */
+.login-dropdown-list.open .variant-badge {
+    opacity: 1;
+    transform: scale(1) translateX(0);
+    transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition-delay: 0.05s;
+}
+
+/* Темна тема (без змін) */
+body.dark .variant-badge {
+    color: #dcbdfc;
+    background: #3c2367;
+    border: 1px solid #5a32a3;
+}
+
+/* Кнопка регенерації всередині поля логіна в ГЕНЕРАТОРІ КОНФІГІВ */
+.config-login-regen-btn {
+    position: absolute;
+    right: 6px;
+    background-color: var(--primary-accent-color);
+    border: none;
+    color: var(--primary-color);
+    font-size: 1.1em;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+}
+
+.config-login-regen-btn:hover {
+    color: var(--hover-color);
+    background-color: rgba(67, 97, 238, 0.1);
+}
+
+body.dark .config-login-regen-btn:hover {
+    background-color: rgba(164, 177, 255, 0.15);
 }
 
 /* config row */
