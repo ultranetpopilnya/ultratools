@@ -1591,7 +1591,7 @@ let lastConfirmedOltName = null;
         <div class="config-row">
    <!-- ДОДАНО: Обгортка для логіна та його випадаючого списку -->
     <div class="login-dropdown-wrapper">
-        <input type="text" class="config-login-input" placeholder="Login або ПІБ" title="Введіть логін або ПІБ українською" autocomplete="off">
+        <input type="text" class="config-login-input" placeholder="Login, ПІБ або назва компанії" title="Введіть згенерований логін або ПІБ українською" autocomplete="off">
         
         <div class="config-login-actions">
             <button type="button" class="config-login-regen-btn" title="Згенерувати наступний варіант">
