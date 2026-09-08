@@ -691,6 +691,7 @@ select:focus,
 /* --- ГРУПА 0: ПЛАВНЕ ВІДТИСКАННЯ (БАЗОВИЙ СТАН) --- */
 /* Цей блок відповідає за плавне повернення кнопки на місце після кліку чи наведення */
 .config-login-regen-btn,
+.config-login-copy-btn,
 .extension-info-btn,
 .extension-download-btn,
 #add-template-button,
@@ -726,6 +727,7 @@ select:focus,
 }
 
 /* --- ГРУПА 1: УНІВЕРСАЛЬНИЙ HOVER (Ефект "спливання" вгору) --- */
+.config-login-copy-btn:hover,
 .config-login-regen-btn:hover,
 .extension-info-btn:hover,
 .extension-download-btn:hover,
@@ -751,6 +753,8 @@ select:focus,
 
 /* --- ГРУПА 2: ПРОЗОРІ КНОПКИ-ІКОНКИ (Active) --- */
 /* При кліку стискаються, БЕЗ внутрішньої тіні, щоб не було брудного квадрата */
+.config-login-copy-btn:active,
+.config-login-regen-btn:active,
 .add-tab-btn:not(.menu-open):active,
 .swap-inputs-btn:active,
 .clear-history-header-btn:active,
@@ -767,7 +771,6 @@ select:focus,
 
 /* --- ГРУПА 3: СУЦІЛЬНІ КНОПКИ (Active - Ефект механічного натискання) --- */
 /* Отримують внутрішню тінь (inset) для ефекту глибини */
-.config-login-regen-btn:active,
 .config-mix-toggle-btn:active,
 .config-onu-mode-btn:active,
 .extension-info-btn:active,
@@ -800,7 +803,6 @@ select:focus,
 }
 
 /* Темна тема: Коригування внутрішньої тіні для суцільних кнопок */
-body.dark .config-login-regen-btn:active,
 body.dark .config-mix-toggle-btn:active,
 body.dark .config-onu-mode-btn:active,
 body.dark .extension-info-btn:active,
@@ -836,6 +838,7 @@ body.dark .qn-add-btn:active {
    ==================================================================== */
 
 /* 1. Готуємо елементи: позиціонування та обрізка хвилі по краях */
+.variant-dropdown-item,
 .speed-dropdown-item,
 .add-tab-item,
 .tab-button,
@@ -852,6 +855,7 @@ body.dark .qn-add-btn:active {
 }
 
 /* 2. Піднімаємо всі внутрішні елементи (текст, іконки), щоб хвиля протікала ПІД ними */
+.variant-dropdown-item > *,
 .speed-dropdown-item > *,
 .add-tab-item > *,
 .tab-button > :not(.ripple):not(.close-tab-btn),
@@ -875,6 +879,7 @@ body.dark .qn-add-btn:active {
 }
 
 /* 3. Базовий стиль самої хвилі (Світла тема) */
+.variant-dropdown-item .ripple,
 .speed-dropdown-item .ripple,
 .add-tab-item .ripple,
 .tab-button .ripple,
@@ -896,6 +901,7 @@ body.dark .qn-add-btn:active {
 }
 
 /* 4. Колір хвилі для Темної теми */
+body.dark .variant-dropdown-item .ripple,
 body.dark .speed-dropdown-item .ripple,
 body.dark .add-tab-item .ripple,
 body.dark .tab-button .ripple,
@@ -3563,19 +3569,27 @@ body.dark .template-config-bar.active {
 .login-dropdown-list {
     min-width: 100%;
     width: max-content;
-    
     max-width: 100%; 
-    
     left: 0;
     right: auto !important;  
     z-index: 100;
     
-   
-    transition: max-width 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.2s ease, transform 0.2s ease !important;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px); /* Список трохи піднятий вгору */
+    
+    transition: 
+        max-width 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), 
+        opacity 0.25s ease, 
+        transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), 
+        visibility 0.25s !important;
 }
 
 .login-dropdown-list.open {
     max-width: 350px; 
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0); /* Опускається на своє місце */
 }
 
 /* Стилі для випадаючого списку варіантів логіна */
@@ -3629,31 +3643,91 @@ body.dark .variant-badge {
     border: 1px solid #5a32a3;
 }
 
-/* Кнопка регенерації всередині поля логіна в ГЕНЕРАТОРІ КОНФІГІВ */
-.config-login-regen-btn {
+/* ==========================================================
+   НОВІ СТИЛІ ДЛЯ ПОЛЯ ВВОДУ ТА КНОПОК (РЕГЕНЕРАЦІЯ + КОПІЯ) 
+   ========================================================== */
+
+/* Повертаємо позиціонування, яке ми забрали з HTML */
+.login-dropdown-wrapper {
+    position: relative;
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+/* Робимо відступ справа, щоб текст не залазив під кнопки */
+.config-login-input {
+    width: 100%;
+    padding-right: 6px !important;
+    text-overflow: clip !important; 
+}
+
+/* Контейнер, що тримає дві кнопки разом справа */
+.config-login-actions {
     position: absolute;
     right: 6px;
-    background-color: var(--primary-accent-color);
-    border-radius: 9999px;
-    color: white;
-    font-size: 0.8em;
-    width: 32px; 
-    height: 22px;
+    height: calc(100% - 4px);
+    gap: 6px;
+    z-index: 2;
+    display: flex; /* Тепер завжди flex */
+    align-items: center;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    background-color: transparent;
+    
+    /* Початковий прихований стан кнопок */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(10px) scale(0.9); /* Кнопки трохи зменшені та зсунуті вправо */
+    
+    transition: 
+        opacity 0.3s ease, 
+        transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), /* Легкий ефект пружинки */
+        visibility 0.3s;
+}
+
+.config-login-actions.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0) scale(1); /* Стають на місце */
+}
+
+/* Стан, коли кнопки з'явилися */
+.config-login-input.has-actions {
+    padding-right: 58px !important; 
+}
+
+/* Оформлення самих кнопок */
+.config-login-regen-btn,
+.config-login-copy-btn {
+    background: transparent;
+    border: none;
     cursor: pointer;
-    padding: 4px;
+    padding: 0;
+    color: var(--text-color);
+    font-size: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0;
-    border: none;
+    transition: all 0.2s ease;
+    outline: none;
 }
 
-.config-login-regen-btn:hover {
-    background-color: var(--primary-accent-color);
+/* Зелена галочка при успішному копіюванні */
+.config-login-copy-btn .success-copy {
+    color: var(--success-color);
+    transform: scale(1.1);
+    transition: transform 0.2s ease;
 }
 
-body.dark .config-login-regen-btn:hover {
-    background-color: var(--primary-accent-color);
+/* --- Темна тема для кнопок --- */
+body.dark .config-login-regen-btn,
+body.dark .config-login-copy-btn {
+    color: var(--text-color);
+}
+
+body.dark .config-login-copy-btn .success-copy {
+    color: var(--success-color);
 }
 
 /* config row */

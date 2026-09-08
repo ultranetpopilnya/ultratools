@@ -1589,12 +1589,18 @@ let lastConfirmedOltName = null;
 
                 <!-- НИЖНІЙ РЯДОК -->
         <div class="config-row">
-    <!-- ДОДАНО: Обгортка для логіна та його випадаючого списку -->
-    <div class="login-dropdown-wrapper" style="position: relative; flex: 1; display: flex; align-items: center;">
-        <input type="text" class="config-login-input" placeholder="Login або ПІБ" title="Введіть логін або ПІБ українською" autocomplete="off" style="width: 100%; padding-right: 32px;">
-        <button type="button" class="config-login-regen-btn" title="Згенерувати наступний варіант" style="display: none;">
-            <i class="fas fa-sync-alt"></i>
-        </button>
+   <!-- ДОДАНО: Обгортка для логіна та його випадаючого списку -->
+    <div class="login-dropdown-wrapper">
+        <input type="text" class="config-login-input" placeholder="Login або ПІБ" title="Введіть логін або ПІБ українською" autocomplete="off">
+        
+        <div class="config-login-actions">
+            <button type="button" class="config-login-regen-btn" title="Згенерувати наступний варіант">
+                <i class="fas fa-sync-alt"></i>
+            </button>
+            <button type="button" class="config-login-copy-btn" title="Копіювати логін">
+                <i class="fa-solid fa-copy"></i>
+            </button>
+        </div>
         
         <div class="login-dropdown-list olt-dropdown-list"></div>
     </div>
@@ -1632,15 +1638,18 @@ let lastConfirmedOltName = null;
     const loginInputBox = configPanel.querySelector('.config-login-input');
     const loginDropdownList = configPanel.querySelector('.login-dropdown-list');
     
-    // Нова назва змінної для кнопки!
+    const loginActionsWrapper = configPanel.querySelector('.config-login-actions');
     const btnConfigRegen = configPanel.querySelector('.config-login-regen-btn'); 
+    const btnConfigCopy = configPanel.querySelector('.config-login-copy-btn');
 
     loginInputBox.addEventListener('input', (e) => {
         const val = e.target.value;
         const cyrillicRegex = /[а-яА-ЯіїєґІЇЄҐёЁ]/; 
         
-        // Ховаємо кнопку регенерації, якщо користувач почав писати щось вручну
-        if (btnConfigRegen) btnConfigRegen.style.display = 'none';
+        if (loginActionsWrapper) {
+            loginActionsWrapper.classList.remove('visible');
+            loginInputBox.classList.remove('has-actions');
+        }
 
         if (cyrillicRegex.test(val)) {
             const variants = getLoginVariants(val);
@@ -1666,7 +1675,9 @@ let lastConfirmedOltName = null;
                         
                         const originalFullName = loginInputBox.value.trim();
                         loginInputBox.value = variant.login;
-                        loginDropdownList.classList.remove('open');
+                        setTimeout(() => {
+                            loginDropdownList.classList.remove('open');
+                        }, 250);
                         
                         // === ПІДГОТОВКА ДЛЯ КНОПКИ РЕГЕНЕРАЦІЇ ===
                         const companyRegex = /(^|\s)(фоп|тов|тзов|пп|ат|прат|пат|ват|зат|тдв|кб|го|гс|кп|дп|фг|сфг|осбб|жбк|бф|нвп|зош|нвк|днз|црл)(\s|$)/i;
@@ -1687,12 +1698,21 @@ let lastConfirmedOltName = null;
                             loginInputBox.dataset.overflowCounter = '0';
                         }
 
-                        // Показуємо кнопку регенерації
-                        if (btnConfigRegen) btnConfigRegen.style.display = 'flex';
+                       // Показуємо блок з обома кнопками
+                        if (loginActionsWrapper) {
+                            loginActionsWrapper.classList.add('visible');
+                            loginInputBox.classList.add('has-actions');
+                        }
                         
                         lastGeneratedLogin = variant.login;
                         addToHistory(variant.login, originalFullName);
-                        showNotification(`Згенеровано: ${variant.login}`);
+                        
+                        navigator.clipboard.writeText(variant.login).then(() => {
+                            showNotification(`Згенеровано та скопійовано: ${variant.login}`);
+                        }).catch(() => {
+                            showNotification(`Згенеровано: ${variant.login}`);
+                        });
+                        
                         saveTemplates();
                     });
                     loginDropdownList.appendChild(item);
@@ -1757,6 +1777,33 @@ let lastConfirmedOltName = null;
             addToHistory(newLogin, loginInputBox.dataset.originalName);
             showNotification(`Новий варіант: ${newLogin}`);
             saveTemplates();
+        });
+    }
+
+  // === ЛОГІКА КЛІКУ ПО КНОПЦІ КОПІЮВАННЯ ЛОГІНА ===
+    if (btnConfigCopy) {
+        btnConfigCopy.addEventListener('click', (e) => {
+            e.preventDefault();
+            const textToCopy = loginInputBox.value.trim();
+            if (!textToCopy) return;
+
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                const icon = btnConfigCopy.querySelector('i');
+                const originalClass = icon.className;
+                
+                icon.className = 'fa-solid fa-check';
+                icon.classList.add('success-copy'); // Можете додати цей клас у CSS для зеленого кольору
+                
+                showNotification(`Логін скопійовано: ${textToCopy}`);
+                
+                setTimeout(() => {
+                    icon.className = originalClass;
+                    icon.classList.remove('success-copy');
+                }, 1500);
+            }).catch(err => {
+                console.error('Помилка копіювання:', err);
+                showNotification('Помилка копіювання!');
+            });
         });
     }
 
@@ -4815,6 +4862,7 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('mousedown', function (e) {
     // Перевіряємо, чи клік був по одному з вказаних класів/ID
     const targetBtn = e.target.closest(`
+        .variant-dropdown-item,
         .speed-dropdown-item,
         .add-tab-item,
         .command-item,
