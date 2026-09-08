@@ -726,7 +726,7 @@ select:focus,
 }
 
 /* --- ГРУПА 1: УНІВЕРСАЛЬНИЙ HOVER (Ефект "спливання" вгору) --- */
-.config-login-regen-btn,
+.config-login-regen-btn:hover,
 .extension-info-btn:hover,
 .extension-download-btn:hover,
 #add-template-button:hover,
@@ -767,7 +767,7 @@ select:focus,
 
 /* --- ГРУПА 3: СУЦІЛЬНІ КНОПКИ (Active - Ефект механічного натискання) --- */
 /* Отримують внутрішню тінь (inset) для ефекту глибини */
-.config-login-regen-btn,
+.config-login-regen-btn:active,
 .config-mix-toggle-btn:active,
 .config-onu-mode-btn:active,
 .extension-info-btn:active,
@@ -800,7 +800,7 @@ select:focus,
 }
 
 /* Темна тема: Коригування внутрішньої тіні для суцільних кнопок */
-body.dark .config-login-regen-btn,
+body.dark .config-login-regen-btn:active,
 body.dark .config-mix-toggle-btn:active,
 body.dark .config-onu-mode-btn:active,
 body.dark .extension-info-btn:active,
@@ -3634,24 +3634,26 @@ body.dark .variant-badge {
     position: absolute;
     right: 6px;
     background-color: var(--primary-accent-color);
-    border: none;
-    color: var(--primary-color);
-    font-size: 1.1em;
+    border-radius: 9999px;
+    color: white;
+    font-size: 0.8em;
+    width: 32px; 
+    height: 22px;
     cursor: pointer;
     padding: 4px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 8px;
+    padding: 0;
+    border: none;
 }
 
 .config-login-regen-btn:hover {
-    color: var(--hover-color);
-    background-color: rgba(67, 97, 238, 0.1);
+    background-color: var(--primary-accent-color);
 }
 
 body.dark .config-login-regen-btn:hover {
-    background-color: rgba(164, 177, 255, 0.15);
+    background-color: var(--primary-accent-color);
 }
 
 /* config row */
