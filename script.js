@@ -1556,79 +1556,81 @@ let lastConfirmedOltName = null;
 
     configPanel.innerHTML = `
         <div class="config-two-rows-wrapper">
-            <div class="config-inputs-col">
-                <!-- ВЕРХНІЙ РЯДОК -->
-                <div class="config-row">
-                    <div class="olt-dropdown-wrapper">
-    <input type="text" class="config-olt-select" placeholder="🔍 Пошук OLT..." autocomplete="off" title="Почніть вводити назву OLT">
-    <i class="fa-solid fa-chevron-down olt-dropdown-arrow"></i>
-    <div class="olt-dropdown-list"></div>
-</div>
-                    <input type="text" class="config-sn-input" placeholder="SN / MAC" title="Серійний номер або MAC" autocomplete="off">
-                    <input type="text" class="config-port-input" placeholder="Port" title="Port (напр. 1/1/1:11)" autocomplete="off">
-                    <div class="speed-dropdown config-speed-dropdown" data-value="100M" title="Швидкість">
-    <button type="button" class="speed-dropdown-toggle">
-        <span class="speed-dropdown-value">100M</span>
-        <i class="fa-solid fa-chevron-down speed-dropdown-arrow"></i>
-    </button>
-    <div class="speed-dropdown-list">
-        <div class="speed-dropdown-item" data-value="10M">10M</div>
-        <div class="speed-dropdown-item" data-value="20M">20M</div>
-        <div class="speed-dropdown-item" data-value="30M">30M</div>
-        <div class="speed-dropdown-item" data-value="40M">40M</div>
-        <div class="speed-dropdown-item" data-value="50M">50M</div>
-        <div class="speed-dropdown-item" data-value="60M">60M</div>
-        <div class="speed-dropdown-item active" data-value="100M">100M</div>
-        <div class="speed-dropdown-item" data-value="200M">200M</div>
-        <div class="speed-dropdown-item" data-value="300M">300M</div>
-        <div class="speed-dropdown-item" data-value="500M">500M</div>
-        <div class="speed-dropdown-item" data-value="1G">1G</div>
-    </div>
-</div>
+            
+            <!-- 1 РЯДОК: ОЛТ, SN/MAC, Порт, Швидкість -->
+            <div class="config-row">
+                <div class="olt-dropdown-wrapper">
+                    <input type="text" class="config-olt-select" placeholder="🔍 Пошук OLT..." autocomplete="off" title="Почніть вводити назву OLT">
+                    <i class="fa-solid fa-chevron-down olt-dropdown-arrow"></i>
+                    <div class="olt-dropdown-list"></div>
                 </div>
-
-                <!-- НИЖНІЙ РЯДОК -->
-        <div class="config-row">
-   <!-- ДОДАНО: Обгортка для логіна та його випадаючого списку -->
-    <div class="login-dropdown-wrapper">
-        <input type="text" class="config-login-input" placeholder="Login, ПІБ або назва компанії" title="Введіть згенерований логін або ПІБ українською" autocomplete="off">
-        
-        <div class="config-login-actions">
-            <button type="button" class="config-login-regen-btn" title="Згенерувати наступний варіант">
-            <i class="fa-solid fa-arrows-spin"></i>
-            </button>
-            <button type="button" class="config-login-copy-btn" title="Копіювати логін">
-                <i class="fa-solid fa-copy"></i>
-            </button>
-        </div>
-        
-        <div class="login-dropdown-list olt-dropdown-list"></div>
-    </div>
-    
-    <input type="text" class="config-vlan-input" placeholder="VLAN" title="VLAN (Залиште порожнім, щоб не міняти)" autocomplete="off">
-
-    <!-- НОВА КНОПКА MIX (За замовчуванням схована) -->
-    <button type="button" class="config-mix-toggle-btn" style="display: none;" title="Оберіть технологію (GPON або EPON)">MIX ?</button>
-    
-    <button type="button" class="config-replace-mode-btn active" title="Заміняти попердньо доданий конфіг на новий">
-                        <i class="fa-solid fa-arrows-rotate"></i>
+                <input type="text" class="config-sn-input" placeholder="SN / MAC" title="Серійний номер або MAC" autocomplete="off">
+                <input type="text" class="config-port-input" placeholder="Port" title="Port (напр. 1/1/1:11)" autocomplete="off">
+                <div class="speed-dropdown config-speed-dropdown" data-value="100M" title="Швидкість">
+                    <button type="button" class="speed-dropdown-toggle">
+                        <span class="speed-dropdown-value">100M</span>
+                        <i class="fa-solid fa-chevron-down speed-dropdown-arrow"></i>
                     </button>
-                    
-                    <button type="button" class="config-onu-mode-btn" title="Режим (Реєстрація або Заміна ону)">РЕЄСТРАЦІЯ</button>
-
-                    <button type="button" class="config-pon-onu-btn" title="Додати PON-ONU до конфігу">
-                        <i class="fa-solid fa-wave-square"></i>
-                    </button>
-                    <button type="button" class="config-show-signal-btn" title="Зберегти та показати сигнал (додати Write та Pon-power)">
-                        <i class="fa-solid fa-signal"></i>
-                    </button>
+                    <div class="speed-dropdown-list">
+                        <div class="speed-dropdown-item" data-value="10M">10M</div>
+                        <div class="speed-dropdown-item" data-value="20M">20M</div>
+                        <div class="speed-dropdown-item" data-value="30M">30M</div>
+                        <div class="speed-dropdown-item" data-value="40M">40M</div>
+                        <div class="speed-dropdown-item" data-value="50M">50M</div>
+                        <div class="speed-dropdown-item" data-value="60M">60M</div>
+                        <div class="speed-dropdown-item active" data-value="100M">100M</div>
+                        <div class="speed-dropdown-item" data-value="200M">200M</div>
+                        <div class="speed-dropdown-item" data-value="300M">300M</div>
+                        <div class="speed-dropdown-item" data-value="500M">500M</div>
+                        <div class="speed-dropdown-item" data-value="1G">1G</div>
+                    </div>
                 </div>
             </div>
+
+            <!-- 2 РЯДОК: Логін, VLAN -->
+            <div class="config-row">
+                <div class="login-dropdown-wrapper">
+                    <input type="text" class="config-login-input" placeholder="Login, ПІБ або назва компанії" title="Введіть згенерований логін або ПІБ українською" autocomplete="off">
+                    
+                    <div class="config-login-actions">
+                        <button type="button" class="config-login-regen-btn" title="Згенерувати наступний варіант">
+                            <i class="fa-solid fa-arrows-spin"></i>
+                        </button>
+                        <button type="button" class="config-login-copy-btn" title="Копіювати логін">
+                            <i class="fa-solid fa-copy"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="login-dropdown-list olt-dropdown-list"></div>
+                </div>
+                
+                <input type="text" class="config-vlan-input" placeholder="VLAN" title="VLAN (Залиште порожнім, щоб не міняти)" autocomplete="off">
+            </div>
             
-            <!-- КНОПКА ЗГЕНЕРУВАТИ (Двоповерхова) -->
-            <button type="button" class="config-generate-btn" title="Згенерувати конфіг">
-                <i class="fa-solid fa-bolt"></i>
-            </button>
+            <!-- 3 РЯДОК: Всі кнопки-перемикачі та кнопка генерації -->
+            <div class="config-row">
+                <button type="button" class="config-mix-toggle-btn" style="display: none;" title="Оберіть технологію (GPON або EPON)">MIX ?</button>
+                
+                <button type="button" class="config-replace-mode-btn active" title="Заміняти попердньо доданий конфіг на новий">
+                    <i class="fa-solid fa-arrows-rotate"></i>
+                </button>
+                
+                <button type="button" class="config-onu-mode-btn" title="Режим (Реєстрація або Заміна ону)">РЕЄСТРАЦІЯ</button>
+
+                <button type="button" class="config-pon-onu-btn" title="Додати PON-ONU до конфігу">
+                    <i class="fa-solid fa-wave-square"></i>
+                </button>
+                
+                <button type="button" class="config-show-signal-btn" title="Зберегти та показати сигнал (додати Write та Pon-power)">
+                    <i class="fa-solid fa-signal"></i>
+                </button>
+                
+                <!-- Кнопка генерації (притиснеться вправо завдяки margin-left: auto з CSS) -->
+                <button type="button" class="config-generate-btn" title="Згенерувати конфіг">
+                    <i class="fa-solid fa-bolt"></i>
+                </button>
+            </div>
+
         </div>
     `;
 

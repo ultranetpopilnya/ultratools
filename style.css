@@ -3333,7 +3333,6 @@ body.dark .template-search-bar.active {
     outline: none;
     font-family: inherit;
 
-    box-shadow: var(--glass-shadow-input);
     transition: box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
@@ -3486,13 +3485,13 @@ body.dark .template-config-bar.active {
     width: 100%; 
 }
 
-/* Обгортка для всього блоку (ліва колонка + права кнопка) */
+/* Обгортка для всього блоку (тепер вертикальна колонка) */
 .config-two-rows-wrapper {
     display: flex;
-    flex-direction: row;
+    flex-direction: column; /* Змінено з row на column */
     gap: 5px;
     width: 100%;
-    height: 100%;
+    height: auto; /* Змінено з 100% на auto */
 }
 
 /* Ліва колонка з полями вводу */
@@ -3539,10 +3538,10 @@ body.dark .template-config-bar.active {
     box-shadow: 0 0 0 2px rgba(79, 109, 245, 0.15);
 }
 
-/* --- РОЗПОДІЛ ШИРИНИ (ВЕРХНІЙ РЯД: Залізо) --- */
+/* РОЗПОДІЛ ШИРИНИ (ВЕРХНІЙ РЯД: Залізо) */
 .config-row .olt-dropdown-wrapper {
-    flex: 1; /* Гумове поле: забирає всю вільну ширину */
-    min-width: 250px; /* ЗАМІНЕНО: тепер воно стиснеться, але не зникне */
+    flex: 1; 
+    min-width: 120px; /* Зменшено з 250px, щоб помістилися всі 4 поля (олт, мак, порт, швидкість) */
     position: relative;
 }
 
@@ -3564,6 +3563,7 @@ body.dark .template-config-bar.active {
 .config-row .config-login-input { 
     flex: 1; 
     min-width: 150px; /* ЗАМІНЕНО: розумний мінімум для логіна */
+    max-width: 300px;
 }
 
 .login-dropdown-list {
@@ -3735,8 +3735,8 @@ body.dark .config-login-copy-btn .success-copy {
 
 /* --- КНОПКА ГЕНЕРАЦІЇ (ДВОПОВЕРХОВА) --- */
 .config-generate-btn {
-    flex: 0 0 70px;
-    height: 100%;
+    flex: 0 0 85px;
+    height: 30px; 
     padding: 0;
     
     background-color: var(--success-color);
