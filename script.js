@@ -2066,6 +2066,15 @@ function renderOltDropdown(filter = '') {
                     snInputBox.value = '';
                     portInputBox.value = '';
                     vlanInputNode.value = '';
+                    
+                    // === ДОДАНО: Очищаємо поле логіна та ховаємо його кнопки ===
+                    loginInputBox.value = '';
+                    if (loginActionsWrapper) {
+                        loginActionsWrapper.classList.remove('visible');
+                        loginInputBox.classList.remove('has-actions');
+                    }
+                    
+                    saveTemplates(); // Зберігаємо стан шаблону
                 }
             });
             oltDropdownList.appendChild(item);
