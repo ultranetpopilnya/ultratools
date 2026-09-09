@@ -1247,7 +1247,6 @@ function centerActiveDropdownItem(dropdownNode) {
         lastGeneratedConfig = '', lastConfigStart = -1, lastConfigEnd = -1,
         ponOnuMode = false, replaceMode = true,
         showSignalMode = false,
-        autoClearMode = true, // <--- ДОДАНО
         onuMode = '', regMode = false, switchMode = false,
         isSearchOpen = false, isConfigOpen = false
     } = data;
@@ -1289,7 +1288,6 @@ fieldGroup.dataset.lastConfigEnd       = lastConfigEnd;
 fieldGroup.dataset.ponOnuMode          = ponOnuMode;
 fieldGroup.dataset.replaceMode         = replaceMode;
 fieldGroup.dataset.showSignalMode      = showSignalMode;
-fieldGroup.dataset.autoClearMode       = autoClearMode;
 fieldGroup.dataset.onuMode             = onuMode || (switchMode ? 'SWITCH' : 'REG');
     
     fieldGroup.style.width = width;
@@ -1544,7 +1542,6 @@ fieldGroup.dataset.onuMode             = onuMode || (switchMode ? 'SWITCH' : 'RE
     let isReplaceMode = (fieldGroup.dataset.replaceMode !== 'false');
 let isPonOnuMode  = (fieldGroup.dataset.ponOnuMode === 'true');
 let isShowSignalMode = (fieldGroup.dataset.showSignalMode === 'true');
-let isAutoClearMode = (fieldGroup.dataset.autoClearMode !== 'false');
 
 // НОВА ЛОГІКА: Єдиний стан режиму ОНУ
 let currentOnuMode = fieldGroup.dataset.onuMode; 
@@ -1614,11 +1611,6 @@ let lastConfirmedOltName = null;
             <!-- 3 РЯДОК: Всі кнопки-перемикачі та кнопка генерації -->
             <div class="config-row">
                 <button type="button" class="config-mix-toggle-btn" style="display: none;" title="Оберіть технологію (GPON або EPON)">MIX ?</button>
-                
-                <!-- Кнопка автоочищення -->
-<button type="button" class="config-autoclear-btn" title="Автоматично очищати поле логіна після копіювання">
-    <i class="fa-solid fa-broom"></i>
-</button>
 
                 <button type="button" class="config-replace-mode-btn active" title="Заміняти попердньо доданий конфіг на новий">
                     <i class="fa-solid fa-arrows-rotate"></i>
@@ -1806,16 +1798,6 @@ let lastConfirmedOltName = null;
                 icon.classList.add('success-copy'); 
                 
                 showNotification(`Логін скопійовано: ${textToCopy}`);
-                
-                // === МАГІЯ ТУТ: Очищаємо поле, ЯКЩО тумблер УВІМКНЕНО ===
-                if (isAutoClearMode) {
-                    loginInputBox.value = ''; 
-                    if (loginActionsWrapper) {
-                        loginActionsWrapper.classList.remove('visible');
-                        loginInputBox.classList.remove('has-actions');
-                    }
-                    saveTemplates();
-                }
 
                 setTimeout(() => {
                     icon.className = originalClass;
@@ -2181,20 +2163,6 @@ btnShowSignal.addEventListener('click', (e) => {
     saveTemplates();
     showNotification(isShowSignalMode ? "Команди Pon-power та Write додаються" : "Команди Pon-power та Write не додаються");
 });
-
-// === ТУМБЛЕР: АВТООЧИЩЕННЯ ЛОГІНА ===
-const btnAutoClearConfig = configPanel.querySelector('.config-autoclear-btn');
-btnAutoClearConfig.addEventListener('click', (e) => {
-    e.preventDefault();
-    isAutoClearMode = !isAutoClearMode;
-    btnAutoClearConfig.classList.toggle('active', isAutoClearMode);
-    fieldGroup.dataset.autoClearMode = isAutoClearMode;
-    saveTemplates();
-    showNotification(isAutoClearMode ? "Очищення логіна після копіювання: УВІМКНЕНО" : "Очищення логіна після копіювання: ВИМКНЕНО");
-});
-
-// Відновлюємо стан кнопки після завантаження/перезавантаження
-btnAutoClearConfig.classList.toggle('active', isAutoClearMode);
 
 // Відновлюємо стан після перезавантаження сторінки
 btnReplaceMode.classList.toggle('active', isReplaceMode);
@@ -2986,7 +2954,6 @@ function addTemplate() {
             ponOnuMode:  group.dataset.ponOnuMode  === 'true',
 replaceMode: group.dataset.replaceMode !== 'false',
 showSignalMode: group.dataset.showSignalMode === 'true',
-autoClearMode: group.dataset.autoClearMode !== 'false',
 onuMode: group.dataset.onuMode || 'REG',
             
             // ДОДАНО: Зберігаємо стани відкритих панелей
