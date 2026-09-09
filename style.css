@@ -3206,8 +3206,8 @@ body.dark .line-marker {
 /* === ІДЕАЛЬНИЙ ІНТЕГРОВАНИЙ СТИЛЬ ПОШУКУ (ДВОКОЛОНКОВИЙ) === */
 .template-search-bar {
     position: relative; 
-    width: calc(100% - 10px) !important;
-    margin: 0 5px !important;
+    width: auto;
+    margin: 0 6px;
     z-index: 5; 
     
     display: flex;
@@ -3218,43 +3218,34 @@ body.dark .line-marker {
     background-color: var(--panel-bg);
     border-radius: 12px;
     border: 0px solid transparent;
+    box-sizing: border-box;
     
-    /* === СУЧАСНА АНІМАЦІЯ (ЗАКРИТО) === */
+    /* Анімація (закрито) */
     max-height: 0;
     min-height: 0;
     opacity: 0;
     overflow: hidden; 
-    padding-top: 0;
-    padding-bottom: 0;
-    transform: translateY(-10px) scale(0.98); /* Легкий зсув вгору */
-    pointer-events: none; /* Забороняємо кліки, коли закрито */
+    padding: 0 6px;
+    transform: translateY(-10px) scale(0.98); 
+    pointer-events: none; 
     
-    /* Універсальний плавний таймінг (0.25s) */
-    transition: 
-        max-height 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-        min-height 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-        opacity 0.2s ease-in-out,
-        transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-        margin 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-        padding 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-        border-color 0.25s ease;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .template-search-bar.active {
-    /* === СУЧАСНА АНІМАЦІЯ (ВІДКРИТО) === */
     max-height: 220px; 
     min-height: 65px;
     opacity: 1;
     transform: translateY(0) scale(1); 
     pointer-events: auto; 
     
-    margin: 0 5px 5px 5px !important;
-    padding: 6px; 
-    border-color: var(--input-border-color) !important;
-    border-width: 1px; 
+    /* Ті самі ідеальні 6px з боків і знизу */
+    margin: 0 6px 6px 6px;   
+    padding: 6px;            
     
-    
-    box-shadow: var(--glass-shadow-inner); 
+    border-width: 1px;
+    border-color: var(--input-border-color);
+    box-shadow: var(--glass-shadow-inner);
 }
 
 /* Темна тема: template search bar — активний стан */
@@ -3267,21 +3258,39 @@ body.dark .template-search-bar.active {
     overflow: visible;
 }
 
+/* 4. Внутрішня сітка пошуку (ЦЕНТРУВАННЯ ПРИ РОЗШИРЕННІ) */
 .search-panel-columns {
     display: flex;
-    width: fit-content; 
-    max-width: calc(100% - 20px); 
-    margin: 0 auto; 
-    gap: 15px;
+    width: 100%;
+    max-width: 510px; 
+    margin: 0 auto;   
+    gap: 8px;                
+    box-sizing: border-box;
+    
+    /* ДОДАНО: Вирівнює всі колонки всередині по нижньому краю */
     align-items: flex-end; 
 }
 
-/* 3. Ліва колонка (Пошук) */
+/* 5. Ліва колонка пошуку */
 .search-col-left {
-    width: 380px; 
+    flex: 1 1 200px;
+    min-width: 150px;
+    max-width: 380px; /* Інпути не стануть гігантськими */
     display: flex;
     flex-direction: column;
-    gap: 5px; 
+    gap: 5px;
+}
+
+/* 6. Права колонка швидкості */
+.search-col-right {
+    flex: 0 1 110px;
+    min-width: 80px;
+    max-width: 110px;
+    padding-left: 8px;   
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    border-left: 1px dashed var(--input-border-color);
 }
 
 /* ВСІ КНОПКИ ДІЙ */
@@ -3358,16 +3367,6 @@ body.dark .template-search-bar.active {
 body.dark .search-inputs-row select option {
     background-color: var(--content-bg-color);
     color: var(--text-color);
-}
-
-/* 4. Права колонка (Швидкість) */
-.search-col-right {
-    flex: 0 0 110px; /* Залізно тримає 95px ширини */
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    padding-left: 15px;
-    border-left: 1px dashed var(--input-border-color); 
 }
 
 /* Маленький напис "Швидкість:" */
@@ -3479,10 +3478,9 @@ body.dark .template-config-bar.active {
 }
 
 /* --- ЗАХИСТ ВІД ЗЛАМУ КАРТКИ --- */
-.template-field-group:has(.template-config-bar.active) {
-    /* Картка вирахує свій ідеальний мінімум автоматично */
-    min-width: min-content !important; 
-    width: 100%; 
+.template-field-group:has(.template-config-bar.active),
+.template-field-group:has(.template-search-bar.active) {
+    min-width: max-content !important; 
 }
 
 /* Обгортка для всього блоку (тепер вертикальна колонка) */
@@ -3541,8 +3539,8 @@ body.dark .template-config-bar.active {
 /* РОЗПОДІЛ ШИРИНИ (ВЕРХНІЙ РЯД: Залізо) */
 .config-row .olt-dropdown-wrapper {
     flex: 1; 
-    min-width: 120px; /* Зменшено з 250px, щоб помістилися всі 4 поля (олт, мак, порт, швидкість) */
     position: relative;
+    min-width: 120px;
 }
 
 /* Всі інші поля верхнього ряду ЖОРСТКО ФІКСОВАНІ */
@@ -3561,9 +3559,8 @@ body.dark .template-config-bar.active {
 
 /* --- РОЗПОДІЛ ШИРИНИ (НИЖНІЙ РЯД: Сервіс) --- */
 .config-row .config-login-input { 
-    flex: 1; 
-    min-width: 150px; /* ЗАМІНЕНО: розумний мінімум для логіна */
-    max-width: 300px;
+    flex: 1;
+    min-width: 0; 
 }
 
 .login-dropdown-list {
@@ -3653,6 +3650,7 @@ body.dark .variant-badge {
     flex: 1;
     display: flex;
     align-items: center;
+    min-width: 100px;
 }
 
 /* Робимо відступ справа, щоб текст не залазив під кнопки */
@@ -3731,11 +3729,11 @@ body.dark .config-login-copy-btn .success-copy {
 }
 
 /* config row */
-.config-row .config-vlan-input  { flex: 0 0 85px; }
+.config-row .config-vlan-input  { flex: 0 0 100px; }
 
 /* --- КНОПКА ГЕНЕРАЦІЇ (ДВОПОВЕРХОВА) --- */
 .config-generate-btn {
-    flex: 0 0 85px;
+    flex: 0 0 100px;
     height: 30px; 
     padding: 0;
     
@@ -3767,7 +3765,7 @@ body.dark .config-generate-btn {
 .config-pon-onu-btn,
 .config-mix-toggle-btn,
 .config-show-signal-btn {
-    flex: 0 0 40px;
+    flex: 0 0 50px;
     height: 30px;
     padding: 0;
     
@@ -4300,6 +4298,7 @@ body.dark .select-group-title {
 .olt-dropdown-wrapper .config-olt-select {
     width: 100%;
     cursor: text;
+    min-width: 0; 
 }
 
 .olt-dropdown-list {
@@ -4586,7 +4585,7 @@ body.dark .speed-dropdown-item.active {
 
 /* Ширина під конкретні місця використання */
 .config-row .speed-dropdown.config-speed-dropdown {
-    flex: 0 0 96px;
+    flex: 0 0 100px;
 }
 
 .config-row .config-speed-dropdown .speed-dropdown-toggle {

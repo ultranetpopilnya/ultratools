@@ -1554,10 +1554,10 @@ let isSwitchMode = (currentOnuMode === 'SWITCH');
 let selectedOltSource = null;
 let lastConfirmedOltName = null;
 
-    configPanel.innerHTML = `
+   configPanel.innerHTML = `
         <div class="config-two-rows-wrapper">
             
-            <!-- 1 РЯДОК: ОЛТ, SN/MAC, Порт, Швидкість -->
+            <!-- 1 РЯДОК: ОЛТ, SN/MAC, Порт -->
             <div class="config-row">
                 <div class="olt-dropdown-wrapper">
                     <input type="text" class="config-olt-select" placeholder="🔍 Пошук OLT..." autocomplete="off" title="Почніть вводити назву OLT">
@@ -1566,6 +1566,26 @@ let lastConfirmedOltName = null;
                 </div>
                 <input type="text" class="config-sn-input" placeholder="SN / MAC" title="Серійний номер або MAC" autocomplete="off">
                 <input type="text" class="config-port-input" placeholder="Port" title="Port (напр. 1/1/1:11)" autocomplete="off">
+            </div>
+
+            <!-- 2 РЯДОК: Логін, Швидкість, VLAN -->
+            <div class="config-row">
+                <div class="login-dropdown-wrapper">
+                    <input type="text" class="config-login-input" placeholder="Login, ПІБ або назва компанії" title="Введіть згенерований логін або ПІБ українською" autocomplete="off">
+                    
+                    <div class="config-login-actions">
+                        <button type="button" class="config-login-regen-btn" title="Згенерувати наступний варіант">
+                            <i class="fa-solid fa-arrows-spin"></i>
+                        </button>
+                        <button type="button" class="config-login-copy-btn" title="Копіювати логін">
+                            <i class="fa-solid fa-copy"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="login-dropdown-list olt-dropdown-list"></div>
+                </div>
+                
+                <!-- БЛОК ШВИДКОСТІ ПЕРЕНЕСЕНО СЮДИ -->
                 <div class="speed-dropdown config-speed-dropdown" data-value="100M" title="Швидкість">
                     <button type="button" class="speed-dropdown-toggle">
                         <span class="speed-dropdown-value">100M</span>
@@ -1584,24 +1604,6 @@ let lastConfirmedOltName = null;
                         <div class="speed-dropdown-item" data-value="500M">500M</div>
                         <div class="speed-dropdown-item" data-value="1G">1G</div>
                     </div>
-                </div>
-            </div>
-
-            <!-- 2 РЯДОК: Логін, VLAN -->
-            <div class="config-row">
-                <div class="login-dropdown-wrapper">
-                    <input type="text" class="config-login-input" placeholder="Login, ПІБ або назва компанії" title="Введіть згенерований логін або ПІБ українською" autocomplete="off">
-                    
-                    <div class="config-login-actions">
-                        <button type="button" class="config-login-regen-btn" title="Згенерувати наступний варіант">
-                            <i class="fa-solid fa-arrows-spin"></i>
-                        </button>
-                        <button type="button" class="config-login-copy-btn" title="Копіювати логін">
-                            <i class="fa-solid fa-copy"></i>
-                        </button>
-                    </div>
-                    
-                    <div class="login-dropdown-list olt-dropdown-list"></div>
                 </div>
                 
                 <input type="text" class="config-vlan-input" placeholder="VLAN" title="VLAN (Залиште порожнім, щоб не міняти)" autocomplete="off">
