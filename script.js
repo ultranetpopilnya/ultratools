@@ -1595,7 +1595,7 @@ let lastConfirmedOltName = null;
         
         <div class="config-login-actions">
             <button type="button" class="config-login-regen-btn" title="Згенерувати наступний варіант">
-                <i class="fas fa-sync-alt"></i>
+            <i class="fa-solid fa-arrows-spin"></i>
             </button>
             <button type="button" class="config-login-copy-btn" title="Копіювати логін">
                 <i class="fa-solid fa-copy"></i>
