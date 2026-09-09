@@ -1610,13 +1610,14 @@ let lastConfirmedOltName = null;
             
             <!-- 3 РЯДОК: Всі кнопки-перемикачі та кнопка генерації -->
             <div class="config-row">
+   
+                <button type="button" class="config-onu-mode-btn" title="Режим (Реєстрація або Заміна ону)">РЕЄСТРАЦІЯ</button>
+
                 <button type="button" class="config-mix-toggle-btn" style="display: none;" title="Оберіть технологію (GPON або EPON)">MIX ?</button>
 
                 <button type="button" class="config-replace-mode-btn active" title="Заміняти попердньо доданий конфіг на новий">
-                    <i class="fa-solid fa-arrows-rotate"></i>
+                <i class="fa-solid fa-arrows-rotate"></i>
                 </button>
-                
-                <button type="button" class="config-onu-mode-btn" title="Режим (Реєстрація або Заміна ону)">РЕЄСТРАЦІЯ</button>
 
                 <button type="button" class="config-pon-onu-btn" title="Додати PON-ONU до конфігу">
                     <i class="fa-solid fa-wave-square"></i>
