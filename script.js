@@ -1557,7 +1557,7 @@ let selectedOltSource = null;
 let lastConfirmedOltName = null;
 
    configPanel.innerHTML = `
-        <div class="config-two-rows-wrapper">
+        <div class="config-rows-wrapper">
             
             <!-- 1 РЯДОК: ОЛТ, SN/MAC, Порт -->
             <div class="config-row">
