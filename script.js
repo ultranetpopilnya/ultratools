@@ -1379,20 +1379,16 @@ fieldGroup.dataset.onuMode             = onuMode || (switchMode ? 'SWITCH' : 'RE
     copyButton.innerHTML = '<i class="fa-solid fa-copy"></i>';
     copyButton.title = 'Копіювати текст';
     copyButton.className = 'copy-template-btn';
-        copyButton.onclick = () => {
-        // Беремо останнє активне поле АБО головне текстове поле
-        const target = (lastFocusedElement && document.body.contains(lastFocusedElement)) 
-            ? lastFocusedElement 
-            : fieldGroup.querySelector('textarea');
+            copyButton.onclick = () => {
+        // === ЗМІНЕНО: кнопка працює тільки з головним textarea шаблону ===
+        const target = fieldGroup.querySelector('textarea');
+        if (!target) return;
 
-        // === ЗМІНЕНО: копіюємо ТІЛЬКИ якщо є реальне виділення тексту ===
         const hasSelection = target.selectionStart !== target.selectionEnd;
-        if (!hasSelection) {
-            showNotification('Спочатку виділіть текст для копіювання');
-            return;
-        }
+        const textToCopy = hasSelection
+            ? target.value.substring(target.selectionStart, target.selectionEnd)
+            : target.value;
 
-        const textToCopy = target.value.substring(target.selectionStart, target.selectionEnd);
         if (!textToCopy.trim()) return; 
         navigator.clipboard.writeText(textToCopy).then(() => {
             copyButton.innerHTML = '<i class="fas fa-check"></i>';
