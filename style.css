@@ -94,7 +94,7 @@ select {
 
     /* MISC */
     --resize-handle-color: rgba(0, 0, 0, 0.22);
-    --highlight-bg-color: rgba(253, 224, 71, 0.75);
+    --highlight-bg-color: #aee924;
     --snow-color: #7dd3fc;
 
     /* BACKGROUNDS */
@@ -208,7 +208,7 @@ color-scheme: dark;
 
     /* MISC */
     --resize-handle-color: rgba(255, 255, 255, 0.18);
-    --highlight-bg-color: rgba(217, 119, 6, 0.75);
+    --highlight-bg-color: #b37c16;
     --snow-color: #cbd5e1;
     
     /*BUTTON */
