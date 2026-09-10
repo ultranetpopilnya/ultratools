@@ -1556,18 +1556,7 @@ let lastConfirmedOltName = null;
    configPanel.innerHTML = `
         <div class="config-rows-wrapper">
             
-            <!-- 1 РЯДОК: ОЛТ, SN/MAC, Порт -->
-            <div class="config-row">
-                <div class="olt-dropdown-wrapper">
-                    <input type="text" class="config-olt-select" placeholder="🔍 Пошук OLT..." autocomplete="off" title="Почніть вводити назву OLT">
-                    <i class="fa-solid fa-chevron-down olt-dropdown-arrow"></i>
-                    <div class="olt-dropdown-list"></div>
-                </div>
-                <input type="text" class="config-sn-input" placeholder="SN / MAC" title="Серійний номер або MAC" autocomplete="off">
-                <input type="text" class="config-port-input" placeholder="Port" title="Port (напр. 1/1/1:11)" autocomplete="off">
-            </div>
-
-            <!-- 2 РЯДОК: Логін, Швидкість, VLAN -->
+            <!-- 1 РЯДОК: Логін, OLT -->
             <div class="config-row">
                 <div class="login-dropdown-wrapper">
                     <input type="text" class="config-login-input" placeholder="Login, ПІБ або назва компанії" title="Введіть згенерований логін або ПІБ українською" autocomplete="off">
@@ -1581,10 +1570,22 @@ let lastConfirmedOltName = null;
                         </button>
                     </div>
                     
-                    <div class="login-dropdown-list olt-dropdown-list"></div>
+                    <div class="login-dropdown-list"></div>
                 </div>
+
+                <div class="olt-dropdown-wrapper">
+                    <input type="text" class="config-olt-select" placeholder="🔍 Пошук OLT..." autocomplete="off" title="Почніть вводити назву OLT">
+                    <i class="fa-solid fa-chevron-down olt-dropdown-arrow"></i>
+                    <div class="olt-dropdown-list"></div>
+                </div>
+            </div>
+
+            <!-- 2 РЯДОК: SN/MAC, Порт, VLAN, Швидкість -->
+            <div class="config-row">
+                <input type="text" class="config-sn-input" placeholder="SN / MAC" title="Серійний номер або MAC" autocomplete="off">
+                <input type="text" class="config-port-input" placeholder="Port" title="Port (напр. 1/1/1:11)" autocomplete="off">
+                <input type="text" class="config-vlan-input" placeholder="VLAN" title="VLAN (Залиште порожнім, щоб не міняти)" autocomplete="off">
                 
-                <!-- БЛОК ШВИДКОСТІ ПЕРЕНЕСЕНО СЮДИ -->
                 <div class="speed-dropdown config-speed-dropdown" data-value="100M" title="Швидкість">
                     <button type="button" class="speed-dropdown-toggle">
                         <span class="speed-dropdown-value">100M</span>
@@ -1604,19 +1605,16 @@ let lastConfirmedOltName = null;
                         <div class="speed-dropdown-item" data-value="1G">1G</div>
                     </div>
                 </div>
-                
-                <input type="text" class="config-vlan-input" placeholder="VLAN" title="VLAN (Залиште порожнім, щоб не міняти)" autocomplete="off">
             </div>
             
             <!-- 3 РЯДОК: Всі кнопки-перемикачі та кнопка генерації -->
             <div class="config-row">
-   
                 <button type="button" class="config-onu-mode-btn" title="Режим (Реєстрація або Заміна ону)">РЕЄСТРАЦІЯ</button>
 
                 <button type="button" class="config-mix-toggle-btn" style="display: none;" title="Оберіть технологію (GPON або EPON)">MIX ?</button>
 
-                <button type="button" class="config-replace-mode-btn active" title="Заміняти попердньо доданий конфіг на новий">
-                <i class="fa-solid fa-arrows-rotate"></i>
+                <button type="button" class="config-replace-mode-btn active" title="Заміняти попередньо доданий конфіг на новий">
+                    <i class="fa-solid fa-arrows-rotate"></i>
                 </button>
 
                 <button type="button" class="config-pon-onu-btn" title="Додати PON-ONU до конфігу">
@@ -1627,7 +1625,7 @@ let lastConfirmedOltName = null;
                     <i class="fa-solid fa-signal"></i>
                 </button>
                 
-                <!-- Кнопка генерації (притиснеться вправо завдяки margin-left: auto з CSS) -->
+                <!-- Кнопка генерації -->
                 <button type="button" class="config-generate-btn" title="Згенерувати конфіг">
                     <i class="fa-solid fa-bolt"></i>
                 </button>

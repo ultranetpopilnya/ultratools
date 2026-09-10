@@ -3539,13 +3539,14 @@ body.dark .template-config-bar.active {
 
 /* РОЗПОДІЛ ШИРИНИ (ВЕРХНІЙ РЯД: Залізо) */
 .config-row .olt-dropdown-wrapper {
-    flex: 1; 
-    position: relative;
-    min-width: 120px;
+    position: relative !important;
+    display: flex;
+    align-items: center;
+    flex: 1 0 270px;
 }
 
 /* Всі інші поля верхнього ряду ЖОРСТКО ФІКСОВАНІ */
-.config-row .config-sn-input    { flex: 0 0 130px; }
+.config-row .config-sn-input    { flex: 1 0 130px; }
 
 /* config row */
 .config-row .config-port-input { 
@@ -3564,17 +3565,32 @@ body.dark .template-config-bar.active {
     min-width: 0; 
 }
 
+/* =========================================
+   ВИПАДАЮЧИЙ СПИСОК ЛОГІНІВ
+   ========================================= */
 .login-dropdown-list {
+    /* 1. Дизайн (те, що раніше бралося від OLT) */
+    position: absolute;
+    top: calc(100% + 1px);
+    padding: 6px;
+    background-color: var(--menu-bg);
+    border: 1px solid var(--input-border-color);
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    max-height: 250px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    
     min-width: 100%;
     width: max-content;
     max-width: 100%; 
     left: 0;
     right: auto !important;  
-    z-index: 100;
+    z-index: 9999;
     
     opacity: 0;
     visibility: hidden;
-    transform: translateY(-10px); /* Список трохи піднятий вгору */
+    transform: translateY(-10px); 
     
     transition: 
         max-width 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), 
@@ -3583,11 +3599,17 @@ body.dark .template-config-bar.active {
         visibility 0.25s !important;
 }
 
+body.dark .login-dropdown-list {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25), 0 1px 4px rgba(0, 0, 0, 0.15);
+    background-color: var(--menu-bg);
+    border-color: var(--input-border-color);
+}
+
 .login-dropdown-list.open {
     max-width: 350px; 
     opacity: 1;
     visibility: visible;
-    transform: translateY(0); /* Опускається на своє місце */
+    transform: translateY(0); 
 }
 
 /* Стилі для випадаючого списку варіантів логіна */
@@ -3648,7 +3670,7 @@ body.dark .variant-badge {
 /* Повертаємо позиціонування, яке ми забрали з HTML */
 .login-dropdown-wrapper {
     position: relative;
-    flex: 1;
+    flex: 1 0 270px;
     display: flex;
     align-items: center;
     min-width: 100px;
@@ -4298,8 +4320,7 @@ body.dark .select-group-title {
 /* olt dropdown wrapper */
 .olt-dropdown-wrapper .config-olt-select {
     width: 100%;
-    cursor: text;
-    min-width: 0; 
+    height: 100%;
 }
 
 .olt-dropdown-list {
@@ -4309,6 +4330,7 @@ body.dark .select-group-title {
     top: calc(100% + 1px);
     left: 0;
     right: 0;
+    width: 100%;
 
     background-color: var(--menu-bg);
     border: 1px solid var(--input-border-color);
