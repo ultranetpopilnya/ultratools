@@ -4425,14 +4425,16 @@ body.dark .olt-group-header {
     text-overflow: ellipsis;
 }
 
-/* olt dropdown item — ховер */
-.olt-dropdown-item:hover {
+
+.olt-dropdown-item:hover,
+.olt-dropdown-item.active {
     background-color: var(--text-hover);
     color: var(--primary-accent-color);
 }
 
 /* Темна тема: olt dropdown item — ховер */
-body.dark .olt-dropdown-item:hover {
+body.dark .olt-dropdown-item:hover,
+body.dark .olt-dropdown-item.active {
     background-color: var(--text-hover);
     color: var(--secondary-accent-color);
 }

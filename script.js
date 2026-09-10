@@ -2017,11 +2017,16 @@ function renderOltDropdown(filter = '') {
         header.textContent = title;
         oltDropdownList.appendChild(header);
 
-        items.forEach(({ olt, source }) => {
+                items.forEach(({ olt, source }) => {
             const item = document.createElement('div');
             item.className = 'olt-dropdown-item';
+
+            // === ДОДАНО: позначаємо поточний обраний ОЛТ ===
+            const isSelected = selectedOltObj && selectedOltObj.name === olt.name && selectedOltSource === source;
+            if (isSelected) {
+                item.classList.add('active');
+            }
             
-            // 1. ВИПРАВЛЕНО: Правильна змінна olt.name у span
             item.innerHTML = `<span>${olt.name}</span>`;
             
             item.addEventListener('mousedown', (e) => {
@@ -2048,13 +2053,6 @@ function renderOltDropdown(filter = '') {
                     portInputBox.value = '';
                     vlanInputNode.value = '';
                     
-                    // === ДОДАНО: Очищаємо поле логіна та ховаємо його кнопки ===
-                    loginInputBox.value = '';
-                    if (loginActionsWrapper) {
-                        loginActionsWrapper.classList.remove('visible');
-                        loginInputBox.classList.remove('has-actions');
-                    }
-                    
                     saveTemplates(); // Зберігаємо стан шаблону
                 }
             });
@@ -2065,6 +2063,22 @@ function renderOltDropdown(filter = '') {
     appendGroup('Ultranet', ultranetItems);
     appendGroup('ISP Energy', energyItems);
     oltDropdownList.classList.add('open');
+    centerActiveOltItem();
+}
+
+// === ФУНКЦІЯ ЦЕНТРУВАННЯ ОБРАНОГО ОЛТ У СПИСКУ ===
+function centerActiveOltItem() {
+    const activeItem = oltDropdownList.querySelector('.olt-dropdown-item.active');
+    if (activeItem) {
+        setTimeout(() => {
+            const listHeight = oltDropdownList.clientHeight;
+            const itemTop = activeItem.offsetTop;
+            const itemHeight = activeItem.clientHeight;
+
+            const scrollPos = itemTop - (listHeight / 2) + (itemHeight / 2);
+            oltDropdownList.scrollTop = scrollPos;
+        }, 0);
+    }
 }
 
 oltInputNode.addEventListener('input', async (e) => { // ДОДАНО async
@@ -2081,15 +2095,15 @@ oltInputNode.addEventListener('input', async (e) => { // ДОДАНО async
     renderOltDropdown(e.target.value);
 });
 
-oltInputNode.addEventListener('click', async () => { // ДОДАНО async
-    // ПЕРЕВІРКА: Якщо база порожня - показуємо індикатор і вантажимо
+oltInputNode.addEventListener('click', async () => {
     if (OLT_CONFIGS.ultranet.length === 0 && OLT_CONFIGS.energy.length === 0) {
         oltDropdownList.innerHTML = `<div class="olt-no-results">🔄 Завантаження бази...</div>`;
         oltDropdownList.classList.add('open');
         await loadOltConfigs();
     }
     
-    renderOltDropdown(oltInputNode.value);
+    // Якщо ОЛТ вже обраний — показуємо повний список, а не фільтруємо по назві
+    renderOltDropdown(selectedOltObj ? '' : oltInputNode.value);
 });
 
 oltInputNode.addEventListener('blur', () => {
