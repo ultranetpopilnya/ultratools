@@ -1780,8 +1780,15 @@ let lastConfirmedOltName = null;
             lastGeneratedLogin = newLogin;
             
             addToHistory(newLogin, loginInputBox.dataset.originalName);
-            showNotification(`Новий варіант: ${newLogin}`);
-            saveTemplates();
+
+// Додаємо автокопіювання для кнопки регенерації
+navigator.clipboard.writeText(newLogin).then(() => {
+    showNotification(`Новий варіант згенеровано і скопійовано: ${newLogin}`);
+}).catch(() => {
+    showNotification(`Новий варіант: ${newLogin}`);
+});
+
+saveTemplates();
         });
     }
 

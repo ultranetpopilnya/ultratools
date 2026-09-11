@@ -3569,9 +3569,9 @@ body.dark .template-config-bar.active {
    ВИПАДАЮЧИЙ СПИСОК ЛОГІНІВ
    ========================================= */
 .login-dropdown-list {
-    /* 1. Дизайн (те, що раніше бралося від OLT) */
+    /* 1. Дизайн */
     position: absolute;
-    top: calc(100% + 1px);
+    top: calc(100% + 3px);
     padding: 6px;
     background-color: var(--menu-bg);
     border: 1px solid var(--input-border-color);
@@ -3588,15 +3588,18 @@ body.dark .template-config-bar.active {
     right: auto !important;  
     z-index: 9999;
     
-    opacity: 0;
+    /* 2. Анімація: закритий стан */
     visibility: hidden;
-    transform: translateY(-10px); 
+    opacity: 0;
+    transform: translateY(-4px); /* Змінив з -10px на -4px, щоб висота "випадання" була ідентичною до OLT */
+    pointer-events: none; /* ЗАХИСТ: щоб не можна було клікнути по невидимому меню */
     
+    /* Таймінги синхронізовані з OLT (0.15s), але max-width залишено трохи довшим для ефекту розгортання */
     transition: 
-        max-width 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), 
-        opacity 0.25s ease, 
-        transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), 
-        visibility 0.25s !important;
+        max-width 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), 
+        opacity 0.15s ease, 
+        transform 0.15s ease, 
+        visibility 0.15s ease;
 }
 
 body.dark .login-dropdown-list {
@@ -3605,11 +3608,13 @@ body.dark .login-dropdown-list {
     border-color: var(--input-border-color);
 }
 
+/* 3. Відкритий стан */
 .login-dropdown-list.open {
     max-width: 350px; 
-    opacity: 1;
     visibility: visible;
+    opacity: 1;
     transform: translateY(0); 
+    pointer-events: auto; /* Повертаємо можливість клікати */
 }
 
 /* Стилі для випадаючого списку варіантів логіна */
@@ -4325,9 +4330,15 @@ body.dark .select-group-title {
 
 .olt-dropdown-list {
     padding: 6px;
-    display: none;
+    /* ЗАМІСТЬ display: none; використовуємо ці 4 рядки: */
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(-4px);
+    pointer-events: none; /* Забороняє клікати по прихованому списку */
+    transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s ease;
+
     position: absolute;
-    top: calc(100% + 1px);
+    top: calc(100% + 3px);
     left: 0;
     right: 0;
     width: 100%;
@@ -4352,14 +4363,10 @@ body.dark .olt-dropdown-list {
 
 /* olt dropdown list — відкритий стан */
 .olt-dropdown-list.open {
-    display: block;
-    animation: oltDropdownFade 0.15s ease;
-}
-
-/* @keyframes oltDropdownFade */
-@keyframes oltDropdownFade {
-    from { opacity: 0; transform: translateY(-4px); }
-    to   { opacity: 1; transform: translateY(0); }
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto; /* Дозволяємо клікати, коли відкрито */
 }
 
 /* Заголовок групи (Ultranet / ISP Energy) */
@@ -4555,16 +4562,21 @@ body.dark .scroll-nav-btn.visible:hover {
 }
 
 .speed-dropdown-list {
-    display: none;
+    /* ЗАМІСТЬ display: none; */
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(-4px);
+    pointer-events: none;
+    transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s ease;
+
     position: absolute;
-    top: calc(100% + 1px);
+    top: calc(100% + 3px);
     left: 0;
     right: 0;
     padding: 6px;
     background-color: var(--menu-bg);
     border: 1px solid var(--input-border-color);
     border-radius: 8px;
-    /* Зменшено радіус розмиття та прозорість (було 0.12 та 0.08) */
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04);
     max-height: 240px;
     overflow-y: auto;
@@ -4576,13 +4588,16 @@ body.dark .scroll-nav-btn.visible:hover {
 }
 
 body.dark .speed-dropdown-list {
-    /* Зменшено радіус розмиття та прозорість (було 0.45 та 0.3) */
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25), 0 1px 4px rgba(0, 0, 0, 0.15);
 }
 
+/* Відкритий стан */
 .speed-dropdown.open .speed-dropdown-list {
-    display: block;
-    animation: oltDropdownFade 0.15s ease;
+    /* ЗАМІСТЬ display: block; та animation */
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
 }
 
 .speed-dropdown-item {
