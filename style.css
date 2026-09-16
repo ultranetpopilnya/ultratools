@@ -3848,6 +3848,14 @@ body.dark .config-clear-fields-btn {
     border-color: var(--primary-white-accent-color);
 }
 
+.config-clear-fields-btn:hover {
+    box-shadow: 0 2px 4px rgba(255, 196, 0, 0.15);    
+}
+
+body.dark .config-clear-fields-btn:hover {
+    box-shadow: 0 2px 4px rgba(79, 109, 245, 0.15);
+}
+
 /* config replace mode btn — активний стан */
 .config-replace-mode-btn.active,
 .config-pon-onu-btn.active,
