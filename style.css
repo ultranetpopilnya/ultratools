@@ -175,6 +175,7 @@ color-scheme: dark;
     --primary-accent-color: #d69b2d;
     --primary-accent-shadow: #705521;
     --secondary-accent-color: #d69b2d;
+    --primary-white-accent-color: #4f6df5;
 
     /* STATUS */
     --danger-color: #df3333;
@@ -3837,14 +3838,14 @@ body.dark .config-generate-btn {
 }
 
 .config-clear-fields-btn {
-    background-color: #9467ad;
+    background-color: var(--secondary-accent-color);
     color: white;
-    border-color: #9467ad;
+    border-color: var(--secondary-accent-color);
 }
 body.dark .config-clear-fields-btn {
-    background-color: #9409e4;
+    background-color: var(--primary-white-accent-color);
     color: white;
-    border-color: #9409e4;
+    border-color: var(--primary-white-accent-color);
 }
 
 /* config replace mode btn — активний стан */
