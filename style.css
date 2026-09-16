@@ -692,6 +692,7 @@ select:focus,
 
 /* --- ГРУПА 0: ПЛАВНЕ ВІДТИСКАННЯ (БАЗОВИЙ СТАН) --- */
 /* Цей блок відповідає за плавне повернення кнопки на місце після кліку чи наведення */
+.config-clear-fields-btn,
 .config-login-regen-btn,
 .config-login-copy-btn,
 .extension-info-btn,
@@ -729,6 +730,7 @@ select:focus,
 }
 
 /* --- ГРУПА 1: УНІВЕРСАЛЬНИЙ HOVER (Ефект "спливання" вгору) --- */
+.config-clear-fields-btn:hover,
 .config-login-copy-btn:hover,
 .config-login-regen-btn:hover,
 .extension-info-btn:hover,
@@ -773,6 +775,7 @@ select:focus,
 
 /* --- ГРУПА 3: СУЦІЛЬНІ КНОПКИ (Active - Ефект механічного натискання) --- */
 /* Отримують внутрішню тінь (inset) для ефекту глибини */
+.config-clear-fields-btn:active,
 .config-mix-toggle-btn:active,
 .config-onu-mode-btn:active,
 .extension-info-btn:active,
@@ -805,6 +808,7 @@ select:focus,
 }
 
 /* Темна тема: Коригування внутрішньої тіні для суцільних кнопок */
+body.dark .config-clear-fields-btn:active,
 body.dark .config-mix-toggle-btn:active,
 body.dark .config-onu-mode-btn:active,
 body.dark .extension-info-btn:active,
@@ -3803,11 +3807,12 @@ body.dark .config-login-copy-btn .success-copy {
 /* Темна тема для кнопки */
 body.dark .config-generate-btn {
     background-color: #3f8f6b;
-    color: #eefbf4;
+    color: white;
     box-shadow: 0 2px 4px rgba(63, 143, 107, 0.25);
 }
 
 /* --- КНОПКИ-ТУМБЛЕРИ --- */
+.config-clear-fields-btn,
 .config-replace-mode-btn,
 .config-pon-onu-btn,
 .config-mix-toggle-btn,
@@ -3829,6 +3834,17 @@ body.dark .config-generate-btn {
     
     box-shadow: inset 0 1px 2px rgba(0,0,0,0.02);
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.config-clear-fields-btn {
+    background-color: #9467ad;
+    color: white;
+    border-color: #9467ad;
+}
+body.dark .config-clear-fields-btn {
+    background-color: #9409e4;
+    color: white;
+    border-color: #9409e4;
 }
 
 /* config replace mode btn — активний стан */

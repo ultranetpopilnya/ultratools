@@ -1627,6 +1627,10 @@ let lastConfirmedOltName = null;
                 <button type="button" class="config-show-signal-btn" title="Зберегти та показати сигнал (додати Write та Pon-power)">
                     <i class="fa-solid fa-signal"></i>
                 </button>
+
+                                <button type="button" class="config-clear-fields-btn" title="Очистити поля (Login, OLT, SN, Port, Vlan)">
+                    <i class="fa-solid fa-broom"></i>
+                </button>
                 
                 <!-- Кнопка генерації -->
                 <button type="button" class="config-generate-btn" title="Згенерувати конфіг">
@@ -2191,6 +2195,33 @@ btnShowSignal.addEventListener('click', (e) => {
 btnReplaceMode.classList.toggle('active', isReplaceMode);
 btnPonOnu.classList.toggle('active', isPonOnuMode);
 btnShowSignal.classList.toggle('active', isShowSignalMode); // ДОДАНО
+
+// === КНОПКА ОЧИЩЕННЯ ПОЛІВ ===
+const btnClearFields = configPanel.querySelector('.config-clear-fields-btn');
+btnClearFields.addEventListener('click', (e) => {
+    e.preventDefault();
+    
+    // Очищаємо текстові поля
+    configPanel.querySelector('.config-login-input').value = '';
+    configPanel.querySelector('.config-olt-select').value = '';
+    configPanel.querySelector('.config-sn-input').value = '';
+    configPanel.querySelector('.config-port-input').value = '';
+    configPanel.querySelector('.config-vlan-input').value = '';
+    
+    // Скидаємо системну пам'ять генератора про обраний OLT
+    selectedOltObj = null;
+    selectedOltSource = null;
+    lastConfirmedOltName = null;
+    
+    // Ховаємо кнопку вибору технології (MIX), якщо вона була
+    resetMixButton(false);
+    
+    // Повертаємо стандартний плейсхолдер для VLAN
+    configPanel.querySelector('.config-vlan-input').placeholder = 'VLAN';
+    
+    saveTemplates();
+    showNotification("Поля очищено");
+});
 
     // === ГОЛОВНА ЛОГІКА ГЕНЕРАЦІЇ ===
     const btnGenerate = configPanel.querySelector('.config-generate-btn');
