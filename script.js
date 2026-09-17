@@ -14,21 +14,21 @@ function clearAllTemplates() {
     
     // ДОДАНО: Безпечна перевірка
     if (!templatesGrid) {
-        showNotification("Помилка: Контейнер шаблонів не знайдено!");
+        showNotification("Помилка: Контейнер шаблонів не знайдено!", 'error');
         return;
     }
     
     // Перевіряємо, чи є взагалі шаблони для видалення
     if (templatesGrid.children.length === 0) {
-        showNotification("Немає шаблонів для видалення.");
+        showNotification("Немає шаблонів для видалення.", 'warning');
         return; 
     }
     
     if (confirm('Ви впевнені, що хочете видалити ВСІ шаблони? Цю дію неможливо скасувати.')) {
         templatesGrid.innerHTML = ''; 
         saveTemplates(); 
-        showNotification("Усі текстові шаблони було видалено.");
-    }
+        showNotification("Усі текстові шаблони було видалено.", 'success');
+}
 }
 
 let lastGeneratedLogin = ''; // Зберігатиме останній згенерований логін
@@ -270,7 +270,7 @@ function generateAlternativeLogin(buttonElement) {
     // === НОВЕ: ПОВІДОМЛЕННЯ ТА АНІМАЦІЯ ===
     
     // 1. Показуємо спливаюче повідомлення
-    showNotification(`Новий варіант: ${newLogin}`);
+    showNotification(`Новий варіант: ${newLogin}`, 'success');
 
     // 2. Анімуємо іконку (крутимо її)
     const icon = buttonElement.querySelector('i');
@@ -294,7 +294,7 @@ function generateAlternativeLogin(buttonElement) {
         button.innerHTML = '<i class="fa-solid fa-check"></i>';
         button.classList.add('copied');
         
-        showNotification(`Логін скопійовано: ${loginText}`);
+        showNotification(`Логін скопійовано: ${loginText}`, 'success');
 
         // === ДОДАЄМО В ІСТОРІЮ ===
         addToHistory(loginText, originalName);
@@ -314,7 +314,7 @@ function generateAlternativeLogin(buttonElement) {
         }, 1500);
     }).catch(err => {
         console.error('Помилка:', err);
-        showNotification('Помилка копіювання!');
+        showNotification('Помилка копіювання!', 'error');
     });
 }
 
@@ -952,19 +952,24 @@ if (activeTab === 'gpon-commands') {
         if (!text) return;
         try {
             await navigator.clipboard.writeText(text);
-            showNotification(`Команда скопійована: ${text}`);
+            showNotification(`Команда скопійована: ${text}`, 'success');
         } catch (err) {
             console.error('Не вдалося скопіювати команду: ', err);
-            showNotification('Помилка копіювання. Спробуйте вручну.');
+            showNotification('Помилка копіювання. Спробуйте вручну.', 'error');
         }
     }
 
     // Стару функцію handleCommandClick можна видалити, 
     // оскільки логіка тепер вбудована прямо в displayCommands через copyCommandToClipboard
 
-    function showNotification(message) {
-    const notification = document.getElementById('notification'); // ДОДАНО
-    if (!notification) return; // ДОДАНО (захист від помилок)
+       function showNotification(message, type = 'info') {
+    const notification = document.getElementById('notification');
+    if (!notification) return;
+
+    // Прибираємо попередній тип, ставимо новий
+    notification.classList.remove('success', 'error', 'warning', 'info');
+    notification.classList.add(type);
+
     notification.textContent = message;
     notification.classList.add('show');
     setTimeout(() => notification.classList.remove('show'), 2000);
@@ -1415,7 +1420,7 @@ fieldGroup.dataset.onuMode             = onuMode || (switchMode ? 'SWITCH' : 'RE
                 const escapeRegExp = (string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
                 const regex = new RegExp(escapeRegExp(selectedText), 'g');
                 target.value = text.replace(regex, targetText);
-                showNotification(`Замінено всі: ${selectedText} ➔ ${targetText}`);
+                showNotification(`Замінено всі: ${selectedText} ➔ ${targetText}`, 'success');
                 target.setSelectionRange(start, start + targetText.length);
             } else {
                 target.value = text.substring(0, start) + targetText + text.substring(end);
@@ -1458,7 +1463,7 @@ fieldGroup.dataset.onuMode             = onuMode || (switchMode ? 'SWITCH' : 'RE
         }
 
         if (!targetText) {
-            showNotification('Немає згенерованого логіна для вставки!');
+            showNotification('Немає згенерованого логіна для вставки!', 'warning');
             return;
         }
         insertTextIntoTarget(targetText);
@@ -1478,7 +1483,7 @@ fieldGroup.dataset.onuMode             = onuMode || (switchMode ? 'SWITCH' : 'RE
             console.warn("Немає доступу до буфера обміну");
         }
         if (!targetText) {
-            showNotification('Буфер обміну порожній або недоступний!');
+            showNotification('Буфер обміну порожній або недоступний!', 'warning');
             return;
         }
         insertTextIntoTarget(targetText);
@@ -1717,9 +1722,9 @@ let lastConfirmedOltName = null;
                         addToHistory(variant.login, originalFullName);
                         
                         navigator.clipboard.writeText(variant.login).then(() => {
-                            showNotification(`Згенеровано та скопійовано: ${variant.login}`);
+                            showNotification(`Згенеровано та скопійовано: ${variant.login}`, 'success');
                         }).catch(() => {
-                            showNotification(`Згенеровано: ${variant.login}`);
+                            showNotification(`Згенеровано: ${variant.login}`, 'success');
                         });
                         
                         saveTemplates();
@@ -1787,7 +1792,7 @@ let lastConfirmedOltName = null;
 
 // Додаємо автокопіювання для кнопки регенерації
 navigator.clipboard.writeText(newLogin).then(() => {
-    showNotification(`Новий варіант згенеровано і скопійовано: ${newLogin}`);
+    showNotification(`Новий варіант згенеровано і скопійовано: ${newLogin}`, 'success');
 }).catch(() => {
     showNotification(`Новий варіант: ${newLogin}`);
 });
@@ -1810,7 +1815,7 @@ saveTemplates();
                 icon.className = 'fa-solid fa-check';
                 icon.classList.add('success-copy'); 
                 
-                showNotification(`Логін скопійовано: ${textToCopy}`);
+                showNotification(`Логін скопійовано: ${textToCopy}`, 'success');
 
                 setTimeout(() => {
                     icon.className = originalClass;
@@ -1818,7 +1823,7 @@ saveTemplates();
                 }, 1500);
             }).catch(err => {
                 console.error('Помилка копіювання:', err);
-                showNotification('Помилка копіювання!');
+                showNotification('Помилка копіювання!', 'error');
             });
         });
     }
@@ -2236,12 +2241,12 @@ btnClearFields.addEventListener('click', (e) => {
 
         // === ДОДАНО: ОБОВ'ЯЗКОВІ ПОЛЯ ===
         if (!loginVal) {
-            showNotification("Помилка: Введіть логін!");
+            showNotification("Помилка: Введіть логін!", 'error');
             return;
         }
 
         if (!snVal) {
-            showNotification("Помилка: Введіть SN або MAC!");
+            showNotification("Помилка: Введіть SN або MAC!", 'error');
             return;
         }
 
@@ -2249,28 +2254,28 @@ btnClearFields.addEventListener('click', (e) => {
         const portRegex = /^\d{1,2}\/\d{1,2}\/\d{1,2}:\d{1,3}$/;
         
         if (!portVal) {
-            showNotification("Помилка: Введіть Port!");
+            showNotification("Помилка: Введіть Port!", 'error');
             return;
         } else if (!portRegex.test(portVal)) {
-            showNotification("Помилка: Неповний формат Port! Потрібно (X/X/X:X)");
+            showNotification("Помилка: Неповний формат Port! Потрібно (X/X/X:X)", 'error');
             return;
         }
         // ================================
 
         if (/[а-яА-ЯіїєґІЇЄҐёЁ]/.test(loginVal)) {
-            showNotification("Помилка! Логін містить кирилицю.");
+            showNotification("Помилка! Логін містить кирилицю.", 'error');
             return;
         }
 
         if (!selectedOltObj) {
-            showNotification("Будь ласка, оберіть OLT зі списку!");
+            showNotification("Будь ласка, оберіть OLT зі списку!", 'warning');
             return;
         }
 
 let oltObj = selectedOltObj;
 
 if (!oltObj) {
-    showNotification("OLT не знайдено в базі!");
+    showNotification("OLT не знайдено в базі!", 'error');
     return;
 }
 
@@ -2280,7 +2285,7 @@ if (!oltObj) {
         if (oltObj.name.includes('(MIX)')) {
             // Перевіряємо, чи користувач клацнув тумблер
             if (currentMixState === null) {
-                showNotification("Помилка! Оберіть тип (GPON чи EPON).");
+                showNotification("Помилка! Оберіть тип (GPON чи EPON).", 'error');
                 
                 // Візуальний струс кнопки
                 btnMixToggle.classList.remove('shake-it');
@@ -2300,7 +2305,7 @@ if (!oltObj) {
 
         const rawTemplate = OLT_TEMPLATES[currentTemplateName];
         if (!rawTemplate) {
-            showNotification(`Помилка: Шаблон "${currentTemplateName}" не знайдено! Перевірте olt_configs.txt`);
+            showNotification(`Помилка: Шаблон "${currentTemplateName}" не знайдено! Перевірте olt_configs.txt`, 'error');
             return;
         }
 
@@ -2348,7 +2353,7 @@ if (!oltObj) {
         // 3. Додаємо PON-ONU, якщо тумблер увімкнений
         if (isPonOnuMode) {
             if (!portVal) {
-                showNotification("Вкажіть Port для команд PON-ONU!");
+                showNotification("Вкажіть Port для команд PON-ONU!", 'warning');
                 return;
             }
             if (ponType && PON_ONU_TEMPLATES[ponType]) {
@@ -2368,7 +2373,7 @@ if (!oltObj) {
         // 4. Додаємо Сигнал, якщо тумблер увімкнений
         if (isShowSignalMode) {
             if (!portVal) {
-                showNotification("Вкажіть Port для команди сигналу!");
+                showNotification("Вкажіть Port для команди сигналу!", 'warning');
                 return;
             }
             if (ponType && SIGNAL_TEMPLATES[ponType]) {
@@ -2408,7 +2413,7 @@ if (!oltObj) {
         saveTemplates();
         
         textarea.scrollTop = savedScroll;
-        showNotification("Конфіг згенеровано!");
+        showNotification("Конфіг згенеровано!", 'success');
     });
     // ========================================================
     // === ПАНЕЛЬ ГЕНЕРАТОРА КОНФІГІВ (КІНЕЦЬ БЛОКУ) ===
@@ -2533,7 +2538,7 @@ document.addEventListener('click', (e) => {
         const speedRegex = /\b(?:10|20|30|40|50|60|100|200|300|500|1000)M\b|\b1G\b/gi;
 
         if (!speedRegex.test(text)) {
-            showNotification("У шаблоні не знайдено швидкостей (10M-1G) для заміни.");
+            showNotification("У шаблоні не знайдено швидкостей (10M-1G) для заміни.", 'warning');
             return;
         }
 
@@ -2550,7 +2555,7 @@ document.addEventListener('click', (e) => {
         saveTemplates();
         
         textarea.scrollTop = savedScroll;
-        showNotification(`Всі швидкості змінено на ${targetSpeed}!`);
+        showNotification(`Всі швидкості змінено на ${targetSpeed}!`, 'success');
     };
 
     // === ЛОГІКА КНОПКИ ОБМІНУ ===
@@ -2603,7 +2608,7 @@ document.addEventListener('click', (e) => {
             const lineHeight = 21; 
             textarea.scrollTop = (lines.length * lineHeight) - (textarea.clientHeight / 2);
         } else {
-            showNotification("Не знайдено");
+            showNotification("Не знайдено", 'error');
         }
     };
 
@@ -2649,7 +2654,7 @@ document.addEventListener('click', (e) => {
         const regex = new RegExp(term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
         
         if (!regex.test(text)) {
-            showNotification("Не знайдено");
+            showNotification("Не знайдено", 'error');
             return;
         }
 
@@ -2664,7 +2669,7 @@ document.addEventListener('click', (e) => {
         saveTemplates();
         
         textarea.scrollTop = savedScroll;
-        showNotification("Замінено!");
+        showNotification("Замінено!", 'success');
     };
 
     // --- СТРУКТУРА HTML ---
@@ -3232,7 +3237,7 @@ function renderHistory(history) {
 }
 
 function copyFromHistory(text) {
-    navigator.clipboard.writeText(text).then(() => showNotification(`Скопійовано: ${text}`));
+    navigator.clipboard.writeText(text).then(() => showNotification(`Скопійовано: ${text}`, 'success'));
 }
 
 document.getElementById('clear-history-btn').addEventListener('click', () => {
@@ -3444,7 +3449,7 @@ function initTabManagement() {
         
         // Якщо відкрита лише 1 вкладка і це саме та, яку ми намагаємось закрити
         if (openTabs.length === 1 && openTabs[0] === tab) {
-            showNotification("Не можна закрити останню вкладку!");
+            showNotification("Не можна закрити останню вкладку!", 'warning');
             return; // Зупиняємо функцію, вкладка не закриється
         }
         // ==========================================
@@ -3623,7 +3628,7 @@ const addDurationToEndDate = (monthsToAdd, yearsToAdd) => {
 
     const startDateValue = startDateInput.value;
     if (!startDateValue) {
-        showNotification("Спочатку встановіть початкову дату!");
+        sshowNotification("Спочатку встановіть початкову дату!", 'warning');
         return;
     }
 
@@ -4613,14 +4618,14 @@ function addQuickNote() {
 
     // Перевіряємо, чи є хоч щось окрім порожнечі (щоб не додати абсолютно пусту нотатку)
     if (text.trim() === '') {
-        showNotification("Текст не може бути порожнім!");
+        showNotification("Текст не може бути порожнім!", 'error');
         return;
     }
 
     if (editingNoteIndex > -1) {
         // РЕЖИМ РЕДАГУВАННЯ
         quickNotesArray[editingNoteIndex] = text;
-        showNotification("Нотатку оновлено!");
+        sshowNotification("Нотатку оновлено!", 'success');
         editingNoteIndex = -1; // Виходимо з режиму редагування
     } else {
         // РЕЖИМ ДОДАВАННЯ (НОВА)
@@ -4657,7 +4662,7 @@ document.getElementById('qn-input')?.addEventListener('keydown', (e) => {
 function copyQuickNote(index) {
     const text = quickNotesArray[index];
     navigator.clipboard.writeText(text).then(() => {
-        showNotification("Нотатку скопійовано!");
+        showNotification("Нотатку скопійовано!", 'success');
         closeQuickNotes(); 
     });
 }
