@@ -102,7 +102,12 @@ select {
 --menu-bg: #fff;
 --panel-bg: #fbfdff;
 --input-bg-color: #fff;
---notification-bg: #ffffff;
+
+    --notification-bg: rgba(255, 255, 255, 0.75);
+    --notification-text: #1a1a1a;
+    --notification-border: rgba(255, 255, 255, 0.5);
+    --notification-shadow-color: 0, 0, 0;
+    --notification-shine: rgba(255, 255, 255, 0.6);
     
     /* BUTTON */
     --btn-bg: #FFFFFF;
@@ -223,7 +228,12 @@ color-scheme: dark;
 --panel-bg:          #262626;
 --menu-bg:           #2A2A2A;
 --input-bg-color:    #2D2D2D;
---notification-bg: #2d2d2d;
+
+    --notification-bg: rgba(30, 30, 32, 0.75);
+    --notification-text: #f2f2f2;
+    --notification-border: rgba(255, 255, 255, 0.12);
+    --notification-shadow-color: 0, 0, 0;
+    --notification-shine: rgba(255, 255, 255, 0.08);
 
     /* GLASS */
     --glass-white-lg: rgba(255, 255, 255, 0.14);
@@ -1902,39 +1912,90 @@ body.dark .moon-icon {
 .notification {
     position: fixed;
     bottom: 30px;
-    left: 50%; /* Центруємо знизу (опціонально) */
-    
-    /* Магія розмиття */
+    left: 50%;
+
     background: var(--notification-bg);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px); /* Для Safari */
-    
-    color: var(--text-color);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+
+    color: var(--notification-text);
     font-family: inherit;
     font-size: 15px;
     font-weight: 400;
-    
+
     padding: 12px 24px;
-    border-radius: 100px; /* Круглі краї (pill shape) */
-    border: 1px solid var(--glass-border-bright);
-    
-    box-shadow: var(--glass-shadow-inner);
-    
+    border-radius: 100px;
+    border: 1px solid var(--notification-border);
+
+    /* Elevation: шарова тінь + тонкий верхній "блиск", як у справжнього скла */
+    box-shadow:
+        inset 0 1px 0 var(--notification-shine),
+        0 2px 4px rgba(var(--notification-shadow-color), 0.10),
+        0 8px 16px rgba(var(--notification-shadow-color), 0.12),
+        0 20px 40px rgba(var(--notification-shadow-color), 0.16);
+
     display: flex;
     align-items: center;
-    gap: 8px;
-    
+    gap: 10px;
+
     opacity: 0;
-    /* Анімація появи знизу + вирівнювання по центру */
-    transform: translate(-50%, 30px); 
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    
+    /* Легкий "spring" ефект замість плоскої анімації */
+    transform: translate(-50%, 20px) scale(0.96);
+    transition:
+        opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+        transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+
     z-index: 9999;
+    overflow: hidden; /* для прогрес-бару нижче */
 }
 
 .notification.show {
     opacity: 1;
-    transform: translate(-50%, 0); /* Важливо зберегти -50% для центрування */
+    transform: translate(-50%, 0) scale(1);
+}
+
+/* --- Іконка-індикатор типу сповіщення (опційно) --- */
+.notification::after {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    background: var(--notification-accent, #4a90e2);
+    box-shadow: 0 0 8px var(--notification-accent, #4a90e2);
+}
+
+.notification.success { --notification-accent: #34c759; }
+.notification.error   { --notification-accent: #ff3b30; }
+.notification.warning { --notification-accent: #ff9500; }
+.notification.info    { --notification-accent: #4a90e2; }
+
+/* --- Прогрес-бар автозникнення (опційно) --- */
+.notification__progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 2px;
+    width: 100%;
+    background: var(--notification-accent, currentColor);
+    opacity: 0.4;
+    transform-origin: left;
+    animation: notification-progress 4s linear forwards;
+}
+
+@keyframes notification-progress {
+    from { transform: scaleX(1); }
+    to   { transform: scaleX(0); }
+}
+
+/* --- Фолбек на системну тему, якщо data-theme ще не виставлено --- */
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+        --notification-bg: rgba(30, 30, 32, 0.75);
+        --notification-text: #f2f2f2;
+        --notification-border: rgba(255, 255, 255, 0.12);
+        --notification-shine: rgba(255, 255, 255, 0.08);
+    }
 }
 
 /* ================================================================
