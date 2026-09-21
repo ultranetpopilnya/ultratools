@@ -3621,7 +3621,6 @@ body.dark .template-config-bar.active {
     box-shadow: 0 0 0 2px rgba(79, 109, 245, 0.15);
 }
 
-/* РОЗПОДІЛ ШИРИНИ (ВЕРХНІЙ РЯД: Залізо) */
 .config-row .olt-dropdown-wrapper {
     position: relative !important;
     display: flex;
@@ -3629,12 +3628,13 @@ body.dark .template-config-bar.active {
     flex: 1 0 270px;
 }
 
-/* Всі інші поля верхнього ряду ЖОРСТКО ФІКСОВАНІ */
-.config-row .config-sn-input    { flex: 1 0 130px; }
+.config-row .config-sn-input { 
+    flex: 1 0 130px; 
+}
 
 /* config row */
 .config-row .config-port-input { 
-    flex: 0 0 100px;
+    flex: 0 0 130px;
     letter-spacing: 2px;
     font-variant-numeric: tabular-nums; /* Робить всі цифри однакової ширини, щоб вони виглядали рівно */
 }
@@ -3643,7 +3643,6 @@ body.dark .template-config-bar.active {
     letter-spacing: normal;
 }
 
-/* --- РОЗПОДІЛ ШИРИНИ (НИЖНІЙ РЯД: Сервіс) --- */
 .config-row .config-login-input { 
     flex: 1;
     min-width: 0; 
@@ -4743,35 +4742,6 @@ body.dark .speed-dropdown-item.active {
 
 .search-col-right .speed-dropdown.search-speed-dropdown {
     width: 100%;
-}
-
-[data-emoji] {
-    position: relative;
-}
-
-[data-emoji]::before {
-    content: attr(data-emoji);
-    position: absolute;
-    left: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 2;
-    line-height: 1;
-    pointer-events: none;
-    font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
-}
-
-[data-emoji] > input {
-    padding-left: 34px;
-}
-
-.emoji-field {
-    flex: 1;
-    min-width: 0;
-}
-.emoji-field > input {
-    width: 100%;
-    box-sizing: border-box;
 }
 
 /* ================================================================
