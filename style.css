@@ -1362,7 +1362,7 @@ body.dark .add-tab-btn.menu-open:active {
 .add-tab-menu {
     position: absolute;
     top: calc(100% + 12px);
-    right: 0;
+    right: 2px;
     min-width: 210px;
     
     /* Використовуємо рідні кольори додатку замість "скла" */
