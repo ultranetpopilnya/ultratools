@@ -1567,7 +1567,7 @@ let lastConfirmedOltName = null;
             <!-- 1 РЯДОК: Логін, OLT -->
             <div class="config-row">
                 <div class="login-dropdown-wrapper">
-                    <input type="text" class="config-login-input" placeholder="Login, ПІБ або назва компанії" title="Введіть згенерований логін або ПІБ українською" autocomplete="off">
+                    <input type="text" class="config-login-input" placeholder="👤Login, ПІБ або назва компанії" title="Введіть згенерований логін або ПІБ українською" autocomplete="off">
                     
                     <div class="config-login-actions">
                         <button type="button" class="config-login-regen-btn" title="Згенерувати наступний варіант">
@@ -1582,7 +1582,7 @@ let lastConfirmedOltName = null;
                 </div>
 
                 <div class="olt-dropdown-wrapper">
-                    <input type="text" class="config-olt-select" placeholder="🔍 Пошук OLT..." autocomplete="off" title="Почніть вводити назву OLT">
+                    <input type="text" class="config-olt-select" placeholder="🔎Пошук OLT..." autocomplete="off" title="Почніть вводити назву OLT">
                     <i class="fa-solid fa-chevron-down olt-dropdown-arrow"></i>
                     <div class="olt-dropdown-list"></div>
                 </div>
@@ -1590,12 +1590,13 @@ let lastConfirmedOltName = null;
 
             <!-- 2 РЯДОК: SN/MAC, Порт, VLAN, Швидкість -->
             <div class="config-row">
-                <input type="text" class="config-sn-input" placeholder="SN / MAC" title="Серійний номер або MAC" autocomplete="off">
-                <input type="text" class="config-port-input" placeholder="Port" title="Port (напр. 1/1/1:11)" autocomplete="off">
-                <input type="text" class="config-vlan-input" placeholder="VLAN" title="VLAN (Залиште порожнім, щоб не міняти)" autocomplete="off">
+                <input type="text" class="config-sn-input" placeholder="🏷️SN / MAC" title="Серійний номер або MAC" autocomplete="off">
+                <input type="text" class="config-port-input" placeholder="🔌Port" title="Port (напр. 1/1/1:11)" autocomplete="off">
+                <input type="text" class="config-vlan-input" placeholder="🌐VLAN" title="VLAN (Залиште порожнім, щоб не міняти)" autocomplete="off">
                 
                 <div class="speed-dropdown config-speed-dropdown" data-value="100M" title="Швидкість">
                     <button type="button" class="speed-dropdown-toggle">
+                    <span class="speed-dropdown-emoji">⚡</span>
                         <span class="speed-dropdown-value">100M</span>
                         <i class="fa-solid fa-chevron-down speed-dropdown-arrow"></i>
                     </button>
@@ -1639,7 +1640,7 @@ let lastConfirmedOltName = null;
                 
                 <!-- Кнопка генерації -->
                 <button type="button" class="config-generate-btn" title="Згенерувати конфіг">
-                    <i class="fa-solid fa-bolt"></i>
+                    <i class="fa-solid fa-code"></i>
                 </button>
             </div>
 
@@ -2468,6 +2469,7 @@ if (!oltObj) {
                 <span class="speed-label">Швидкість:</span>
                 <div class="speed-dropdown search-speed-dropdown" data-value="100M">
     <button type="button" class="speed-dropdown-toggle">
+    <span class="speed-dropdown-emoji">⚡</span>
         <span class="speed-dropdown-value">100M</span>
         <i class="fa-solid fa-chevron-down speed-dropdown-arrow"></i>
     </button>
@@ -2485,8 +2487,8 @@ if (!oltObj) {
         <div class="speed-dropdown-item" data-value="1G">1G</div>
     </div>
 </div>
-                <button class="search-cmd-btn btn-replace-speed" title="Автоматично знайти стару швидкість і замінити">
-                    <i class="fa-solid fa-bolt"></i> Замінити
+                <button class="search-cmd-btn btn-replace-speed" title="Заміна швидкості в конфігу на обрану">
+                    <i class="fa-solid fa-arrow-right-arrow-left"></i> Замінити
                 </button>
             </div>
         </div>
