@@ -3291,12 +3291,9 @@ body.dark .line-marker {
 .template-search-bar {
     position: relative; 
     
-    /* 1. ДОЗВОЛЯЄМО БРАУЗЕРУ САМОМУ ОБРАХУВАТИ ШИРИНУ */
-    /* Замість calc() кажемо панелі розтягнутись на всю ширину батька... */
     align-self: stretch;
-    width: auto !important;
-    /* ...але зробити жорсткий відступ рівно 6px з обох боків */
-    margin: 0 6px !important; 
+    width: auto;
+    margin: 0 6px; 
     
     z-index: 5; 
     display: flex;
@@ -3392,7 +3389,7 @@ body.dark .template-search-bar.active {
     border: none;
     border-radius: 8px; 
     font-size: 13px;
-    font-weight: 400; 
+    font-weight: 600; 
     cursor: pointer;
     color: rgb(241, 241, 241);
     transition: filter 0.2s, transform 0.1s;
