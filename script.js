@@ -1566,8 +1566,8 @@ let lastConfirmedOltName = null;
             
             <!-- 1 РЯДОК: Логін, OLT -->
             <div class="config-row">
-                <div class="login-dropdown-wrapper">
-                    <input type="text" class="config-login-input" placeholder="👤Login, ПІБ або назва компанії" title="Введіть згенерований логін або ПІБ українською" autocomplete="off">
+                <div class="login-dropdown-wrapper" data-emoji="👤">
+    <input type="text" class="config-login-input" placeholder="Login, ПІБ або назва компанії" title="Введіть згенерований логін або ПІБ українською" autocomplete="off">
                     
                     <div class="config-login-actions">
                         <button type="button" class="config-login-regen-btn" title="Згенерувати наступний варіант">
@@ -1581,8 +1581,8 @@ let lastConfirmedOltName = null;
                     <div class="login-dropdown-list"></div>
                 </div>
 
-                <div class="olt-dropdown-wrapper">
-                    <input type="text" class="config-olt-select" placeholder="🔎Пошук OLT..." autocomplete="off" title="Почніть вводити назву OLT">
+                <div class="olt-dropdown-wrapper" data-emoji="🔎">
+    <input type="text" class="config-olt-select" placeholder="Пошук OLT..." autocomplete="off" title="Почніть вводити назву OLT">
                     <i class="fa-solid fa-chevron-down olt-dropdown-arrow"></i>
                     <div class="olt-dropdown-list"></div>
                 </div>
@@ -1590,9 +1590,9 @@ let lastConfirmedOltName = null;
 
             <!-- 2 РЯДОК: SN/MAC, Порт, VLAN, Швидкість -->
             <div class="config-row">
-                <input type="text" class="config-sn-input" placeholder="🏷️SN / MAC" title="Серійний номер або MAC" autocomplete="off">
-                <input type="text" class="config-port-input" placeholder="🔌Port" title="Port (напр. 1/1/1:11)" autocomplete="off">
-                <input type="text" class="config-vlan-input" placeholder="🌐VLAN" title="VLAN (Залиште порожнім, щоб не міняти)" autocomplete="off">
+                <div class="emoji-field" data-emoji="🏷️"><input type="text" class="config-sn-input" placeholder="SN / MAC" title="Серійний номер або MAC" autocomplete="off"></div>
+<div class="emoji-field" data-emoji="🔌"><input type="text" class="config-port-input" placeholder="Port" title="Port (напр. 1/1/1:11)" autocomplete="off"></div>
+<div class="emoji-field" data-emoji="🌐"><input type="text" class="config-vlan-input" placeholder="VLAN" title="VLAN (Залиште порожнім, щоб не міняти)" autocomplete="off"></div>
                 
                 <div class="speed-dropdown config-speed-dropdown" data-value="100M" title="Швидкість">
                     <button type="button" class="speed-dropdown-toggle">
