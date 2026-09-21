@@ -642,7 +642,7 @@ body.dark .container {
     visibility: visible;
     transform: translateX(-50%) scale(1);
     pointer-events: auto; 
-    z-index: 10; 
+    z-index: 1; 
 }
 
 /* Універсальні інпути та їх світіння при фокусі */
@@ -968,9 +968,9 @@ button:disabled, input:disabled, select:disabled {
     background-image: var(--reflection-top);
     backdrop-filter: blur(20px) saturate(150%); 
     -webkit-backdrop-filter: blur(20px) saturate(150%);
-    padding: 4px;
+    padding: 0px 2px;
     border-radius: 9999px;
-    margin: 0 auto 0 auto;
+    margin: 0;
     cursor: default;
 
     width: fit-content;
@@ -1001,7 +1001,7 @@ body.dark .tabs {
 
     width: max-content;
     max-width: 400px;
-    margin: 0 2px 0 4px;
+    margin: 4px 2px 4px 2px;
 
     display: flex;
     align-items: center;
@@ -1269,7 +1269,7 @@ body.dark .close-tab-btn:active {
     position: relative;
     display: flex;
     align-items: center;
-    margin-left: 2px;
+    margin-left: 0px;
     order: 999; 
 }
 
@@ -1285,7 +1285,7 @@ body.dark .close-tab-btn:active {
     justify-content: center;
     align-items: center;
     font-size: 18px;
-    margin: 0 4px 0 2px;
+    margin: 0 4px 0 0;
     transition: all 0.2s ease-out;
 }
 
@@ -1293,7 +1293,6 @@ body.dark .close-tab-btn:active {
 .add-tab-btn:hover {
     background-color: rgba(0, 0, 0, 0.05);
     color: var(--text-color);
-    transform: rotate(90deg); 
 }
 
 /* Меню відкрито: Кнопка стає хрестиком */
