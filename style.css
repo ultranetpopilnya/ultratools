@@ -3628,15 +3628,13 @@ body.dark .template-config-bar.active {
     flex: 1 0 270px;
 }
 
-.config-row .config-sn-input { 
-    flex: 1 0 130px; 
-}
+.config-row .config-field--sn   { flex: 1 0 130px; }
+.config-row .config-field--port { flex: 0 0 150px; }
+.config-row .config-field--vlan { flex: 0 0 100px; }
 
-/* config row */
-.config-row .config-port-input { 
-    flex: 0 0 130px;
+.config-row .config-port-input {
     letter-spacing: 2px;
-    font-variant-numeric: tabular-nums; /* Робить всі цифри однакової ширини, щоб вони виглядали рівно */
+    font-variant-numeric: tabular-nums;
 }
 
 .config-row .config-port-input::placeholder {
@@ -3646,6 +3644,73 @@ body.dark .template-config-bar.active {
 .config-row .config-login-input { 
     flex: 1;
     min-width: 0; 
+}
+
+/* =========================================
+   ЕМОДЗІ В ПОЛЯХ ВВОДУ ТА ШВИДКОСТІ
+   ========================================= */
+
+/* --- Обгортки полів (розміри перенесені з інпутів) --- */
+.config-field {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-width: 0;
+}
+
+.config-field > input {
+    width: 100%;
+}
+
+.config-row .config-port-input {
+    letter-spacing: 2px;
+    font-variant-numeric: tabular-nums;
+}
+
+/* --- Спільне для всіх емодзі --- */
+.input-emoji,
+.speed-dropdown-emoji {
+    width: 16px;
+    text-align: center;
+    font-size: 13px;
+    line-height: 1;
+    font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+    user-select: none;
+    opacity: 0.80;
+    transition: opacity 0.2s;
+}
+
+/* --- Інпути: емодзі поверх поля, поза потоком --- */
+.input-emoji {
+    position: absolute;
+    left: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    z-index: 1;
+}
+
+.config-row input.has-emoji {
+    padding-left: 28px;
+}
+
+/* --- Швидкість: емодзі в потоці, всередині кнопки --- */
+.speed-dropdown .speed-dropdown-toggle {
+    padding: 3px 8px 3px 6px;
+}
+
+.speed-dropdown-emoji {
+    flex: none;
+    margin-right: 6px;
+}
+
+/* --- Яскраві у фокусі / коли список відкритий --- */
+.config-field:focus-within > .input-emoji,
+.login-dropdown-wrapper:focus-within > .input-emoji,
+.olt-dropdown-wrapper:focus-within > .input-emoji,
+.speed-dropdown:focus-within .speed-dropdown-emoji,
+.speed-dropdown.open .speed-dropdown-emoji {
+    opacity: 1;
 }
 
 /* =========================================
@@ -3838,9 +3903,6 @@ body.dark .config-login-copy-btn {
 body.dark .config-login-copy-btn .success-copy {
     color: var(--success-color);
 }
-
-/* config row */
-.config-row .config-vlan-input  { flex: 0 0 100px; }
 
 /* --- КНОПКА ГЕНЕРАЦІЇ (ДВОПОВЕРХОВА) --- */
 .config-generate-btn {
@@ -4644,11 +4706,6 @@ body.dark .scroll-nav-btn.visible:hover {
     box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.03);
     cursor: pointer;
     transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.speed-dropdown-emoji {
-    font-size: 1em;
-    line-height: 1;
 }
 
 .speed-dropdown-value {
