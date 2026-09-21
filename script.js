@@ -1601,7 +1601,7 @@ let lastConfirmedOltName = null;
     <input type="text" class="config-port-input has-emoji" placeholder="Port" title="Port (напр. 1/1/1:11)" autocomplete="off">
 </div>
 <div class="config-field config-field--vlan">
-    <span class="input-emoji">🌐</span>
+    <span class="input-emoji">🖧</span>
     <input type="text" class="config-vlan-input has-emoji" placeholder="VLAN" title="VLAN (Залиште порожнім, щоб не міняти)" autocomplete="off">
 </div>
                 

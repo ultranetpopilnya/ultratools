@@ -3290,10 +3290,15 @@ body.dark .line-marker {
 /* === ІДЕАЛЬНИЙ ІНТЕГРОВАНИЙ СТИЛЬ ПОШУКУ (ДВОКОЛОНКОВИЙ) === */
 .template-search-bar {
     position: relative; 
-    width: auto;
-    margin: 0 6px;
-    z-index: 5; 
     
+    /* 1. ДОЗВОЛЯЄМО БРАУЗЕРУ САМОМУ ОБРАХУВАТИ ШИРИНУ */
+    /* Замість calc() кажемо панелі розтягнутись на всю ширину батька... */
+    align-self: stretch;
+    width: auto !important;
+    /* ...але зробити жорсткий відступ рівно 6px з обох боків */
+    margin: 0 6px !important; 
+    
+    z-index: 5; 
     display: flex;
     flex-direction: column;
     align-items: center; 
@@ -3323,8 +3328,8 @@ body.dark .line-marker {
     transform: translateY(0) scale(1); 
     pointer-events: auto; 
     
-    /* Ті самі ідеальні 6px з боків і знизу */
-    margin: 0 6px 6px 6px;   
+    /* Зберігаємо 6px з боків та додаємо 6px знизу */
+    margin: 0 6px 6px 6px !important;   
     padding: 6px;            
     
     border-width: 1px;
@@ -3342,24 +3347,26 @@ body.dark .template-search-bar.active {
     overflow: visible;
 }
 
-/* 4. Внутрішня сітка пошуку (ЦЕНТРУВАННЯ ПРИ РОЗШИРЕННІ) */
+/* 4. Внутрішня сітка пошуку (АБСОЛЮТНЕ ЦЕНТРУВАННЯ ВМІСТУ) */
 .search-panel-columns {
     display: flex;
     width: 100%;
-    max-width: 510px; 
-    margin: 0 auto;   
-    gap: 8px;                
-    box-sizing: border-box;
+    max-width: 100%; /* Знімаємо жорстке обмеження */
     
-    /* ДОДАНО: Вирівнює всі колонки всередині по нижньому краю */
+    /* 2. ГОЛОВНЕ ВИПРАВЛЕННЯ: Центруємо весь блок з колонками рівно по центру панелі */
+    justify-content: center; 
+    
+    margin: 0 auto;   
+    gap: 14px; /* Трохи збільшили відступ між колонками для гармонії */
+    box-sizing: border-box;
     align-items: flex-end; 
 }
 
 /* 5. Ліва колонка пошуку */
 .search-col-left {
-    flex: 1 1 200px;
-    min-width: 150px;
-    max-width: 380px; /* Інпути не стануть гігантськими */
+    /* flex-grow: 0 забороняє колонці асиметрично розтягуватись, руйнуючи центрування */
+    flex: 0 1 380px; 
+    width: 100%;
     display: flex;
     flex-direction: column;
     gap: 5px;
@@ -3367,10 +3374,10 @@ body.dark .template-search-bar.active {
 
 /* 6. Права колонка швидкості */
 .search-col-right {
-    flex: 0 1 110px;
-    min-width: 80px;
-    max-width: 110px;
-    padding-left: 8px;   
+    /* Фіксуємо праву колонку, щоб вона не стискалась і не розширювалась */
+    flex: 0 0 110px; 
+    width: 110px;
+    padding-left: 14px; /* Зсунули трохи вправо від пунктирної лінії */
     display: flex;
     flex-direction: column;
     gap: 5px;
@@ -3659,7 +3666,9 @@ body.dark .template-config-bar.active {
 }
 
 .config-field > input {
-    width: 100%;
+    flex: 1 1 0;
+    width: 0;
+    min-width: 0;
 }
 
 .config-row .config-port-input {
@@ -7197,5 +7206,3 @@ body.holiday-mode .page-title .isp-e-color-s {
         overflow-x: hidden !important;
     }
 }
-
-
