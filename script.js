@@ -42,17 +42,35 @@ function updateSyncTimeDisplay(date, isSyncing = false) {
     if (!el) return;
 
     el.classList.add('visible');
-    el.classList.toggle('syncing', isSyncing);
 
-    el.innerHTML = isSyncing
-        ? `<i class="fas fa-sync-alt"></i> Синхронізація...`
-        : `<i class="fas fa-check-circle"></i> Синхр.: ${formatSyncDateTime(date)}`;
+    if (isSyncing) {
+        // УВІМКНЕНО СИНХРОНІЗАЦІЮ
+        el.classList.remove('sync-success'); // Забираємо старий клас
+        
+        // Хак для перезапуску CSS анімації
+        void el.offsetWidth; 
+        
+        el.classList.add('syncing');
+        el.innerHTML = `<i class="fas fa-sync-alt"></i> Синхронізація...`;
+    } else {
+        // СИНХРОНІЗАЦІЮ ЗАВЕРШЕНО
+        el.classList.remove('syncing'); // Забираємо крутілку
+        
+        // Хак для перезапуску CSS анімації
+        void el.offsetWidth; 
+        
+        el.classList.add('sync-success');
+        el.innerHTML = `<i class="fas fa-check-circle"></i> Синхр.: ${formatSyncDateTime(date)}`;
+    }
 }
 
 // Ховає напис (для гостя, який не увійшов)
 function hideSyncTimeDisplay() {
     const el = document.getElementById('sync-time-display');
-    if (el) el.classList.remove('visible');
+    if (el) {
+        // Очищаємо всі класи, щоб при наступному вході анімація почалася "з чистого аркуша"
+        el.classList.remove('visible', 'syncing', 'sync-success');
+    }
 }
 
 // Викликається одразу після УСПІШНОГО запису в Firestore
