@@ -2913,6 +2913,83 @@ body.dark .logout-btn:hover {
     background-color: var(--danger-bg-dark);
 }
 
+/* =========================================
+   ІНДИКАТОР ТА ТУЛТУЛ СИНХРОНІЗАЦІЇ
+   ========================================= */
+.user-info-wrapper {
+    position: relative; /* потрібно для тултипа */
+}
+
+.user-avatar-wrapper {
+    position: relative;
+    display: flex;
+    flex-shrink: 0;
+}
+
+.sync-time-display {
+    display: none; /* показується тільки коли юзер увійшов */
+    align-items: center;
+    gap: 5px;
+    margin-left: 10px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--inactive-text);
+    white-space: nowrap;
+    transition: color 0.2s ease;
+}
+
+.sync-time-display.visible {
+    display: inline-flex;
+}
+
+.sync-time-display i {
+    font-size: 11px;
+}
+
+.sync-time-display.syncing {
+    color: var(--primary-accent-color);
+}
+
+.sync-time-display.syncing i {
+    animation: sync-spin 0.9s linear infinite;
+}
+
+@keyframes sync-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Заглушка, поки Firebase визначає, залогінений юзер чи ні */
+.auth-skeleton {
+    display: none;
+    width: 88px;
+    height: 30px;
+    border-radius: 9999px;
+    background: linear-gradient(90deg, var(--btn-bg) 25%, var(--input-border-color) 50%, var(--btn-bg) 75%);
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.4s ease-in-out infinite;
+}
+
+/* Заглушку показуємо тільки поки на контейнері є клас is-loading */
+.auth-container.is-loading .auth-skeleton {
+    display: block;
+}
+
+@keyframes skeleton-shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* Плавна поява кнопки входу або блоку юзера, коли Firebase вже відповів */
+.login-btn, .user-info-wrapper {
+    animation: auth-fade-in 0.25s ease forwards;
+}
+
+@keyframes auth-fade-in {
+    from { opacity: 0; transform: translateY(-2px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
 /* =========================================================
    УНІВЕРСАЛЬНИЙ ГРАДІЄНТНИЙ РОЗДІЛЮВАЧ (В ПОТОЦІ)
    ========================================================= */

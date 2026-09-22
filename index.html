@@ -190,18 +190,24 @@
 			<div class="content-card">
 <div class="templates-header-wrapper">
 
-                <div id="auth-container" class="auth-container">
-                <button id="login-google-btn" class="auth-btn login-btn" onclick="loginWithGoogle()">
-                    <i class="fa-brands fa-google"></i> <span>Увійти в обліковий запис Google</span>
-                </button>
-                <div id="user-info-wrapper" class="user-info-wrapper" style="display: none;">
-                    <img id="user-avatar" class="user-avatar" src="" alt="Avatar">
-                    <span id="user-info" class="user-info-text"></span>
-                    <button id="logout-btn" class="auth-btn logout-btn" onclick="logoutFromGoogle()" title="Вийти з акаунта">
-                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
-                    </button>
-                </div>
-            </div>
+                <div id="auth-container" class="auth-container is-loading">
+    <span class="auth-skeleton"></span>
+
+    <button id="login-google-btn" class="auth-btn login-btn" onclick="loginWithGoogle()" style="display:none;">
+        <i class="fa-brands fa-google"></i> <span>Увійти в обліковий запис Google</span>
+    </button>
+
+    <div id="user-info-wrapper" class="user-info-wrapper" style="display:none;">
+        <div class="user-avatar-wrapper">
+            <img id="user-avatar" class="user-avatar" src="" alt="avatar">
+            <span id="sync-status-dot" class="sync-status-dot"></span>
+        </div>
+        <span id="user-info" class="user-info-text"></span>
+        <button class="logout-btn" onclick="logoutFromGoogle()"><i class="fas fa-times"></i></button>
+    </div>
+
+    <span id="sync-time-display" class="sync-time-display"></span>
+</div>
 
     <h2 class="template-main-title"><img src="imgs/bookmark_tabs_3d.png" class="emoji-png">Текстовий простір</h2>
 

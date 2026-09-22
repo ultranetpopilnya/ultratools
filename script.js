@@ -20,8 +20,68 @@ const db = firebase.firestore();
 // Глобальна змінна, де буде зберігатися інформація про користувача (якщо увійшов)
 let currentUser = null;
 
+// Форматує дату синхронізації у зручний вигляд: "Сьогодні, 14:35" / "Вчора, 09:12" / "22.09.2026, 14:35"
+function formatSyncDateTime(date) {
+    if (!date) return 'ще не синхронізовано';
+    const now = new Date();
+    const time = date.toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' });
+
+    if (date.toDateString() === now.toDateString()) return `Сьогодні, ${time}`;
+
+    const yesterday = new Date(now);
+    yesterday.setDate(now.getDate() - 1);
+    if (date.toDateString() === yesterday.toDateString()) return `Вчора, ${time}`;
+
+    const dateStr = date.toLocaleDateString('uk-UA', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    return `${dateStr}, ${time}`;
+}
+
+// Форматує дату: "Сьогодні, 14:35" / "Вчора, 09:12" / "22.09.2026, 14:35"
+function formatSyncDateTime(date) {
+    if (!date) return 'ще не синхронізовано';
+    const now = new Date();
+    const time = date.toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' });
+
+    if (date.toDateString() === now.toDateString()) return `Сьогодні, ${time}`;
+
+    const yesterday = new Date(now);
+    yesterday.setDate(now.getDate() - 1);
+    if (date.toDateString() === yesterday.toDateString()) return `Вчора, ${time}`;
+
+    const dateStr = date.toLocaleDateString('uk-UA', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    return `${dateStr}, ${time}`;
+}
+
+// Оновлює постійний напис праворуч. isSyncing=true -> показує "Синхронізація..."
+function updateSyncTimeDisplay(date, isSyncing = false) {
+    const el = document.getElementById('sync-time-display');
+    if (!el) return;
+
+    el.classList.add('visible');
+    el.classList.toggle('syncing', isSyncing);
+
+    el.innerHTML = isSyncing
+        ? `<i class="fas fa-sync-alt"></i> Синхронізація...`
+        : `<i class="fas fa-check-circle"></i> Синхр.: ${formatSyncDateTime(date)}`;
+}
+
+// Ховає напис (для гостя, який не увійшов)
+function hideSyncTimeDisplay() {
+    const el = document.getElementById('sync-time-display');
+    if (el) el.classList.remove('visible');
+}
+
+// Викликається одразу після УСПІШНОГО запису в Firestore
+function markSyncedNow() {
+    const now = new Date();
+    localStorage.setItem('lastSyncTime', now.toISOString());
+    updateSyncTimeDisplay(now, false);
+}
+
 // Ця функція сама викликається, коли статус входу змінюється (увійшов/вийшов)
 auth.onAuthStateChanged((user) => {
+    document.getElementById('auth-container')?.classList.remove('is-loading');
+
     currentUser = user;
     const loginBtn = document.getElementById('login-google-btn');
     const userInfoWrapper = document.getElementById('user-info-wrapper');
@@ -33,17 +93,18 @@ auth.onAuthStateChanged((user) => {
         if(loginBtn) loginBtn.style.display = 'none';
         if(userInfoWrapper) userInfoWrapper.style.display = 'flex';
         
-        // Беремо тільки перше слово з імені (щоб не займало багато місця)
         const firstName = user.displayName ? user.displayName.split(' ')[0] : 'Користувач';
         if(userInfo) userInfo.textContent = firstName;
         
-        // Встановлюємо аватарку, якщо вона є
         if(userAvatar && user.photoURL) {
             userAvatar.src = user.photoURL;
         }
 
         showNotification(`Синхронізація активна: ${user.email}`, 'success');
         
+        const cached = localStorage.getItem('lastSyncTime'); // ← НОВЕ
+        if (cached) updateSyncTimeDisplay(new Date(cached), false); // ← НОВЕ
+
         loadUserDataFromCloud();
         
     } else {
@@ -51,6 +112,7 @@ auth.onAuthStateChanged((user) => {
         if(loginBtn) loginBtn.style.display = 'flex';
         if(userInfoWrapper) userInfoWrapper.style.display = 'none';
         if(userInfo) userInfo.textContent = '';
+        hideSyncTimeDisplay(); // ← НОВЕ
     }
 });
 
@@ -58,37 +120,50 @@ auth.onAuthStateChanged((user) => {
 async function syncTemplatesToCloud(templatesArray) {
     if (!currentUser) return; // Якщо гість - нічого не робимо
     
+    updateSyncTimeDisplay(null, true); // ← додано: показуємо "Синхронізація..."
     try {
         // Зберігаємо в колекцію 'users', документ з ID користувача
         await db.collection('users').doc(currentUser.uid).set({
             templates: templatesArray,
             lastUpdated: firebase.firestore.FieldValue.serverTimestamp() // Час останньої зміни
         }, { merge: true }); // merge: true означає, що ми не затремо інші дані (напр. нотатки в майбутньому)
+        markSyncedNow(); // ← додано: показуємо реальний час завершення
     } catch (error) {
         console.error("Помилка збереження в хмару:", error);
+        document.getElementById('sync-time-display')?.classList.remove('syncing'); // ← додано
     }
 }
 
 // --- ФУНКЦІЯ: Відправка нотаток у хмару ---
 async function syncNotesToCloud(notesArray) {
     if (!currentUser) return;
+    updateSyncTimeDisplay(null, true); // ← додано
     try {
         await db.collection('users').doc(currentUser.uid).set({
             quickNotes: notesArray,
             lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
         }, { merge: true });
-    } catch (error) { console.error("Помилка синхронізації нотаток:", error); }
+        markSyncedNow(); // ← додано
+    } catch (error) {
+        console.error("Помилка синхронізації нотаток:", error);
+        document.getElementById('sync-time-display')?.classList.remove('syncing'); // ← додано
+    }
 }
 
 // --- ФУНКЦІЯ: Відправка історії логінів у хмару ---
 async function syncHistoryToCloud(historyArray) {
     if (!currentUser) return;
+    updateSyncTimeDisplay(null, true); // ← додано
     try {
         await db.collection('users').doc(currentUser.uid).set({
             loginHistory: historyArray,
             lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
         }, { merge: true });
-    } catch (error) { console.error("Помилка синхронізації історії:", error); }
+        markSyncedNow(); // ← додано
+    } catch (error) {
+        console.error("Помилка синхронізації історії:", error);
+        document.getElementById('sync-time-display')?.classList.remove('syncing'); // ← додано
+    }
 }
 
 // --- ФУНКЦІЯ: Завантаження УСІХ даних з хмари ---
@@ -100,6 +175,10 @@ async function loadUserDataFromCloud() {
         
         if (doc.exists) {
             const data = doc.data();
+            
+            const lastSyncDate = data.lastUpdated ? data.lastUpdated.toDate() : new Date(); // ← НОВЕ
+            updateSyncTimeDisplay(lastSyncDate, false); // ← НОВЕ
+            localStorage.setItem('lastSyncTime', lastSyncDate.toISOString()); // ← НОВЕ
             
             // 1. Шаблони
             if (data.templates && data.templates.length > 0) {
@@ -119,7 +198,7 @@ async function loadUserDataFromCloud() {
                 localStorage.setItem('loginHistory', JSON.stringify(data.loginHistory));
                 renderHistory(data.loginHistory); // Перемальовуємо історію
             }
-            
+
             showNotification("Усі дані синхронізовано з хмарою ☁️", 'success');
         } else {
             // Якщо хмара пуста (перший вхід) — відправляємо туди все, що є локально
@@ -3124,7 +3203,7 @@ function addTemplate() {
     container.appendChild(newField);
     
     // 3. Через мить (коли тетріс відпрацював) робимо магію
-    setTimeout(() => {
+    requestAnimationFrame(() => {
         container.style.height = 'auto';
         newField.style.transition = ''; // Повертаємо анімацію
         
@@ -3134,28 +3213,17 @@ function addTemplate() {
         
         saveTemplates();
 
-        // --- НОВА БЕЗПЕЧНА ПРОКРУТКА ---
+        // --- НАДІЙНА ПРОКРУТКА ---
         // Знаходимо саме той контейнер, який має скрол (біла картка)
         const scrollContainer = newField.closest('.content-card');
 
         if (scrollContainer) {
-            // Отримуємо координати нового блоку і контейнера
-            const elementRect = newField.getBoundingClientRect();
-            const containerRect = scrollContainer.getBoundingClientRect();
-
-            // Рахуємо, де знаходиться блок відносно верхнього краю видимого контейнера
-            const relativeTop = elementRect.top - containerRect.top;
-
-            // Рахуємо центр: (відступ блоку) - (половина висоти екрану) + (половина висоти блоку)
-            const centerOffset = relativeTop - (containerRect.height / 2) + (elementRect.height / 2);
-
-            // Плавно крутимо тільки внутрішній контейнер
-            scrollContainer.scrollTo({
-                top: scrollContainer.scrollTop + centerOffset,
-                behavior: 'smooth'
+            // Даємо ще один кадр на перерахунок висоти після зміни container.style.height
+            requestAnimationFrame(() => {
+                newField.scrollIntoView({ behavior: 'smooth', block: 'center' });
             });
         }
-    }, 50);
+    }, { once: true });
 }
     
     function saveTemplates() {
