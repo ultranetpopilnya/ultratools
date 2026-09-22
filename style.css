@@ -772,6 +772,7 @@ select:focus,
 
 /* --- ГРУПА 2: ПРОЗОРІ КНОПКИ-ІКОНКИ (Active) --- */
 /* При кліку стискаються, БЕЗ внутрішньої тіні, щоб не було брудного квадрата */
+.logout-btn:active,
 .config-login-copy-btn:active,
 .config-login-regen-btn:active,
 .add-tab-btn:not(.menu-open):active,
@@ -2815,7 +2816,6 @@ body.dark .history-copy-btn:hover {
     transform: scale(1.1);
 }
 
-
 /* =========================================
    ТЕМНА ТЕМА ДЛЯ КНОПКИ ВХОДУ
    ========================================= */
@@ -2898,12 +2898,10 @@ body.dark .auth-btn:hover {
 .logout-btn:hover {
     background-color: rgba(220, 38, 38, 0.1);
     color: var(--danger-color);
-    transform: scale(1.1);
 }
 
 /* Клік: стає повністю червоною */
 .logout-btn:active {
-    transform: scale(0.92);
     background-color: var(--danger-color);
     color: white;
 }
@@ -2995,7 +2993,7 @@ body.dark .logout-btn:hover {
    ========================================================= */
 .fancy-divider {
     display: block;
-    width: 80%;
+    width: 98%;
     height: 1px;
     border: none;
     margin: 0;
