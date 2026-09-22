@@ -160,7 +160,7 @@ function syncHistoryToCloud(historyArray) {
     delayedSaveHistory(currentUser.uid, historyArray);
 }
 
-// --- ФУНКЦІЯ: Завантаження УСІХ даних з хмари ---
+// --- ФУНКЦІЯ: Завантаження та РОЗУМНЕ ОБ'ЄДНАННЯ даних з хмари ---
 async function loadUserDataFromCloud() {
     if (!currentUser) return;
 
@@ -170,37 +170,99 @@ async function loadUserDataFromCloud() {
         if (doc.exists) {
             const data = doc.data();
             
-            const lastSyncDate = data.lastUpdated ? data.lastUpdated.toDate() : new Date(); // ← НОВЕ
-            updateSyncTimeDisplay(lastSyncDate, false); // ← НОВЕ
-            localStorage.setItem('lastSyncTime', lastSyncDate.toISOString()); // ← НОВЕ
+            const lastSyncDate = data.lastUpdated ? data.lastUpdated.toDate() : new Date();
+            updateSyncTimeDisplay(lastSyncDate, false);
+            localStorage.setItem('lastSyncTime', lastSyncDate.toISOString());
             
-            // 1. Шаблони
-            if (data.templates && data.templates.length > 0) {
-                localStorage.setItem('textTemplates', JSON.stringify(data.templates));
+            let needsCloudUpdate = false; // Прапорець: чи є застряглі локальні дані
+
+            // === 1. ВИЗВОЛЕННЯ ШАБЛОНІВ ===
+            const localTemplates = JSON.parse(localStorage.getItem('textTemplates') || '[]');
+            const cloudTemplates = data.templates || [];
+            let mergedTemplates = [...cloudTemplates];
+
+            localTemplates.forEach(localTpl => {
+                const exists = cloudTemplates.find(cTpl => cTpl.name === localTpl.name && cTpl.content === localTpl.content);
+                if (!exists) {
+                    mergedTemplates.push(localTpl); 
+                    needsCloudUpdate = true; // Знайшли унікальний локальний шаблон!
+                }
+            });
+
+            if (mergedTemplates.length > 0) {
+                localStorage.setItem('textTemplates', JSON.stringify(mergedTemplates));
                 loadTemplates();
             }
             
-            // 2. Нотатки
-            if (data.quickNotes && data.quickNotes.length > 0) {
-                localStorage.setItem('quickNotesData', JSON.stringify(data.quickNotes));
-                quickNotesArray = data.quickNotes;
-                renderQuickNotes(); // Перемальовуємо нотатки
+            // === 2. ВИЗВОЛЕННЯ НОТАТОК ===
+            const localNotes = JSON.parse(localStorage.getItem('quickNotesData') || '[]');
+            const cloudNotes = data.quickNotes || [];
+            let mergedNotes = [...cloudNotes];
+
+            localNotes.forEach(note => {
+                if (!mergedNotes.includes(note)) {
+                    mergedNotes.push(note);
+                    needsCloudUpdate = true; // Знайшли застряглу нотатку!
+                }
+            });
+
+            if (mergedNotes.length > 0) {
+                localStorage.setItem('quickNotesData', JSON.stringify(mergedNotes));
+                quickNotesArray = mergedNotes;
+                renderQuickNotes();
             }
             
-            // 3. Історія логінів
-            if (data.loginHistory && data.loginHistory.length > 0) {
-                localStorage.setItem('loginHistory', JSON.stringify(data.loginHistory));
-                renderHistory(data.loginHistory); // Перемальовуємо історію
+            // === 3. ВИЗВОЛЕННЯ ІСТОРІЇ ЛОГІНІВ ===
+            const localHistory = JSON.parse(localStorage.getItem('loginHistory') || '[]');
+            const cloudHistory = data.loginHistory || [];
+            let mergedHistory = [...cloudHistory];
+
+            localHistory.forEach(localItem => {
+                const exists = mergedHistory.find(h => h.login === localItem.login);
+                if (!exists) {
+                    mergedHistory.push(localItem);
+                    needsCloudUpdate = true; // Знайшли застряглу історію!
+                }
+            });
+            mergedHistory = mergedHistory.slice(0, 8); // Ліміт 8 штук
+
+            if (mergedHistory.length > 0) {
+                localStorage.setItem('loginHistory', JSON.stringify(mergedHistory));
+                renderHistory(mergedHistory);
             }
+
+            // === 4. МИТТЄВА ПРИМУСОВА СИНХРОНІЗАЦІЯ ===
+            // Якщо ми знайшли хоч щось локальне, чого не було в хмарі — пушимо все одним запитом!
+            if (needsCloudUpdate) {
+                updateSyncTimeDisplay(null, true);
+                
+                await db.collection('users').doc(currentUser.uid).set({
+                    templates: mergedTemplates,
+                    quickNotes: mergedNotes,
+                    loginHistory: mergedHistory,
+                    lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+                
+                markSyncedNow();
+                console.log("Успіх: Локальні дані витягнуто з пастки і синхронізовано з хмарою!");
+            }
+
         } else {
-            // Якщо хмара пуста (перший вхід) — відправляємо туди все, що є локально
+            // === ПЕРШИЙ ВХІД В АКАУНТ === (якщо в хмарі ще ніколи нічого не було)
             const localTemplates = JSON.parse(localStorage.getItem('textTemplates') || '[]');
             const localNotes = JSON.parse(localStorage.getItem('quickNotesData') || '[]');
             const localHistory = JSON.parse(localStorage.getItem('loginHistory') || '[]');
             
-            if (localTemplates.length > 0) syncTemplatesToCloud(localTemplates);
-            if (localNotes.length > 0) syncNotesToCloud(localNotes);
-            if (localHistory.length > 0) syncHistoryToCloud(localHistory);
+            if (localTemplates.length > 0 || localNotes.length > 0 || localHistory.length > 0) {
+                updateSyncTimeDisplay(null, true);
+                await db.collection('users').doc(currentUser.uid).set({
+                    templates: localTemplates,
+                    quickNotes: localNotes,
+                    loginHistory: localHistory,
+                    lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                markSyncedNow();
+            }
         }
     } catch (error) {
         console.error("Помилка завантаження з хмари:", error);
@@ -221,15 +283,6 @@ function logoutFromGoogle() {
     auth.signOut().then(() => {
         showNotification("Ви вийшли з акаунта", 'info');
     });
-}
-
-// 1. Спочатку оголошуємо допоміжну функцію
-function debounce(func, delay) {
-    let timeout;
-    return function(...args) {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => func.apply(this, args), delay);
-    };
 }
 
 // Функція, яка використовує твої CSS-анімації для плавного переходу
@@ -3886,7 +3939,7 @@ const addDurationToEndDate = (monthsToAdd, yearsToAdd) => {
 
     const startDateValue = startDateInput.value;
     if (!startDateValue) {
-        sshowNotification("Спочатку встановіть початкову дату!", 'warning');
+        showNotification("Спочатку встановіть початкову дату!", 'warning');
         return;
     }
 
@@ -4883,7 +4936,7 @@ function addQuickNote() {
     if (editingNoteIndex > -1) {
         // РЕЖИМ РЕДАГУВАННЯ
         quickNotesArray[editingNoteIndex] = text;
-        sshowNotification("Нотатку оновлено!", 'success');
+        showNotification("Нотатку оновлено!", 'success');
         editingNoteIndex = -1; // Виходимо з режиму редагування
     } else {
         // РЕЖИМ ДОДАВАННЯ (НОВА)
