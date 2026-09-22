@@ -74,8 +74,9 @@ auth.onAuthStateChanged((user) => {
 
     if (user) {
         // === КОРИСТУВАЧ АВТОРИЗОВАНИЙ ===
-        if(loginBtn) loginBtn.style.display = 'none';
-        if(userInfoWrapper) userInfoWrapper.style.display = 'flex';
+        
+        // Використовуємо твій клас 'is-authenticating'
+        animatedAuthSwitch(loginBtn, userInfoWrapper, 'is-authenticating');
         
         const firstName = user.displayName ? user.displayName.split(' ')[0] : 'Користувач';
         if(userInfo) userInfo.textContent = firstName;
@@ -83,18 +84,20 @@ auth.onAuthStateChanged((user) => {
         if(userAvatar && user.photoURL) {
             userAvatar.src = user.photoURL;
         }
-        
-        const cached = localStorage.getItem('lastSyncTime'); // ← НОВЕ
-        if (cached) updateSyncTimeDisplay(new Date(cached), false); // ← НОВЕ
+
+        const cached = localStorage.getItem('lastSyncTime'); 
+        if (cached) updateSyncTimeDisplay(new Date(cached), false); 
 
         loadUserDataFromCloud();
         
     } else {
         // === КОРИСТУВАЧ НЕ АВТОРИЗОВАНИЙ (ГІСТЬ) ===
-        if(loginBtn) loginBtn.style.display = 'flex';
-        if(userInfoWrapper) userInfoWrapper.style.display = 'none';
+        
+        // Використовуємо твій клас 'is-signing-out'
+        animatedAuthSwitch(userInfoWrapper, loginBtn, 'is-signing-out');
+        
         if(userInfo) userInfo.textContent = '';
-        hideSyncTimeDisplay(); // ← НОВЕ
+        hideSyncTimeDisplay(); 
     }
 });
 
@@ -228,6 +231,32 @@ function debounce(func, delay) {
         timeout = setTimeout(() => func.apply(this, args), delay);
     };
 }
+
+// Функція, яка використовує твої CSS-анімації для плавного переходу
+function animatedAuthSwitch(hideEl, showEl, containerClass) {
+    if (!hideEl || !showEl) return;
+    const container = document.querySelector('.auth-container') || document.getElementById('auth-container');
+
+    // Якщо сторінка тільки завантажилась, міняємо без анімації (щоб не блимало)
+    if (window.getComputedStyle(hideEl).display === 'none') {
+        hideEl.style.display = 'none';
+        showEl.style.display = 'flex';
+        return;
+    }
+
+    // 1. Додаємо клас для анімації зникнення (з твого CSS)
+    if (container) container.classList.add(containerClass);
+
+    // 2. Чекаємо 200мс (рівно стільки триває твоя анімація auth-fade-out)
+    setTimeout(() => {
+        hideEl.style.display = 'none';
+        showEl.style.display = 'flex'; // Твоя анімація auth-fade-in запуститься автоматично
+
+        // Прибираємо клас, щоб все було готово для наступного разу
+        if (container) container.classList.remove(containerClass);
+    }, 200); 
+}
+
 // Додайте це на початку скрипту, якщо змінна ще не оголошена
 const debouncedSaveTemplates = debounce(saveTemplates, 1000);
 
