@@ -2765,23 +2765,26 @@ body.dark .history-copy-btn:hover {
     flex-shrink: 0; 
 }
 
+.header-controls-wrapper {
+    grid-column: 3;
+    justify-self: end;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
 /* =========================================
    СТИЛІ ДЛЯ FIREBASE АВТОРИЗАЦІЇ
    ========================================= */
 
-.template-global-actions {
-    justify-content: flex-end;
-}
-
 /* Контейнер авторизації */
 .auth-container {
-    position: relative; /* потрібно для тултипа/абсолютного позиціювання дочірніх елементів */
+    position: relative;
+    top: 5px;
     display: flex;
     align-items: center;
-    justify-content: flex-start;
-    padding-left: 16px;
+    justify-content: center;
 }
-
 
 /* =========================================
    1. СТАН ЗАВАНТАЖЕННЯ (поки Firebase визначає юзера)
@@ -2796,7 +2799,6 @@ body.dark .history-copy-btn:hover {
     animation: skeleton-shimmer 1.4s ease-in-out infinite;
 }
 
-/* Заглушку показуємо тільки поки на контейнері є клас is-loading */
 .auth-container.is-loading .auth-skeleton {
     display: block;
 }
@@ -2806,9 +2808,8 @@ body.dark .history-copy-btn:hover {
     100% { background-position: -200% 0; }
 }
 
-
 /* =========================================
-   2. КНОПКА ВХОДУ (УВІЙТИ ЧЕРЕЗ GOOGLE) — неавторизований стан
+   2. КНОПКА ВХОДУ (УВІЙТИ ЧЕРЕЗ GOOGLE)
    ========================================= */
 .login-btn, .auth-btn {
     display: inline-flex;
@@ -2821,7 +2822,7 @@ body.dark .history-copy-btn:hover {
 
     background-color: var(--btn-bg);
     border: 1px solid var(--input-border-color);
-    border-radius: 9999px; /* Робимо її круглою пігулкою */
+    border-radius: 9999px;
 
     color: var(--text-color);
     font-size: 13px;
@@ -2840,24 +2841,20 @@ body.dark .history-copy-btn:hover {
     transition: transform 0.2s ease, color 0.2s ease;
 }
 
-/* Ховер (Світла тема) */
 .login-btn:hover, .auth-btn:hover {
     border-color: var(--primary-accent-color);
     color: var(--primary-accent-color);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
-/* При наведенні іконка може легенько підстрибувати або ставати акцентною */
 .login-btn:hover i, .auth-btn:hover i {
     transform: scale(1.1);
 }
 
-/* Клік по кнопці входу — легкий "press" ефект */
 .login-btn:active, .auth-btn:active {
     transform: scale(0.96);
 }
 
-/* Темна тема — кнопка входу */
 body.dark .login-btn,
 body.dark .auth-btn {
     background-color: var(--btn-bg);
@@ -2870,24 +2867,22 @@ body.dark .auth-btn:hover {
     color: var(--secondary-accent-color);
 }
 
-
 /* =========================================
-   3. БЛОК ІНФОРМАЦІЇ КОРИСТУВАЧА — авторизований стан
+   3. БЛОК ІНФОРМАЦІЇ КОРИСТУВАЧА
    ========================================= */
 .user-info-wrapper {
-    position: relative; /* потрібно для тултипа */
+    position: relative;
     display: flex;
     align-items: center;
     gap: 8px;
 
-    /* Чітка висота (збігається з кнопками дій справа) та обмежена ширина */
     height: 30px;
-    max-width: 200px; /* Щоб дуже довге ім'я не ламало центр шапки */
-    padding: 0 4px 0 6px; /* Внутрішні відступи по боках */
+    max-width: 200px;
+    padding: 0 4px 0 6px;
 
     background-color: var(--btn-bg);
     border: 1px solid var(--input-border-color);
-    border-radius: 9999px; /* Форма пігулки */
+    border-radius: 9999px;
 
     transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.15s ease;
 }
@@ -2897,21 +2892,19 @@ body.dark .auth-btn:hover {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
-/* Обгортка аватарки (для індикатора синхронізації навколо неї, за потреби) */
 .user-avatar-wrapper {
     position: relative;
     display: flex;
     flex-shrink: 0;
 }
 
-/* Аватарка з Google */
 .user-avatar {
-    width: 20px; /* Трохи менша, щоб ідеально влізла у 30px пігулку */
+    width: 20px;
     height: 20px;
     border-radius: 50%;
     object-fit: cover;
     border: none;
-    flex-shrink: 0; /* Забороняємо сплющуватись */
+    flex-shrink: 0;
 
     opacity: 0;
     transform: scale(0.6);
@@ -2923,13 +2916,11 @@ body.dark .auth-btn:hover {
     to   { opacity: 1; transform: scale(1); }
 }
 
-/* Ім'я користувача */
 .user-info-text {
     font-size: 12.5px;
     font-weight: 600;
     color: var(--text-color);
 
-    /* Обрізка тексту трьома крапками, якщо ім'я задовге */
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -2943,13 +2934,12 @@ body.dark .auth-btn:hover {
     to   { opacity: 1; transform: translateX(0); }
 }
 
-/* Кнопка виходу (Хрестик / Sign-out) */
 .logout-btn {
     display: flex;
     justify-content: center;
     align-items: center;
 
-    width: 22px; /* Компактна кнопка для гармонії */
+    width: 22px;
     height: 22px;
     padding: 0;
     flex-shrink: 0;
@@ -2964,33 +2954,29 @@ body.dark .auth-btn:hover {
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Ховер: плавно червоніє */
 .logout-btn:hover {
     background-color: rgba(220, 38, 38, 0.1);
     color: var(--danger-color);
 }
 
-/* Клік: стає повністю червоною */
 .logout-btn:active {
     background-color: var(--danger-color);
     color: white;
     transform: rotate(90deg) scale(0.9);
 }
 
-/* Темна тема: Кнопка виходу */
 body.dark .logout-btn:hover {
     background-color: var(--danger-bg-dark);
 }
-
 
 /* =========================================
    4. ІНДИКАТОР СИНХРОНІЗАЦІЇ
    ========================================= */
 .sync-time-display {
-    display: none; /* показується тільки коли юзер увійшов */
+    display: none;
     align-items: center;
     gap: 5px;
-    margin-left: 10px;
+    /* margin-left прибрано, тепер воно само відцентрується завдяки flexbox */
     font-size: 12px;
     font-weight: 500;
     color: var(--inactive-text);
@@ -3020,7 +3006,6 @@ body.dark .logout-btn:hover {
     to { transform: rotate(360deg); }
 }
 
-/* Коротка "спалах" анімація в момент успішного завершення синхронізації */
 .sync-time-display.sync-success {
     animation: sync-success-pulse 0.5s ease;
 }
@@ -3031,13 +3016,9 @@ body.dark .logout-btn:hover {
     100% { color: var(--inactive-text); transform: scale(1); }
 }
 
-
 /* =========================================
    5. ПЕРЕХОДИ МІЖ СТАНАМИ (вхід / вихід)
    ========================================= */
-
-/* Поява кнопки входу або блоку юзера, коли Firebase вже відповів
-   (загальний "en­trance" для обох кінцевих станів) */
 .login-btn,
 .user-info-wrapper {
     animation: auth-fade-in 0.25s ease forwards;
@@ -3048,14 +3029,10 @@ body.dark .logout-btn:hover {
     to   { opacity: 1; transform: translateY(0); }
 }
 
-/* Клас, що додається на контейнер JS-ом у момент переходу
-   "неавторизований → авторизований" (після успішного логіну) */
 .auth-container.is-authenticating .login-btn {
     animation: auth-fade-out 0.2s ease forwards;
 }
 
-/* Клас, що додається на контейнер JS-ом у момент переходу
-   "авторизований → неавторизований" (після виходу) */
 .auth-container.is-signing-out .user-info-wrapper {
     animation: auth-fade-out 0.2s ease forwards;
 }
@@ -3100,8 +3077,6 @@ body.dark .fancy-divider {
 }
 
 .template-global-actions {
-    grid-column: 3;
-    justify-self: end;
     display: flex;
     align-items: center;
     gap: 10px;

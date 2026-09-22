@@ -356,7 +356,7 @@ function clearAllTemplates() {
         return; 
     }
     
-    if (confirm('Ви впевнені, що хочете видалити ВСІ шаблони? Цю дію неможливо скасувати.')) {
+    if (confirm('Ви впевнені, що хочете видалити ВСІ шаблони? Якщо ви увійшли у свій обліковий запис, шаблони також буде видалено з нього.')) {
         templatesGrid.innerHTML = ''; 
         saveTemplates(); 
         showNotification("Усі текстові шаблони було видалено.", 'success');
@@ -4251,11 +4251,12 @@ if (initialTab === 'gpon-commands') {
     // ВАЖЛИВО: Цей рядок запускає сніг!
     createSnowflakes();
 	
-	// === ЛОГІКА КНОПОК ПРОКРУТКИ ===
+// === ЛОГІКА КНОПОК ПРОКРУТКИ ===
     const scrollUpBtn = document.getElementById('scroll-up-btn');
     const scrollDownBtn = document.getElementById('scroll-down-btn');
-    // Знаходимо елемент, який реально скролиться (content-card всередині text-templates)
-    const templateScrollContainer = document.querySelector('.container[data-content="text-templates"] .content-card');
+    
+    // ОСЬ ТУТ ВИПРАВЛЕНО: Тепер ми слухаємо елемент, який реально скролиться
+    const templateScrollContainer = document.getElementById('templates-grid-wrapper');
 
     if (scrollUpBtn && scrollDownBtn && templateScrollContainer) {
         
@@ -4281,7 +4282,7 @@ if (initialTab === 'gpon-commands') {
             }
         };
 
-        // Слухаємо подію скролу (використовуємо debounce/throttle якщо є, або просто так)
+        // Слухаємо подію скролу 
         templateScrollContainer.addEventListener('scroll', checkScrollButtons);
         
         // Також перевіряємо при зміні розміру вікна або додаванні шаблонів
@@ -4327,7 +4328,7 @@ if (initialTab === 'gpon-commands') {
 
         // Клік "Вгору"
         scrollUpBtn.addEventListener('click', () => {
-            // 600 - це швидкість прокрутки (мілісекунди). Можна міняти!
+            // 800 - це швидкість прокрутки (мілісекунди).
             customSmoothScroll(templateScrollContainer, 0, 800); 
         });
 

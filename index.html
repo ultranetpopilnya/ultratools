@@ -187,50 +187,68 @@
             </div>
 
             <div class="container" data-content="text-templates">
-			<div class="content-card">
-<div class="templates-header-wrapper">
+    <div class="content-card">
+        
+        <!-- === ШАПКА ШАБЛОНІВ === -->
+        <div class="templates-header-wrapper">
+            
+            <!-- Ліва частина: Заголовок -->
+            <h2 class="template-main-title">
+                <img src="imgs/bookmark_tabs_3d.png" class="emoji-png">Текстовий простір
+            </h2>
 
-                <div id="auth-container" class="auth-container is-loading">
-    <span class="auth-skeleton"></span>
+            <!-- Права частина: Панель керування (Все в один рядок) -->
+            <div class="header-controls-wrapper">
+                
+                                <!-- 1. Текст синхронізації (Найлівіше) -->
+                <span id="sync-time-display" class="sync-time-display"></span>
 
-    <button id="login-google-btn" class="auth-btn login-btn" onclick="loginWithGoogle()" style="display:none;">
-        <i class="fa-brands fa-google"></i> <span>Увійти в обліковий запис Google</span>
-    </button>
+                <!-- 2. Кнопки керування (логін + решта, все разом) -->
+                <div class="template-global-actions">
 
-    <div id="user-info-wrapper" class="user-info-wrapper" style="display:none;">
-        <div class="user-avatar-wrapper">
-            <img id="user-avatar" class="user-avatar" src="" alt="avatar">
-            <span id="sync-status-dot" class="sync-status-dot"></span>
-        </div>
-        <span id="user-info" class="user-info-text"></span>
-        <button class="logout-btn" onclick="logoutFromGoogle()"><i class="fa-solid fa-right-from-bracket"></i></button>
-    </div>
+                    <!-- Авторизація / Профіль -->
+                    <div id="auth-container" class="auth-container is-loading">
+                        <span class="auth-skeleton"></span>
 
-    <span id="sync-time-display" class="sync-time-display"></span>
-</div>
+                        <button id="login-google-btn" class="auth-btn login-btn" onclick="loginWithGoogle()" style="display:none;">
+                            <i class="fa-brands fa-google"></i> <span class="auth-btn-text">Увійти через Google</span>
+                        </button>
 
-    <h2 class="template-main-title"><img src="imgs/bookmark_tabs_3d.png" class="emoji-png">Текстовий простір</h2>
-
-    <div class="template-global-actions">
-        <button id="add-template-button" title="Додати текстовий шаблон"><i class="fa-regular fa-square-plus"></i></button>
-        <input type="file" id="import-file-input" accept=".json" style="display: none;">
-        <button id="import-templates-button" title="Імпортувати шаблони з файлу">
-            <i class="fa-solid fa-file-arrow-down"></i>
-        </button>
-        <button id="export-templates-button" title="Експортувати шаблони у файл">
-            <i class="fa-solid fa-file-arrow-up"></i>
-        </button>
-        <button id="clear-all-templates-button" title="Видалити всі шаблони">
-            <i class="fa-solid fa-trash-can"></i>
-        </button>
-    </div>
-    <hr class="fancy-divider template-divider">
-</div>
-
-                <div id="templates-grid-wrapper">
+                        <div id="user-info-wrapper" class="user-info-wrapper" style="display:none;">
+                            <div class="user-avatar-wrapper">
+                                <img id="user-avatar" class="user-avatar" src="" alt="avatar">
+                                <span id="sync-status-dot" class="sync-status-dot"></span>
+                            </div>
+                            <span id="user-info" class="user-info-text"></span>
+                            <button class="logout-btn" onclick="logoutFromGoogle()" title="Вийти"><i class="fa-solid fa-right-from-bracket"></i></button>
+                        </div>
                     </div>
-            </div>
-             <div class="scroll-nav-buttons">
+
+                    <button id="add-template-button" title="Додати текстовий шаблон"><i class="fa-regular fa-square-plus"></i></button>
+                    <input type="file" id="import-file-input" accept=".json" style="display: none;">
+                    <button id="import-templates-button" title="Імпортувати шаблони з файлу">
+                        <i class="fa-solid fa-file-arrow-down"></i>
+                    </button>
+                    <button id="export-templates-button" title="Експортувати шаблони у файл">
+                        <i class="fa-solid fa-file-arrow-up"></i>
+                    </button>
+                    <button id="clear-all-templates-button" title="Видалити всі шаблони">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                </div>
+
+            </div> <!-- /header-controls-wrapper -->
+            <hr class="fancy-divider template-divider">
+        </div> <!-- /templates-header-wrapper -->
+
+        
+
+        <!-- Сітка шаблонів -->
+        <div id="templates-grid-wrapper"></div>
+    </div> <!-- /content-card -->
+
+    <!-- === КНОПКИ СКРОЛУ === -->
+    <div class="scroll-nav-buttons">
         <button id="scroll-up-btn" class="scroll-nav-btn" title="Прокрутити вгору">
             <i class="fa-solid fa-angle-up"></i>
         </button>
@@ -238,7 +256,7 @@
             <i class="fa-solid fa-angle-down"></i>
         </button>
     </div>   
-        </div> 
+</div>
         
         <!-- === ПОЧАТОК ЗМІНЕНОГО БЛОКУ DATE CALCULATOR === -->
 <div class="container date-calculator-container" data-content="date-calculator" data-default-width="830px">
