@@ -2787,7 +2787,7 @@ body.dark .history-copy-btn:hover {
     padding: 0 14px;
     
     background-color: var(--btn-bg);
-    border: 1px solid var(--btn-bg);
+    border: 1px solid var(--input-border-color);
     border-radius: 9999px; /* Робимо її круглою пігулкою */
     
     color: var(--text-color);
@@ -2822,7 +2822,7 @@ body.dark .history-copy-btn:hover {
 body.dark .login-btn, 
 body.dark .auth-btn {
     background-color: var(--btn-bg);
-    border-color: var(--btn-bg);
+    border-color: var(--input-border-color);
 }
 
 body.dark .login-btn:hover, 
@@ -2845,7 +2845,7 @@ body.dark .auth-btn:hover {
     padding: 0 4px 0 6px; /* Внутрішні відступи по боках */
     
     background-color: var(--btn-bg);
-    border: 1px solid var(--btn-bg);
+    border: 1px solid var(--input-border-color);
     border-radius: 9999px; /* Форма пігулки */
     
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
