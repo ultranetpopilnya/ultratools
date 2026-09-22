@@ -93,6 +93,9 @@ auth.onAuthStateChanged((user) => {
     } else {
         // === КОРИСТУВАЧ НЕ АВТОРИЗОВАНИЙ (ГІСТЬ) ===
         
+        // ДОДАЙТЕ ЦЕЙ РЯДОК:
+        localStorage.removeItem('lastSyncTime'); 
+        
         // Використовуємо твій клас 'is-signing-out'
         animatedAuthSwitch(userInfoWrapper, loginBtn, 'is-signing-out');
         
@@ -167,6 +170,9 @@ async function loadUserDataFromCloud() {
     try {
         const doc = await db.collection('users').doc(currentUser.uid).get();
         
+        // ПЕРЕВІРКА: Чи цей пристрій вже брав участь у синхронізації?
+        const hasSyncedBefore = localStorage.getItem('lastSyncTime') !== null;
+        
         if (doc.exists) {
             const data = doc.data();
             
@@ -174,9 +180,35 @@ async function loadUserDataFromCloud() {
             updateSyncTimeDisplay(lastSyncDate, false);
             localStorage.setItem('lastSyncTime', lastSyncDate.toISOString());
             
-            let needsCloudUpdate = false; // Прапорець: чи є застряглі локальні дані
+            // =================================================================
+            // СЦЕНАРІЙ А: ПРИСТРІЙ ВЖЕ СИНХРОНІЗОВАНИЙ (ХМАРА - ГОЛОВНА)
+            // =================================================================
+            if (hasSyncedBefore) {
+                // ШАБЛОНИ
+                const cloudTemplates = data.templates || [];
+                localStorage.setItem('textTemplates', JSON.stringify(cloudTemplates));
+                loadTemplates();
+                
+                // НОТАТКИ (Тепер видалення на ПК видалить їх і тут!)
+                const cloudNotes = data.quickNotes || [];
+                localStorage.setItem('quickNotesData', JSON.stringify(cloudNotes));
+                quickNotesArray = cloudNotes;
+                renderQuickNotes();
+                
+                // ІСТОРІЯ
+                const cloudHistory = data.loginHistory || [];
+                localStorage.setItem('loginHistory', JSON.stringify(cloudHistory));
+                renderHistory(cloudHistory);
+                
+                return; // Зупиняємо функцію, об'єднання не потрібне
+            }
 
-            // === 1. ВИЗВОЛЕННЯ ШАБЛОНІВ ===
+            // =================================================================
+            // СЦЕНАРІЙ Б: ПЕРШИЙ ВХІД З ГОСТЯ (РОЗУМНЕ ЗЛИТТЯ)
+            // =================================================================
+            let needsCloudUpdate = false; 
+
+            // 1. ШАБЛОНИ
             const localTemplates = JSON.parse(localStorage.getItem('textTemplates') || '[]');
             const cloudTemplates = data.templates || [];
             let mergedTemplates = [...cloudTemplates];
@@ -185,7 +217,7 @@ async function loadUserDataFromCloud() {
                 const exists = cloudTemplates.find(cTpl => cTpl.name === localTpl.name && cTpl.content === localTpl.content);
                 if (!exists) {
                     mergedTemplates.push(localTpl); 
-                    needsCloudUpdate = true; // Знайшли унікальний локальний шаблон!
+                    needsCloudUpdate = true;
                 }
             });
 
@@ -194,7 +226,7 @@ async function loadUserDataFromCloud() {
                 loadTemplates();
             }
             
-            // === 2. ВИЗВОЛЕННЯ НОТАТОК ===
+            // 2. НОТАТКИ
             const localNotes = JSON.parse(localStorage.getItem('quickNotesData') || '[]');
             const cloudNotes = data.quickNotes || [];
             let mergedNotes = [...cloudNotes];
@@ -202,7 +234,7 @@ async function loadUserDataFromCloud() {
             localNotes.forEach(note => {
                 if (!mergedNotes.includes(note)) {
                     mergedNotes.push(note);
-                    needsCloudUpdate = true; // Знайшли застряглу нотатку!
+                    needsCloudUpdate = true;
                 }
             });
 
@@ -212,7 +244,7 @@ async function loadUserDataFromCloud() {
                 renderQuickNotes();
             }
             
-            // === 3. ВИЗВОЛЕННЯ ІСТОРІЇ ЛОГІНІВ ===
+            // 3. ІСТОРІЯ ЛОГІНІВ
             const localHistory = JSON.parse(localStorage.getItem('loginHistory') || '[]');
             const cloudHistory = data.loginHistory || [];
             let mergedHistory = [...cloudHistory];
@@ -221,34 +253,30 @@ async function loadUserDataFromCloud() {
                 const exists = mergedHistory.find(h => h.login === localItem.login);
                 if (!exists) {
                     mergedHistory.push(localItem);
-                    needsCloudUpdate = true; // Знайшли застряглу історію!
+                    needsCloudUpdate = true; 
                 }
             });
-            mergedHistory = mergedHistory.slice(0, 8); // Ліміт 8 штук
+            mergedHistory = mergedHistory.slice(0, 8); 
 
             if (mergedHistory.length > 0) {
                 localStorage.setItem('loginHistory', JSON.stringify(mergedHistory));
                 renderHistory(mergedHistory);
             }
 
-            // === 4. МИТТЄВА ПРИМУСОВА СИНХРОНІЗАЦІЯ ===
-            // Якщо ми знайшли хоч щось локальне, чого не було в хмарі — пушимо все одним запитом!
+            // ПРИМУСОВА СИНХРОНІЗАЦІЯ ПІСЛЯ ЗЛИТТЯ
             if (needsCloudUpdate) {
                 updateSyncTimeDisplay(null, true);
-                
                 await db.collection('users').doc(currentUser.uid).set({
                     templates: mergedTemplates,
                     quickNotes: mergedNotes,
                     loginHistory: mergedHistory,
                     lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
                 }, { merge: true });
-                
                 markSyncedNow();
-                console.log("Успіх: Локальні дані витягнуто з пастки і синхронізовано з хмарою!");
             }
 
         } else {
-            // === ПЕРШИЙ ВХІД В АКАУНТ === (якщо в хмарі ще ніколи нічого не було)
+            // === ПЕРШИЙ ВХІД В АКАУНТ ВЗАГАЛІ (ПУСТА ХМАРА) === 
             const localTemplates = JSON.parse(localStorage.getItem('textTemplates') || '[]');
             const localNotes = JSON.parse(localStorage.getItem('quickNotesData') || '[]');
             const localHistory = JSON.parse(localStorage.getItem('loginHistory') || '[]');
