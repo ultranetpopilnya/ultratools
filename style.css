@@ -1009,7 +1009,7 @@ body.dark .tabs {
 
 .tab-button {
     height: 40px;
-    padding: 0 50px 0 14px; 
+    padding: 0 44px 0 14px; 
 
     cursor: pointer;
     -webkit-user-select: none;
