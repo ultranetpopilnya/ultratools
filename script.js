@@ -5175,6 +5175,7 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('mousedown', function (e) {
     // Перевіряємо, чи клік був по одному з вказаних класів/ID
     const targetBtn = e.target.closest(`
+        .login-btn,
         .variant-dropdown-item,
         .speed-dropdown-item,
         .add-tab-item,
