@@ -20,22 +20,6 @@ const db = firebase.firestore();
 // Глобальна змінна, де буде зберігатися інформація про користувача (якщо увійшов)
 let currentUser = null;
 
-// Форматує дату синхронізації у зручний вигляд: "Сьогодні, 14:35" / "Вчора, 09:12" / "22.09.2026, 14:35"
-function formatSyncDateTime(date) {
-    if (!date) return 'ще не синхронізовано';
-    const now = new Date();
-    const time = date.toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' });
-
-    if (date.toDateString() === now.toDateString()) return `Сьогодні, ${time}`;
-
-    const yesterday = new Date(now);
-    yesterday.setDate(now.getDate() - 1);
-    if (date.toDateString() === yesterday.toDateString()) return `Вчора, ${time}`;
-
-    const dateStr = date.toLocaleDateString('uk-UA', { day: '2-digit', month: '2-digit', year: 'numeric' });
-    return `${dateStr}, ${time}`;
-}
-
 // Форматує дату: "Сьогодні, 14:35" / "Вчора, 09:12" / "22.09.2026, 14:35"
 function formatSyncDateTime(date) {
     if (!date) return 'ще не синхронізовано';
@@ -99,8 +83,6 @@ auth.onAuthStateChanged((user) => {
         if(userAvatar && user.photoURL) {
             userAvatar.src = user.photoURL;
         }
-
-        showNotification(`Синхронізація активна: ${user.email}`, 'success');
         
         const cached = localStorage.getItem('lastSyncTime'); // ← НОВЕ
         if (cached) updateSyncTimeDisplay(new Date(cached), false); // ← НОВЕ
@@ -116,54 +98,63 @@ auth.onAuthStateChanged((user) => {
     }
 });
 
-// --- ФУНКЦІЯ 1: Відправка шаблонів у хмару ---
-async function syncTemplatesToCloud(templatesArray) {
-    if (!currentUser) return; // Якщо гість - нічого не робимо
-    
-    updateSyncTimeDisplay(null, true); // ← додано: показуємо "Синхронізація..."
+// Спочатку додаємо допоміжну функцію затримки (Debounce)
+function debounce(func, delay) {
+    let timeout;
+    return function(...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), delay);
+    };
+}
+
+// Створюємо відкладені функції збереження (чекають 5 секунд)
+const delayedSaveTemplates = debounce(async (uid, data) => {
     try {
-        // Зберігаємо в колекцію 'users', документ з ID користувача
-        await db.collection('users').doc(currentUser.uid).set({
-            templates: templatesArray,
-            lastUpdated: firebase.firestore.FieldValue.serverTimestamp() // Час останньої зміни
-        }, { merge: true }); // merge: true означає, що ми не затремо інші дані (напр. нотатки в майбутньому)
-        markSyncedNow(); // ← додано: показуємо реальний час завершення
+        await db.collection('users').doc(uid).set({ templates: data, lastUpdated: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true });
+        markSyncedNow();
     } catch (error) {
         console.error("Помилка збереження в хмару:", error);
-        document.getElementById('sync-time-display')?.classList.remove('syncing'); // ← додано
+        document.getElementById('sync-time-display')?.classList.remove('syncing');
     }
+}, 5000);
+
+const delayedSaveNotes = debounce(async (uid, data) => {
+    try {
+        await db.collection('users').doc(uid).set({ quickNotes: data, lastUpdated: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true });
+        markSyncedNow();
+    } catch (error) {
+        console.error("Помилка збереження нотаток:", error);
+        document.getElementById('sync-time-display')?.classList.remove('syncing');
+    }
+}, 5000);
+
+const delayedSaveHistory = debounce(async (uid, data) => {
+    try {
+        await db.collection('users').doc(uid).set({ loginHistory: data, lastUpdated: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true });
+        markSyncedNow();
+    } catch (error) {
+        console.error("Помилка збереження історії:", error);
+        document.getElementById('sync-time-display')?.classList.remove('syncing');
+    }
+}, 5000);
+
+// Оновлені головні функції: вони одразу показують анімацію, але чекають 5 сек перед записом в БД
+function syncTemplatesToCloud(templatesArray) {
+    if (!currentUser) return;
+    updateSyncTimeDisplay(null, true); // Показуємо "Синхронізація..."
+    delayedSaveTemplates(currentUser.uid, templatesArray);
 }
 
-// --- ФУНКЦІЯ: Відправка нотаток у хмару ---
-async function syncNotesToCloud(notesArray) {
+function syncNotesToCloud(notesArray) {
     if (!currentUser) return;
-    updateSyncTimeDisplay(null, true); // ← додано
-    try {
-        await db.collection('users').doc(currentUser.uid).set({
-            quickNotes: notesArray,
-            lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
-        }, { merge: true });
-        markSyncedNow(); // ← додано
-    } catch (error) {
-        console.error("Помилка синхронізації нотаток:", error);
-        document.getElementById('sync-time-display')?.classList.remove('syncing'); // ← додано
-    }
+    updateSyncTimeDisplay(null, true);
+    delayedSaveNotes(currentUser.uid, notesArray);
 }
 
-// --- ФУНКЦІЯ: Відправка історії логінів у хмару ---
-async function syncHistoryToCloud(historyArray) {
+function syncHistoryToCloud(historyArray) {
     if (!currentUser) return;
-    updateSyncTimeDisplay(null, true); // ← додано
-    try {
-        await db.collection('users').doc(currentUser.uid).set({
-            loginHistory: historyArray,
-            lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
-        }, { merge: true });
-        markSyncedNow(); // ← додано
-    } catch (error) {
-        console.error("Помилка синхронізації історії:", error);
-        document.getElementById('sync-time-display')?.classList.remove('syncing'); // ← додано
-    }
+    updateSyncTimeDisplay(null, true);
+    delayedSaveHistory(currentUser.uid, historyArray);
 }
 
 // --- ФУНКЦІЯ: Завантаження УСІХ даних з хмари ---
@@ -198,8 +189,6 @@ async function loadUserDataFromCloud() {
                 localStorage.setItem('loginHistory', JSON.stringify(data.loginHistory));
                 renderHistory(data.loginHistory); // Перемальовуємо історію
             }
-
-            showNotification("Усі дані синхронізовано з хмарою ☁️", 'success');
         } else {
             // Якщо хмара пуста (перший вхід) — відправляємо туди все, що є локально
             const localTemplates = JSON.parse(localStorage.getItem('textTemplates') || '[]');
