@@ -1,3 +1,157 @@
+// ==========================================
+// === FIREBASE: ІНІЦІАЛІЗАЦІЯ ТА АВТОРИЗАЦІЯ ===
+// ==========================================
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCtG8ntauKXBLnxDLgpDRNdzrgwR59fHAs",
+  authDomain: "ultranet-tools.firebaseapp.com",
+  projectId: "ultranet-tools",
+  storageBucket: "ultranet-tools.firebasestorage.app",
+  messagingSenderId: "859456074205",
+  appId: "1:859456074205:web:834efebff45562e8d60634",
+  measurementId: "G-64HX9KYJS0"
+};
+
+// Запускаємо Firebase
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+// Глобальна змінна, де буде зберігатися інформація про користувача (якщо увійшов)
+let currentUser = null;
+
+// Ця функція сама викликається, коли статус входу змінюється (увійшов/вийшов)
+auth.onAuthStateChanged((user) => {
+    currentUser = user;
+    const loginBtn = document.getElementById('login-google-btn');
+    const userInfoWrapper = document.getElementById('user-info-wrapper');
+    const userInfo = document.getElementById('user-info');
+    const userAvatar = document.getElementById('user-avatar');
+
+    if (user) {
+        // === КОРИСТУВАЧ АВТОРИЗОВАНИЙ ===
+        if(loginBtn) loginBtn.style.display = 'none';
+        if(userInfoWrapper) userInfoWrapper.style.display = 'flex';
+        
+        // Беремо тільки перше слово з імені (щоб не займало багато місця)
+        const firstName = user.displayName ? user.displayName.split(' ')[0] : 'Користувач';
+        if(userInfo) userInfo.textContent = firstName;
+        
+        // Встановлюємо аватарку, якщо вона є
+        if(userAvatar && user.photoURL) {
+            userAvatar.src = user.photoURL;
+        }
+
+        showNotification(`Синхронізація активна: ${user.email}`, 'success');
+        
+        loadUserDataFromCloud();
+        
+    } else {
+        // === КОРИСТУВАЧ НЕ АВТОРИЗОВАНИЙ (ГІСТЬ) ===
+        if(loginBtn) loginBtn.style.display = 'flex';
+        if(userInfoWrapper) userInfoWrapper.style.display = 'none';
+        if(userInfo) userInfo.textContent = '';
+    }
+});
+
+// --- ФУНКЦІЯ 1: Відправка шаблонів у хмару ---
+async function syncTemplatesToCloud(templatesArray) {
+    if (!currentUser) return; // Якщо гість - нічого не робимо
+    
+    try {
+        // Зберігаємо в колекцію 'users', документ з ID користувача
+        await db.collection('users').doc(currentUser.uid).set({
+            templates: templatesArray,
+            lastUpdated: firebase.firestore.FieldValue.serverTimestamp() // Час останньої зміни
+        }, { merge: true }); // merge: true означає, що ми не затремо інші дані (напр. нотатки в майбутньому)
+    } catch (error) {
+        console.error("Помилка збереження в хмару:", error);
+    }
+}
+
+// --- ФУНКЦІЯ: Відправка нотаток у хмару ---
+async function syncNotesToCloud(notesArray) {
+    if (!currentUser) return;
+    try {
+        await db.collection('users').doc(currentUser.uid).set({
+            quickNotes: notesArray,
+            lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true });
+    } catch (error) { console.error("Помилка синхронізації нотаток:", error); }
+}
+
+// --- ФУНКЦІЯ: Відправка історії логінів у хмару ---
+async function syncHistoryToCloud(historyArray) {
+    if (!currentUser) return;
+    try {
+        await db.collection('users').doc(currentUser.uid).set({
+            loginHistory: historyArray,
+            lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true });
+    } catch (error) { console.error("Помилка синхронізації історії:", error); }
+}
+
+// --- ФУНКЦІЯ: Завантаження УСІХ даних з хмари ---
+async function loadUserDataFromCloud() {
+    if (!currentUser) return;
+
+    try {
+        const doc = await db.collection('users').doc(currentUser.uid).get();
+        
+        if (doc.exists) {
+            const data = doc.data();
+            
+            // 1. Шаблони
+            if (data.templates && data.templates.length > 0) {
+                localStorage.setItem('textTemplates', JSON.stringify(data.templates));
+                loadTemplates();
+            }
+            
+            // 2. Нотатки
+            if (data.quickNotes && data.quickNotes.length > 0) {
+                localStorage.setItem('quickNotesData', JSON.stringify(data.quickNotes));
+                quickNotesArray = data.quickNotes;
+                renderQuickNotes(); // Перемальовуємо нотатки
+            }
+            
+            // 3. Історія логінів
+            if (data.loginHistory && data.loginHistory.length > 0) {
+                localStorage.setItem('loginHistory', JSON.stringify(data.loginHistory));
+                renderHistory(data.loginHistory); // Перемальовуємо історію
+            }
+            
+            showNotification("Усі дані синхронізовано з хмарою ☁️", 'success');
+        } else {
+            // Якщо хмара пуста (перший вхід) — відправляємо туди все, що є локально
+            const localTemplates = JSON.parse(localStorage.getItem('textTemplates') || '[]');
+            const localNotes = JSON.parse(localStorage.getItem('quickNotesData') || '[]');
+            const localHistory = JSON.parse(localStorage.getItem('loginHistory') || '[]');
+            
+            if (localTemplates.length > 0) syncTemplatesToCloud(localTemplates);
+            if (localNotes.length > 0) syncNotesToCloud(localNotes);
+            if (localHistory.length > 0) syncHistoryToCloud(localHistory);
+        }
+    } catch (error) {
+        console.error("Помилка завантаження з хмари:", error);
+    }
+}
+
+// Функція для кнопки "Увійти"
+function loginWithGoogle() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider).catch((error) => {
+        console.error("Помилка входу:", error);
+        showNotification("Помилка входу через Google", 'error');
+    });
+}
+
+// Функція для кнопки "Вийти"
+function logoutFromGoogle() {
+    auth.signOut().then(() => {
+        showNotification("Ви вийшли з акаунта", 'info');
+    });
+}
+
 // 1. Спочатку оголошуємо допоміжну функцію
 function debounce(func, delay) {
     let timeout;
@@ -3034,6 +3188,8 @@ onuMode: group.dataset.onuMode || 'REG',
         });
     });
     localStorage.setItem('textTemplates', JSON.stringify(templates));
+
+    if (typeof syncTemplatesToCloud === 'function') syncTemplatesToCloud(templates);
 }
 
     function loadTemplates() {
@@ -3202,6 +3358,7 @@ function addToHistory(login, originalName) {
     history.unshift({ login, originalName });
     if (history.length > 8) history = history.slice(0, 8);
     localStorage.setItem('loginHistory', JSON.stringify(history));
+    if (typeof syncHistoryToCloud === 'function') syncHistoryToCloud(history);
     renderHistory(history);
 }
 
@@ -3257,6 +3414,8 @@ document.getElementById('clear-history-btn').addEventListener('click', () => {
     if(confirm('Очистити історію?')) {
         localStorage.removeItem('loginHistory');
         renderHistory([]);
+        // Очищаємо історію і в хмарі:
+        if (typeof syncHistoryToCloud === 'function') syncHistoryToCloud([]);
     }
 });
 
@@ -4646,6 +4805,7 @@ function addQuickNote() {
     }
 
     localStorage.setItem('quickNotesData', JSON.stringify(quickNotesArray));
+    if (typeof syncNotesToCloud === 'function') syncNotesToCloud(quickNotesArray);
     resetQuickNoteForm();
     renderQuickNotes();
 }
@@ -4701,6 +4861,7 @@ function deleteQuickNote(index) {
     if (confirm("Видалити цю нотатку?")) {
         quickNotesArray.splice(index, 1);
         localStorage.setItem('quickNotesData', JSON.stringify(quickNotesArray));
+        if (typeof syncNotesToCloud === 'function') syncNotesToCloud(quickNotesArray);
         
         // Якщо ми видалили ту нотатку, яку зараз редагували — скидаємо форму
         if (editingNoteIndex === index) {
@@ -4782,7 +4943,7 @@ function renderQuickNotes() {
             const currentItems = [...list.querySelectorAll('.qn-text')];
             quickNotesArray = currentItems.map(el => el.innerText);
             localStorage.setItem('quickNotesData', JSON.stringify(quickNotesArray));
-            
+            if (typeof syncNotesToCloud === 'function') syncNotesToCloud(quickNotesArray);
             // Перемальовуємо, щоб оновити індекси кнопок
             renderQuickNotes(); 
         });

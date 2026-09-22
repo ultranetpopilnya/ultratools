@@ -703,6 +703,8 @@ select:focus,
 
 /* --- ГРУПА 0: ПЛАВНЕ ВІДТИСКАННЯ (БАЗОВИЙ СТАН) --- */
 /* Цей блок відповідає за плавне повернення кнопки на місце після кліку чи наведення */
+.login-btn, 
+.auth-btn,
 .config-clear-fields-btn,
 .config-login-regen-btn,
 .config-login-copy-btn,
@@ -741,6 +743,8 @@ select:focus,
 }
 
 /* --- ГРУПА 1: УНІВЕРСАЛЬНИЙ HOVER (Ефект "спливання" вгору) --- */
+.login-btn:hover,
+.auth-btn:hover,
 .config-clear-fields-btn:hover,
 .config-login-copy-btn:hover,
 .config-login-regen-btn:hover,
@@ -786,6 +790,8 @@ select:focus,
 
 /* --- ГРУПА 3: СУЦІЛЬНІ КНОПКИ (Active - Ефект механічного натискання) --- */
 /* Отримують внутрішню тінь (inset) для ефекту глибини */
+.login-btn:active,
+.auth-btn:active,
 .config-clear-fields-btn:active,
 .config-mix-toggle-btn:active,
 .config-onu-mode-btn:active,
@@ -819,6 +825,8 @@ select:focus,
 }
 
 /* Темна тема: Коригування внутрішньої тіні для суцільних кнопок */
+body.dark .login-btn:active,
+body.dark .auth-btn:active,
 body.dark .config-clear-fields-btn:active,
 body.dark .config-mix-toggle-btn:active,
 body.dark .config-onu-mode-btn:active,
@@ -2748,6 +2756,161 @@ body.dark .history-copy-btn:hover {
     position: relative;
     z-index: 10;
     flex-shrink: 0; 
+}
+
+/* =========================================
+   СТИЛІ ДЛЯ FIREBASE АВТОРИЗАЦІЇ
+   ========================================= */
+
+.template-global-actions {
+    justify-content: flex-end;
+}
+
+/* Контейнер авторизації */
+.auth-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding-left: 16px;
+}
+
+/* =========================================
+   КНОПКА ВХОДУ (УВІЙТИ ЧЕРЕЗ GOOGLE)
+   ========================================= */
+.login-btn, .auth-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    
+    height: 30px; /* Збігається з висотою інших кнопок шапки */
+    padding: 0 14px;
+    
+    background-color: var(--btn-bg);
+    border: 1px solid var(--btn-bg);
+    border-radius: 9999px; /* Робимо її круглою пігулкою */
+    
+    color: var(--text-color);
+    font-size: 13px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+}
+
+/* Фірмовий колір Google для іконки */
+.login-btn i, .auth-btn i {
+    color: #DB4437;
+    font-size: 14px;
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+/* Ховер (Світла тема) */
+.login-btn:hover, .auth-btn:hover {
+    border-color: var(--primary-accent-color);
+    color: var(--primary-accent-color);
+}
+
+/* При наведенні іконка може легенько підстрибувати або ставати акцентною */
+.login-btn:hover i, .auth-btn:hover i {
+    transform: scale(1.1);
+}
+
+
+/* =========================================
+   ТЕМНА ТЕМА ДЛЯ КНОПКИ ВХОДУ
+   ========================================= */
+body.dark .login-btn, 
+body.dark .auth-btn {
+    background-color: var(--btn-bg);
+    border-color: var(--btn-bg);
+}
+
+body.dark .login-btn:hover, 
+body.dark .auth-btn:hover {
+    border-color: var(--secondary-accent-color);
+    color: var(--secondary-accent-color);
+}
+
+/* =========================================
+   БЛОК ІНФОРМАЦІЇ КОРИСТУВАЧА (Аватарка + Вихід)
+   ========================================= */
+.user-info-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    
+    /* Чітка висота (збігається з кнопками дій справа) та обмежена ширина */
+    height: 30px; 
+    max-width: 200px; /* Щоб дуже довге ім'я не ламало центр шапки */
+    padding: 0 4px 0 6px; /* Внутрішні відступи по боках */
+    
+    background-color: var(--btn-bg);
+    border: 1px solid var(--btn-bg);
+    border-radius: 9999px; /* Форма пігулки */
+    
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Аватарка з Google */
+.user-avatar {
+    width: 20px; /* Трохи менша, щоб ідеально влізла у 30px пігулку */
+    height: 20px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: none;
+    flex-shrink: 0; /* Забороняємо сплющуватись */
+}
+
+/* Ім'я користувача */
+.user-info-text {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text-color);
+    
+    /* Обрізка тексту трьома крапками, якщо ім'я задовге */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Кнопка виходу (Хрестик / Sign-out) */
+.logout-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    width: 22px; /* Компактна кнопка для гармонії */
+    height: 22px;
+    padding: 0;
+    flex-shrink: 0;
+    
+    background-color: transparent;
+    border: none;
+    border-radius: 50%;
+    
+    color: var(--inactive-text);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Ховер: плавно червоніє */
+.logout-btn:hover {
+    background-color: rgba(220, 38, 38, 0.1);
+    color: var(--danger-color);
+    transform: scale(1.1);
+}
+
+/* Клік: стає повністю червоною */
+.logout-btn:active {
+    transform: scale(0.92);
+    background-color: var(--danger-color);
+    color: white;
+}
+
+/* Темна тема: Кнопка виходу */
+body.dark .logout-btn:hover {
+    background-color: var(--danger-bg-dark);
 }
 
 /* =========================================================

@@ -19,9 +19,13 @@
   gtag('config', 'G-PLNBNW2JBJ');
 </script>
 
+<!-- Firebase (Compat версія, ідеальна для існуючого ванільного JS) -->
+<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
+
 </head>
 <body class="holiday-modee">
-    
 
      <script>
         if (localStorage.getItem('theme') === 'dark') {
@@ -185,6 +189,20 @@
             <div class="container" data-content="text-templates">
 			<div class="content-card">
 <div class="templates-header-wrapper">
+
+                <div id="auth-container" class="auth-container">
+                <button id="login-google-btn" class="auth-btn login-btn" onclick="loginWithGoogle()">
+                    <i class="fa-brands fa-google"></i> <span>Увійти в обліковий запис Google</span>
+                </button>
+                <div id="user-info-wrapper" class="user-info-wrapper" style="display: none;">
+                    <img id="user-avatar" class="user-avatar" src="" alt="Avatar">
+                    <span id="user-info" class="user-info-text"></span>
+                    <button id="logout-btn" class="auth-btn logout-btn" onclick="logoutFromGoogle()" title="Вийти з акаунта">
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                    </button>
+                </div>
+            </div>
+
     <h2 class="template-main-title"><img src="imgs/bookmark_tabs_3d.png" class="emoji-png">Текстовий простір</h2>
 
     <div class="template-global-actions">
