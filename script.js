@@ -3504,27 +3504,57 @@ function addTemplate() {
             saveTemplates();
             checkEmptyTemplatesState(); 
             
-            // --- 2. ІМПОРТ НОТАТОК (ПРАВИЛЬНИЙ ПОРЯДОК) ---
-if (parsedData.isUltraBackup && notesToImport.length > 0) {
-    let existingNotes = JSON.parse(localStorage.getItem('quickNotesData') || '[]');
-    
-    // Фільтруємо нотатки з файлу, яких ще немає в базі (щоб уникнути дублів)
-    const newUniqueNotes = notesToImport.filter(note => !existingNotes.includes(note));
-    
-    // Додаємо нові нотатки в кінець існуючих
-    let combinedNotes = [...existingNotes, ...newUniqueNotes];
-    
-    localStorage.setItem('quickNotesData', JSON.stringify(combinedNotes));
-    
-    // Оновлюємо глобальну змінну, якщо вікно відкрите
-    if (typeof quickNotesArray !== 'undefined') {
-        quickNotesArray = combinedNotes;
-        const popover = document.getElementById('qn-popover');
-        if (popover && popover.classList.contains('active')) {
-            renderQuickNotes();
-        }
-    }
-}
+            // --- 2. ІМПОРТ НОТАТОК (ЗАХИСТ ВІД ДУБЛІКАТІВ ЗА ТЕКСТОМ ТА ID) ---
+            if (parsedData.isUltraBackup && notesToImport.length > 0) {
+                let existingNotes = JSON.parse(localStorage.getItem('quickNotesData') || '[]');
+                
+                // Нормалізуємо існуючі нотатки (якщо трапляються старі текстові рядки)
+                existingNotes = existingNotes.map(n => 
+                    typeof n === 'string' ? { id: generateUUID(), text: n, updatedAt: Date.now() } : n
+                );
+
+                // Збираємо текст та ID вже наявних нотаток
+                const existingTexts = new Set(existingNotes.map(n => (n.text || '').trim().toLowerCase()));
+                const existingIds = new Set(existingNotes.map(n => n.id));
+
+                const newUniqueNotes = [];
+
+                notesToImport.forEach(note => {
+                    // Витягуємо текст і ID незалежно від того, старий це формат чи новий
+                    const rawText = typeof note === 'string' ? note : (note.text || '');
+                    const cleanText = rawText.trim();
+                    const noteId = (typeof note === 'object' && note.id) ? note.id : generateUUID();
+
+                    if (!cleanText) return; // Пропускаємо порожні
+
+                    // Перевіряємо: якщо такого тексту і такого ID ще немає в базі
+                    if (!existingTexts.has(cleanText.toLowerCase()) && !existingIds.has(noteId)) {
+                        newUniqueNotes.push({
+                            id: noteId,
+                            text: cleanText,
+                            updatedAt: (typeof note === 'object' && note.updatedAt) ? note.updatedAt : Date.now()
+                        });
+                        // Додаємо до перевірки, щоб не було дублів усередині самого файлу
+                        existingTexts.add(cleanText.toLowerCase());
+                        existingIds.add(noteId);
+                    }
+                });
+
+                // Об'єднуємо тільки дійсно нові нотатки
+                let combinedNotes = [...existingNotes, ...newUniqueNotes];
+                
+                localStorage.setItem('quickNotesData', JSON.stringify(combinedNotes));
+                localStorage.setItem('quickNotesOrder', JSON.stringify(combinedNotes.map(n => n.id)));
+                
+                // Оновлюємо глобальний масив та інтерфейс
+                quickNotesArray = combinedNotes;
+                renderQuickNotes();
+
+                // Відправляємо оновлені нотатки в хмару
+                if (typeof syncNotesToCloud === 'function') {
+                    syncNotesToCloud();
+                }
+            }
             
             // Візуальне повідомлення
             setTimeout(() => {
