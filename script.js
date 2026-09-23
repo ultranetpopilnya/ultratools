@@ -17,51 +17,61 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-// Глобальна змінна, де буде зберігатися інформація про користувача (якщо увійшов)
+// === УВІМКНЕННЯ ОФЛАЙН РЕЖИМУ ===
+db.enablePersistence({ synchronizeTabs: true })
+  .catch(function(err) {
+      console.warn("Помилка активації офлайн режиму Firebase:", err);
+  });
+
 let currentUser = null;
 
-// Форматує дату: "Сьогодні, 14:35" / "Вчора, 09:12" / "22.09.2026, 14:35"
+// === ГЕНЕРАТОР УНІКАЛЬНИХ ID (UUID) ===
+function generateUUID() {
+    return Date.now().toString(36) + Math.random().toString(36).substring(2);
+}
+
 function formatSyncDateTime(date) {
     if (!date) return 'ще не синхронізовано';
     const now = new Date();
     const time = date.toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' });
-
     if (date.toDateString() === now.toDateString()) return `Сьогодні, ${time}`;
-
     const yesterday = new Date(now);
     yesterday.setDate(now.getDate() - 1);
     if (date.toDateString() === yesterday.toDateString()) return `Вчора, ${time}`;
-
-    const dateStr = date.toLocaleDateString('uk-UA', { day: '2-digit', month: '2-digit', year: 'numeric' });
-    return `${dateStr}, ${time}`;
+    return `${date.toLocaleDateString('uk-UA', { day: '2-digit', month: '2-digit', year: 'numeric' })}, ${time}`;
 }
 
-// Оновлює постійний напис праворуч. isSyncing=true -> показує "Синхронізація..."
-function updateSyncTimeDisplay(date, isSyncing = false) {
+// Оновлює постійний напис праворуч. status може бути: 'syncing', 'success', 'error'
+function updateSyncTimeDisplay(date, status = 'success') {
     const el = document.getElementById('sync-time-display');
     if (!el) return;
-
     el.classList.add('visible');
+    el.classList.remove('sync-success', 'syncing', 'sync-error');
+    void el.offsetWidth; // Хак для перезапуску анімації
 
-    if (isSyncing) {
-        // УВІМКНЕНО СИНХРОНІЗАЦІЮ
-        el.classList.remove('sync-success'); // Забираємо старий клас
-        
-        // Хак для перезапуску CSS анімації
-        void el.offsetWidth; 
-        
+    if (status === 'syncing') {
         el.classList.add('syncing');
         el.innerHTML = `<i class="fas fa-sync-alt"></i> Синхронізація...`;
+    } else if (status === 'error') {
+        el.classList.add('sync-error');
+        el.innerHTML = `<i class="fa-solid fa-cloud-arrow-down"></i> Збережено локально (Офлайн)`;
+        el.style.color = '#f39c12'; // Помаранчевий колір для офлайну
     } else {
-        // СИНХРОНІЗАЦІЮ ЗАВЕРШЕНО
-        el.classList.remove('syncing'); // Забираємо крутілку
-        
-        // Хак для перезапуску CSS анімації
-        void el.offsetWidth; 
-        
         el.classList.add('sync-success');
         el.innerHTML = `<i class="fas fa-check-circle"></i> Синхр.: ${formatSyncDateTime(date)}`;
+        el.style.color = ''; // Повертаємо стандартний колір
     }
+}
+
+function hideSyncTimeDisplay() {
+    const el = document.getElementById('sync-time-display');
+    if (el) el.classList.remove('visible', 'syncing', 'sync-success', 'sync-error');
+}
+
+function markSyncedNow() {
+    const now = new Date();
+    localStorage.setItem('lastSyncTime', now.toISOString());
+    updateSyncTimeDisplay(now, 'success');
 }
 
 // Ховає напис (для гостя, який не увійшов)
@@ -122,194 +132,156 @@ auth.onAuthStateChanged((user) => {
     }
 });
 
-// Спочатку додаємо допоміжну функцію затримки (Debounce)
-function debounce(func, delay) {
-    let timeout;
-    return function(...args) {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => func.apply(this, args), delay);
-    };
-}
+// ==========================================
+// === ЄДИНИЙ МЕНЕДЖЕР СИНХРОНІЗАЦІЇ (ENTERPRISE) ===
+// ==========================================
+const SyncManager = {
+    timeout: null,
+    pending: false,
+    
+    // Викликається при будь-якій зміні даних
+    trigger() {
+        if (!currentUser) return;
+        this.pending = true;
+        updateSyncTimeDisplay(null, 'syncing');
+        
+        clearTimeout(this.timeout);
+        // Чекаємо 3 секунди після останньої дії (друкування тощо)
+        this.timeout = setTimeout(() => this.flush(), 3000); 
+    },
 
-// Створюємо відкладені функції збереження (чекають 5 секунд)
-const delayedSaveTemplates = debounce(async (uid, data) => {
-    try {
-        await db.collection('users').doc(uid).set({ templates: data, lastUpdated: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true });
-        markSyncedNow();
-    } catch (error) {
-        console.error("Помилка збереження в хмару:", error);
-        document.getElementById('sync-time-display')?.classList.remove('syncing');
+    // Фізична відправка даних у хмару
+    async flush() {
+        if (!this.pending || !currentUser) return;
+        this.pending = false;
+        clearTimeout(this.timeout);
+
+        try {
+            // Збираємо всі локальні дані одним махом
+            const templates = JSON.parse(localStorage.getItem('textTemplates') || '[]');
+            const quickNotes = JSON.parse(localStorage.getItem('quickNotesData') || '[]');
+            const loginHistory = JSON.parse(localStorage.getItem('loginHistory') || '[]');
+            const tombstones = JSON.parse(localStorage.getItem('tombstones') || '[]');
+
+            await db.collection('users').doc(currentUser.uid).set({
+                templates,
+                quickNotes,
+                loginHistory,
+                tombstones,
+                lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+            }, { merge: true });
+
+            markSyncedNow();
+        } catch (error) {
+            console.error("Помилка синхронізації (можливо офлайн):", error);
+            updateSyncTimeDisplay(null, 'error');
+            this.pending = true; // Залишаємо прапорець, щоб система спробувала пізніше
+        }
     }
-}, 5000);
+};
 
-const delayedSaveNotes = debounce(async (uid, data) => {
-    try {
-        await db.collection('users').doc(uid).set({ quickNotes: data, lastUpdated: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true });
-        markSyncedNow();
-    } catch (error) {
-        console.error("Помилка збереження нотаток:", error);
-        document.getElementById('sync-time-display')?.classList.remove('syncing');
+// ЗАХИСТ: миттєво відправляємо дані, якщо користувач різко закриває вкладку браузера
+window.addEventListener('beforeunload', () => {
+    if (SyncManager.pending) {
+        SyncManager.flush();
     }
-}, 5000);
+});
 
-const delayedSaveHistory = debounce(async (uid, data) => {
-    try {
-        await db.collection('users').doc(uid).set({ loginHistory: data, lastUpdated: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true });
-        markSyncedNow();
-    } catch (error) {
-        console.error("Помилка збереження історії:", error);
-        document.getElementById('sync-time-display')?.classList.remove('syncing');
-    }
-}, 5000);
+// Функції-перехідники (щоб не ламати твої старі виклики в кнопках)
+function syncTemplatesToCloud() { SyncManager.trigger(); }
+function syncNotesToCloud() { SyncManager.trigger(); }
+function syncHistoryToCloud() { SyncManager.trigger(); }
 
-// Оновлені головні функції: вони одразу показують анімацію, але чекають 5 сек перед записом в БД
-function syncTemplatesToCloud(templatesArray) {
-    if (!currentUser) return;
-    updateSyncTimeDisplay(null, true); // Показуємо "Синхронізація..."
-    delayedSaveTemplates(currentUser.uid, templatesArray);
-}
+// ВИПРАВЛЕННЯ: Спочатку зберігаємо текст з екрану локально, і лише потім даємо сигнал хмарі
+let saveDebounceTimer;
+const debouncedSaveTemplates = () => {
+    clearTimeout(saveDebounceTimer);
+    saveDebounceTimer = setTimeout(() => {
+        saveTemplates(); // Це фізично збереже текст в localStorage і автоматично запустить синхронізацію
+    }, 1000);
+};
 
-function syncNotesToCloud(notesArray) {
-    if (!currentUser) return;
-    updateSyncTimeDisplay(null, true);
-    delayedSaveNotes(currentUser.uid, notesArray);
-}
-
-function syncHistoryToCloud(historyArray) {
-    if (!currentUser) return;
-    updateSyncTimeDisplay(null, true);
-    delayedSaveHistory(currentUser.uid, historyArray);
-}
-
-// --- ФУНКЦІЯ: Завантаження та РОЗУМНЕ ОБ'ЄДНАННЯ даних з хмари ---
+// --- ФУНКЦІЯ: РОЗУМНЕ ЗЛИТТЯ ЗА ID, ЧАСОМ ТА НАДГРОБКАМИ (TOMBSTONES) ---
 async function loadUserDataFromCloud() {
     if (!currentUser) return;
 
     try {
         const doc = await db.collection('users').doc(currentUser.uid).get();
-        
-        // ПЕРЕВІРКА: Чи цей пристрій вже брав участь у синхронізації?
-        const hasSyncedBefore = localStorage.getItem('lastSyncTime') !== null;
-        
-        if (doc.exists) {
-            const data = doc.data();
+        if (!doc.exists) return; // Пуста хмара
+
+        const cloudData = doc.data();
+        const cloudTombstones = cloudData.tombstones || [];
+        let localTombstones = JSON.parse(localStorage.getItem('tombstones') || '[]');
+        let needsCloudUpdate = false;
+
+        // Допоміжна функція для злиття масивів
+        function mergeArrays(localArr, cloudArr) {
+            // Мігруємо старі локальні дані (даємо їм ID і час)
+            let local = localArr.map(item => 
+                (typeof item === 'string') ? { id: generateUUID(), text: item, updatedAt: 0 } 
+                : (!item.id) ? { ...item, id: generateUUID(), updatedAt: 0 } : item
+            );
             
-            const lastSyncDate = data.lastUpdated ? data.lastUpdated.toDate() : new Date();
-            updateSyncTimeDisplay(lastSyncDate, false);
-            localStorage.setItem('lastSyncTime', lastSyncDate.toISOString());
+            // 1. Видаляємо локальні елементи, які були видалені в хмарі (є в cloudTombstones)
+            local = local.filter(item => !cloudTombstones.includes(item.id));
             
-            // =================================================================
-            // СЦЕНАРІЙ А: ПРИСТРІЙ ВЖЕ СИНХРОНІЗОВАНИЙ (ХМАРА - ГОЛОВНА)
-            // =================================================================
-            if (hasSyncedBefore) {
-                // ШАБЛОНИ
-                const cloudTemplates = data.templates || [];
-                localStorage.setItem('textTemplates', JSON.stringify(cloudTemplates));
-                loadTemplates();
-                
-                // НОТАТКИ (Тепер видалення на ПК видалить їх і тут!)
-                const cloudNotes = data.quickNotes || [];
-                localStorage.setItem('quickNotesData', JSON.stringify(cloudNotes));
-                quickNotesArray = cloudNotes;
-                renderQuickNotes();
-                
-                // ІСТОРІЯ
-                const cloudHistory = data.loginHistory || [];
-                localStorage.setItem('loginHistory', JSON.stringify(cloudHistory));
-                renderHistory(cloudHistory);
-                
-                return; // Зупиняємо функцію, об'єднання не потрібне
-            }
+            let merged = [...local];
 
-            // =================================================================
-            // СЦЕНАРІЙ Б: ПЕРШИЙ ВХІД З ГОСТЯ (РОЗУМНЕ ЗЛИТТЯ)
-            // =================================================================
-            let needsCloudUpdate = false; 
-
-            // 1. ШАБЛОНИ
-            const localTemplates = JSON.parse(localStorage.getItem('textTemplates') || '[]');
-            const cloudTemplates = data.templates || [];
-            let mergedTemplates = [...cloudTemplates];
-
-            localTemplates.forEach(localTpl => {
-                const exists = cloudTemplates.find(cTpl => cTpl.name === localTpl.name && cTpl.content === localTpl.content);
-                if (!exists) {
-                    mergedTemplates.push(localTpl); 
-                    needsCloudUpdate = true;
+            cloudArr.forEach(cItem => {
+                const lIndex = merged.findIndex(l => l.id === cItem.id);
+                if (lIndex > -1) {
+                    // Збіг ID: беремо те, що новіше
+                    if (cItem.updatedAt > merged[lIndex].updatedAt) {
+                        merged[lIndex] = cItem;
+                    } else if (cItem.updatedAt < merged[lIndex].updatedAt) {
+                        needsCloudUpdate = true;
+                    }
+                } else {
+                    // Є в хмарі, немає локально. Чи видаляли ми його локально?
+                    if (!localTombstones.includes(cItem.id)) {
+                        merged.push(cItem); // Ні, це нове з іншого пристрою
+                    } else {
+                        needsCloudUpdate = true; // Так, видаляли, хмара має оновитись
+                    }
                 }
             });
 
-            if (mergedTemplates.length > 0) {
-                localStorage.setItem('textTemplates', JSON.stringify(mergedTemplates));
-                loadTemplates();
-            }
-            
-            // 2. НОТАТКИ
-            const localNotes = JSON.parse(localStorage.getItem('quickNotesData') || '[]');
-            const cloudNotes = data.quickNotes || [];
-            let mergedNotes = [...cloudNotes];
-
-            localNotes.forEach(note => {
-                if (!mergedNotes.includes(note)) {
-                    mergedNotes.push(note);
-                    needsCloudUpdate = true;
-                }
+            // Перевіряємо, чи є локальні, яких немає в хмарі
+            merged.forEach(lItem => {
+                if (!cloudArr.find(c => c.id === lItem.id)) needsCloudUpdate = true;
             });
 
-            if (mergedNotes.length > 0) {
-                localStorage.setItem('quickNotesData', JSON.stringify(mergedNotes));
-                quickNotesArray = mergedNotes;
-                renderQuickNotes();
-            }
-            
-            // 3. ІСТОРІЯ ЛОГІНІВ
-            const localHistory = JSON.parse(localStorage.getItem('loginHistory') || '[]');
-            const cloudHistory = data.loginHistory || [];
-            let mergedHistory = [...cloudHistory];
-
-            localHistory.forEach(localItem => {
-                const exists = mergedHistory.find(h => h.login === localItem.login);
-                if (!exists) {
-                    mergedHistory.push(localItem);
-                    needsCloudUpdate = true; 
-                }
-            });
-            mergedHistory = mergedHistory.slice(0, 8); 
-
-            if (mergedHistory.length > 0) {
-                localStorage.setItem('loginHistory', JSON.stringify(mergedHistory));
-                renderHistory(mergedHistory);
-            }
-
-            // ПРИМУСОВА СИНХРОНІЗАЦІЯ ПІСЛЯ ЗЛИТТЯ
-            if (needsCloudUpdate) {
-                updateSyncTimeDisplay(null, true);
-                await db.collection('users').doc(currentUser.uid).set({
-                    templates: mergedTemplates,
-                    quickNotes: mergedNotes,
-                    loginHistory: mergedHistory,
-                    lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
-                }, { merge: true });
-                markSyncedNow();
-            }
-
-        } else {
-            // === ПЕРШИЙ ВХІД В АКАУНТ ВЗАГАЛІ (ПУСТА ХМАРА) === 
-            const localTemplates = JSON.parse(localStorage.getItem('textTemplates') || '[]');
-            const localNotes = JSON.parse(localStorage.getItem('quickNotesData') || '[]');
-            const localHistory = JSON.parse(localStorage.getItem('loginHistory') || '[]');
-            
-            if (localTemplates.length > 0 || localNotes.length > 0 || localHistory.length > 0) {
-                updateSyncTimeDisplay(null, true);
-                await db.collection('users').doc(currentUser.uid).set({
-                    templates: localTemplates,
-                    quickNotes: localNotes,
-                    loginHistory: localHistory,
-                    lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                markSyncedNow();
-            }
+            // Сортуємо по даті оновлення (найновіші зверху)
+            return merged.sort((a, b) => b.updatedAt - a.updatedAt);
         }
+
+        // Зливаємо Шаблони
+        const mergedTemplates = mergeArrays(JSON.parse(localStorage.getItem('textTemplates') || '[]'), cloudData.templates || []);
+        localStorage.setItem('textTemplates', JSON.stringify(mergedTemplates));
+        loadTemplates();
+
+        // Зливаємо Нотатки
+        const mergedNotes = mergeArrays(JSON.parse(localStorage.getItem('quickNotesData') || '[]'), cloudData.quickNotes || []);
+        localStorage.setItem('quickNotesData', JSON.stringify(mergedNotes));
+        quickNotesArray = mergedNotes;
+        renderQuickNotes();
+
+        // Зливаємо Історію
+        let mergedHistory = mergeArrays(JSON.parse(localStorage.getItem('loginHistory') || '[]'), cloudData.loginHistory || []);
+        mergedHistory = mergedHistory.slice(0, 8); // Ліміт 8
+        localStorage.setItem('loginHistory', JSON.stringify(mergedHistory));
+        renderHistory(mergedHistory);
+
+        // Об'єднуємо надгробки
+        const finalTombstones = [...new Set([...cloudTombstones, ...localTombstones])];
+        localStorage.setItem('tombstones', JSON.stringify(finalTombstones));
+
+        updateSyncTimeDisplay(cloudData.lastUpdated ? cloudData.lastUpdated.toDate() : new Date(), 'success');
+
+        if (needsCloudUpdate) {
+            SyncManager.trigger();
+        }
+
     } catch (error) {
         console.error("Помилка завантаження з хмари:", error);
     }
@@ -355,9 +327,6 @@ function animatedAuthSwitch(hideEl, showEl, containerClass) {
         if (container) container.classList.remove(containerClass);
     }, 200); 
 }
-
-// Додайте це на початку скрипту, якщо змінна ще не оголошена
-const debouncedSaveTemplates = debounce(saveTemplates, 1000);
 
 function clearAllTemplates() {
     const templatesGrid = document.getElementById('templates-grid-wrapper');
@@ -1603,7 +1572,9 @@ function centerActiveDropdownItem(dropdownNode) {
         ponOnuMode = false, replaceMode = true,
         showSignalMode = false,
         onuMode = '', regMode = false, switchMode = false,
-        isSearchOpen = false, isConfigOpen = false
+        isSearchOpen = false, 
+        id = generateUUID(), 
+        updatedAt = Date.now()
     } = data;
 
     const container = document.getElementById('templates-grid-wrapper'); 
@@ -2507,6 +2478,8 @@ function updateOnuModeUI() {
     isRegMode = (currentOnuMode === 'REG');
     isSwitchMode = (currentOnuMode === 'SWITCH');
     fieldGroup.dataset.onuMode = currentOnuMode;
+    fieldGroup.dataset.id = id;
+    fieldGroup.dataset.updatedAt = updatedAt;
 }
 
 btnOnuMode.addEventListener('click', (e) => {
@@ -2786,17 +2759,21 @@ if (!oltObj) {
     deleteButton.title = 'Видалити шаблон';
     deleteButton.className = 'delete-template-btn';
     deleteButton.onclick = () => {
-    if (confirm('Видалити шаблон?')) {
-        // ДОДАНО: Відключаємо від ResizeObserver перед видаленням
-        const textarea = fieldGroup.querySelector('textarea');
-        if (textarea && window.textareaObserver) {
-            window.textareaObserver.unobserve(textarea);
+        if (confirm('Видалити шаблон?')) {
+            // === ЛОГІКА НАДГРОБКІВ (TOMBSTONES) ===
+            const templateId = fieldGroup.dataset.id;
+            let tombstones = JSON.parse(localStorage.getItem('tombstones') || '[]');
+            tombstones.push(templateId);
+            localStorage.setItem('tombstones', JSON.stringify(tombstones));
+
+            const textarea = fieldGroup.querySelector('textarea');
+            if (textarea && window.textareaObserver) {
+                window.textareaObserver.unobserve(textarea);
+            }
+            fieldGroup.remove();
+            saveTemplates();
         }
-        
-        fieldGroup.remove();
-        saveTemplates();
-    }
-};
+    };
 
     const searchPanel = document.createElement('div');
     searchPanel.className = 'template-search-bar';
@@ -3073,6 +3050,7 @@ document.addEventListener('click', (e) => {
 
     let bookmarksTimeout;
     textarea.addEventListener('input', () => {
+        fieldGroup.dataset.updatedAt = Date.now();
         updateHighlight(textarea, highlighter);
         
         clearTimeout(bookmarksTimeout);
@@ -3354,6 +3332,8 @@ function addTemplate() {
         const configPanel = group.querySelector('.template-config-bar');
 
         templates.push({
+            id: group.dataset.id,
+            updatedAt: parseInt(group.dataset.updatedAt, 10),
             name: nameInput ? nameInput.value : '',
             content: textarea ? textarea.value : '',
             width: group.style.width,
@@ -3540,10 +3520,13 @@ function loadHistory() {
 function addToHistory(login, originalName) {
     let history = JSON.parse(localStorage.getItem('loginHistory') || '[]');
     history = history.filter(item => item.login !== login);
-    history.unshift({ login, originalName });
+    
+    // ДОДАНО id та updatedAt
+    history.unshift({ id: generateUUID(), login, originalName, updatedAt: Date.now() });
+    
     if (history.length > 8) history = history.slice(0, 8);
     localStorage.setItem('loginHistory', JSON.stringify(history));
-    if (typeof syncHistoryToCloud === 'function') syncHistoryToCloud(history);
+    syncHistoryToCloud();
     renderHistory(history);
 }
 
@@ -4966,32 +4949,32 @@ document.getElementById('qn-popover')?.addEventListener('click', (e) => {
 // 4. Робота з даними
 function loadQuickNotes() {
     quickNotesArray = JSON.parse(localStorage.getItem('quickNotesData') || '[]');
+    // Захист від старих масивів-рядків
+    quickNotesArray = quickNotesArray.map(n => typeof n === 'string' ? { id: generateUUID(), text: n, updatedAt: Date.now() } : n);
     renderQuickNotes();
 }
 
 // 5. ДОДАВАННЯ АБО ЗБЕРЕЖЕННЯ ВІДРЕДАГОВАНОЇ
 function addQuickNote() {
     const input = document.getElementById('qn-input');
-    const text = input.value; // ВАЖЛИВО: Прибрали .trim()! Тепер зберігаються ВСІ пробіли і відступи.
+    const text = input.value;
 
-    // Перевіряємо, чи є хоч щось окрім порожнечі (щоб не додати абсолютно пусту нотатку)
     if (text.trim() === '') {
         showNotification("Текст не може бути порожнім!", 'error');
         return;
     }
 
     if (editingNoteIndex > -1) {
-        // РЕЖИМ РЕДАГУВАННЯ
-        quickNotesArray[editingNoteIndex] = text;
+        quickNotesArray[editingNoteIndex].text = text;
+        quickNotesArray[editingNoteIndex].updatedAt = Date.now();
         showNotification("Нотатку оновлено!", 'success');
-        editingNoteIndex = -1; // Виходимо з режиму редагування
+        editingNoteIndex = -1;
     } else {
-        // РЕЖИМ ДОДАВАННЯ (НОВА)
-        quickNotesArray.unshift(text);
+        quickNotesArray.unshift({ id: generateUUID(), text: text, updatedAt: Date.now() });
     }
 
     localStorage.setItem('quickNotesData', JSON.stringify(quickNotesArray));
-    if (typeof syncNotesToCloud === 'function') syncNotesToCloud(quickNotesArray);
+    syncNotesToCloud();
     resetQuickNoteForm();
     renderQuickNotes();
 }
@@ -5000,11 +4983,10 @@ function addQuickNote() {
 function resetQuickNoteForm() {
     const input = document.getElementById('qn-input');
     const btn = document.querySelector('.qn-add-btn');
-    
     if (input && btn) {
         input.value = '';
         btn.innerHTML = 'Додати';
-        btn.style.backgroundColor = ''; // Очищаємо інлайн-стиль!
+        btn.style.backgroundColor = '';
         editingNoteIndex = -1;
     }
 }
@@ -5019,7 +5001,7 @@ document.getElementById('qn-input')?.addEventListener('keydown', (e) => {
 
 // 6. Скопіювати нотатку
 function copyQuickNote(index) {
-    const text = quickNotesArray[index];
+    const text = quickNotesArray[index].text; // ЗМІНЕНО
     navigator.clipboard.writeText(text).then(() => {
         showNotification("Нотатку скопійовано!", 'success');
         closeQuickNotes(); 
@@ -5030,14 +5012,9 @@ function copyQuickNote(index) {
 function editQuickNote(index) {
     const input = document.getElementById('qn-input');
     const btn = document.querySelector('.qn-add-btn');
-    
-    // Вставляємо текст нотатки в поле
-    input.value = quickNotesArray[index];
-    
-    // Змінюємо кнопку
+    input.value = quickNotesArray[index].text; // ЗМІНЕНО
     btn.innerHTML = 'Зберегти';
-    btn.style.backgroundColor = '#f39c12'; // Робимо кнопку помаранчевою, щоб було видно режим редагування
-    
+    btn.style.backgroundColor = '#f39c12';
     editingNoteIndex = index;
     input.focus();
 }
@@ -5045,18 +5022,22 @@ function editQuickNote(index) {
 // 8. Видалити нотатку
 function deleteQuickNote(index) {
     if (confirm("Видалити цю нотатку?")) {
+        const noteId = quickNotesArray[index].id;
+        
+        // Додаємо в надгробки
+        let tombstones = JSON.parse(localStorage.getItem('tombstones') || '[]');
+        tombstones.push(noteId);
+        localStorage.setItem('tombstones', JSON.stringify(tombstones));
+
         quickNotesArray.splice(index, 1);
         localStorage.setItem('quickNotesData', JSON.stringify(quickNotesArray));
-        if (typeof syncNotesToCloud === 'function') syncNotesToCloud(quickNotesArray);
+        syncNotesToCloud();
         
-        // Якщо ми видалили ту нотатку, яку зараз редагували — скидаємо форму
         if (editingNoteIndex === index) {
             resetQuickNoteForm();
         } else if (editingNoteIndex > index) {
-            // Зсуваємо індекс, якщо видалили щось вище по списку
             editingNoteIndex--;
         }
-
         renderQuickNotes();
     }
 }
@@ -5068,22 +5049,21 @@ function renderQuickNotes() {
     list.innerHTML = '';
     
     quickNotesArray = JSON.parse(localStorage.getItem('quickNotesData') || '[]');
+    quickNotesArray = quickNotesArray.map(n => typeof n === 'string' ? { id: generateUUID(), text: n, updatedAt: Date.now() } : n);
 
     if (quickNotesArray.length === 0) {
         list.innerHTML = '<div class="qn-empty">У вас немає збережених нотаток.</div>';
         return;
     }
 
-    quickNotesArray.forEach((text, index) => {
+    quickNotesArray.forEach((note, index) => {
         const item = document.createElement('div');
         item.className = 'qn-item';
-        
-        // 1. ЗА ЗАМОВЧУВАННЯМ ПЕРЕТЯГУВАННЯ ВИМКНЕНО
         item.setAttribute('draggable', 'false');
         
         item.innerHTML = `
             <div class="qn-drag-handle" title="Потягніть, щоб перемістити"><i class="fa-solid fa-grip-vertical"></i></div>
-            <div class="qn-text">${escapeHtml(text)}</div>
+            <div class="qn-text" data-id="${note.id}">${escapeHtml(note.text)}</div>
             <div class="qn-actions">
                 <button class="qn-action-btn" onclick="copyQuickNote(${index})"><i class="fa-solid fa-copy"></i></button>
                 <button class="qn-action-btn" onclick="editQuickNote(${index})"><i class="fa-solid fa-pen"></i></button>
@@ -5091,46 +5071,38 @@ function renderQuickNotes() {
             </div>
         `;
 
-        // === 2. ЛОГІКА РУЧКИ ПЕРЕТЯГУВАННЯ ===
+        // логіка drag & drop залишається (твоя звичайна)
         const dragHandle = item.querySelector('.qn-drag-handle');
-        
-        // Вмикаємо перетягування ТІЛЬКИ коли затиснули ліву кнопку миші на ручці
         dragHandle.addEventListener('mousedown', (e) => {
-            if (e.button === 0) { // 0 - це ліва кнопка
-                item.setAttribute('draggable', 'true');
-            }
+            if (e.button === 0) item.setAttribute('draggable', 'true');
         });
-
-        // Вимикаємо перетягування, якщо мишку відпустили або курсор зійшов з ручки
         dragHandle.addEventListener('mouseup', () => item.setAttribute('draggable', 'false'));
         dragHandle.addEventListener('mouseleave', () => {
-            if (!item.classList.contains('qn-dragging')) {
-                item.setAttribute('draggable', 'false');
-            }
+            if (!item.classList.contains('qn-dragging')) item.setAttribute('draggable', 'false');
         });
 
-        // === 3. ПОДІЇ САМОГО ПЕРЕТЯГУВАННЯ ===
         item.addEventListener('dragstart', (e) => {
-            // Захист: якщо якось почали тягнути не за ручку, зупиняємо
-            if (item.getAttribute('draggable') === 'false') {
-                e.preventDefault();
-                return;
-            }
+            if (item.getAttribute('draggable') === 'false') { e.preventDefault(); return; }
             e.dataTransfer.effectAllowed = 'move';
             setTimeout(() => item.classList.add('qn-dragging'), 0);
         });
 
         item.addEventListener('dragend', () => {
             item.classList.remove('qn-dragging');
-            // ОБОВ'ЯЗКОВО вимикаємо перетягування, коли відпустили нотатку
             item.setAttribute('draggable', 'false');
             
-            // Зберігаємо новий порядок
+            // НОВЕ: Відновлюємо правильний масив об'єктів після перетягування
             const currentItems = [...list.querySelectorAll('.qn-text')];
-            quickNotesArray = currentItems.map(el => el.innerText);
+            quickNotesArray = currentItems.map(el => {
+                return {
+                    id: el.dataset.id,
+                    text: el.innerText,
+                    updatedAt: Date.now()
+                };
+            });
+            
             localStorage.setItem('quickNotesData', JSON.stringify(quickNotesArray));
-            if (typeof syncNotesToCloud === 'function') syncNotesToCloud(quickNotesArray);
-            // Перемальовуємо, щоб оновити індекси кнопок
+            syncNotesToCloud();
             renderQuickNotes(); 
         });
 
