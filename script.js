@@ -94,7 +94,6 @@ function hideSyncTimeDisplay() {
     }, 250);
 }
 
-// Ця функція сама викликається, коли статус входу змінюється (увійшов/вийшов)
 auth.onAuthStateChanged((user) => {
     authStateResolved = true;
     document.getElementById('auth-container')?.classList.remove('is-loading');
@@ -107,23 +106,22 @@ auth.onAuthStateChanged((user) => {
 
     if (user) {
         // === КОРИСТУВАЧ АВТОРИЗОВАНИЙ ===
-        
-        // Використовуємо твій клас 'is-authenticating'
         animatedAuthSwitch(loginBtn, userInfoWrapper);
         
         const firstName = user.displayName ? user.displayName.split(' ')[0] : 'Користувач';
         if(userInfo) userInfo.textContent = firstName;
-        
-        if(userAvatar && user.photoURL) {
-            userAvatar.src = user.photoURL;
-        }
+        if(userAvatar && user.photoURL) userAvatar.src = user.photoURL;
+
+        // ПРИ ВХОДІ: спалюємо старі локальні надгробки, щоб вони не чіпали хмару
+        localStorage.removeItem('tombstones');
 
         const cached = localStorage.getItem('lastSyncTime'); 
         if (cached) updateSyncTimeDisplay(new Date(cached), false); 
 
         loadUserDataFromCloud();
-        
     } else {
+        // === КОРИСТУВАЧ ГІСТЬ ===
+        // Локальні шаблони НЕ чіпаємо, вони залишаються на комп'ютері!
         animatedAuthSwitch(userInfoWrapper, loginBtn);
         
         if(userInfo) userInfo.textContent = '';
@@ -277,8 +275,8 @@ async function loadUserDataFromCloud() {
         let cloudTombstones = cloudMeta.tombstones || [];
         cloudTombstones = cloudTombstones.map(t => typeof t === 'object' ? t.id : t);
         
-        let localTombstonesRaw = JSON.parse(localStorage.getItem('tombstones') || '[]');
-        let localTombstones = localTombstonesRaw.map(t => typeof t === 'object' ? t.id : t);
+        let localTombstones = [];
+        localStorage.removeItem('tombstones');
         
         let needsCloudUpdate = false;
 
@@ -296,13 +294,8 @@ async function loadUserDataFromCloud() {
             local = local.filter(item => !cloudTombstones.includes(item.id));
             let mergedMap = new Map();
 
-            // 1. Спочатку складаємо в базу всі хмарні дані
-            cloudArr.forEach(cItem => {
-                if (!localTombstones.includes(cItem.id)) {
-                    mergedMap.set(cItem.id, cItem);
-                } else {
-                    needsCloudUpdate = true; // Видалено локально, треба повідомити хмару
-                }
+                        cloudArr.forEach(cItem => {
+                mergedMap.set(cItem.id, cItem);
             });
 
             // 2. Перевіряємо локальні дані
@@ -501,46 +494,31 @@ function animatedAuthSwitch(hideEl, showEl) {
 function clearAllTemplates() {
     const templatesGrid = document.getElementById('templates-grid-wrapper');
 
-        if (!authStateResolved) {
-        showNotification("Зачекайте, перевіряємо стан акаунта...", 'warning');
-        return;
-    }
-    
-    // Безпечна перевірка
-    if (!templatesGrid) {
-        showNotification("Помилка: Контейнер шаблонів не знайдено!", 'error');
-        return;
-    }
-    
-    // Перевіряємо, чи є взагалі шаблони для видалення
-    if (templatesGrid.children.length === 0) {
+    if (!templatesGrid || templatesGrid.children.length === 0) {
         showNotification("Немає шаблонів для видалення.", 'warning');
         return; 
     }
     
-    if (confirm('УВАГА: Видалити ВСІ шаблони?\nВони будуть назавжди видалені з цього комп\'ютера та вашого хмарного акаунта.')) {
-        
-        // === ВИПРАВЛЕННЯ: Правильно повідомляємо хмару про видалення ===
-        let tombstones = JSON.parse(localStorage.getItem('tombstones') || '[]');
-        const allTemplates = document.querySelectorAll('#templates-grid-wrapper .template-field-group');
-        
-        allTemplates.forEach(group => {
-            const templateId = group.dataset.id;
-            if (templateId && templateId !== 'undefined') {
-                // Додаємо кожен шаблон у список "на видалення" у Firebase
-                tombstones.push({ id: templateId, deletedAt: Date.now() });
-            }
-        });
-        
-        localStorage.setItem('tombstones', JSON.stringify(tombstones));
-        // ==================================================================
+    if (confirm('УВАГА: Видалити ВСІ шаблони з екрану?')) {
+        // Записуємо надгробок ТІЛЬКИ якщо ми залогінені в акаунт!
+        if (currentUser) {
+            let tombstones = JSON.parse(localStorage.getItem('tombstones') || '[]');
+            const allTemplates = document.querySelectorAll('#templates-grid-wrapper .template-field-group');
+            
+            allTemplates.forEach(group => {
+                const templateId = group.dataset.id;
+                if (templateId && templateId !== 'undefined') {
+                    tombstones.push({ id: templateId, deletedAt: Date.now() });
+                }
+            });
+            localStorage.setItem('tombstones', JSON.stringify(tombstones));
+        }
 
-        // Тепер очищаємо екран
+        // Очищаємо екран
         templatesGrid.innerHTML = ''; 
-        
-        // Зберігаємо (це автоматично відправить tombstones у Firebase і видалить їх там)
         saveTemplates(); 
-        showNotification("Усі текстові шаблони було видалено.", 'success');
+        checkEmptyTemplatesState();
+        showNotification("Усі шаблони було видалено.", 'success');
     }
 }
 
@@ -2973,18 +2951,15 @@ if (!oltObj) {
     deleteButton.title = 'Видалити шаблон';
     deleteButton.className = 'delete-template-btn';
     deleteButton.onclick = () => {
-        if (!authStateResolved) {
-        showNotification("Зачекайте, перевіряємо стан акаунта...", 'warning');
-        return;
-    }
-        if (confirm('Видалити цей шаблон назавжди? (Він також зникне з вашого акаунта на інших пристроях)')) {
+        if (confirm('Видалити цей шаблон?')) {
             const templateId = fieldGroup.dataset.id;
             
-            // === НОВА ЛОГІКА НАДГРОБКІВ З ДАТОЮ ===
-            let tombstones = JSON.parse(localStorage.getItem('tombstones') || '[]');
-            // Зберігаємо як об'єкт: ID + точний час смерті
-            tombstones.push({ id: templateId, deletedAt: Date.now() });
-            localStorage.setItem('tombstones', JSON.stringify(tombstones));
+            // Записуємо надгробок ТІЛЬКИ якщо ми залогінені в акаунт!
+            if (currentUser && templateId && templateId !== 'undefined') {
+                let tombstones = JSON.parse(localStorage.getItem('tombstones') || '[]');
+                tombstones.push({ id: templateId, deletedAt: Date.now() });
+                localStorage.setItem('tombstones', JSON.stringify(tombstones));
+            }
 
             const textarea = fieldGroup.querySelector('textarea');
             if (textarea && window.textareaObserver) {
