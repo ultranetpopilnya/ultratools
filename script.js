@@ -124,8 +124,16 @@ auth.onAuthStateChanged((user) => {
     } else {
         // === КОРИСТУВАЧ НЕ АВТОРИЗОВАНИЙ (ГІСТЬ) ===
         
-        // ДОДАЙТЕ ЦЕЙ РЯДОК:
-        localStorage.removeItem('lastSyncTime'); 
+        // Очищаємо ВСІ локальні дані синхронізації, щоб вони не "плуталися"
+// з даними наступної сесії (гостьової чи іншого акаунта)
+localStorage.removeItem('lastSyncTime');
+localStorage.removeItem('textTemplates');
+localStorage.removeItem('templateOrder');
+localStorage.removeItem('quickNotesData');
+localStorage.removeItem('quickNotesOrder');
+localStorage.removeItem('loginHistory');
+localStorage.removeItem('tombstones');
+quickNotesArray = [];
         
         // Використовуємо твій клас 'is-signing-out'
         animatedAuthSwitch(userInfoWrapper, loginBtn);
@@ -258,7 +266,7 @@ const debouncedSaveTemplates = () => {
     }, 1000);
 };
 
-// --- ФУНКЦІЯ: РОЗУМНЕ ЗЛИТТЯ ТА ЧИТАННЯ З ПІДКОЛЕКЦІЙ ---
+// --- ФУНКЦІЯ: РОЗУМНЕ ЗЛИТТЯ ТА ЧИТАННЯ З ПІДКОЛЕКЦІЙ (АНТИ-ДУБЛІКАТОР) ---
 async function loadUserDataFromCloud() {
     if (!currentUser) return;
 
@@ -292,65 +300,104 @@ async function loadUserDataFromCloud() {
         const cloudNotes = notesSnap.empty ? (cloudMeta.quickNotes || []) : notesSnap.docs.map(d => d.data());
         const cloudHistory = historySnap.empty ? (cloudMeta.loginHistory || []) : historySnap.docs.map(d => d.data());
 
-        function mergeArrays(localArr, cloudArr) {
+        // НОВИЙ АНТИ-ДУБЛІКАТОР
+        function mergeArrays(localArr, cloudArr, dataType) {
             let local = localArr.map(item => 
                 (typeof item === 'string') ? { id: generateUUID(), text: item, updatedAt: 0 } 
                 : (!item.id) ? { ...item, id: generateUUID(), updatedAt: 0 } : item
             );
             
             local = local.filter(item => !cloudTombstones.includes(item.id));
-            let merged = [];
+            let mergedMap = new Map();
 
+            // 1. Спочатку складаємо в базу всі хмарні дані
             cloudArr.forEach(cItem => {
-                const lItem = local.find(l => l.id === cItem.id);
-                if (lItem) {
-                    if (lItem.updatedAt > cItem.updatedAt) {
-                        merged.push(lItem);
+                if (!localTombstones.includes(cItem.id)) {
+                    mergedMap.set(cItem.id, cItem);
+                } else {
+                    needsCloudUpdate = true; // Видалено локально, треба повідомити хмару
+                }
+            });
+
+            // 2. Перевіряємо локальні дані
+            local.forEach(lItem => {
+                if (mergedMap.has(lItem.id)) {
+                    // ID збігаються - виграє той, що відредагований пізніше
+                    let cItem = mergedMap.get(lItem.id);
+                    if ((lItem.updatedAt || 0) > (cItem.updatedAt || 0)) {
+                        mergedMap.set(lItem.id, lItem);
                         needsCloudUpdate = true;
-                    } else {
-                        merged.push(cItem);
                     }
                 } else {
-                    if (!localTombstones.includes(cItem.id)) {
-                        merged.push(cItem); 
-                    } else {
-                        needsCloudUpdate = true; 
+                    // ID НЕ ЗБІГАЄТЬСЯ. Перевіряємо текст (Анти-дубль)
+                    let isDuplicate = false;
+
+                    for (let [cId, cItem] of mergedMap.entries()) {
+                        let contentMatches = false;
+
+                        if (dataType === 'templates') {
+                            const lName = (lItem.name || '').trim();
+                            const cName = (cItem.name || '').trim();
+                            const lContent = (lItem.content || '').trim();
+                            const cContent = (cItem.content || '').trim();
+                            if (lName === cName && lContent === cContent) contentMatches = true;
+                        } 
+                        else if (dataType === 'notes') {
+                            const lText = (lItem.text || '').trim();
+                            const cText = (cItem.text || '').trim();
+                            if (lText === cText) contentMatches = true;
+                        }
+                        else if (dataType === 'history') {
+                            const lLogin = (lItem.login || '').trim();
+                            const cLogin = (cItem.login || '').trim();
+                            if (lLogin === cLogin) contentMatches = true;
+                        }
+
+                        if (contentMatches) {
+                            isDuplicate = true;
+                            // Це дублікат за контентом! Залишаємо ХМАРНИЙ ID, не створюємо копію.
+                            // Але якщо в локальному міняли щось інше (розмір вікна тощо) - зливаємо.
+                            if ((lItem.updatedAt || 0) > (cItem.updatedAt || 0)) {
+                                mergedMap.set(cId, { ...cItem, ...lItem, id: cId });
+                                needsCloudUpdate = true;
+                            }
+                            break;
+                        }
+                    }
+
+                    // Якщо аналогів не знайдено, значить це дійсно щось нове
+                    if (!isDuplicate) {
+                        mergedMap.set(lItem.id, lItem);
+                        needsCloudUpdate = true;
                     }
                 }
             });
 
-            local.forEach(lItem => {
-                if (!cloudArr.find(c => c.id === lItem.id)) {
-                    merged.push(lItem);
-                    needsCloudUpdate = true;
-                }
-            });
-
-            return merged;
+            return Array.from(mergedMap.values());
         }
 
         // --- 1. ШАБЛОНИ ---
-        let mergedTemplates = mergeArrays(JSON.parse(localStorage.getItem('textTemplates') || '[]'), cloudTemplates);
+        let mergedTemplates = mergeArrays(JSON.parse(localStorage.getItem('textTemplates') || '[]'), cloudTemplates, 'templates');
         
         // СОРТУВАННЯ ШАБЛОНІВ ЗА КАРТОЮ ПОРЯДКУ
         if (cloudTemplateOrder.length > 0) {
             mergedTemplates.sort((a, b) => {
                 let indexA = cloudTemplateOrder.indexOf(a.id);
                 let indexB = cloudTemplateOrder.indexOf(b.id);
-                if (indexA === -1) indexA = 999999; // Невідомі шаблони (офлайн) йдуть у кінець
+                if (indexA === -1) indexA = 999999; // Невідомі йдуть у кінець
                 if (indexB === -1) indexB = 999999;
                 return indexA - indexB;
             });
         }
         
-        localStorage.setItem('templateOrder', JSON.stringify(mergedTemplates.map(t => t.id))); // Зберігаємо порядок
+        localStorage.setItem('templateOrder', JSON.stringify(mergedTemplates.map(t => t.id))); 
         localStorage.setItem('textTemplates', JSON.stringify(mergedTemplates));
         loadTemplates();
 
         // --- 2. НОТАТКИ ---
-        let mergedNotes = mergeArrays(JSON.parse(localStorage.getItem('quickNotesData') || '[]'), cloudNotes);
+        let mergedNotes = mergeArrays(JSON.parse(localStorage.getItem('quickNotesData') || '[]'), cloudNotes, 'notes');
         
-        // СОРТУВАННЯ НОТАТОК ЗА КАРТОЮ ПОРЯДКУ
+        // СОРТУВАННЯ НОТАТОК
         if (cloudNotesOrder.length > 0) {
             mergedNotes.sort((a, b) => {
                 let indexA = cloudNotesOrder.indexOf(a.id);
@@ -367,8 +414,7 @@ async function loadUserDataFromCloud() {
         renderQuickNotes();
 
         // --- 3. ІСТОРІЯ ЛОГІНІВ ---
-        let mergedHistory = mergeArrays(JSON.parse(localStorage.getItem('loginHistory') || '[]'), cloudHistory);
-        // Історію завжди сортуємо від найновішої до найстарішої за часом
+        let mergedHistory = mergeArrays(JSON.parse(localStorage.getItem('loginHistory') || '[]'), cloudHistory, 'history');
         mergedHistory.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
         mergedHistory = mergedHistory.slice(0, 8); 
         localStorage.setItem('loginHistory', JSON.stringify(mergedHistory));
@@ -389,6 +435,7 @@ async function loadUserDataFromCloud() {
         localStorage.setItem('tombstones', JSON.stringify(Array.from(finalTombMap.values())));
         updateSyncTimeDisplay(cloudMeta.lastUpdated ? cloudMeta.lastUpdated.toDate() : new Date(), 'success');
 
+        // Якщо масиви злилися і були зміни - пушимо оновлення назад у хмару
         if (cloudMeta.templates || cloudMeta.quickNotes || cloudMeta.loginHistory) {
             needsCloudUpdate = true;
         }
