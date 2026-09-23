@@ -95,7 +95,7 @@ function hideSyncTimeDisplay() {
 }
 
 // =========================================================================
-// === БРОНЕБІЙНИЙ СИНХРОНІЗАТОР (ОДИН ДОКУМЕНТ, БЕЗ НАДГРОБКІВ І ЗБОЇВ) ===
+// === ОБРОБНИК СТАТУСУ ВХОДУ (АВТОРИЗАЦІЯ / ГОСТЬОВИЙ РЕЖИМ) ===
 // =========================================================================
 
 auth.onAuthStateChanged(async (user) => {
@@ -109,19 +109,38 @@ auth.onAuthStateChanged(async (user) => {
     const userAvatar = document.getElementById('user-avatar');
 
     if (user) {
+        // === КОРИСТУВАЧ АВТОРИЗОВАНИЙ ===
         animatedAuthSwitch(loginBtn, userInfoWrapper);
+
         const firstName = user.displayName ? user.displayName.split(' ')[0] : 'Користувач';
         if (userInfo) userInfo.textContent = firstName;
         if (userAvatar && user.photoURL) userAvatar.src = user.photoURL;
 
-        console.log("👤 Авторизовано як:", user.email);
+        // 1. Спалюємо будь-які старі гостьові надгробки, щоб вони не чіпали хмару
+        localStorage.removeItem('tombstones');
+
+        // 2. Одразу розширюємо порожній контейнер до 70% під напис синхронізації
+        checkEmptyTemplatesState();
+
+        // 3. Показуємо збережений локально час синхронізації
+        const cached = localStorage.getItem('lastSyncTime');
+        if (cached) updateSyncTimeDisplay(new Date(cached), 'success');
+
+        // 4. Завантажуємо свіжі дані облікового запису з хмари
         await loadUserDataFromCloud();
+
     } else {
+        // === КОРИСТУВАЧ НЕ АВТОРИЗОВАНИЙ (ГІСТЬ) ===
         animatedAuthSwitch(userInfoWrapper, loginBtn);
+
         if (userInfo) userInfo.textContent = '';
         if (userAvatar) userAvatar.src = '';
         hideSyncTimeDisplay();
-        console.log("👤 Режим гостя. Локальні дані не чіпаємо.");
+
+        // УВАГА: Ми НЕ видаляємо локальні шаблони тут, щоб вони не зникали при F5!
+
+        // Звужуємо порожній контейнер назад до 60% (напис синхронізації зник)
+        checkEmptyTemplatesState();
     }
 });
 
@@ -265,9 +284,21 @@ function loginWithGoogle() {
     });
 }
 
-// Функція для кнопки "Вийти"
 function logoutFromGoogle() {
     auth.signOut().then(() => {
+        // 1. Очищаємо картки з екрана
+        const templatesGrid = document.getElementById('templates-grid-wrapper');
+        if (templatesGrid) templatesGrid.innerHTML = '';
+        
+        // 2. Очищаємо пам'ять облікового запису
+        localStorage.removeItem('textTemplates');
+        localStorage.removeItem('templateOrder');
+        localStorage.removeItem('lastSyncTime');
+        
+        // 3. ГОЛОВНЕ: викликаємо перевірку, яка побачить 0 карток, 
+        // додасть клас .is-empty і контейнер плавно стиснеться!
+        checkEmptyTemplatesState();
+        
         showNotification("Ви вийшли з акаунта", 'info');
     });
 }
@@ -5383,16 +5414,25 @@ function checkEmptyTemplatesState() {
     const emptyMessage = document.getElementById('empty-templates-message');
     const container = document.querySelector('.container[data-content="text-templates"]');
     
-    // Перевіряємо кількість елементів у сітці
-    if (gridWrapper.children.length === 0) {
-        // Якщо порожньо
+    if (!gridWrapper || !container) return;
+
+    const isEmpty = gridWrapper.children.length === 0;
+
+    // 1. Перевіряємо порожнечу (стан 1 і 2 проти стану 3)
+    if (isEmpty) {
         gridWrapper.style.display = 'none';
-        emptyMessage.style.display = 'flex';
-        container.classList.add('is-empty'); // Звужуємо контейнер
+        if (emptyMessage) emptyMessage.style.display = 'flex';
+        container.classList.add('is-empty');
     } else {
-        // Якщо є хоча б один шаблон
-        gridWrapper.style.display = ''; // Повертаємо стандартний display (grid/flex)
-        emptyMessage.style.display = 'none';
-        container.classList.remove('is-empty'); // Розширюємо контейнер
+        gridWrapper.style.display = '';
+        if (emptyMessage) emptyMessage.style.display = 'none';
+        container.classList.remove('is-empty');
+    }
+
+    // 2. Перевіряємо статус входу (стан 1 на 60% проти стану 2 на 70%)
+    if (currentUser) {
+        container.classList.add('is-logged-in');
+    } else {
+        container.classList.remove('is-logged-in');
     }
 }

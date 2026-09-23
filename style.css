@@ -488,12 +488,15 @@ h1 {
 .container[data-content="text-templates"] h2, 
 .date-calculator-container h2, 
 .gpon-commands-container h2 {
+    position: relative;             /* <-- 1. Робить заголовок базою для позиціонування */
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 100%;                    /* <-- 2. Заголовок займає 100% ширини і тримає центр */
     margin: 0;
     padding-top: 16px;
     padding-bottom: 16px;
+    box-sizing: border-box;
 }
 
 /* Темна тема: page title */
@@ -2767,22 +2770,53 @@ body.dark .history-copy-btn:hover {
     gap: 10px;
 }
 
-/* ========================================= */
-/* === РОЗУМНИЙ КОНТЕЙНЕР ДЛЯ ШАБЛОНІВ === */
-/* ========================================= */
+/* ======================================================== */
+/* === СТАН 3: Є ХОЧА Б 1 ШАБЛОН -> ПОВНА ШИРИНА (100%) === */
+/* ======================================================== */
 .container[data-content="text-templates"] {
-    /* Плавна анімація зміни ширини, як у GPON команд */
     transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1),
-                opacity 0.3s ease-in-out, 
-                transform 0.3s ease-in-out !important;
+                height 0.4s ease,
+                opacity 0.3s ease-in-out !important;
     
-    width: 100%;
+    width: 100% !important; /* Коли є шаблони — завжди 100% */
+    margin: 0 auto;
 }
 
-/* Коли додано клас is-empty, контейнер звужується */
+/* ======================================================== */
+/* === СТАН 1: НЕМА ШАБЛОНІВ + ГІСТЬ -> 60% ШИРИНИ === */
+/* ======================================================== */
 .container[data-content="text-templates"].is-empty {
-    width: 56%;
-    height: 54%; 
+    width: 60% !important;
+    min-width: 520px;
+    height: 60%;
+    min-height: 320px;
+}
+
+/* ======================================================== */
+/* === СТАН 2: НЕМА ШАБЛОНІВ + УВІЙШОВ -> 70% ШИРИНИ === */
+/* ======================================================== */
+.container[data-content="text-templates"].is-empty.is-logged-in {
+    width: 78% !important; /* Автоматично додає 10% під напис синхронізації */
+    min-width: 620px;
+}
+
+.empty-templates-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 24px;
+    text-align: center;
+    border: 2px dashed var(--input-border-color);
+    border-radius: 12px;
+    margin: 10px auto;
+    background-color: rgba(0, 0, 0, 0.02);
+    animation: fadeIn 0.4s ease-in-out;
+}
+
+body.dark .empty-templates-message {
+    border-color: var(--input-border-color);
+    background-color: rgba(255, 255, 255, 0.02);
 }
 
 /* ========================================= */
@@ -3012,7 +3046,6 @@ body.dark .logout-action-btn:hover { background: var(--danger-bg-dark); }
     color: var(--inactive-text);
     white-space: nowrap;
     
-    /* Прихований за замовчуванням */
     opacity: 0;
     visibility: hidden;
     transform: translateY(2px);
