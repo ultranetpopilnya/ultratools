@@ -3940,8 +3940,8 @@ body.dark .template-config-bar.active {
 }
 
 .config-row .config-field--sn   { flex: 1 0 130px; }
-.config-row .config-field--port { flex: 0 0 150px; }
-.config-row .config-field--vlan { flex: 0 0 100px; }
+.config-row .config-field--port { flex: 0 0 140px; }
+.config-row .config-field--vlan { flex: 0 0 110px; }
 
 .config-row .config-port-input {
     letter-spacing: 2px;
