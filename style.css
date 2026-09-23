@@ -2801,7 +2801,7 @@ body.dark .history-copy-btn:hover {
     justify-content: center;
     padding: 50px;
     text-align: center;
-    border: 2px dashed rgba(129, 30, 113, 0.3);
+    border: 2px dashed var(--input-border-color);
     border-radius: 12px;
     margin: auto 50px;
     background-color: rgba(0, 0, 0, 0.02);
@@ -2809,7 +2809,7 @@ body.dark .history-copy-btn:hover {
 }
 
 body.dark .empty-templates-message {
-    border-color: rgba(255, 255, 255, 0.15);
+    border-color: var(--input-border-color);
     background-color: rgba(255, 255, 255, 0.02);
 }
 
