@@ -1578,7 +1578,8 @@ function centerActiveDropdownItem(dropdownNode) {
         ponOnuMode = false, replaceMode = true,
         showSignalMode = false,
         onuMode = '', regMode = false, switchMode = false,
-        isSearchOpen = false, 
+        isSearchOpen = false,
+        isConfigOpen = false, 
         id = generateUUID(), 
         updatedAt = Date.now()
     } = data;
@@ -1834,7 +1835,7 @@ fieldGroup.dataset.onuMode             = onuMode || (switchMode ? 'SWITCH' : 'RE
 
    // === КНОПКА ПОШУКУ (НЕЗАЛЕЖНА) ===
     const searchToggleButton = document.createElement('button');
-    searchToggleButton.className = 'search-template-btn'; // ДОДАЛИ КЛАС
+    searchToggleButton.className = 'search-template-btn';
     searchToggleButton.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i>';
     searchToggleButton.title = 'Пошук і заміна тексту';
     
@@ -1846,13 +1847,17 @@ fieldGroup.dataset.onuMode             = onuMode || (switchMode ? 'SWITCH' : 'RE
 
         if (isActive) {
             panel.classList.remove('active');
+            fieldGroup.dataset.isSearchOpen = 'false'; // Записуємо закриття
         } else {
-            // ДОДАНО: Якщо відкриваємо пошук, закриваємо генератор конфігів
             const configPanel = fieldGroup.querySelector('.template-config-bar');
-            if (configPanel) configPanel.classList.remove('active');
+            if (configPanel) {
+                configPanel.classList.remove('active');
+                fieldGroup.dataset.isConfigOpen = 'false'; // Закриваємо генератор
+            }
             
             panel.classList.add('active');
-            // Автоматично ставимо курсор у поле "Знайти"
+            fieldGroup.dataset.isSearchOpen = 'true'; // Записуємо відкриття
+            
             setTimeout(() => {
                 const input = panel.querySelector('.input-find');
                 if (input) input.focus();
@@ -1860,7 +1865,7 @@ fieldGroup.dataset.onuMode             = onuMode || (switchMode ? 'SWITCH' : 'RE
         }
         
         fieldGroup.dataset.updatedAt = Date.now();
-        saveTemplates(); // Зберігаємо стан (якщо ти додав це з попереднього кроку)
+        saveTemplates(); 
     };
 
     // === КНОПКА ГЕНЕРАТОРА КОНФІГІВ ===
@@ -2238,27 +2243,32 @@ if (!isDeleting) {
     input.setSelectionRange(newCursorPos, newCursorPos);
 });
 
-    // === ЛОГІКА ВІДКРИТТЯ/ЗАКРИТТЯ ПАНЕЛІ ===
+/// === ЛОГІКА ВІДКРИТТЯ/ЗАКРИТТЯ ПАНЕЛІ ===
     configToggleButton.onclick = (e) => {
         e.stopPropagation();
         const isActive = configPanel.classList.contains('active');
+        
         if (isActive) {
             configPanel.classList.remove('active');
+            fieldGroup.dataset.isConfigOpen = 'false'; // Записуємо закриття
         } else {
             const searchBar = fieldGroup.querySelector('.template-search-bar');
-            if (searchBar) searchBar.classList.remove('active');
+            if (searchBar) {
+                searchBar.classList.remove('active');
+                fieldGroup.dataset.isSearchOpen = 'false'; // Закриваємо пошук
+            }
             
             configPanel.classList.add('active');
-            
+            fieldGroup.dataset.isConfigOpen = 'true'; // Записуємо відкриття
 
             const loginInput = configPanel.querySelector('.config-login-input');
             if (!loginInput.value && lastGeneratedLogin) {
                 loginInput.value = lastGeneratedLogin;
             }
-
-            fieldGroup.dataset.updatedAt = Date.now();
-            saveTemplates();
         }
+        
+        fieldGroup.dataset.updatedAt = Date.now();
+        saveTemplates();
     };
     
     const oltInputNode = configPanel.querySelector('.config-olt-select');
@@ -3189,11 +3199,17 @@ document.addEventListener('click', (e) => {
     
     // === ДОДАНО: Відслідковуємо, де стоїть курсор ===
     fieldGroup.addEventListener('focusin', (e) => {
-        // Якщо курсор потрапив у TEXTAREA або будь-який текстовий INPUT
         if (e.target.tagName === 'TEXTAREA' || (e.target.tagName === 'INPUT' && e.target.type === 'text')) {
             lastFocusedElement = e.target;
         }
     });
+    
+    // НАДІЙНЕ ВІДКРИТТЯ: Записуємо стан в пам'ять елемента і візуально відкриваємо
+    fieldGroup.dataset.isSearchOpen = isSearchOpen ? 'true' : 'false';
+    fieldGroup.dataset.isConfigOpen = isConfigOpen ? 'true' : 'false';
+
+    if (isSearchOpen) searchPanel.classList.add('active');
+    if (isConfigOpen) configPanel.classList.add('active');
     
     return fieldGroup;
 }
@@ -3339,14 +3355,10 @@ function addTemplate() {
     document.querySelectorAll('#templates-grid-wrapper .template-field-group').forEach(group => {
         const nameInput = group.querySelector('.template-name-input');
         const textarea = group.querySelector('textarea');
-        
-        // Зчитуємо стани панелей для поточного шаблону
-        const searchPanel = group.querySelector('.template-search-bar');
-        const configPanel = group.querySelector('.template-config-bar');
 
         templates.push({
             id: group.dataset.id,
-            updatedAt: parseInt(group.dataset.updatedAt, 10),
+            updatedAt: parseInt(group.dataset.updatedAt, 10) || Date.now(),
             name: nameInput ? nameInput.value : '',
             content: textarea ? textarea.value : '',
             width: group.style.width,
@@ -3356,18 +3368,18 @@ function addTemplate() {
             lastConfigStart: parseInt(group.dataset.lastConfigStart ?? '-1', 10),
             lastConfigEnd:   parseInt(group.dataset.lastConfigEnd   ?? '-1', 10),
             ponOnuMode:  group.dataset.ponOnuMode  === 'true',
-replaceMode: group.dataset.replaceMode !== 'false',
-showSignalMode: group.dataset.showSignalMode === 'true',
-onuMode: group.dataset.onuMode || 'REG',
+            replaceMode: group.dataset.replaceMode !== 'false',
+            showSignalMode: group.dataset.showSignalMode === 'true',
+            onuMode: group.dataset.onuMode || 'REG',
             
-            // ДОДАНО: Зберігаємо стани відкритих панелей
-            isSearchOpen: searchPanel ? searchPanel.classList.contains('active') : false,
-            isConfigOpen: configPanel ? configPanel.classList.contains('active') : false
+            // ВАЖЛИВО: Тепер зчитуємо стан прямо з міток пам'яті (dataset)
+            isSearchOpen: group.dataset.isSearchOpen === 'true',
+            isConfigOpen: group.dataset.isConfigOpen === 'true'
         });
     });
     localStorage.setItem('textTemplates', JSON.stringify(templates));
 
-    if (typeof syncTemplatesToCloud === 'function') syncTemplatesToCloud(templates);
+    if (typeof syncTemplatesToCloud === 'function') syncTemplatesToCloud();
 }
 
     function loadTemplates() {
