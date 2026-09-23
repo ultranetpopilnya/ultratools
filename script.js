@@ -124,20 +124,6 @@ auth.onAuthStateChanged((user) => {
         loadUserDataFromCloud();
         
     } else {
-        // === КОРИСТУВАЧ НЕ АВТОРИЗОВАНИЙ (ГІСТЬ) ===
-        
-        // Очищаємо ВСІ локальні дані синхронізації, щоб вони не "плуталися"
-// з даними наступної сесії (гостьової чи іншого акаунта)
-localStorage.removeItem('lastSyncTime');
-localStorage.removeItem('textTemplates');
-localStorage.removeItem('templateOrder');
-localStorage.removeItem('quickNotesData');
-localStorage.removeItem('quickNotesOrder');
-localStorage.removeItem('loginHistory');
-localStorage.removeItem('tombstones');
-quickNotesArray = [];
-        
-        // Використовуємо твій клас 'is-signing-out'
         animatedAuthSwitch(userInfoWrapper, loginBtn);
         
         if(userInfo) userInfo.textContent = '';
@@ -282,9 +268,7 @@ async function loadUserDataFromCloud() {
             userRef.collection('loginHistory').get()
         ]);
 
-        if (!metaDoc.exists) return; 
-
-        const cloudMeta = metaDoc.data();
+        const cloudMeta = metaDoc.exists ? metaDoc.data() : {};
         
         // Дістаємо карти порядку з хмари
         const cloudTemplateOrder = cloudMeta.templateOrder || [];
@@ -1818,6 +1802,9 @@ function centerActiveDropdownItem(dropdownNode) {
         }
     }
     fieldGroup.dataset.bookmarks = JSON.stringify(modernBookmarks);
+
+        fieldGroup.dataset.id = id;
+    fieldGroup.dataset.updatedAt = updatedAt;
 
     fieldGroup.dataset.lastGeneratedConfig = lastGeneratedConfig;
 fieldGroup.dataset.lastConfigStart     = lastConfigStart;
@@ -5274,7 +5261,7 @@ function deleteQuickNote(index) {
         showNotification("Зачекайте, перевіряємо стан акаунта...", 'warning');
         return;
     }
-    
+
     if (confirm("Видалити цю нотатку назавжди (з усіх пристроїв)?")) {
         const noteId = quickNotesArray[index].id;
         
