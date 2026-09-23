@@ -139,43 +139,85 @@ const SyncManager = {
     timeout: null,
     pending: false,
     
-    // Викликається при будь-якій зміні даних
     trigger() {
         if (!currentUser) return;
         this.pending = true;
         updateSyncTimeDisplay(null, 'syncing');
-        
         clearTimeout(this.timeout);
-        // Чекаємо 3 секунди після останньої дії (друкування тощо)
         this.timeout = setTimeout(() => this.flush(), 3000); 
     },
 
-    // Фізична відправка даних у хмару
     async flush() {
         if (!this.pending || !currentUser) return;
         this.pending = false;
         clearTimeout(this.timeout);
 
         try {
-            // Збираємо всі локальні дані одним махом
+            // Отримуємо дані
             const templates = JSON.parse(localStorage.getItem('textTemplates') || '[]');
             const quickNotes = JSON.parse(localStorage.getItem('quickNotesData') || '[]');
             const loginHistory = JSON.parse(localStorage.getItem('loginHistory') || '[]');
-            const tombstones = JSON.parse(localStorage.getItem('tombstones') || '[]');
+            let tombstones = JSON.parse(localStorage.getItem('tombstones') || '[]');
 
-            await db.collection('users').doc(currentUser.uid).set({
-                templates,
-                quickNotes,
-                loginHistory,
-                tombstones,
-                lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+            // === ПРИБИРАННЯ ЦВИНТАРЯ (GARBAGE COLLECTION) ===
+            // Конвертуємо старі текстові надгробки в нові об'єкти (для зворотної сумісності)
+            tombstones = tombstones.map(t => typeof t === 'string' ? { id: t, deletedAt: Date.now() } : t);
+            
+            // Залишаємо тільки ті надгробки, яким менше 30 днів (30 * 24 * 60 * 60 * 1000 мс)
+            const THIRTY_DAYS = 2592000000; 
+            tombstones = tombstones.filter(t => (Date.now() - t.deletedAt) < THIRTY_DAYS);
+            
+            // Зберігаємо почищений список локально
+            localStorage.setItem('tombstones', JSON.stringify(tombstones));
+
+            // === ПАКЕТНИЙ ЗАПИС У ПІДКОЛЕКЦІЇ FIREBASE ===
+            const batch = db.batch();
+            const userRef = db.collection('users').doc(currentUser.uid);
+
+            // 1. Записуємо шаблони (кожен як окремий документ)
+            templates.forEach(tpl => {
+                const docRef = userRef.collection('templates').doc(tpl.id);
+                batch.set(docRef, tpl, { merge: true });
+            });
+
+            // 2. Записуємо нотатки
+            quickNotes.forEach(note => {
+                const docRef = userRef.collection('quickNotes').doc(note.id);
+                batch.set(docRef, note, { merge: true });
+            });
+
+            // 3. Записуємо історію
+            loginHistory.forEach(hist => {
+                const docRef = userRef.collection('loginHistory').doc(hist.id);
+                batch.set(docRef, hist, { merge: true });
+            });
+
+            // 4. Видаляємо мертві душі з хмари фізично
+            tombstones.forEach(tomb => {
+                batch.delete(userRef.collection('templates').doc(tomb.id));
+                batch.delete(userRef.collection('quickNotes').doc(tomb.id));
+                batch.delete(userRef.collection('loginHistory').doc(tomb.id));
+            });
+
+            // 5. Оновлюємо мета-дані (залишаємо тільки масив надгробків та час)
+            // Ми використовуємо { merge: false } АБО видаляємо старі масиви, щоб звільнити місце
+            batch.set(userRef, {
+                tombstones: tombstones,
+                lastUpdated: firebase.firestore.FieldValue.serverTimestamp(),
+                // Примусово затираємо старі монолітні масиви, щоб вони не займали місце в базі
+                templates: firebase.firestore.FieldValue.delete(),
+                quickNotes: firebase.firestore.FieldValue.delete(),
+                loginHistory: firebase.firestore.FieldValue.delete()
             }, { merge: true });
 
+            // Відправляємо всю пачку на сервер за 1 раз
+            await batch.commit();
             markSyncedNow();
+            
         } catch (error) {
             console.error("Помилка синхронізації (можливо офлайн):", error);
             updateSyncTimeDisplay(null, 'error');
-            this.pending = true; // Залишаємо прапорець, щоб система спробувала пізніше
+            this.pending = true; 
         }
     }
 };
@@ -201,37 +243,54 @@ const debouncedSaveTemplates = () => {
     }, 1000);
 };
 
-// --- ФУНКЦІЯ: РОЗУМНЕ ЗЛИТТЯ ЗА ID, ЧАСОМ ТА НАДГРОБКАМИ (TOMBSTONES) ---
+// --- ФУНКЦІЯ: РОЗУМНЕ ЗЛИТТЯ ТА ЧИТАННЯ З ПІДКОЛЕКЦІЙ ---
 async function loadUserDataFromCloud() {
     if (!currentUser) return;
 
     try {
-        const doc = await db.collection('users').doc(currentUser.uid).get();
-        if (!doc.exists) return; // Пуста хмара
+        const userRef = db.collection('users').doc(currentUser.uid);
+        
+        // Читаємо одразу все паралельно для швидкості (Мета-дані + 3 підколекції)
+        const [metaDoc, templatesSnap, notesSnap, historySnap] = await Promise.all([
+            userRef.get(),
+            userRef.collection('templates').get(),
+            userRef.collection('quickNotes').get(),
+            userRef.collection('loginHistory').get()
+        ]);
 
-        const cloudData = doc.data();
-        const cloudTombstones = cloudData.tombstones || [];
-        let localTombstones = JSON.parse(localStorage.getItem('tombstones') || '[]');
+        if (!metaDoc.exists) return; 
+
+        const cloudMeta = metaDoc.data();
+        
+        // Конвертуємо всі надгробки у зручний формат для пошуку ID
+        let cloudTombstones = cloudMeta.tombstones || [];
+        cloudTombstones = cloudTombstones.map(t => typeof t === 'object' ? t.id : t);
+        
+        let localTombstonesRaw = JSON.parse(localStorage.getItem('tombstones') || '[]');
+        let localTombstones = localTombstonesRaw.map(t => typeof t === 'object' ? t.id : t);
+        
         let needsCloudUpdate = false;
+
+        // Дістаємо дані. Якщо бази ще не мігрували, вони можуть бути у cloudMeta (старий формат).
+        // Якщо вже мігрували — вони будуть у підколекціях (Snap).
+        const cloudTemplates = templatesSnap.empty ? (cloudMeta.templates || []) : templatesSnap.docs.map(d => d.data());
+        const cloudNotes = notesSnap.empty ? (cloudMeta.quickNotes || []) : notesSnap.docs.map(d => d.data());
+        const cloudHistory = historySnap.empty ? (cloudMeta.loginHistory || []) : historySnap.docs.map(d => d.data());
 
         // Допоміжна функція для злиття масивів
         function mergeArrays(localArr, cloudArr) {
-            // Мігруємо старі локальні дані
             let local = localArr.map(item => 
                 (typeof item === 'string') ? { id: generateUUID(), text: item, updatedAt: 0 } 
                 : (!item.id) ? { ...item, id: generateUUID(), updatedAt: 0 } : item
             );
             
-            // Видаляємо локальні елементи, які були видалені в хмарі (є в cloudTombstones)
+            // Видаляємо локальні, якщо їх ID є в хмарному списку надгробків
             local = local.filter(item => !cloudTombstones.includes(item.id));
-            
             let merged = [];
 
-            // 1. Формуємо масив на основі порядку з ХМАРИ (це зберігає сортування Drag&Drop)
             cloudArr.forEach(cItem => {
                 const lItem = local.find(l => l.id === cItem.id);
                 if (lItem) {
-                    // Збіг ID: беремо версію з новішим текстом/даними
                     if (lItem.updatedAt > cItem.updatedAt) {
                         merged.push(lItem);
                         needsCloudUpdate = true;
@@ -239,16 +298,14 @@ async function loadUserDataFromCloud() {
                         merged.push(cItem);
                     }
                 } else {
-                    // Є в хмарі, немає локально. Чи видаляли ми його локально?
                     if (!localTombstones.includes(cItem.id)) {
-                        merged.push(cItem); // Ні, це нове з іншого пристрою
+                        merged.push(cItem); 
                     } else {
-                        needsCloudUpdate = true; // Так, видаляли, хмара має оновитись
+                        needsCloudUpdate = true; 
                     }
                 }
             });
 
-            // 2. Додаємо в кінець ті елементи, що створені локально (в офлайні) і яких ще немає в хмарі
             local.forEach(lItem => {
                 if (!cloudArr.find(c => c.id === lItem.id)) {
                     merged.push(lItem);
@@ -256,33 +313,47 @@ async function loadUserDataFromCloud() {
                 }
             });
 
-            // ВИПРАВЛЕНО: Ми прибрали примусове сортування за часом (sort). 
-            // Тепер масив зберігає свій фізичний порядок, який ти задаєш перетягуванням.
             return merged;
         }
 
-        // Зливаємо Шаблони
-        const mergedTemplates = mergeArrays(JSON.parse(localStorage.getItem('textTemplates') || '[]'), cloudData.templates || []);
+        // 1. Шаблони
+        const mergedTemplates = mergeArrays(JSON.parse(localStorage.getItem('textTemplates') || '[]'), cloudTemplates);
         localStorage.setItem('textTemplates', JSON.stringify(mergedTemplates));
         loadTemplates();
 
-        // Зливаємо Нотатки
-        const mergedNotes = mergeArrays(JSON.parse(localStorage.getItem('quickNotesData') || '[]'), cloudData.quickNotes || []);
+        // 2. Нотатки
+        const mergedNotes = mergeArrays(JSON.parse(localStorage.getItem('quickNotesData') || '[]'), cloudNotes);
         localStorage.setItem('quickNotesData', JSON.stringify(mergedNotes));
         quickNotesArray = mergedNotes;
         renderQuickNotes();
 
-        // Зливаємо Історію
-        let mergedHistory = mergeArrays(JSON.parse(localStorage.getItem('loginHistory') || '[]'), cloudData.loginHistory || []);
-        mergedHistory = mergedHistory.slice(0, 8); // Ліміт 8
+        // 3. Історія
+        let mergedHistory = mergeArrays(JSON.parse(localStorage.getItem('loginHistory') || '[]'), cloudHistory);
+        mergedHistory = mergedHistory.slice(0, 8); 
         localStorage.setItem('loginHistory', JSON.stringify(mergedHistory));
         renderHistory(mergedHistory);
 
-        // Об'єднуємо надгробки
-        const finalTombstones = [...new Set([...cloudTombstones, ...localTombstones])];
-        localStorage.setItem('tombstones', JSON.stringify(finalTombstones));
+        // Об'єднуємо надгробки та зберігаємо новий масив ОБ'ЄКТІВ локально
+        const cloudTombObjects = cloudMeta.tombstones || [];
+        // Формуємо фінальний список надгробків (без дублів)
+        const finalTombMap = new Map();
+        localTombstonesRaw.forEach(t => {
+            const obj = typeof t === 'string' ? { id: t, deletedAt: Date.now() } : t;
+            finalTombMap.set(obj.id, obj);
+        });
+        cloudTombObjects.forEach(t => {
+            const obj = typeof t === 'string' ? { id: t, deletedAt: Date.now() } : t;
+            finalTombMap.set(obj.id, obj);
+        });
+        
+        localStorage.setItem('tombstones', JSON.stringify(Array.from(finalTombMap.values())));
+        updateSyncTimeDisplay(cloudMeta.lastUpdated ? cloudMeta.lastUpdated.toDate() : new Date(), 'success');
 
-        updateSyncTimeDisplay(cloudData.lastUpdated ? cloudData.lastUpdated.toDate() : new Date(), 'success');
+        // Якщо були старі монолітні масиви в хмарі, примусово запускаємо синхронізацію,
+        // щоб переписати їх у підколекції (Міграція бази даних)
+        if (cloudMeta.templates || cloudMeta.quickNotes || cloudMeta.loginHistory) {
+            needsCloudUpdate = true;
+        }
 
         if (needsCloudUpdate) {
             SyncManager.trigger();
@@ -2783,10 +2854,12 @@ if (!oltObj) {
     deleteButton.className = 'delete-template-btn';
     deleteButton.onclick = () => {
         if (confirm('Видалити шаблон?')) {
-            // === ЛОГІКА НАДГРОБКІВ (TOMBSTONES) ===
             const templateId = fieldGroup.dataset.id;
+            
+            // === НОВА ЛОГІКА НАДГРОБКІВ З ДАТОЮ ===
             let tombstones = JSON.parse(localStorage.getItem('tombstones') || '[]');
-            tombstones.push(templateId);
+            // Зберігаємо як об'єкт: ID + точний час смерті
+            tombstones.push({ id: templateId, deletedAt: Date.now() });
             localStorage.setItem('tombstones', JSON.stringify(tombstones));
 
             const textarea = fieldGroup.querySelector('textarea');
@@ -5049,9 +5122,9 @@ function deleteQuickNote(index) {
     if (confirm("Видалити цю нотатку?")) {
         const noteId = quickNotesArray[index].id;
         
-        // Додаємо в надгробки
+        // === НОВА ЛОГІКА НАДГРОБКІВ З ДАТОЮ ===
         let tombstones = JSON.parse(localStorage.getItem('tombstones') || '[]');
-        tombstones.push(noteId);
+        tombstones.push({ id: noteId, deletedAt: Date.now() });
         localStorage.setItem('tombstones', JSON.stringify(tombstones));
 
         quickNotesArray.splice(index, 1);
