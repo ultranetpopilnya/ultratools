@@ -1859,6 +1859,7 @@ fieldGroup.dataset.onuMode             = onuMode || (switchMode ? 'SWITCH' : 'RE
             }, 50);
         }
         
+        fieldGroup.dataset.updatedAt = Date.now();
         saveTemplates(); // Зберігаємо стан (якщо ти додав це з попереднього кроку)
     };
 
@@ -2254,6 +2255,8 @@ if (!isDeleting) {
             if (!loginInput.value && lastGeneratedLogin) {
                 loginInput.value = lastGeneratedLogin;
             }
+
+            fieldGroup.dataset.updatedAt = Date.now();
             saveTemplates();
         }
     };
@@ -2493,6 +2496,7 @@ btnOnuMode.addEventListener('click', (e) => {
     // Перемикаємо між двома станами
     currentOnuMode = (currentOnuMode === 'REG') ? 'SWITCH' : 'REG';
     updateOnuModeUI();
+    fieldGroup.dataset.updatedAt = Date.now();
     saveTemplates();
     showNotification(currentOnuMode === 'REG' ? "Режим: РЕЄСТРАЦІЯ ОНУ" : "Режим: ПЕРЕНЕСЕННЯ (ЗАМІНА) ОНУ");
 });
@@ -2507,6 +2511,7 @@ updateOnuModeUI();
     isReplaceMode = !isReplaceMode;
     btnReplaceMode.classList.toggle('active', isReplaceMode);
     fieldGroup.dataset.replaceMode = isReplaceMode;
+    fieldGroup.dataset.updatedAt = Date.now();
     saveTemplates();
     showNotification(isReplaceMode ? "Режим: ПОВНЕ ОЧИЩЕННЯ ТА ВСТАВКА" : "Режим: ДОДАВАННЯ ДО ТЕКСТУ");
 });
@@ -2518,6 +2523,7 @@ btnPonOnu.addEventListener('click', (e) => {
     isPonOnuMode = !isPonOnuMode;
     btnPonOnu.classList.toggle('active', isPonOnuMode);
     fieldGroup.dataset.ponOnuMode = isPonOnuMode;
+    fieldGroup.dataset.updatedAt = Date.now();
     saveTemplates();
     showNotification(isPonOnuMode ? "Команди PON-ONU УВІМКНЕНО" : "Команди PON-ONU ВИМКНЕНО");
 });
@@ -2533,6 +2539,7 @@ btnShowSignal.addEventListener('click', (e) => {
     isShowSignalMode = !isShowSignalMode;
     btnShowSignal.classList.toggle('active', isShowSignalMode);
     fieldGroup.dataset.showSignalMode = isShowSignalMode;
+    fieldGroup.dataset.updatedAt = Date.now();
     saveTemplates();
     showNotification(isShowSignalMode ? "Команди Pon-power та Write додаються" : "Команди Pon-power та Write не додаються");
 });
