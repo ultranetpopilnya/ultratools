@@ -153,69 +153,59 @@ const SyncManager = {
         clearTimeout(this.timeout);
 
         try {
-            // Отримуємо дані
             const templates = JSON.parse(localStorage.getItem('textTemplates') || '[]');
             const quickNotes = JSON.parse(localStorage.getItem('quickNotesData') || '[]');
             const loginHistory = JSON.parse(localStorage.getItem('loginHistory') || '[]');
             let tombstones = JSON.parse(localStorage.getItem('tombstones') || '[]');
-
-            // === ПРИБИРАННЯ ЦВИНТАРЯ (GARBAGE COLLECTION) ===
-            // Конвертуємо старі текстові надгробки в нові об'єкти (для зворотної сумісності)
-            tombstones = tombstones.map(t => typeof t === 'string' ? { id: t, deletedAt: Date.now() } : t);
             
-            // Залишаємо тільки ті надгробки, яким менше 30 днів (30 * 24 * 60 * 60 * 1000 мс)
+            const templateOrder = JSON.parse(localStorage.getItem('templateOrder') || '[]');
+            const quickNotesOrder = JSON.parse(localStorage.getItem('quickNotesOrder') || '[]');
+
+            tombstones = tombstones.map(t => typeof t === 'string' ? { id: t, deletedAt: Date.now() } : t);
             const THIRTY_DAYS = 2592000000; 
             tombstones = tombstones.filter(t => (Date.now() - t.deletedAt) < THIRTY_DAYS);
-            
-            // Зберігаємо почищений список локально
             localStorage.setItem('tombstones', JSON.stringify(tombstones));
 
-            // === ПАКЕТНИЙ ЗАПИС У ПІДКОЛЕКЦІЇ FIREBASE ===
             const batch = db.batch();
             const userRef = db.collection('users').doc(currentUser.uid);
 
-            // 1. Записуємо шаблони (кожен як окремий документ)
+            // === БРОНЕБІЙНИЙ ЗАХИСТ ПЕРЕД ВІДПРАВКОЮ ===
             templates.forEach(tpl => {
-                const docRef = userRef.collection('templates').doc(tpl.id);
-                batch.set(docRef, tpl, { merge: true });
+                if (!tpl.id) tpl.id = generateUUID(); // Захист
+                batch.set(userRef.collection('templates').doc(tpl.id), tpl, { merge: true });
             });
-
-            // 2. Записуємо нотатки
             quickNotes.forEach(note => {
-                const docRef = userRef.collection('quickNotes').doc(note.id);
-                batch.set(docRef, note, { merge: true });
+                if (!note.id) note.id = generateUUID(); // Захист
+                batch.set(userRef.collection('quickNotes').doc(note.id), note, { merge: true });
             });
-
-            // 3. Записуємо історію
             loginHistory.forEach(hist => {
-                const docRef = userRef.collection('loginHistory').doc(hist.id);
-                batch.set(docRef, hist, { merge: true });
+                if (!hist.id) hist.id = generateUUID(); // Захист
+                batch.set(userRef.collection('loginHistory').doc(hist.id), hist, { merge: true });
             });
 
-            // 4. Видаляємо мертві душі з хмари фізично
             tombstones.forEach(tomb => {
-                batch.delete(userRef.collection('templates').doc(tomb.id));
-                batch.delete(userRef.collection('quickNotes').doc(tomb.id));
-                batch.delete(userRef.collection('loginHistory').doc(tomb.id));
+                if (tomb.id && tomb.id !== 'undefined') {
+                    batch.delete(userRef.collection('templates').doc(tomb.id));
+                    batch.delete(userRef.collection('quickNotes').doc(tomb.id));
+                    batch.delete(userRef.collection('loginHistory').doc(tomb.id));
+                }
             });
 
-            // 5. Оновлюємо мета-дані (залишаємо тільки масив надгробків та час)
-            // Ми використовуємо { merge: false } АБО видаляємо старі масиви, щоб звільнити місце
             batch.set(userRef, {
                 tombstones: tombstones,
+                templateOrder: templateOrder,       
+                quickNotesOrder: quickNotesOrder,   
                 lastUpdated: firebase.firestore.FieldValue.serverTimestamp(),
-                // Примусово затираємо старі монолітні масиви, щоб вони не займали місце в базі
                 templates: firebase.firestore.FieldValue.delete(),
                 quickNotes: firebase.firestore.FieldValue.delete(),
                 loginHistory: firebase.firestore.FieldValue.delete()
             }, { merge: true });
 
-            // Відправляємо всю пачку на сервер за 1 раз
             await batch.commit();
             markSyncedNow();
             
         } catch (error) {
-            console.error("Помилка синхронізації (можливо офлайн):", error);
+            console.error("Помилка синхронізації:", error);
             updateSyncTimeDisplay(null, 'error');
             this.pending = true; 
         }
@@ -250,7 +240,6 @@ async function loadUserDataFromCloud() {
     try {
         const userRef = db.collection('users').doc(currentUser.uid);
         
-        // Читаємо одразу все паралельно для швидкості (Мета-дані + 3 підколекції)
         const [metaDoc, templatesSnap, notesSnap, historySnap] = await Promise.all([
             userRef.get(),
             userRef.collection('templates').get(),
@@ -262,7 +251,10 @@ async function loadUserDataFromCloud() {
 
         const cloudMeta = metaDoc.data();
         
-        // Конвертуємо всі надгробки у зручний формат для пошуку ID
+        // Дістаємо карти порядку з хмари
+        const cloudTemplateOrder = cloudMeta.templateOrder || [];
+        const cloudNotesOrder = cloudMeta.quickNotesOrder || [];
+
         let cloudTombstones = cloudMeta.tombstones || [];
         cloudTombstones = cloudTombstones.map(t => typeof t === 'object' ? t.id : t);
         
@@ -271,20 +263,16 @@ async function loadUserDataFromCloud() {
         
         let needsCloudUpdate = false;
 
-        // Дістаємо дані. Якщо бази ще не мігрували, вони можуть бути у cloudMeta (старий формат).
-        // Якщо вже мігрували — вони будуть у підколекціях (Snap).
         const cloudTemplates = templatesSnap.empty ? (cloudMeta.templates || []) : templatesSnap.docs.map(d => d.data());
         const cloudNotes = notesSnap.empty ? (cloudMeta.quickNotes || []) : notesSnap.docs.map(d => d.data());
         const cloudHistory = historySnap.empty ? (cloudMeta.loginHistory || []) : historySnap.docs.map(d => d.data());
 
-        // Допоміжна функція для злиття масивів
         function mergeArrays(localArr, cloudArr) {
             let local = localArr.map(item => 
                 (typeof item === 'string') ? { id: generateUUID(), text: item, updatedAt: 0 } 
                 : (!item.id) ? { ...item, id: generateUUID(), updatedAt: 0 } : item
             );
             
-            // Видаляємо локальні, якщо їх ID є в хмарному списку надгробків
             local = local.filter(item => !cloudTombstones.includes(item.id));
             let merged = [];
 
@@ -316,26 +304,53 @@ async function loadUserDataFromCloud() {
             return merged;
         }
 
-        // 1. Шаблони
-        const mergedTemplates = mergeArrays(JSON.parse(localStorage.getItem('textTemplates') || '[]'), cloudTemplates);
+        // --- 1. ШАБЛОНИ ---
+        let mergedTemplates = mergeArrays(JSON.parse(localStorage.getItem('textTemplates') || '[]'), cloudTemplates);
+        
+        // СОРТУВАННЯ ШАБЛОНІВ ЗА КАРТОЮ ПОРЯДКУ
+        if (cloudTemplateOrder.length > 0) {
+            mergedTemplates.sort((a, b) => {
+                let indexA = cloudTemplateOrder.indexOf(a.id);
+                let indexB = cloudTemplateOrder.indexOf(b.id);
+                if (indexA === -1) indexA = 999999; // Невідомі шаблони (офлайн) йдуть у кінець
+                if (indexB === -1) indexB = 999999;
+                return indexA - indexB;
+            });
+        }
+        
+        localStorage.setItem('templateOrder', JSON.stringify(mergedTemplates.map(t => t.id))); // Зберігаємо порядок
         localStorage.setItem('textTemplates', JSON.stringify(mergedTemplates));
         loadTemplates();
 
-        // 2. Нотатки
-        const mergedNotes = mergeArrays(JSON.parse(localStorage.getItem('quickNotesData') || '[]'), cloudNotes);
+        // --- 2. НОТАТКИ ---
+        let mergedNotes = mergeArrays(JSON.parse(localStorage.getItem('quickNotesData') || '[]'), cloudNotes);
+        
+        // СОРТУВАННЯ НОТАТОК ЗА КАРТОЮ ПОРЯДКУ
+        if (cloudNotesOrder.length > 0) {
+            mergedNotes.sort((a, b) => {
+                let indexA = cloudNotesOrder.indexOf(a.id);
+                let indexB = cloudNotesOrder.indexOf(b.id);
+                if (indexA === -1) indexA = 999999;
+                if (indexB === -1) indexB = 999999;
+                return indexA - indexB;
+            });
+        }
+
+        localStorage.setItem('quickNotesOrder', JSON.stringify(mergedNotes.map(n => n.id)));
         localStorage.setItem('quickNotesData', JSON.stringify(mergedNotes));
         quickNotesArray = mergedNotes;
         renderQuickNotes();
 
-        // 3. Історія
+        // --- 3. ІСТОРІЯ ЛОГІНІВ ---
         let mergedHistory = mergeArrays(JSON.parse(localStorage.getItem('loginHistory') || '[]'), cloudHistory);
+        // Історію завжди сортуємо від найновішої до найстарішої за часом
+        mergedHistory.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
         mergedHistory = mergedHistory.slice(0, 8); 
         localStorage.setItem('loginHistory', JSON.stringify(mergedHistory));
         renderHistory(mergedHistory);
 
-        // Об'єднуємо надгробки та зберігаємо новий масив ОБ'ЄКТІВ локально
+        // Об'єднуємо надгробки
         const cloudTombObjects = cloudMeta.tombstones || [];
-        // Формуємо фінальний список надгробків (без дублів)
         const finalTombMap = new Map();
         localTombstonesRaw.forEach(t => {
             const obj = typeof t === 'string' ? { id: t, deletedAt: Date.now() } : t;
@@ -349,8 +364,6 @@ async function loadUserDataFromCloud() {
         localStorage.setItem('tombstones', JSON.stringify(Array.from(finalTombMap.values())));
         updateSyncTimeDisplay(cloudMeta.lastUpdated ? cloudMeta.lastUpdated.toDate() : new Date(), 'success');
 
-        // Якщо були старі монолітні масиви в хмарі, примусово запускаємо синхронізацію,
-        // щоб переписати їх у підколекції (Міграція бази даних)
         if (cloudMeta.templates || cloudMeta.quickNotes || cloudMeta.loginHistory) {
             needsCloudUpdate = true;
         }
@@ -3425,12 +3438,21 @@ function addTemplate() {
     
     function saveTemplates() {
     const templates = [];
+    const templateOrder = []; 
+    
     document.querySelectorAll('#templates-grid-wrapper .template-field-group').forEach(group => {
         const nameInput = group.querySelector('.template-name-input');
         const textarea = group.querySelector('textarea');
 
+        // === БРОНЕБІЙНИЙ ЗАХИСТ ID ===
+        let currentId = group.dataset.id;
+        if (!currentId || currentId === 'undefined') {
+            currentId = generateUUID(); // Генеруємо новий
+            group.dataset.id = currentId; // Одразу записуємо в HTML, щоб не загубився
+        }
+
         templates.push({
-            id: group.dataset.id,
+            id: currentId,
             updatedAt: parseInt(group.dataset.updatedAt, 10) || Date.now(),
             name: nameInput ? nameInput.value : '',
             content: textarea ? textarea.value : '',
@@ -3444,13 +3466,15 @@ function addTemplate() {
             replaceMode: group.dataset.replaceMode !== 'false',
             showSignalMode: group.dataset.showSignalMode === 'true',
             onuMode: group.dataset.onuMode || 'REG',
-            
-            // ВАЖЛИВО: Тепер зчитуємо стан прямо з міток пам'яті (dataset)
             isSearchOpen: group.dataset.isSearchOpen === 'true',
             isConfigOpen: group.dataset.isConfigOpen === 'true'
         });
+        
+        templateOrder.push(currentId);
     });
+    
     localStorage.setItem('textTemplates', JSON.stringify(templates));
+    localStorage.setItem('templateOrder', JSON.stringify(templateOrder)); 
 
     if (typeof syncTemplatesToCloud === 'function') syncTemplatesToCloud();
 }
@@ -5225,21 +5249,27 @@ function getDragAfterElement(container, y) {
     }, { offset: Number.NEGATIVE_INFINITY }).element;
 }
 
-// Функція для синхронізації DOM-порядку з масивом quickNotesArray
 function saveNewOrder() {
     const list = document.getElementById('qn-list');
     const items = [...list.querySelectorAll('.qn-item')];
     
-    // Перебудовуємо масив на основі того, як елементи стоять у DOM
     const newArray = items.map(item => {
-        // Отримуємо текст з блоку qn-text (враховуючи, що він може бути багаторядковим)
-        return item.querySelector('.qn-text').innerText;
+        const textNode = item.querySelector('.qn-text');
+        return {
+            id: textNode.dataset.id,
+            text: textNode.innerText,
+            updatedAt: Date.now()
+        };
     });
 
     quickNotesArray = newArray;
     localStorage.setItem('quickNotesData', JSON.stringify(quickNotesArray));
     
-    // Перемальовуємо, щоб оновити індекси в кнопках onclick
+    // НОВЕ: Зберігаємо порядок нотаток
+    const notesOrder = newArray.map(n => n.id);
+    localStorage.setItem('quickNotesOrder', JSON.stringify(notesOrder));
+    
+    syncNotesToCloud(); // Запускаємо синхронізацію після перетягування
     renderQuickNotes();
 }
 
