@@ -216,25 +216,27 @@ async function loadUserDataFromCloud() {
 
         // Допоміжна функція для злиття масивів
         function mergeArrays(localArr, cloudArr) {
-            // Мігруємо старі локальні дані (даємо їм ID і час)
+            // Мігруємо старі локальні дані
             let local = localArr.map(item => 
                 (typeof item === 'string') ? { id: generateUUID(), text: item, updatedAt: 0 } 
                 : (!item.id) ? { ...item, id: generateUUID(), updatedAt: 0 } : item
             );
             
-            // 1. Видаляємо локальні елементи, які були видалені в хмарі (є в cloudTombstones)
+            // Видаляємо локальні елементи, які були видалені в хмарі (є в cloudTombstones)
             local = local.filter(item => !cloudTombstones.includes(item.id));
             
-            let merged = [...local];
+            let merged = [];
 
+            // 1. Формуємо масив на основі порядку з ХМАРИ (це зберігає сортування Drag&Drop)
             cloudArr.forEach(cItem => {
-                const lIndex = merged.findIndex(l => l.id === cItem.id);
-                if (lIndex > -1) {
-                    // Збіг ID: беремо те, що новіше
-                    if (cItem.updatedAt > merged[lIndex].updatedAt) {
-                        merged[lIndex] = cItem;
-                    } else if (cItem.updatedAt < merged[lIndex].updatedAt) {
+                const lItem = local.find(l => l.id === cItem.id);
+                if (lItem) {
+                    // Збіг ID: беремо версію з новішим текстом/даними
+                    if (lItem.updatedAt > cItem.updatedAt) {
+                        merged.push(lItem);
                         needsCloudUpdate = true;
+                    } else {
+                        merged.push(cItem);
                     }
                 } else {
                     // Є в хмарі, немає локально. Чи видаляли ми його локально?
@@ -246,13 +248,17 @@ async function loadUserDataFromCloud() {
                 }
             });
 
-            // Перевіряємо, чи є локальні, яких немає в хмарі
-            merged.forEach(lItem => {
-                if (!cloudArr.find(c => c.id === lItem.id)) needsCloudUpdate = true;
+            // 2. Додаємо в кінець ті елементи, що створені локально (в офлайні) і яких ще немає в хмарі
+            local.forEach(lItem => {
+                if (!cloudArr.find(c => c.id === lItem.id)) {
+                    merged.push(lItem);
+                    needsCloudUpdate = true;
+                }
             });
 
-            // Сортуємо по даті оновлення (найновіші зверху)
-            return merged.sort((a, b) => b.updatedAt - a.updatedAt);
+            // ВИПРАВЛЕНО: Ми прибрали примусове сортування за часом (sort). 
+            // Тепер масив зберігає свій фізичний порядок, який ти задаєш перетягуванням.
+            return merged;
         }
 
         // Зливаємо Шаблони
