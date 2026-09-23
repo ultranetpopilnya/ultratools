@@ -207,22 +207,35 @@
                 <div class="template-global-actions">
 
                     <!-- Авторизація / Профіль -->
-                    <div id="auth-container" class="auth-container is-loading">
-                        <span class="auth-skeleton"></span>
+<div id="auth-container" class="auth-container is-loading">
+    <span class="auth-skeleton"></span>
 
-                        <button id="login-google-btn" class="auth-btn login-btn" onclick="loginWithGoogle()" style="display:none;">
-                            <i class="fa-brands fa-google"></i> <span class="auth-btn-text">Увійти через Google</span>
-                        </button>
+    <!-- ЄДИНА ПІГУЛКА-ОБГОРТКА -->
+    <div id="unified-pill" class="unified-pill">
+        
+        <!-- Стан 1: Кнопка Входу (тепер це div, який діє як кнопка) -->
+        <div id="login-google-btn" class="pill-content" onclick="loginWithGoogle()">
+            <i class="fa-brands fa-google"></i> 
+            <span class="auth-btn-text">Увійти</span>
+        </div>
 
-                        <div id="user-info-wrapper" class="user-info-wrapper" style="display:none;">
-                            <div class="user-avatar-wrapper">
-                                <img id="user-avatar" class="user-avatar" src="" alt="avatar">
-                                <span id="sync-status-dot" class="sync-status-dot"></span>
-                            </div>
-                            <span id="user-info" class="user-info-text"></span>
-                            <button class="logout-btn" onclick="logoutFromGoogle()" title="Вийти"><i class="fa-solid fa-right-from-bracket"></i></button>
-                        </div>
-                    </div>
+        <!-- Стан 2: Профіль користувача -->
+        <div id="user-info-wrapper" class="pill-content auth-hidden">
+            <div class="user-avatar-wrapper">
+                <img id="user-avatar" class="user-avatar" src="" alt="avatar">
+            </div>
+            
+            <span id="user-info" class="user-info-text"></span>
+            
+            <div class="auth-btn-divider"></div>
+            
+            <button class="logout-action-btn" onclick="logoutFromGoogle()" title="Вийти з акаунта">
+                <i class="fa-solid fa-right-from-bracket"></i>
+            </button>
+        </div>
+        
+    </div>
+</div>
 
                     <button id="add-template-button" title="Додати текстовий шаблон"><i class="fa-regular fa-square-plus"></i></button>
                     <input type="file" id="import-file-input" accept=".json" style="display: none;">

@@ -704,8 +704,7 @@ select:focus,
 /* --- ГРУПА 0: ПЛАВНЕ ВІДТИСКАННЯ (БАЗОВИЙ СТАН) --- */
 /* Цей блок відповідає за плавне повернення кнопки на місце після кліку чи наведення */
 .logout-btn,
-.login-btn, 
-.auth-btn,
+.unified-pill:has(#login-google-btn:not(.auth-hidden)),
 .config-clear-fields-btn,
 .config-login-regen-btn,
 .config-login-copy-btn,
@@ -744,8 +743,7 @@ select:focus,
 }
 
 /* --- ГРУПА 1: УНІВЕРСАЛЬНИЙ HOVER (Ефект "спливання" вгору) --- */
-.login-btn:hover,
-.auth-btn:hover,
+.unified-pill:has(#login-google-btn:not(.auth-hidden)):hover,
 .config-clear-fields-btn:hover,
 .config-login-copy-btn:hover,
 .config-login-regen-btn:hover,
@@ -792,8 +790,7 @@ select:focus,
 
 /* --- ГРУПА 3: СУЦІЛЬНІ КНОПКИ (Active - Ефект механічного натискання) --- */
 /* Отримують внутрішню тінь (inset) для ефекту глибини */
-.login-btn:active,
-.auth-btn:active,
+.unified-pill:has(#login-google-btn:not(.auth-hidden)):active,
 .config-clear-fields-btn:active,
 .config-mix-toggle-btn:active,
 .config-onu-mode-btn:active,
@@ -823,12 +820,11 @@ select:focus,
     transform: translateY(1px) scale(0.96) !important;
     box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.2) !important;
     filter: brightness(0.9);
-    transition: all 0.05s ease-out !important; /* Швидке натискання */
+    transition: all 0.05s ease-out !important; 
 }
 
 /* Темна тема: Коригування внутрішньої тіні для суцільних кнопок */
-body.dark .login-btn:active,
-body.dark .auth-btn:active,
+body.dark .unified-pill:has(#login-google-btn:not(.auth-hidden)):active,
 body.dark .config-clear-fields-btn:active,
 body.dark .config-mix-toggle-btn:active,
 body.dark .config-onu-mode-btn:active,
@@ -866,7 +862,7 @@ body.dark .qn-add-btn:active {
 
 /* 1. Готуємо елементи: позиціонування та обрізка хвилі по краях */
 
-.login-btn,
+.unified-pill:has(#login-google-btn:not(.auth-hidden)),
 .variant-dropdown-item,
 .speed-dropdown-item,
 .add-tab-item,
@@ -884,7 +880,7 @@ body.dark .qn-add-btn:active {
 }
 
 /* 2. Піднімаємо всі внутрішні елементи (текст, іконки), щоб хвиля протікала ПІД ними */
-.login-btn > *,
+.unified-pill #login-google-btn:not(.auth-hidden) > *,
 .variant-dropdown-item > *,
 .speed-dropdown-item > *,
 .add-tab-item > *,
@@ -909,7 +905,7 @@ body.dark .qn-add-btn:active {
 }
 
 /* 3. Базовий стиль самої хвилі (Світла тема) */
-.login-btn .ripple,
+.unified-pill:has(#login-google-btn:not(.auth-hidden)) .ripple,
 .variant-dropdown-item .ripple,
 .speed-dropdown-item .ripple,
 .add-tab-item .ripple,
@@ -932,7 +928,7 @@ body.dark .qn-add-btn:active {
 }
 
 /* 4. Колір хвилі для Темної теми */
-body.dark .login-btn .ripple,
+body.dark .unified-pill:has(#login-google-btn:not(.auth-hidden)) .ripple,
 body.dark .variant-dropdown-item .ripple,
 body.dark .speed-dropdown-item .ripple,
 body.dark .add-tab-item .ripple,
@@ -957,8 +953,6 @@ body.dark .sub-command-item .ripple {
     0% { transform: scale(0); opacity: 1; }
     100% { transform: scale(4); opacity: 0; }
 }
-/* ==================================================================== */
-
 
 /* --- ГРУПА 5: СТАН DISABLED (Вимкнені елементи) --- */
 button:disabled, input:disabled, select:disabled {
@@ -2787,7 +2781,7 @@ body.dark .history-copy-btn:hover {
 
 /* Коли додано клас is-empty, контейнер звужується */
 .container[data-content="text-templates"].is-empty {
-    width: 64%;
+    width: 66%;
     height: 56%; 
 }
 
@@ -2803,7 +2797,7 @@ body.dark .history-copy-btn:hover {
     text-align: center;
     border: 2px dashed var(--input-border-color);
     border-radius: 12px;
-    margin: auto 50px;
+    margin: auto 46px;
     background-color: rgba(0, 0, 0, 0.02);
     animation: fadeIn 0.4s ease-in-out;
 }
@@ -2841,10 +2835,9 @@ body.dark .empty-templates-message {
 }
 
 /* =========================================
-   СТИЛІ ДЛЯ FIREBASE АВТОРИЗАЦІЇ
+   СТИЛІ ДЛЯ FIREBASE АВТОРИЗАЦІЇ (MORPHING PILL)
    ========================================= */
 
-/* Контейнер авторизації */
 .auth-container {
     position: relative;
     top: 5px;
@@ -2853,9 +2846,7 @@ body.dark .empty-templates-message {
     justify-content: center;
 }
 
-/* =========================================
-   1. СТАН ЗАВАНТАЖЕННЯ (поки Firebase визначає юзера)
-   ========================================= */
+/* --- Скелетон завантаження --- */
 .auth-skeleton {
     display: none;
     width: 88px;
@@ -2865,10 +2856,8 @@ body.dark .empty-templates-message {
     background-size: 200% 100%;
     animation: skeleton-shimmer 1.4s ease-in-out infinite;
 }
-
-.auth-container.is-loading .auth-skeleton {
-    display: block;
-}
+.auth-container.is-loading .auth-skeleton { display: block; }
+.auth-container.is-loading .unified-pill { display: none; }
 
 @keyframes skeleton-shimmer {
     0% { background-position: 200% 0; }
@@ -2876,246 +2865,200 @@ body.dark .empty-templates-message {
 }
 
 /* =========================================
-   2. КНОПКА ВХОДУ (УВІЙТИ ЧЕРЕЗ GOOGLE)
+   ОБГОРТКА ПІГУЛКИ (Сам фон і рамка)
    ========================================= */
-.login-btn, .auth-btn {
+.unified-pill {
+    position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-
-    height: 30px; /* Збігається з висотою інших кнопок шапки */
-    padding: 0 14px;
-
-    background-color: var(--btn-bg);
-    border: 1px solid var(--input-border-color);
-    border-radius: 9999px;
-
-    color: var(--text-color);
-    font-size: 13px;
-    font-weight: 600;
-    font-family: inherit;
-    cursor: pointer;
-
-    transition: border-color 0.2s ease, color 0.2s ease,
-                transform 0.15s ease, box-shadow 0.2s ease;
-}
-
-/* Фірмовий колір Google для іконки */
-.login-btn i, .auth-btn i {
-    color: #DB4437;
-    font-size: 14px;
-    transition: transform 0.2s ease, color 0.2s ease;
-}
-
-.login-btn:hover, .auth-btn:hover {
-    border-color: var(--primary-accent-color);
-    color: var(--primary-accent-color);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-}
-
-.login-btn:hover i, .auth-btn:hover i {
-    transform: scale(1.1);
-}
-
-.login-btn:active, .auth-btn:active {
-    transform: scale(0.96);
-}
-
-body.dark .login-btn,
-body.dark .auth-btn {
-    background-color: var(--btn-bg);
-    border-color: var(--input-border-color);
-}
-
-body.dark .login-btn:hover,
-body.dark .auth-btn:hover {
-    border-color: var(--secondary-accent-color);
-    color: var(--secondary-accent-color);
-}
-
-/* =========================================
-   3. БЛОК ІНФОРМАЦІЇ КОРИСТУВАЧА
-   ========================================= */
-.user-info-wrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-
+    
     height: 30px;
-    max-width: 200px;
-    padding: 0 4px 0 6px;
-
     background-color: var(--btn-bg);
     border: 1px solid var(--input-border-color);
     border-radius: 9999px;
-
-    transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.15s ease;
+    
+    /* Магія! Обрізає контент під час звуження пігулки */
+    overflow: hidden; 
+    
+    transition: width 0.35s cubic-bezier(0.25, 1, 0.5, 1),
+                border-color 0.2s ease, box-shadow 0.2s ease;
+    will-change: width;
 }
 
-.user-info-wrapper:hover {
-    border-color: var(--input-border-color);
+.unified-pill:hover {
+    border-color: var(--primary-accent-color);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
-.user-avatar-wrapper {
-    position: relative;
-    display: flex;
-    flex-shrink: 0;
-}
-
-.user-avatar {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: none;
-    flex-shrink: 0;
-
-    opacity: 0;
-    transform: scale(0.6);
-    animation: avatar-pop-in 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s forwards;
-}
-
-@keyframes avatar-pop-in {
-    from { opacity: 0; transform: scale(0.6); }
-    to   { opacity: 1; transform: scale(1); }
-}
-
-.user-info-text {
-    font-size: 12.5px;
-    font-weight: 600;
-    color: var(--text-color);
-
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-
-    opacity: 0;
-    animation: text-slide-in 0.3s ease 0.15s forwards;
-}
-
-@keyframes text-slide-in {
-    from { opacity: 0; transform: translateX(-4px); }
-    to   { opacity: 1; transform: translateX(0); }
-}
-
-.logout-btn {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    width: 22px;
-    height: 22px;
-    padding: 0;
-    flex-shrink: 0;
-
-    background-color: transparent;
-    border: none;
-    border-radius: 50%;
-
-    color: var(--inactive-text);
-    font-size: 13px;
-    cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.logout-btn:hover {
-    background-color: rgba(220, 38, 38, 0.1);
-    color: var(--danger-color);
-}
-
-.logout-btn:active {
-    background-color: var(--danger-color);
-    color: white;
-    transform: rotate(90deg) scale(0.9);
-}
-
-body.dark .logout-btn:hover {
-    background-color: var(--danger-bg-dark);
+body.dark .unified-pill:hover {
+    border-color: var(--secondary-accent-color);
 }
 
 /* =========================================
-   4. ІНДИКАТОР СИНХРОНІЗАЦІЇ
+   ВНУТРІШНІЙ КОНТЕНТ (Увійти або Профіль)
    ========================================= */
-.sync-time-display {
-    display: none;
+.pill-content {
+    display: flex;
     align-items: center;
-    gap: 5px;
-    font-size: 12px;
+    height: 100%;
+    box-sizing: border-box;
+    white-space: nowrap; /* Не дає тексту переноситись під час звуження */
+    
+    color: var(--text-color);
+    font-size: 13px;
+    font-weight: 600;
+    
+    transition: opacity 0.3s ease, transform 0.35s ease;
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* --- СТАН ПРИХОВУВАННЯ --- */
+.pill-content.auth-hidden {
+    position: absolute; /* Відриваємо від потоку, щоб він не впливав на ширину обгортки */
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0.9); /* Злегка зменшується при зникненні */
+}
+
+/* --- Відступи для конкретних станів --- */
+#login-google-btn {
+    padding: 0 16px 0 14px;
+    gap: 6px;
+    cursor: pointer;
+}
+
+#login-google-btn i {
+    color: #DB4437; 
+    font-size: 14px;
+    transition: transform 0.2s ease;
+    
+}
+#login-google-btn:hover i { transform: scale(1.14); }
+#login-google-btn:active { transform: scale(0.96); }
+
+#user-info-wrapper {
+    padding: 0 4px 0 4px;
+    gap: 6px;
+}
+
+/* =========================================
+   ЕЛЕМЕНТИ ПРОФІЛЮ (Аватарка, текст, вихід)
+   ========================================= */
+.user-avatar-wrapper { width: 22px; height: 22px; flex-shrink: 0; }
+.user-avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+.user-info-text { max-width: 110px; overflow: hidden; text-overflow: ellipsis; font-size: 12.5px; }
+
+/* Анімація появи елементів після розширення пігулки */
+#user-info-wrapper:not(.auth-hidden) .user-avatar {
+    animation: avatar-pop-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 0.15s both;
+}
+#user-info-wrapper:not(.auth-hidden) .user-info-text {
+    animation: text-slide-in 0.3s ease 0.2s both;
+}
+@keyframes avatar-pop-in {
+    from { opacity: 0; transform: scale(0.4) rotate(-15deg); }
+    to   { opacity: 1; transform: scale(1) rotate(0); }
+}
+
+.auth-btn-divider {
+    width: 1px; height: 14px; background-color: var(--input-border-color); margin: 0 2px;
+}
+
+.logout-action-btn {
+    display: flex; justify-content: center; align-items: center;
+    width: 24px; height: 24px; padding: 0; flex-shrink: 0;
+    background: transparent; border: none; border-radius: 50%;
+    color: var(--inactive-text); font-size: 12.5px;
+    cursor: pointer; transition: all 0.2s;
+}
+.logout-action-btn:hover { background: rgba(220, 38, 38, 0.1); color: var(--danger-color); }
+.logout-action-btn:active { transform: scale(0.9); }
+body.dark .logout-action-btn:hover { background: var(--danger-bg-dark); }
+
+/* =========================================
+   1. АНІМАЦІЯ КРУТІННЯ (Іконка синхронізації)
+   ========================================= */
+.sync-time-display.syncing i {
+    display: inline-block; /* ВАЖЛИВО: Без цього rotate не працює! */
+    animation: sync-spin-icon 1s linear infinite;
+    transform-origin: center; /* Крутимо рівно по центру */
+}
+
+@keyframes sync-spin-icon {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* =========================================
+   ІНДИКАТОР СИНХРОНІЗАЦІЇ (Базові стилі)
+   ========================================= */
+#sync-time-display {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
     font-weight: 500;
     color: var(--inactive-text);
     white-space: nowrap;
-    transition: color 0.2s ease;
-    position: relative;
+    
+    /* Прихований за замовчуванням */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(2px);
+    transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease, color 0.3s ease;
 }
 
-.sync-time-display.visible {
-    display: inline-flex;
-    animation: text-slide-in 0.3s ease forwards;
-}
-
-/* 1. Вирівнюємо будь-яку іконку синхронізації */
-.sync-time-display i {
-    font-size: 12px; 
-    position: relative; 
-}
-
-/* 2. Робимо іконку галочки зеленою */
-.sync-time-display i.fa-check-circle {
-    color: var(--success-color);
-}
-
-/* --- АНІМАЦІЯ: СПІНЕР (Крутіння іконки) --- */
-.sync-time-display.syncing i {
-    animation: sync-spin 0.9s linear infinite;
-}
-
-@keyframes sync-spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
-
-/* --- ЄДИНА КРАСИВА АНІМАЦІЯ ЗМІНИ ТЕКСТУ --- */
-@keyframes text-swap-elegant {
-    0% { 
-        opacity: 0; 
-        transform: translateY(3px); /* Ледве помітний рух знизу */
-    }
-    100% { 
-        opacity: 1; 
-        transform: translateY(0); 
-    }
-}
-
-/* Застосовуємо ОДНАКОВУ анімацію до обох станів */
-.sync-time-display.syncing {
-    color: var(--primary-accent-color);
-    animation: text-swap-elegant 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-}
-
-.sync-time-display.sync-success {
-    color: var(--inactive-text);
-    animation: text-swap-elegant 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+/* Стан видимості */
+#sync-time-display.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
 }
 
 /* =========================================
-   5. ПЕРЕХОДИ МІЖ СТАНАМИ (вхід / вихід)
+   СТАНИ СИНХРОНІЗАЦІЇ
    ========================================= */
 
-/* Проста і однакова зміна для обох напрямків — просто плавне згасання/прояв */
-.login-btn,
-.user-info-wrapper {
-    transition: opacity 220ms ease;
-    opacity: 1;
+/* 1. Успіх (Колір іконки та анімація, яку перезапускає JS-хак) */
+#sync-time-display.sync-success {
+    animation: sync-pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+#sync-time-display.sync-success i {
+    color: #27ae60; /* Зелений колір успіху */
 }
 
-.login-btn.auth-hidden,
-.user-info-wrapper.auth-hidden {
-    opacity: 0;
-    pointer-events: none;
+/* 2. В процесі (Колір тексту під час крутіння) */
+#sync-time-display.syncing {
+    color: var(--primary-accent-color, #3498db);
 }
+
+/* 3. Помилка / Офлайн (Спрацьовує візуальний струс) */
+#sync-time-display.sync-error {
+    animation: sync-shake 0.4s ease-in-out;
+    /* Колір #f39c12 задається безпосередньо у вашому JS */
+}
+
+/* =========================================
+   АНІМАЦІЇ ДЛЯ СТАТУСІВ
+   ========================================= */
+
+/* Легка пульсація при успішному збереженні */
+@keyframes sync-pop {
+    0% { transform: scale(0.95); opacity: 0.7; }
+    50% { transform: scale(1.05); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* Смикання, якщо збережено локально (офлайн/помилка) */
+@keyframes sync-shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-3px); }
+    50% { transform: translateX(3px); }
+    75% { transform: translateX(-2px); }
+}
+
 
 /* =========================================================
    УНІВЕРСАЛЬНИЙ ГРАДІЄНТНИЙ РОЗДІЛЮВАЧ (В ПОТОЦІ)

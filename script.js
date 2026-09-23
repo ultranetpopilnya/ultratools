@@ -44,6 +44,8 @@ function formatSyncDateTime(date) {
 
 // Оновлює постійний напис праворуч. status може бути: 'syncing', 'success', 'error'
 function updateSyncTimeDisplay(date, status = 'success') {
+    if (!currentUser) return; 
+
     const el = document.getElementById('sync-time-display');
     if (!el) return;
     el.classList.add('visible');
@@ -56,23 +58,39 @@ function updateSyncTimeDisplay(date, status = 'success') {
     } else if (status === 'error') {
         el.classList.add('sync-error');
         el.innerHTML = `<i class="fa-solid fa-cloud-arrow-down"></i> Збережено локально (Офлайн)`;
-        el.style.color = '#f39c12'; // Помаранчевий колір для офлайну
+        el.style.color = '#f39c12';
     } else {
         el.classList.add('sync-success');
         el.innerHTML = `<i class="fas fa-check-circle"></i> Синхр.: ${formatSyncDateTime(date)}`;
-        el.style.color = ''; // Повертаємо стандартний колір
+        el.style.color = '';
     }
+}
+
+function markSyncedNow() {
+    if (!currentUser) return; 
+    
+    const now = new Date();
+    localStorage.setItem('lastSyncTime', now.toISOString());
+    updateSyncTimeDisplay(now, 'success');
 }
 
 function hideSyncTimeDisplay() {
     const el = document.getElementById('sync-time-display');
-    if (el) el.classList.remove('visible', 'syncing', 'sync-success', 'sync-error');
-}
+    if (!el) return;
 
-function markSyncedNow() {
-    const now = new Date();
-    localStorage.setItem('lastSyncTime', now.toISOString());
-    updateSyncTimeDisplay(now, 'success');
+    // Робимо плавне розчинення перед тим, як прибрати елемент
+    el.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(3px)';
+
+    // Через 250мс (коли анімація завершиться) фізично ховаємо його
+    setTimeout(() => {
+        el.classList.remove('visible', 'syncing', 'sync-success', 'sync-error');
+        // Очищаємо інлайн-стилі, щоб при наступному вході анімація появи спрацювала чисто
+        el.style.opacity = '';
+        el.style.transform = '';
+        el.style.transition = '';
+    }, 250);
 }
 
 // Ця функція сама викликається, коли статус входу змінюється (увійшов/вийшов)
@@ -113,6 +131,7 @@ auth.onAuthStateChanged((user) => {
         animatedAuthSwitch(userInfoWrapper, loginBtn);
         
         if(userInfo) userInfo.textContent = '';
+        if(userAvatar) userAvatar.src = '';
         hideSyncTimeDisplay(); 
     }
 });
@@ -399,40 +418,51 @@ function logoutFromGoogle() {
     });
 }
 
-// Проста плавна зміна кнопки "Увійти" <-> картки користувача. Без рухів, тільки opacity.
+// Проста плавна зміна кнопки "Увійти" <-> картки користувача.
 const AUTH_SWITCH_DURATION = 220; // мс — має збігатись з transition у CSS
 
+// Розумна плавна зміна розміру пігулки (FLIP Animation)
 function animatedAuthSwitch(hideEl, showEl) {
     if (!hideEl || !showEl) return;
 
-    const isFirstRender = getComputedStyle(hideEl).display === 'none'
-                        && getComputedStyle(showEl).display === 'none';
+    const pill = document.getElementById('unified-pill');
+    if (!pill) return;
 
-    // Перший рендер сторінки — без анімації, щоб нічого не блимало
-    if (isFirstRender) {
-        hideEl.style.display = 'none';
+    // Якщо це перше завантаження (відбувається миттєво без анімації)
+    if (!pill.classList.contains('initialized')) {
+        pill.classList.add('initialized');
+        hideEl.classList.add('auth-hidden');
         showEl.classList.remove('auth-hidden');
-        showEl.style.display = 'flex';
         return;
     }
 
-    // 1. Гасимо поточний елемент
+    // 1. Фіксуємо поточну ширину пігулки, щоб вона не смикнулася
+    const startWidth = pill.offsetWidth;
+    pill.style.width = startWidth + 'px';
+
+    // 2. Підміняємо контент 
+    // (старий стає position:absolute і зникає, новий з'являється)
     hideEl.classList.add('auth-hidden');
+    showEl.classList.remove('auth-hidden');
 
+    // 3. Вимірюємо, яку ширину потребує новий контент
+    pill.style.width = 'max-content'; 
+    const targetWidth = pill.offsetWidth;
+
+    // 4. Миттєво повертаємо на стартову ширину для початку анімації
+    pill.style.width = startWidth + 'px';
+
+    // 5. Змушуємо браузер запам'ятати стартову ширину (Reflow hack)
+    void pill.offsetHeight;
+
+    // 6. Запускаємо CSS-анімацію розширення/звуження до нової ширини
+    pill.style.width = targetWidth + 'px';
+
+    // 7. Очищаємо жорстко задану ширину після завершення анімації (350мс),
+    // щоб пігулка залишалася "гумовою" (якщо, наприклад, зміниться шрифт)
     setTimeout(() => {
-        hideEl.style.display = 'none';
-        hideEl.classList.remove('auth-hidden');
-    }, AUTH_SWITCH_DURATION);
-
-    // 2. Проявляємо новий елемент
-    showEl.classList.add('auth-hidden');
-    showEl.style.display = 'flex';
-
-    requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-            showEl.classList.remove('auth-hidden');
-        });
-    });
+        pill.style.width = ''; 
+    }, 350); 
 }
 
 function clearAllTemplates() {
@@ -5415,7 +5445,7 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('mousedown', function (e) {
     // Перевіряємо, чи клік був по одному з вказаних класів/ID
     const targetBtn = e.target.closest(`
-        .login-btn,
+        .unified-pill:has(#login-google-btn:not(.auth-hidden)),
         .variant-dropdown-item,
         .speed-dropdown-item,
         .add-tab-item,
