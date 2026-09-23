@@ -24,6 +24,7 @@ db.enablePersistence({ synchronizeTabs: true })
   });
 
 let currentUser = null;
+let authStateResolved = false; 
 let quickNotesArray = [];
 
 // === ГЕНЕРАТОР УНІКАЛЬНИХ ID (UUID) ===
@@ -95,6 +96,7 @@ function hideSyncTimeDisplay() {
 
 // Ця функція сама викликається, коли статус входу змінюється (увійшов/вийшов)
 auth.onAuthStateChanged((user) => {
+    authStateResolved = true;
     document.getElementById('auth-container')?.classList.remove('is-loading');
 
     currentUser = user;
@@ -514,6 +516,11 @@ function animatedAuthSwitch(hideEl, showEl) {
 
 function clearAllTemplates() {
     const templatesGrid = document.getElementById('templates-grid-wrapper');
+
+        if (!authStateResolved) {
+        showNotification("Зачекайте, перевіряємо стан акаунта...", 'warning');
+        return;
+    }
     
     // Безпечна перевірка
     if (!templatesGrid) {
@@ -2979,6 +2986,10 @@ if (!oltObj) {
     deleteButton.title = 'Видалити шаблон';
     deleteButton.className = 'delete-template-btn';
     deleteButton.onclick = () => {
+        if (!authStateResolved) {
+        showNotification("Зачекайте, перевіряємо стан акаунта...", 'warning');
+        return;
+    }
         if (confirm('Видалити цей шаблон назавжди? (Він також зникне з вашого акаунта на інших пристроях)')) {
             const templateId = fieldGroup.dataset.id;
             
@@ -5259,6 +5270,11 @@ function editQuickNote(index) {
 
 // 8. Видалити нотатку
 function deleteQuickNote(index) {
+    if (!authStateResolved) {
+        showNotification("Зачекайте, перевіряємо стан акаунта...", 'warning');
+        return;
+    }
+    
     if (confirm("Видалити цю нотатку назавжди (з усіх пристроїв)?")) {
         const noteId = quickNotesArray[index].id;
         
