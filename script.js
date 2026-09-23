@@ -2921,6 +2921,7 @@ if (!oltObj) {
             }
             fieldGroup.remove();
             saveTemplates();
+            checkEmptyTemplatesState();
         }
     };
 
@@ -3462,6 +3463,7 @@ function addTemplate() {
         if (nameInput) nameInput.focus({ preventScroll: true });
         
         saveTemplates();
+        checkEmptyTemplatesState();
 
         // --- НАДІЙНА ПРОКРУТКА ---
         // Знаходимо саме той контейнер, який має скрол (біла картка)
@@ -3546,6 +3548,7 @@ function addTemplate() {
             console.error("Критична помилка читання збережених шаблонів:", e);
         }
     }
+    checkEmptyTemplatesState();
 }
     
     function exportToFile() {
@@ -3619,7 +3622,8 @@ function addTemplate() {
                 if (template) createTemplateField(template); 
             });
             
-            saveTemplates(); 
+            saveTemplates();
+            checkEmptyTemplatesState(); 
             
             // --- 2. ІМПОРТ НОТАТОК (ПРАВИЛЬНИЙ ПОРЯДОК) ---
 if (parsedData.isUltraBackup && notesToImport.length > 0) {
@@ -5538,3 +5542,22 @@ document.addEventListener('DOMContentLoaded', () => {
     // Початковий виклик
     updateDivider();
 });
+
+function checkEmptyTemplatesState() {
+    const gridWrapper = document.getElementById('templates-grid-wrapper');
+    const emptyMessage = document.getElementById('empty-templates-message');
+    const container = document.querySelector('.container[data-content="text-templates"]');
+    
+    // Перевіряємо кількість елементів у сітці
+    if (gridWrapper.children.length === 0) {
+        // Якщо порожньо
+        gridWrapper.style.display = 'none';
+        emptyMessage.style.display = 'flex';
+        container.classList.add('is-empty'); // Звужуємо контейнер
+    } else {
+        // Якщо є хоча б один шаблон
+        gridWrapper.style.display = ''; // Повертаємо стандартний display (grid/flex)
+        emptyMessage.style.display = 'none';
+        container.classList.remove('is-empty'); // Розширюємо контейнер
+    }
+}

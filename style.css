@@ -2773,6 +2773,73 @@ body.dark .history-copy-btn:hover {
     gap: 10px;
 }
 
+/* ========================================= */
+/* === РОЗУМНИЙ КОНТЕЙНЕР ДЛЯ ШАБЛОНІВ === */
+/* ========================================= */
+.container[data-content="text-templates"] {
+    /* Плавна анімація зміни ширини, як у GPON команд */
+    transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1),
+                opacity 0.3s ease-in-out, 
+                transform 0.3s ease-in-out !important;
+    
+    width: 100%;
+}
+
+/* Коли додано клас is-empty, контейнер звужується */
+.container[data-content="text-templates"].is-empty {
+    width: 64%;
+    height: 56%; 
+}
+
+/* ========================================= */
+/* === СТИЛІ ПОРОЖНЬОГО СТАНУ === */
+/* ========================================= */
+.empty-templates-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 50px;
+    text-align: center;
+    border: 2px dashed rgba(129, 30, 113, 0.3);
+    border-radius: 12px;
+    margin: auto 50px;
+    background-color: rgba(0, 0, 0, 0.02);
+    animation: fadeIn 0.4s ease-in-out;
+}
+
+body.dark .empty-templates-message {
+    border-color: rgba(255, 255, 255, 0.15);
+    background-color: rgba(255, 255, 255, 0.02);
+}
+
+.empty-templates-message img {
+    width: 70px;
+    height: 70px;
+    margin-bottom: 15px;
+    opacity: 0.8;
+    filter: grayscale(0.2);
+}
+
+.empty-templates-message h3 {
+    margin: 0 0 10px 0;
+    font-size: 1.2rem;
+    color: var(--text-color);
+}
+
+.empty-templates-message p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--text-color);
+    opacity: 0.7;
+    line-height: 1.5;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
 /* =========================================
    СТИЛІ ДЛЯ FIREBASE АВТОРИЗАЦІЇ
    ========================================= */
