@@ -2781,8 +2781,8 @@ body.dark .history-copy-btn:hover {
 
 /* Коли додано клас is-empty, контейнер звужується */
 .container[data-content="text-templates"].is-empty {
-    width: 66%;
-    height: 56%; 
+    width: 56%;
+    height: 54%; 
 }
 
 /* ========================================= */
@@ -2797,7 +2797,7 @@ body.dark .history-copy-btn:hover {
     text-align: center;
     border: 2px dashed var(--input-border-color);
     border-radius: 12px;
-    margin: auto 46px;
+    margin: auto 42px;
     background-color: rgba(0, 0, 0, 0.02);
     animation: fadeIn 0.4s ease-in-out;
 }
