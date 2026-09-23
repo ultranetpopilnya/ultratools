@@ -2872,18 +2872,12 @@ body.dark .empty-templates-message {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    
     height: 30px;
     background-color: var(--btn-bg);
     border: 1px solid var(--input-border-color);
     border-radius: 9999px;
-    
-    /* Магія! Обрізає контент під час звуження пігулки */
     overflow: hidden; 
-    
-    transition: width 0.35s cubic-bezier(0.25, 1, 0.5, 1),
-                border-color 0.2s ease, box-shadow 0.2s ease;
-    will-change: width;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .unified-pill:hover {
@@ -2899,27 +2893,42 @@ body.dark .unified-pill:hover {
    ВНУТРІШНІЙ КОНТЕНТ (Увійти або Профіль)
    ========================================= */
 .pill-content {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     height: 100%;
     box-sizing: border-box;
-    white-space: nowrap; /* Не дає тексту переноситись під час звуження */
+    white-space: nowrap;
+    overflow: hidden; 
     
     color: var(--text-color);
     font-size: 13px;
     font-weight: 600;
     
-    transition: opacity 0.3s ease, transform 0.35s ease;
+    /* ДОДАНО gap у transition для ідеальної плавності */
+    transition: max-width 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                padding 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                gap 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.3s ease, 
+                transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    
     opacity: 1;
     transform: scale(1);
 }
 
+/* Трохи збільшив max-width, щоб текст гарантовано не обрізався завчасно */
+#login-google-btn { max-width: 140px; gap: 8px; }
+#user-info-wrapper { max-width: 220px; gap: 6px; }
+
 /* --- СТАН ПРИХОВУВАННЯ --- */
 .pill-content.auth-hidden {
-    position: absolute; /* Відриваємо від потоку, щоб він не впливав на ширину обгортки */
-    opacity: 0;
+    max-width: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin: 0 !important;
+    gap: 0 !important; /* <--- САМЕ ЦЕ ПРИБИРАЄ РИВОК В КІНЦІ */
+    opacity: 0 !important;
     pointer-events: none;
-    transform: scale(0.9); /* Злегка зменшується при зникненні */
+    transform: scale(0.9) !important;
 }
 
 /* --- Відступи для конкретних станів --- */
