@@ -3103,27 +3103,18 @@ body.dark .logout-btn:hover {
 /* =========================================
    5. ПЕРЕХОДИ МІЖ СТАНАМИ (вхід / вихід)
    ========================================= */
+
+/* Проста і однакова зміна для обох напрямків — просто плавне згасання/прояв */
 .login-btn,
 .user-info-wrapper {
-    animation: auth-fade-in 0.25s ease forwards;
+    transition: opacity 220ms ease;
+    opacity: 1;
 }
 
-@keyframes auth-fade-in {
-    from { opacity: 0; transform: translateY(-2px); }
-    to   { opacity: 1; transform: translateY(0); }
-}
-
-.auth-container.is-authenticating .login-btn {
-    animation: auth-fade-out 0.2s ease forwards;
-}
-
-.auth-container.is-signing-out .user-info-wrapper {
-    animation: auth-fade-out 0.2s ease forwards;
-}
-
-@keyframes auth-fade-out {
-    from { opacity: 1; transform: translateY(0) scale(1); }
-    to   { opacity: 0; transform: translateY(-2px) scale(0.96); }
+.login-btn.auth-hidden,
+.user-info-wrapper.auth-hidden {
+    opacity: 0;
+    pointer-events: none;
 }
 
 /* =========================================================

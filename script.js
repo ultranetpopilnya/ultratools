@@ -104,7 +104,7 @@ auth.onAuthStateChanged((user) => {
         // === КОРИСТУВАЧ АВТОРИЗОВАНИЙ ===
         
         // Використовуємо твій клас 'is-authenticating'
-        animatedAuthSwitch(loginBtn, userInfoWrapper, 'is-authenticating');
+        animatedAuthSwitch(loginBtn, userInfoWrapper);
         
         const firstName = user.displayName ? user.displayName.split(' ')[0] : 'Користувач';
         if(userInfo) userInfo.textContent = firstName;
@@ -125,7 +125,7 @@ auth.onAuthStateChanged((user) => {
         localStorage.removeItem('lastSyncTime'); 
         
         // Використовуємо твій клас 'is-signing-out'
-        animatedAuthSwitch(userInfoWrapper, loginBtn, 'is-signing-out');
+        animatedAuthSwitch(userInfoWrapper, loginBtn);
         
         if(userInfo) userInfo.textContent = '';
         hideSyncTimeDisplay(); 
@@ -414,29 +414,40 @@ function logoutFromGoogle() {
     });
 }
 
-// Функція, яка використовує твої CSS-анімації для плавного переходу
-function animatedAuthSwitch(hideEl, showEl, containerClass) {
-    if (!hideEl || !showEl) return;
-    const container = document.querySelector('.auth-container') || document.getElementById('auth-container');
+// Проста плавна зміна кнопки "Увійти" <-> картки користувача. Без рухів, тільки opacity.
+const AUTH_SWITCH_DURATION = 220; // мс — має збігатись з transition у CSS
 
-    // Якщо сторінка тільки завантажилась, міняємо без анімації (щоб не блимало)
-    if (window.getComputedStyle(hideEl).display === 'none') {
+function animatedAuthSwitch(hideEl, showEl) {
+    if (!hideEl || !showEl) return;
+
+    const isFirstRender = getComputedStyle(hideEl).display === 'none'
+                        && getComputedStyle(showEl).display === 'none';
+
+    // Перший рендер сторінки — без анімації, щоб нічого не блимало
+    if (isFirstRender) {
         hideEl.style.display = 'none';
+        showEl.classList.remove('auth-hidden');
         showEl.style.display = 'flex';
         return;
     }
 
-    // 1. Додаємо клас для анімації зникнення (з твого CSS)
-    if (container) container.classList.add(containerClass);
+    // 1. Гасимо поточний елемент
+    hideEl.classList.add('auth-hidden');
 
-    // 2. Чекаємо 200мс (рівно стільки триває твоя анімація auth-fade-out)
     setTimeout(() => {
         hideEl.style.display = 'none';
-        showEl.style.display = 'flex'; // Твоя анімація auth-fade-in запуститься автоматично
+        hideEl.classList.remove('auth-hidden');
+    }, AUTH_SWITCH_DURATION);
 
-        // Прибираємо клас, щоб все було готово для наступного разу
-        if (container) container.classList.remove(containerClass);
-    }, 200); 
+    // 2. Проявляємо новий елемент
+    showEl.classList.add('auth-hidden');
+    showEl.style.display = 'flex';
+
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            showEl.classList.remove('auth-hidden');
+        });
+    });
 }
 
 function clearAllTemplates() {
