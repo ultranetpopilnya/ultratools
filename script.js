@@ -154,12 +154,27 @@ const SyncManager = {
 
         try {
             const templates = JSON.parse(localStorage.getItem('textTemplates') || '[]');
-            const quickNotes = JSON.parse(localStorage.getItem('quickNotesData') || '[]');
+            let quickNotes = JSON.parse(localStorage.getItem('quickNotesData') || '[]');
             const loginHistory = JSON.parse(localStorage.getItem('loginHistory') || '[]');
             let tombstones = JSON.parse(localStorage.getItem('tombstones') || '[]');
             
             const templateOrder = JSON.parse(localStorage.getItem('templateOrder') || '[]');
             const quickNotesOrder = JSON.parse(localStorage.getItem('quickNotesOrder') || '[]');
+
+            // === ВИПРАВЛЕННЯ: Конвертуємо старі текстові нотатки в правильні об'єкти ===
+            let notesChanged = false;
+            quickNotes = quickNotes.map(note => {
+                if (typeof note === 'string') {
+                    notesChanged = true;
+                    return { id: generateUUID(), text: note, updatedAt: Date.now() };
+                }
+                return note;
+            });
+            // Якщо були старі нотатки, перезаписуємо їх локально, щоб більше не було проблем
+            if (notesChanged) {
+                localStorage.setItem('quickNotesData', JSON.stringify(quickNotes));
+            }
+            // =========================================================================
 
             tombstones = tombstones.map(t => typeof t === 'string' ? { id: t, deletedAt: Date.now() } : t);
             const THIRTY_DAYS = 2592000000; 
@@ -171,16 +186,22 @@ const SyncManager = {
 
             // === БРОНЕБІЙНИЙ ЗАХИСТ ПЕРЕД ВІДПРАВКОЮ ===
             templates.forEach(tpl => {
-                if (!tpl.id) tpl.id = generateUUID(); // Захист
-                batch.set(userRef.collection('templates').doc(tpl.id), tpl, { merge: true });
+                if (typeof tpl === 'object') { // Додатковий захист
+                    if (!tpl.id) tpl.id = generateUUID(); 
+                    batch.set(userRef.collection('templates').doc(tpl.id), tpl, { merge: true });
+                }
             });
             quickNotes.forEach(note => {
-                if (!note.id) note.id = generateUUID(); // Захист
-                batch.set(userRef.collection('quickNotes').doc(note.id), note, { merge: true });
+                if (typeof note === 'object') { // Додатковий захист
+                    if (!note.id) note.id = generateUUID(); 
+                    batch.set(userRef.collection('quickNotes').doc(note.id), note, { merge: true });
+                }
             });
             loginHistory.forEach(hist => {
-                if (!hist.id) hist.id = generateUUID(); // Захист
-                batch.set(userRef.collection('loginHistory').doc(hist.id), hist, { merge: true });
+                if (typeof hist === 'object') { // Додатковий захист
+                    if (!hist.id) hist.id = generateUUID(); 
+                    batch.set(userRef.collection('loginHistory').doc(hist.id), hist, { merge: true });
+                }
             });
 
             tombstones.forEach(tomb => {
