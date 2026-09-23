@@ -190,79 +190,37 @@ const debouncedSaveTemplates = () => {
     }, 400);
 };
 
-// --- ЗАВАНТАЖЕННЯ ДАНИХ З ХМАРИ (БЕЗПЕЧНЕ ЗЛИТТЯ) ---
+// --- ЗАВАНТАЖЕННЯ ДАНИХ З ХМАРИ (ХМАРА — ЄДИНИЙ ХАЗЯЇН) ---
 async function loadUserDataFromCloud() {
     if (!currentUser) return;
 
     try {
         const userRef = db.collection('users').doc(currentUser.uid);
-        
-        // 1. Зчитуємо головний документ
         const docSnap = await userRef.get();
         let cloudData = docSnap.exists ? docSnap.data() : null;
 
-        // Рятувальний круг: якщо дані раніше застрягли в підколекціях — витягуємо їх
-        let cloudTemplates = (cloudData && cloudData.templates) ? cloudData.templates : null;
-        if (!cloudTemplates) {
-            try {
-                const subSnap = await userRef.collection('templates').get();
-                if (!subSnap.empty) {
-                    cloudTemplates = subSnap.docs.map(d => d.data());
-                    console.log(`📦 Знайдено ${cloudTemplates.length} старих шаблонів у підколекції, мігруємо...`);
-                }
-            } catch (e) {}
-        }
-        cloudTemplates = cloudTemplates || [];
-
-        let cloudNotes = (cloudData && cloudData.quickNotes) || [];
-        let cloudHistory = (cloudData && cloudData.loginHistory) || [];
+        let cloudTemplates = (cloudData && cloudData.templates !== undefined) ? cloudData.templates : null;
+        let cloudNotes = (cloudData && cloudData.quickNotes !== undefined) ? cloudData.quickNotes : null;
+        let cloudHistory = (cloudData && cloudData.loginHistory !== undefined) ? cloudData.loginHistory : null;
         let cloudTplOrder = (cloudData && cloudData.templateOrder) || [];
         let cloudNotesOrder = (cloudData && cloudData.quickNotesOrder) || [];
 
         let localTemplates = JSON.parse(localStorage.getItem('textTemplates') || '[]');
-        let localNotes = JSON.parse(localStorage.getItem('quickNotesData') || '[]');
-        let localHistory = JSON.parse(localStorage.getItem('loginHistory') || '[]');
 
-        console.log(`📥 [LOAD] Хмара: ${cloudTemplates.length} шаблонів | Локально: ${localTemplates.length} шаблонів`);
-
-        // --- ЛОГІКА ЗЛИТТЯ: ХМАРА НІКОЛИ НЕ СТИРАЄТЬСЯ ПОРОЖНЕЧЕЮ ---
         let finalTemplates = [];
 
-        if (localTemplates.length === 0) {
-            // Комп'ютер чистий — просто беремо все з хмари
+        // 1. ЯКЩО В ХМАРІ ВЖЕ Є ДАНІ АКАУНТА:
+        // Ми беремо ТІЛЬКИ те, що в хмарі! Ніякого "воскресіння" старого кешу!
+        if (cloudTemplates !== null) {
             finalTemplates = cloudTemplates;
-        } else if (cloudTemplates.length === 0) {
-            // У хмарі порожньо (новий акаунт), а на ПК є шаблони — завантажуємо їх у хмару
+        } 
+        // 2. ТІЛЬКИ ЯКЩО ЦЕ ПЕРШИЙ ВХІД (хмара ще взагалі порожня, а на ПК вже були шаблони)
+        else if (localTemplates.length > 0) {
             finalTemplates = localTemplates;
-            SyncManager.trigger();
-        } else {
-            // На обох пристроях є дані: об'єднуємо їх, щоб нічого не пропало
-            const map = new Map();
-            cloudTemplates.forEach(t => map.set(t.id, t));
-
-            localTemplates.forEach(lItem => {
-                if (map.has(lItem.id)) {
-                    const cItem = map.get(lItem.id);
-                    if ((lItem.updatedAt || 0) > (cItem.updatedAt || 0)) {
-                        map.set(lItem.id, lItem);
-                    }
-                } else {
-                    // Перевіряємо, чи немає дубліката за назвою і текстом
-                    const isDup = Array.from(map.values()).some(c => 
-                        (c.name || '').trim() === (lItem.name || '').trim() &&
-                        (c.content || '').trim() === (lItem.content || '').trim()
-                    );
-                    if (!isDup) {
-                        map.set(lItem.id, lItem);
-                    }
-                }
-            });
-            finalTemplates = Array.from(map.values());
-            // Відправляємо об'єднаний результат назад у хмару
-            SyncManager.trigger();
+            SyncManager.trigger(); // Первинне вивантаження в новий акаунт
         }
 
-        // Сортування порядку
+        // Застосовуємо порядок карток
         if (cloudTplOrder.length > 0) {
             finalTemplates.sort((a, b) => {
                 let idxA = cloudTplOrder.indexOf(a.id);
@@ -271,25 +229,26 @@ async function loadUserDataFromCloud() {
             });
         }
 
+        // Оновлюємо пам'ять ПК 2 СВІЖИМИ даними з хмари (старий кеш викидається)
         localStorage.setItem('textTemplates', JSON.stringify(finalTemplates));
         localStorage.setItem('templateOrder', JSON.stringify(finalTemplates.map(t => t.id)));
         loadTemplates();
 
-        // 2. НОТАТКИ
-        let finalNotes = (cloudNotes.length >= localNotes.length) ? cloudNotes : localNotes;
+        // 2. НОТАТКИ (так само — тільки з хмари)
+        let finalNotes = (cloudNotes !== null) ? cloudNotes : JSON.parse(localStorage.getItem('quickNotesData') || '[]');
         localStorage.setItem('quickNotesData', JSON.stringify(finalNotes));
         localStorage.setItem('quickNotesOrder', JSON.stringify(finalNotes.map(n => n.id)));
         quickNotesArray = finalNotes;
         renderQuickNotes();
 
         // 3. ІСТОРІЯ
-        let finalHistory = (cloudHistory.length >= localHistory.length) ? cloudHistory : localHistory;
+        let finalHistory = (cloudHistory !== null) ? cloudHistory : JSON.parse(localStorage.getItem('loginHistory') || '[]');
         localStorage.setItem('loginHistory', JSON.stringify(finalHistory));
         renderHistory(finalHistory);
 
         const syncDate = (cloudData && cloudData.updatedAt) ? new Date(cloudData.updatedAt) : new Date();
         updateSyncTimeDisplay(syncDate, 'success');
-        console.log(`✅ [LOAD DONE] Відображено ${finalTemplates.length} шаблонів`);
+        console.log(`✅ [LOAD DONE] ПК оновлено з хмари: ${finalTemplates.length} шаблонів`);
 
     } catch (error) {
         console.error("❌ [LOAD ERROR] Помилка завантаження з хмари:", error);
