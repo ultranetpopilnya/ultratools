@@ -442,7 +442,7 @@ function animatedAuthSwitch(hideEl, showEl, containerClass) {
 function clearAllTemplates() {
     const templatesGrid = document.getElementById('templates-grid-wrapper');
     
-    // ДОДАНО: Безпечна перевірка
+    // Безпечна перевірка
     if (!templatesGrid) {
         showNotification("Помилка: Контейнер шаблонів не знайдено!", 'error');
         return;
@@ -454,11 +454,30 @@ function clearAllTemplates() {
         return; 
     }
     
-    if (confirm('Ви впевнені, що хочете видалити ВСІ шаблони? Якщо ви увійшли у свій обліковий запис, шаблони також буде видалено з нього.')) {
+    if (confirm('УВАГА: Видалити ВСІ шаблони?\nВони будуть назавжди видалені з цього комп\'ютера та вашого хмарного акаунта.')) {
+        
+        // === ВИПРАВЛЕННЯ: Правильно повідомляємо хмару про видалення ===
+        let tombstones = JSON.parse(localStorage.getItem('tombstones') || '[]');
+        const allTemplates = document.querySelectorAll('#templates-grid-wrapper .template-field-group');
+        
+        allTemplates.forEach(group => {
+            const templateId = group.dataset.id;
+            if (templateId && templateId !== 'undefined') {
+                // Додаємо кожен шаблон у список "на видалення" у Firebase
+                tombstones.push({ id: templateId, deletedAt: Date.now() });
+            }
+        });
+        
+        localStorage.setItem('tombstones', JSON.stringify(tombstones));
+        // ==================================================================
+
+        // Тепер очищаємо екран
         templatesGrid.innerHTML = ''; 
+        
+        // Зберігаємо (це автоматично відправить tombstones у Firebase і видалить їх там)
         saveTemplates(); 
         showNotification("Усі текстові шаблони було видалено.", 'success');
-}
+    }
 }
 
 let lastGeneratedLogin = ''; // Зберігатиме останній згенерований логін
@@ -2887,7 +2906,7 @@ if (!oltObj) {
     deleteButton.title = 'Видалити шаблон';
     deleteButton.className = 'delete-template-btn';
     deleteButton.onclick = () => {
-        if (confirm('Видалити шаблон?')) {
+        if (confirm('Видалити цей шаблон назавжди? (Він також зникне з вашого акаунта на інших пристроях)')) {
             const templateId = fieldGroup.dataset.id;
             
             // === НОВА ЛОГІКА НАДГРОБКІВ З ДАТОЮ ===
@@ -3626,10 +3645,10 @@ if (parsedData.isUltraBackup && notesToImport.length > 0) {
             
             // Візуальне повідомлення
             setTimeout(() => {
-                showNotification(parsedData.isUltraBackup 
-                    ? "Шаблони та нотатки успішно об'єднано!" 
-                    : "Текстові шаблони успішно імпортовано!");
-            }, 50);
+    showNotification(parsedData.isUltraBackup 
+        ? "Дані об'єднано і синхронізовано з хмарою ☁️" 
+        : "Шаблони імпортовано і відправлено у хмару ☁️");
+}, 50);
 
         } catch (error) {
             console.error("Помилка імпорту:", error);
@@ -3690,7 +3709,7 @@ function renderHistory(history) {
 
     // Якщо пусто - пишемо повідомлення і ховаємо кнопку "смітник"
     if (history.length === 0) {
-        listContainer.innerHTML = '<div class="empty-history-msg">Тут поки що пусто...</div>';
+        listContainer.innerHTML = '<div class="empty-history-msg">Історія порожня.<br><span">Логіни зберігаються у хмарі автоматично.</span></div>';
         if(clearBtn) clearBtn.style.display = 'none'; // Ховаємо смітник, бо нема що чистити
         return;
     }
@@ -3722,7 +3741,7 @@ function copyFromHistory(text) {
 }
 
 document.getElementById('clear-history-btn').addEventListener('click', () => {
-    if(confirm('Очистити історію?')) {
+    if (confirm('Очистити історію логінів? (Вона буде очищена у хмарі та на всіх ваших пристроях)')) {
         localStorage.removeItem('loginHistory');
         renderHistory([]);
         // Очищаємо історію і в хмарі:
@@ -5164,7 +5183,7 @@ function editQuickNote(index) {
 
 // 8. Видалити нотатку
 function deleteQuickNote(index) {
-    if (confirm("Видалити цю нотатку?")) {
+    if (confirm("Видалити цю нотатку назавжди (з усіх пристроїв)?")) {
         const noteId = quickNotesArray[index].id;
         
         // === НОВА ЛОГІКА НАДГРОБКІВ З ДАТОЮ ===
@@ -5195,7 +5214,7 @@ function renderQuickNotes() {
     quickNotesArray = quickNotesArray.map(n => typeof n === 'string' ? { id: generateUUID(), text: n, updatedAt: Date.now() } : n);
 
     if (quickNotesArray.length === 0) {
-        list.innerHTML = '<div class="qn-empty">У вас немає збережених нотаток.</div>';
+        list.innerHTML = '<div class="qn-empty">Тут поки пусто.<br><span>Додайте нотатку, і вона миттєво з\'явиться на всіх ваших пристроях ☁️</span></div>';
         return;
     }
 
