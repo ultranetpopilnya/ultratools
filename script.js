@@ -24,6 +24,7 @@ db.enablePersistence({ synchronizeTabs: true })
   });
 
 let currentUser = null;
+let quickNotesArray = [];
 
 // === ГЕНЕРАТОР УНІКАЛЬНИХ ID (UUID) ===
 function generateUUID() {
@@ -72,22 +73,6 @@ function markSyncedNow() {
     const now = new Date();
     localStorage.setItem('lastSyncTime', now.toISOString());
     updateSyncTimeDisplay(now, 'success');
-}
-
-// Ховає напис (для гостя, який не увійшов)
-function hideSyncTimeDisplay() {
-    const el = document.getElementById('sync-time-display');
-    if (el) {
-        // Очищаємо всі класи, щоб при наступному вході анімація почалася "з чистого аркуша"
-        el.classList.remove('visible', 'syncing', 'sync-success');
-    }
-}
-
-// Викликається одразу після УСПІШНОГО запису в Firestore
-function markSyncedNow() {
-    const now = new Date();
-    localStorage.setItem('lastSyncTime', now.toISOString());
-    updateSyncTimeDisplay(now, false);
 }
 
 // Ця функція сама викликається, коли статус входу змінюється (увійшов/вийшов)
@@ -5053,7 +5038,6 @@ document.addEventListener('DOMContentLoaded', () => {
 const qnPlaceholder = document.createElement('div');
 qnPlaceholder.className = 'qn-placeholder';
 
-let quickNotesArray = [];
 let currentActiveQnBtn = null;
 let editingNoteIndex = -1; // -1 означає "додаємо нову", інакше - індекс нотатки, яку редагуємо
 
@@ -5285,23 +5269,6 @@ function renderQuickNotes() {
 
         list.appendChild(item);
     });
-}
-
-// Допоміжна функція для визначення позиції мишки відносно списку
-function getDragAfterElement(container, y) {
-    // Отримуємо всі елементи, які НЕ перетягуються в даний момент
-    const draggableElements = [...container.querySelectorAll('.qn-item:not(.qn-dragging)')];
-
-    return draggableElements.reduce((closest, child) => {
-        const box = child.getBoundingClientRect();
-        const offset = y - box.top - box.height / 2; // Відстань від центру елемента
-
-        if (offset < 0 && offset > closest.offset) {
-            return { offset: offset, element: child };
-        } else {
-            return closest;
-        }
-    }, { offset: Number.NEGATIVE_INFINITY }).element;
 }
 
 function saveNewOrder() {
