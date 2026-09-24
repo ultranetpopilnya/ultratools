@@ -1119,7 +1119,7 @@ body.dark .tab-button:hover:not(.active) {
 /* Крапка рівним шрифтом */
 .site-status-dot {
     font-family: 'Fira Code', monospace;
-    font-size: 16px;
+    font-size: 17px;
     line-height: 1;
     display: inline-block;
     transition: all 0.3s ease;
