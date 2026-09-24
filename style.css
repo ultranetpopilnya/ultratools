@@ -3129,7 +3129,7 @@ body.dark .logout-action-btn:hover { background: var(--danger-bg-dark); }
 }
 
 .site-status-dot {
-    --dot-color: #27ae60;
+    --dot-color: #2baf62;
     position: relative;
     display: block;
     width: 10px;   /* парний розмір, щоб центр не потрапляв на піврозмір */
