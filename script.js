@@ -1583,7 +1583,7 @@ function initDraggableAndResizable(element) {
 
     fieldGroup.dataset.bookmarks = JSON.stringify(uniqueBookmarks);
     renderLineMarkers(fieldGroup);
-    saveTemplates()
+    saveTemplates();
 }
    
 // --- НОВІ ФУНКЦІЇ ДЛЯ ПІДСВІТКИ СЛІВ ---
@@ -2716,10 +2716,6 @@ btnPonOnu.addEventListener('click', (e) => {
     showNotification(isPonOnuMode ? "Команди PON-ONU УВІМКНЕНО" : "Команди PON-ONU ВИМКНЕНО");
 });
 
-// Відновлюємо стан кнопок після перезавантаження сторінки
-btnReplaceMode.classList.toggle('active', isReplaceMode);
-btnPonOnu.classList.toggle('active', isPonOnuMode);
-
 // === ТУМБЛЕР: СИГНАЛ ===
 const btnShowSignal = configPanel.querySelector('.config-show-signal-btn');
 btnShowSignal.addEventListener('click', (e) => {
@@ -2735,7 +2731,7 @@ btnShowSignal.addEventListener('click', (e) => {
 // Відновлюємо стан після перезавантаження сторінки
 btnReplaceMode.classList.toggle('active', isReplaceMode);
 btnPonOnu.classList.toggle('active', isPonOnuMode);
-btnShowSignal.classList.toggle('active', isShowSignalMode); // ДОДАНО
+btnShowSignal.classList.toggle('active', isShowSignalMode);
 
 // === КНОПКА ОЧИЩЕННЯ ПОЛІВ ===
 const btnClearFields = configPanel.querySelector('.config-clear-fields-btn');
@@ -3387,10 +3383,6 @@ document.addEventListener('click', (e) => {
     renderLineMarkers(fieldGroup);
     
     if (window.textareaObserver) window.textareaObserver.observe(textarea);
-
-    // ДОДАНО: Відкриваємо панелі, якщо вони були відкриті при збереженні
-    if (isSearchOpen) searchPanel.classList.add('active');
-    if (isConfigOpen) configPanel.classList.add('active');
     
     // === ДОДАНО: Відслідковуємо, де стоїть курсор ===
     fieldGroup.addEventListener('focusin', (e) => {
@@ -3562,7 +3554,7 @@ function addTemplate() {
             group.dataset.id = currentId;
         }
 
-        ttemplates.push({
+        templates.push({
             id: currentId,
             updatedAt: parseInt(group.dataset.updatedAt, 10) || Date.now(),
             name: nameInput ? nameInput.value : '',
@@ -3814,7 +3806,7 @@ function renderHistory(history) {
 
     // Якщо пусто - пишемо повідомлення і ховаємо кнопку "смітник"
     if (history.length === 0) {
-        listContainer.innerHTML = '<div class="empty-history-msg">Історія порожня.<br><span">Логіни зберігаються у хмарі автоматично.</span></div>';
+        listContainer.innerHTML = '<div class="empty-history-msg">Історія порожня.<br><span>Логіни зберігаються у хмарі автоматично.</span></div>';
         if(clearBtn) clearBtn.style.display = 'none'; // Ховаємо смітник, бо нема що чистити
         return;
     }
@@ -5679,7 +5671,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Клік по кнопці: перезавантажує сторінку тільки коли оновлення готове
     statusBtn.addEventListener('click', () => {
         if (isUpdateReady) {
-            window.location.reload(true); // F5 з очищенням кешу
+            window.location.reload();
         } else {
             showNotification("Сайт вже оновлений до останньої версії!", "info");
         }
