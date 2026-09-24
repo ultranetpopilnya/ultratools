@@ -51,6 +51,7 @@ function updateSyncTimeDisplay(date, status = 'success') {
     if (!el) return;
     el.classList.add('visible');
     el.classList.remove('sync-success', 'syncing', 'sync-error');
+    el.style.color = ''; // Фікс: скидаємо помаранчевий колір помилки при новому статусі
     void el.offsetWidth; // Хак для перезапуску анімації
 
     if (status === 'syncing') {
@@ -63,7 +64,6 @@ function updateSyncTimeDisplay(date, status = 'success') {
     } else {
         el.classList.add('sync-success');
         el.innerHTML = `<i class="fas fa-check-circle"></i> Синхр.: ${formatSyncDateTime(date)}`;
-        el.style.color = '';
     }
 }
 
@@ -112,21 +112,26 @@ auth.onAuthStateChanged(async (user) => {
         // === КОРИСТУВАЧ АВТОРИЗОВАНИЙ ===
         animatedAuthSwitch(loginBtn, userInfoWrapper);
 
-        const firstName = user.displayName ? user.displayName.split(' ')[0] : 'Користувач';
+        // Безпечне отримання імені (якщо displayName відсутній — беремо логін з email)
+        let firstName = 'Користувач';
+        if (user.displayName && user.displayName.trim()) {
+            firstName = user.displayName.split(' ')[0];
+        } else if (user.email) {
+            firstName = user.email.split('@')[0];
+        }
+
         if (userInfo) userInfo.textContent = firstName;
-        if (userAvatar && user.photoURL) userAvatar.src = user.photoURL;
+        if (userAvatar) {
+            userAvatar.src = user.photoURL || '';
+            userAvatar.style.display = user.photoURL ? 'block' : 'none';
+        }
 
-        // 1. Спалюємо будь-які старі гостьові надгробки, щоб вони не чіпали хмару
         localStorage.removeItem('tombstones');
-
-        // 2. Одразу розширюємо порожній контейнер до 70% під напис синхронізації
         checkEmptyTemplatesState();
 
-        // 3. Показуємо збережений локально час синхронізації
         const cached = localStorage.getItem('lastSyncTime');
         if (cached) updateSyncTimeDisplay(new Date(cached), 'success');
 
-        // 4. Завантажуємо свіжі дані облікового запису з хмари
         await loadUserDataFromCloud();
 
     } else {
@@ -134,12 +139,11 @@ auth.onAuthStateChanged(async (user) => {
         animatedAuthSwitch(userInfoWrapper, loginBtn);
 
         if (userInfo) userInfo.textContent = '';
-        if (userAvatar) userAvatar.src = '';
+        if (userAvatar) {
+            userAvatar.src = '';
+            userAvatar.style.display = 'none';
+        }
         hideSyncTimeDisplay();
-
-        // УВАГА: Ми НЕ видаляємо локальні шаблони тут, щоб вони не зникали при F5!
-
-        // Звужуємо порожній контейнер назад до 60% (напис синхронізації зник)
         checkEmptyTemplatesState();
     }
 });
@@ -246,11 +250,10 @@ function cleanDuplicates(arr, type) {
     return Array.from(uniqueMap.values());
 }
 
-// --- ЗАВАНТАЖЕННЯ ДАНИХ З ХМАРИ (ХМАРА — АБСОЛЮТНИЙ ХАЗЯЇН) ---
+// --- ЗАВАНТАЖЕННЯ ДАНИХ З ХМАРИ ТА ОБ'ЄДНАННЯ З ГОСТЬОВИМИ ---
 async function loadUserDataFromCloud() {
     if (!currentUser) return;
 
-    // ВМИКАЄМО ЗАМОК: Поки ми малюємо інтерфейс, нічого не зберігати!
     isCloudSyncing = true; 
 
     try {
@@ -259,14 +262,33 @@ async function loadUserDataFromCloud() {
         let cloudData = docSnap.exists ? docSnap.data() : null;
 
         let localTemplates = JSON.parse(localStorage.getItem('textTemplates') || '[]');
+        let localNotes = JSON.parse(localStorage.getItem('quickNotesData') || '[]');
 
         if (cloudData) {
-            // 1. Отримуємо дані з хмари та ОЧИЩАЄМО їх від багів/дублікатів
             let cloudTemplates = cleanDuplicates(cloudData.templates || [], 'templates');
             let cloudNotes = cleanDuplicates(cloudData.quickNotes || [], 'notes');
             let cloudHistory = cloudData.loginHistory || [];
 
-            // 2. Відновлюємо порядок (якщо він був збережений)
+            // ОБ'ЄДНАННЯ: якщо гість створив нові шаблони чи нотатки, додаємо їх до хмари
+            let hasNewGuestData = false;
+
+            if (localTemplates.length > 0) {
+                const combinedTemplates = cleanDuplicates([...cloudTemplates, ...localTemplates], 'templates');
+                if (combinedTemplates.length > cloudTemplates.length) {
+                    cloudTemplates = combinedTemplates;
+                    hasNewGuestData = true;
+                }
+            }
+
+            if (localNotes.length > 0) {
+                const combinedNotes = cleanDuplicates([...cloudNotes, ...localNotes], 'notes');
+                if (combinedNotes.length > cloudNotes.length) {
+                    cloudNotes = combinedNotes;
+                    hasNewGuestData = true;
+                }
+            }
+
+            // Відновлюємо порядок шаблонів
             let cloudTplOrder = cloudData.templateOrder || [];
             if (cloudTplOrder.length > 0) {
                 cloudTemplates.sort((a, b) => {
@@ -276,16 +298,7 @@ async function loadUserDataFromCloud() {
                 });
             }
 
-            let cloudNotesOrder = cloudData.quickNotesOrder || [];
-            if (cloudNotesOrder.length > 0) {
-                cloudNotes.sort((a, b) => {
-                    let idxA = cloudNotesOrder.indexOf(a.id);
-                    let idxB = cloudNotesOrder.indexOf(b.id);
-                    return (idxA === -1 ? 9999 : idxA) - (idxB === -1 ? 9999 : idxB);
-                });
-            }
-
-            // 3. ЖОРСТКО ПЕРЕЗАПИСУЄМО ЛОКАЛЬНИЙ КЕШ ДАНИМИ З ХМАРИ
+            // Оновлюємо локальний кеш
             localStorage.setItem('textTemplates', JSON.stringify(cloudTemplates));
             localStorage.setItem('templateOrder', JSON.stringify(cloudTemplates.map(t => t.id)));
             
@@ -295,26 +308,32 @@ async function loadUserDataFromCloud() {
             
             localStorage.setItem('loginHistory', JSON.stringify(cloudHistory));
 
-        } else if (localTemplates.length > 0) {
-            // Хмара порожня (перший вхід у житті), а на ПК вже є шаблони
-            // Вивантажуємо локальні шаблони в порожню хмару
+            // Якщо були нові гостьові дані — синхронізуємо об'єднаний результат назад у хмару
+            if (hasNewGuestData) {
+                setTimeout(() => { SyncManager.trigger(); }, 800);
+            }
+
+        } else if (localTemplates.length > 0 || localNotes.length > 0) {
+            // Перший вхід у житті: вивантажуємо все з комп'ютера у порожню хмару
             setTimeout(() => { SyncManager.trigger(); }, 1000);
         }
 
-        // 4. Оновлюємо інтерфейс (малюємо картки на екрані)
+        // Оновлюємо інтерфейс
         loadTemplates();
         renderQuickNotes();
         renderHistory(JSON.parse(localStorage.getItem('loginHistory') || '[]'));
 
+        // Пункт 5: оновлюємо і зберігаємо в кеш точний час синхронізації
         const syncDate = (cloudData && cloudData.updatedAt) ? new Date(cloudData.updatedAt) : new Date();
+        localStorage.setItem('lastSyncTime', syncDate.toISOString());
         updateSyncTimeDisplay(syncDate, 'success');
-        console.log(`✅ [LOAD DONE] Інтерфейс оновлено. Шаблонів: ${JSON.parse(localStorage.getItem('textTemplates')).length}`);
+
+        console.log(`✅ [LOAD DONE] Шаблонів завантажено: ${JSON.parse(localStorage.getItem('textTemplates')).length}`);
 
     } catch (error) {
         console.error("❌ [LOAD ERROR] Помилка завантаження з хмари:", error);
         updateSyncTimeDisplay(null, 'error');
     } finally {
-        // ЗНІМАЄМО ЗАМОК через 500мс (щоб браузер встиг відмалювати DOM і не запустив випадкових подій збереження)
         setTimeout(() => { isCloudSyncing = false; }, 500);
     }
 }
@@ -330,15 +349,10 @@ function loginWithGoogle() {
 
 function logoutFromGoogle() {
     auth.signOut().then(() => {
-        // Видаляємо лише мітку часу синхронізації з акаунтом
+        // Ми НЕ очищаємо шаблони та нотатки — вони залишаються доступні в гостьовому режимі
         localStorage.removeItem('lastSyncTime');
-        
-        // Ховаємо статус синхронізації
         hideSyncTimeDisplay();
-        
-        // Оновлюємо стан контейнера (прибираємо статус авторизованого користувача)
         checkEmptyTemplatesState();
-        
         showNotification("Ви вийшли з акаунта", 'info');
     }).catch((error) => {
         console.error("Помилка виходу:", error);
