@@ -3093,6 +3093,31 @@ body.dark .logout-action-btn:hover { background: var(--danger-bg-dark); }
 }
 
 /* =========================================
+   ІНДИКАТОР СИНХРОНІЗАЦІЇ (Базові стилі)
+   ========================================= */
+#sync-time-display {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--inactive-text);
+    white-space: nowrap;
+    
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(2px);
+    transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease, color 0.3s ease;
+}
+
+/* Стан видимості */
+#sync-time-display.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* =========================================
    ІНДИКАТОР СТАТУСУ САЙТУ (крапка)
    ========================================= */
 .site-status-btn {
