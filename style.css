@@ -1097,6 +1097,82 @@ body.dark .tab-button:hover:not(.active) {
     background-color: rgba(255, 255, 255, 0.05);
 }
 
+/* === ІНДИКАТОР ОНОВЛЕННЯ САЙТУ (РІВНИЙ ШРИФТ FIRA CODE) === */
+.site-status-wrapper {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 8px;
+    padding: 4px 6px;
+    cursor: pointer;
+    user-select: none;
+    font-family: 'Fira Code', monospace; /* Рівний моноширинний шрифт */
+}
+
+/* Крапка через текстовий символ */
+.site-status-dot {
+    font-family: 'Fira Code', monospace;
+    font-size: 14px;
+    line-height: 1;
+    display: inline-block;
+    transition: all 0.3s ease;
+}
+
+/* Стан 1: Зелений (актуально) */
+.site-status-dot.status-green {
+    color: #22c55e;
+    text-shadow: 0 0 8px rgba(34, 197, 94, 0.7);
+}
+
+/* Стан 2: Помаранчевий (новий код на GitHub) */
+.site-status-dot.status-orange {
+    color: #f97316;
+    text-shadow: 0 0 10px rgba(249, 115, 22, 0.9);
+    animation: font-dot-pulse 1.6s infinite ease-in-out;
+}
+
+@keyframes font-dot-pulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 0.85;
+    }
+    50% {
+        transform: scale(1.35);
+        opacity: 1;
+        text-shadow: 0 0 14px rgba(249, 115, 22, 1);
+    }
+}
+
+/* Підказка з моноширинним шрифтом */
+.site-status-tooltip {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    background: rgba(15, 23, 42, 0.96);
+    color: #f8fafc;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-family: 'Fira Code', monospace; /* Рівний шрифт для тексту та комітів */
+    font-size: 11px;
+    line-height: 1.5;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-4px);
+    transition: all 0.2s ease;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    z-index: 1000;
+}
+
+.site-status-wrapper:hover .site-status-tooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
 /* === СТИЛІ ДЛЯ DRAG & DROP (ВИПРАВЛЕНО) === */
 /* 1. Елемент, який ми зараз тягнемо (залишається на місці як "місце під посадку") */
 .tab-button.dragging {

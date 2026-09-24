@@ -5540,3 +5540,89 @@ function checkEmptyTemplatesState() {
         container.classList.remove('is-logged-in');
     }
 }
+
+// =========================================================================
+// === ІНДИКАТОР АКТУАЛЬНОСТІ КОДУ З GITHUB (БЕЗ ЕМОДЗІ) ===
+// =========================================================================
+document.addEventListener('DOMContentLoaded', () => {
+    let repoName = 'ultranetpopilnya/UltraEnergy-SMS-Tool'; 
+
+    if (window.location.hostname.includes('github.io')) {
+        const owner = window.location.hostname.split('.')[0];
+        const path = window.location.pathname.split('/')[1];
+        if (owner && path) repoName = `${owner}/${path}`;
+    }
+
+    // 1. Створюємо елемент крапки
+    const statusWrapper = document.createElement('div');
+    statusWrapper.className = 'site-status-wrapper';
+    statusWrapper.innerHTML = `
+        <span class="site-status-dot status-green">●</span>
+        <div class="site-status-tooltip">Перевірка оновлень...</div>
+    `;
+
+    // 2. Додаємо праворуч від вкладок
+    const addTabWrapper = document.querySelector('.add-tab-wrapper');
+    const tabsContainer = document.querySelector('.tabs');
+
+    if (addTabWrapper && addTabWrapper.parentNode) {
+        addTabWrapper.parentNode.insertBefore(statusWrapper, addTabWrapper.nextSibling);
+    } else if (tabsContainer) {
+        tabsContainer.appendChild(statusWrapper);
+    }
+
+    const dot = statusWrapper.querySelector('.site-status-dot');
+    const tooltip = statusWrapper.querySelector('.site-status-tooltip');
+
+    let initialCommitSha = null;
+    let isUpdateAvailable = false;
+
+    statusWrapper.addEventListener('click', () => {
+        if (isUpdateAvailable) {
+            window.location.reload(true);
+        }
+    });
+
+    async function checkGitHubVersion() {
+        if (document.visibilityState !== 'visible') return;
+
+        try {
+            const res = await fetch(`https://api.github.com/repos/${repoName}/commits/main?_t=${Date.now()}`, {
+                cache: 'no-store'
+            });
+            if (!res.ok) return;
+
+            const data = await res.json();
+            const latestSha = data.sha.substring(0, 7);
+            const commitMsg = data.commit.message.split('\n')[0];
+
+            if (!initialCommitSha) {
+                initialCommitSha = latestSha;
+                dot.className = 'site-status-dot status-green';
+                tooltip.innerHTML = `<i class="fa-solid fa-circle-check" style="color:#22c55e"></i> <b>Сайт оновлений</b><br><span style="color:#94a3b8">Коміт: [${latestSha}] ${escapeHtml(commitMsg)}</span>`;
+                return;
+            }
+
+            if (latestSha !== initialCommitSha) {
+                isUpdateAvailable = true;
+                dot.className = 'site-status-dot status-orange';
+                tooltip.innerHTML = `<i class="fa-solid fa-arrows-rotate" style="color:#f97316"></i> <b>На GitHub є новий код!</b><br><span style="color:#fdba74">[${latestSha}] ${escapeHtml(commitMsg)}</span><br><span style="color:#94a3b8">Клікніть для оновлення (F5)</span>`;
+            } else {
+                isUpdateAvailable = false;
+                dot.className = 'site-status-dot status-green';
+                tooltip.innerHTML = `<i class="fa-solid fa-circle-check" style="color:#22c55e"></i> <b>Сайт оновлений</b><br><span style="color:#94a3b8">Коміт: [${latestSha}]</span>`;
+            }
+        } catch (err) {
+            console.warn("Помилка зв'язку з GitHub:", err);
+        }
+    }
+
+    setTimeout(checkGitHubVersion, 2000);
+    setInterval(checkGitHubVersion, 60000);
+
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') {
+            checkGitHubVersion();
+        }
+    });
+});
