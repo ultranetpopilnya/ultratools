@@ -215,35 +215,51 @@ let saveDebounceTimer;
 const debouncedSaveTemplates = () => {
     clearTimeout(saveDebounceTimer);
     saveDebounceTimer = setTimeout(() => {
-        saveTemplates();
+        saveTemplates(true);
     }, 400);
 };
 
+let saveLocalDebounceTimer;
+const debouncedSaveLocal = () => {
+    clearTimeout(saveLocalDebounceTimer);
+    saveLocalDebounceTimer = setTimeout(() => {
+        saveTemplates(false);
+    }, 300);
+};
+
 // --- ФУНКЦІЯ ОЧИЩЕННЯ ВІД ДУБЛІКАТІВ ---
-// Видаляє елементи з однаковим ID або з абсолютно ідентичним текстом, залишаючи найновіші
 function cleanDuplicates(arr, type) {
     if (!arr || !Array.isArray(arr)) return [];
     
     const uniqueMap = new Map();
     const contentSet = new Set();
     
-    // Сортуємо від новіших до старіших, щоб при конфлікті зберігся найсвіжіший варіант
     const sorted = [...arr].sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
 
     sorted.forEach(item => {
         if (!item) return;
         
         let signature = '';
+        let hasContent = false;
+
         if (type === 'templates') {
-            signature = `${(item.name || '').trim().toLowerCase()}|||${(item.content || '').trim().toLowerCase()}`;
+            const name = (item.name || '').trim().toLowerCase();
+            const content = (item.content || '').trim().toLowerCase();
+            hasContent = (name.length > 0 || content.length > 0);
+            signature = `${name}|||${content}`;
         } else if (type === 'notes') {
-            signature = (item.text || '').trim().toLowerCase();
+            const text = (item.text || '').trim().toLowerCase();
+            hasContent = (text.length > 0);
+            signature = text;
         }
 
-        // Якщо такий ID ще не зустрічався І такий текст ще не зустрічався
-        if (!uniqueMap.has(item.id) && (!signature || !contentSet.has(signature))) {
-            uniqueMap.set(item.id, item);
-            if (signature) contentSet.add(signature);
+        // Якщо елемент порожній (тільки створений) — перевіряємо тільки унікальність ID.
+        // Якщо заповнений — перевіряємо і ID, і однаковий зміст.
+        if (!uniqueMap.has(item.id)) {
+            if (!hasContent || !contentSet.has(signature)) {
+                uniqueMap.set(item.id, item);
+                if (hasContent) contentSet.add(signature);
+            }
         }
     });
 
@@ -268,6 +284,19 @@ async function loadUserDataFromCloud() {
             let cloudTemplates = cleanDuplicates(cloudData.templates || [], 'templates');
             let cloudNotes = cleanDuplicates(cloudData.quickNotes || [], 'notes');
             let cloudHistory = cloudData.loginHistory || [];
+
+            // Зберігаємо локальний стан полів генератора (щоб очищення або ввід не затиралися старою хмарою при F5)
+            cloudTemplates.forEach(ct => {
+                const local = localTemplates.find(lt => lt.id === ct.id);
+                if (local) {
+                    ct.configLogin = local.configLogin ?? '';
+                    ct.configOlt = local.configOlt ?? '';
+                    ct.configSn = local.configSn ?? '';
+                    ct.configPort = local.configPort ?? '';
+                    ct.configVlan = local.configVlan ?? '';
+                    ct.configSpeed = local.configSpeed ?? '100M';
+                }
+            });
 
             // ОБ'ЄДНАННЯ ПРАЦЮЄ ТІЛЬКИ ЯКЩО КОРИСТУВАЧ ЩОЙНО НАТИСНУВ "УВІЙТИ"
             // (при звичайному F5 воно НЕ спрацює і не воскресить видалені шаблони)
@@ -1385,63 +1414,54 @@ if (activeTab === 'gpon-commands') {
 function initDraggableAndResizable(element) {
     if (typeof interact === 'undefined') return;
 
-    // ВАЖЛИВО: Якщо елемент вже має ініціалізацію, знімаємо її перед новою
-    // (Це критично при імпорті шаблонів)
     interact(element).unset();
 
     interact(element).resizable({
-        // Обираємо краї: правий, нижній та кутик
         edges: { left: false, right: true, bottom: true, top: false },
         listeners: {
             start(event) {
-                // Вимикаємо draggable на час ресайзу, щоб вони не конфліктували
                 event.target.setAttribute('draggable', 'false');
                 event.target.classList.add('is-resizing');
             },
             move(event) {
                 let target = event.target;
                 
-                // 1. Отримуємо нові розміри
                 let newWidth = event.rect.width;
                 let newHeight = event.rect.height;
 
-                // 2. ЗАХИСТ ВІД "ПРИВИДА": якщо значення некоректне - нічого не робимо
                 if (!newWidth || isNaN(newWidth) || newWidth < 100) return;
                 if (!newHeight || isNaN(newHeight) || newHeight < 50) return;
 
-                // === ДОДАНО: ЗАХИСТ ВІД РОЗТЯГУВАННЯ ЗА ЕКРАН ===
                 const parent = target.parentElement;
                 if (parent) {
-                    const maxAllowedWidth = parent.clientWidth - 20; // 20px - безпечний відступ
+                    const maxAllowedWidth = parent.clientWidth - 20;
                     if (newWidth > maxAllowedWidth) {
                         newWidth = maxAllowedWidth;
                     }
                 }
-                // ==============================================
 
-                // 3. Примусово записуємо в пікселях (цілі числа)
                 target.style.width = Math.round(newWidth) + 'px';
                 target.style.height = Math.round(newHeight) + 'px';
             },
             end(event) {
                 let target = event.target;
+                // Гарантовано знімаємо стан зміни розміру, щоб мишка ніколи не залипала
                 target.classList.remove('is-resizing');
-                
-                // Повертаємо можливість перетягування (Drag & Drop)
                 target.setAttribute('draggable', 'false'); 
                 
-                // Фінальний перерахунок маркерів
-                renderLineMarkers(target);
-                saveTemplates();
+                try {
+                    renderLineMarkers(target);
+                    saveTemplates();
+                } catch (err) {
+                    console.error("Помилка збереження після ресайзу:", err);
+                }
             }
         },
         modifiers: [
-            // Обмежуємо мінімальні та максимальні розміри
             interact.modifiers.restrictSize({
                 min: { width: 450, height: 90 },
                 max: { width: 2000, height: 2000 }
             }),
-            // === ДОДАНО: Обмеження для мишки (курсору) ===
             interact.modifiers.restrictEdges({
                 outer: 'parent'
             })
@@ -1663,7 +1683,13 @@ function centerActiveDropdownItem(dropdownNode) {
         isSearchOpen = false,
         isConfigOpen = false, 
         id = generateUUID(), 
-        updatedAt = Date.now()
+        updatedAt = Date.now(),
+        configLogin = '',
+        configOlt = '',
+        configSn = '',
+        configPort = '',
+        configVlan = '',
+        configSpeed = '100M'
     } = data;
 
     const container = document.getElementById('templates-grid-wrapper'); 
@@ -2157,7 +2183,7 @@ let lastConfirmedOltName = null;
                             showNotification(`Згенеровано: ${variant.login}`, 'success');
                         });
                         
-                        saveTemplates();
+                        saveTemplates(false);
                     });
                     loginDropdownList.appendChild(item);
                 });
@@ -2227,7 +2253,7 @@ navigator.clipboard.writeText(newLogin).then(() => {
     showNotification(`Новий варіант: ${newLogin}`);
 });
 
-saveTemplates();
+saveTemplates(false);
         });
     }
 
@@ -2380,6 +2406,7 @@ speedItems.forEach(item => {
         speedDropdownNode.dataset.value = item.dataset.value;
         speedValueLabel.textContent = item.textContent;
         speedDropdownNode.classList.remove('open');
+        saveTemplates(false);
     });
 });
 
@@ -2442,6 +2469,30 @@ function resetMixButton(show, isMix = false) {
         // Не примушуємо до великих літер, щоб MAC міг бути маленькими (abcd.efgh.1234)
         let val = e.target.value.replace(/[^a-zA-Z0-9.:-]/g, '');
         e.target.value = val;
+    });
+
+    // === ВІДНОВЛЕННЯ ТА ЗБЕРЕЖЕННЯ ЗНАЧЕНЬ ПІСЛЯ F5 ===
+    if (configLogin) loginInputBox.value = configLogin;
+    if (configOlt) {
+        oltInputNode.value = configOlt;
+        lastConfirmedOltName = configOlt;
+        if (configOlt.includes('(MIX)')) resetMixButton(true, true);
+    }
+    if (configSn) snInputBox.value = configSn;
+    if (configPort) portInputBox.value = configPort;
+    if (configVlan) vlanInputNode.value = configVlan;
+
+    if (configSpeed) {
+        speedDropdownNode.dataset.value = configSpeed;
+        speedValueLabel.textContent = configSpeed;
+        speedItems.forEach(i => i.classList.toggle('active', i.dataset.value === configSpeed));
+    }
+
+    // Зберігаємо тихо без хмари (для відновлення при F5)
+    configPanel.querySelectorAll('input').forEach(input => {
+        input.addEventListener('input', () => {
+            debouncedSaveLocal();
+        });
     });
 
 function renderOltDropdown(filter = '') {
@@ -2509,8 +2560,8 @@ function renderOltDropdown(filter = '') {
                     portInputBox.value = '';
                     vlanInputNode.value = '';
                     
-                    saveTemplates(); // Зберігаємо стан шаблону
                 }
+                saveTemplates(false);
             });
             oltDropdownList.appendChild(item);
         });
@@ -2667,7 +2718,7 @@ btnClearFields.addEventListener('click', (e) => {
     // Повертаємо стандартний плейсхолдер для VLAN
     configPanel.querySelector('.config-vlan-input').placeholder = 'VLAN';
     
-    saveTemplates();
+    saveTemplates(false);
     showNotification("Поля очищено");
 });
 
@@ -2708,6 +2759,16 @@ btnClearFields.addEventListener('click', (e) => {
         if (/[а-яА-ЯіїєґІЇЄҐёЁ]/.test(loginVal)) {
             showNotification("Помилка! Логін містить кирилицю.", 'error');
             return;
+        }
+
+        // Якщо сторінку щойно оновили — шукаємо збережений OLT у базі
+        if (!selectedOltObj && oltInputNode.value.trim()) {
+            const typedName = oltInputNode.value.trim().toLowerCase();
+            const allOlts = [...OLT_CONFIGS.ultranet, ...OLT_CONFIGS.energy];
+            const matched = allOlts.find(o => o.name.toLowerCase() === typedName);
+            if (matched) {
+                selectedOltObj = matched;
+            }
         }
 
         if (!selectedOltObj) {
@@ -3431,9 +3492,8 @@ function addTemplate() {
     }, { once: true });
 }
     
-    function saveTemplates() {
-
-        if (typeof isCloudSyncing !== 'undefined' && isCloudSyncing) return;
+    function saveTemplates(syncToCloud = true) {
+    if (typeof isCloudSyncing !== 'undefined' && isCloudSyncing) return;
 
     const templates = [];
     const templateOrder = []; 
@@ -3442,11 +3502,10 @@ function addTemplate() {
         const nameInput = group.querySelector('.template-name-input');
         const textarea = group.querySelector('textarea');
 
-        // === БРОНЕБІЙНИЙ ЗАХИСТ ID ===
         let currentId = group.dataset.id;
         if (!currentId || currentId === 'undefined') {
-            currentId = generateUUID(); // Генеруємо новий
-            group.dataset.id = currentId; // Одразу записуємо в HTML, щоб не загубився
+            currentId = generateUUID();
+            group.dataset.id = currentId;
         }
 
         templates.push({
@@ -3465,7 +3524,13 @@ function addTemplate() {
             showSignalMode: group.dataset.showSignalMode === 'true',
             onuMode: group.dataset.onuMode || 'REG',
             isSearchOpen: group.dataset.isSearchOpen === 'true',
-            isConfigOpen: group.dataset.isConfigOpen === 'true'
+            isConfigOpen: group.dataset.isConfigOpen === 'true',
+            configLogin: group.querySelector('.config-login-input')?.value || '',
+            configOlt: group.querySelector('.config-olt-select')?.value || '',
+            configSn: group.querySelector('.config-sn-input')?.value || '',
+            configPort: group.querySelector('.config-port-input')?.value || '',
+            configVlan: group.querySelector('.config-vlan-input')?.value || '',
+            configSpeed: group.querySelector('.config-speed-dropdown')?.dataset.value || '100M'
         });
         
         templateOrder.push(currentId);
@@ -3474,7 +3539,9 @@ function addTemplate() {
     localStorage.setItem('textTemplates', JSON.stringify(templates));
     localStorage.setItem('templateOrder', JSON.stringify(templateOrder)); 
 
-    if (typeof syncTemplatesToCloud === 'function') syncTemplatesToCloud();
+    if (syncToCloud && typeof syncTemplatesToCloud === 'function') {
+        syncTemplatesToCloud();
+    }
 }
 
     function loadTemplates() {
