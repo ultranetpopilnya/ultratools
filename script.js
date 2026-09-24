@@ -5542,87 +5542,108 @@ function checkEmptyTemplatesState() {
 }
 
 // =========================================================================
-// === ІНДИКАТОР АКТУАЛЬНОСТІ КОДУ З GITHUB (БЕЗ ЕМОДЗІ) ===
+// === РОЗУМНИЙ ДЕТЕКТОР ЗБІРКИ ТА ОНОВЛЕНЬ GITHUB PAGES ===
 // =========================================================================
 document.addEventListener('DOMContentLoaded', () => {
-    let repoName = 'ultranetpopilnya/UltraEnergy-SMS-Tool'; 
+    const statusBtn = document.getElementById('site-status-btn');
+    const dot = document.getElementById('site-status-dot');
 
+    if (!statusBtn || !dot) return;
+
+    let repoName = 'ultranetpopilnya/UltraEnergy-SMS-Tool'; 
     if (window.location.hostname.includes('github.io')) {
         const owner = window.location.hostname.split('.')[0];
         const path = window.location.pathname.split('/')[1];
         if (owner && path) repoName = `${owner}/${path}`;
     }
 
-    // 1. Створюємо елемент крапки
-    const statusWrapper = document.createElement('div');
-    statusWrapper.className = 'site-status-wrapper';
-    statusWrapper.innerHTML = `
-        <span class="site-status-dot status-green">●</span>
-        <div class="site-status-tooltip">Перевірка оновлень...</div>
-    `;
-
-    // 2. Додаємо праворуч від вкладок
-    const addTabWrapper = document.querySelector('.add-tab-wrapper');
-    const tabsContainer = document.querySelector('.tabs');
-
-    if (addTabWrapper && addTabWrapper.parentNode) {
-        addTabWrapper.parentNode.insertBefore(statusWrapper, addTabWrapper.nextSibling);
-    } else if (tabsContainer) {
-        tabsContainer.appendChild(statusWrapper);
-    }
-
-    const dot = statusWrapper.querySelector('.site-status-dot');
-    const tooltip = statusWrapper.querySelector('.site-status-tooltip');
-
     let initialCommitSha = null;
-    let isUpdateAvailable = false;
+    let currentState = 'green'; // 'green' | 'yellow' | 'orange'
+    let pollTimer = null;
 
-    statusWrapper.addEventListener('click', () => {
-        if (isUpdateAvailable) {
+    // Клік по кнопці
+    statusBtn.addEventListener('click', () => {
+        if (currentState === 'orange') {
+            // Збірка готова — оновлюємо
             window.location.reload(true);
+        } else if (currentState === 'yellow') {
+            // Ще будується
+            showNotification("GitHub ще збирає оновлення (~30 сек). Зачекайте трохи...", "warning");
+        } else {
+            showNotification("Сайт вже оновлений до останньої версії!", "info");
         }
     });
 
-    async function checkGitHubVersion() {
+    async function checkGitHubBuildStatus() {
         if (document.visibilityState !== 'visible') return;
 
         try {
-            const res = await fetch(`https://api.github.com/repos/${repoName}/commits/main?_t=${Date.now()}`, {
+            // Опитуємо останній запуск GitHub Actions (процес публікації сторінки)
+            const res = await fetch(`https://api.github.com/repos/${repoName}/actions/runs?per_page=1&_t=${Date.now()}`, {
                 cache: 'no-store'
             });
             if (!res.ok) return;
 
             const data = await res.json();
-            const latestSha = data.sha.substring(0, 7);
-            const commitMsg = data.commit.message.split('\n')[0];
+            if (!data.workflow_runs || data.workflow_runs.length === 0) return;
 
+            const latestRun = data.workflow_runs[0];
+            const runSha = latestRun.head_sha.substring(0, 7);
+            const runStatus = latestRun.status;        // 'queued', 'in_progress', 'completed'
+            const runConclusion = latestRun.conclusion; // 'success', 'failure', null
+            const commitMsg = latestRun.head_commit ? latestRun.head_commit.message.split('\n')[0] : 'Оновлення';
+
+            // 1. Перший запуск при завантаженні сайту
             if (!initialCommitSha) {
-                initialCommitSha = latestSha;
+                initialCommitSha = runSha;
+                currentState = 'green';
                 dot.className = 'site-status-dot status-green';
-                tooltip.innerHTML = `<i class="fa-solid fa-circle-check" style="color:#22c55e"></i> <b>Сайт оновлений</b><br><span style="color:#94a3b8">Коміт: [${latestSha}] ${escapeHtml(commitMsg)}</span>`;
+                statusBtn.title = `Сайт оновлений (коміт [${runSha}])\n${commitMsg}`;
+                scheduleNextCheck(60000);
                 return;
             }
 
-            if (latestSha !== initialCommitSha) {
-                isUpdateAvailable = true;
-                dot.className = 'site-status-dot status-orange';
-                tooltip.innerHTML = `<i class="fa-solid fa-arrows-rotate" style="color:#f97316"></i> <b>На GitHub є новий код!</b><br><span style="color:#fdba74">[${latestSha}] ${escapeHtml(commitMsg)}</span><br><span style="color:#94a3b8">Клікніть для оновлення (F5)</span>`;
-            } else {
-                isUpdateAvailable = false;
+            // 2. Якщо коміт той самий — сайт актуальний
+            if (runSha === initialCommitSha) {
+                currentState = 'green';
                 dot.className = 'site-status-dot status-green';
-                tooltip.innerHTML = `<i class="fa-solid fa-circle-check" style="color:#22c55e"></i> <b>Сайт оновлений</b><br><span style="color:#94a3b8">Коміт: [${latestSha}]</span>`;
+                statusBtn.title = `Сайт оновлений (коміт [${runSha}])`;
+                scheduleNextCheck(60000);
+                return;
+            }
+
+            // 3. Якщо з'явився новий коміт:
+            if (runStatus === 'queued' || runStatus === 'in_progress') {
+                // САЙТ ЩЕ ЗБИРАЄТЬСЯ (Жовтий)
+                currentState = 'yellow';
+                dot.className = 'site-status-dot status-yellow';
+                statusBtn.title = `GitHub зараз обробляє новий код...\nЗачекайте завершення збірки (~30 сек)`;
+                // Перевіряємо частіше (кожні 7 секунд), щоб одразу зловити завершення
+                scheduleNextCheck(7000);
+
+            } else if (runStatus === 'completed' && runConclusion === 'success') {
+                // ЗБІРКА УСПІШНО ЗАВЕРШЕНА (Помаранчевий)
+                currentState = 'orange';
+                dot.className = 'site-status-dot status-orange';
+                statusBtn.title = `Новий код успішно опубліковано! [${runSha}]\n${commitMsg}\nНатисніть для оновлення сторінки (F5)`;
+                scheduleNextCheck(30000);
             }
         } catch (err) {
-            console.warn("Помилка зв'язку з GitHub:", err);
+            console.warn("Помилка перевірки збірки GitHub:", err);
+            scheduleNextCheck(60000);
         }
     }
 
-    setTimeout(checkGitHubVersion, 2000);
-    setInterval(checkGitHubVersion, 60000);
+    function scheduleNextCheck(delay) {
+        clearTimeout(pollTimer);
+        pollTimer = setTimeout(checkGitHubBuildStatus, delay);
+    }
 
+    // Перший запуск
+    setTimeout(checkGitHubBuildStatus, 1500);
+
+    // Миттєва перевірка при перемиканні на вкладку
     document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'visible') {
-            checkGitHubVersion();
-        }
+        if (document.visibilityState === 'visible') checkGitHubBuildStatus();
     });
 });
