@@ -4501,7 +4501,7 @@ body.dark .config-show-signal-btn.active {
     flex: 0 0 auto !important; 
     display: inline-flex;
     align-items: center;
-    width: 80px; 
+    width: 82px; 
     border-radius: 8px !important; 
     border: 1px solid var(--input-border-color);
     background-color: var(--input-bg-color);
@@ -4548,8 +4548,7 @@ body.dark .config-show-signal-btn.active {
 
 /* --- Стан 2: Вибрано GPON (Повзунок ЗЛІВА) --- */
 .config-mix-toggle-btn.is-gpon {
-    justify-content: flex-end; /* Текст йде вправо */
-    padding: 0 6px 0 30px !important; /* Місце для повзунка зліва */
+    padding: 0 6px 0 29px !important; /* Місце для повзунка зліва */
     border-color: var(--primary-accent-color);
     color: var(--primary-accent-color);
     background-color: rgba(79, 109, 245, 0.05);
@@ -4558,7 +4557,7 @@ body.dark .config-show-signal-btn.active {
 /* config mix toggle btn — псевдоелемент ::before */
 .config-mix-toggle-btn.is-gpon::before {
     opacity: 1;
-    left: 6px; /* Фізично притискається вліво */
+    left: 10px; /* Фізично притискається вліво */
     background-color: var(--primary-accent-color);
     box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3);
 }
@@ -4589,8 +4588,7 @@ body.dark .config-mix-toggle-btn.is-gpon:hover {
 
 /* --- Стан 3: Вибрано EPON (Повзунок СПРАВА) --- */
 .config-mix-toggle-btn.is-epon {
-    justify-content: flex-start; /* Текст йде вліво */
-    padding: 0 30px 0 6px !important; /* Місце для повзунка справа */
+    padding: 0 28px 0 6px !important; /* Місце для повзунка справа */
     border-color: #198754;        /* Насичений зелений контур */
     color: #146c43;               /* Глибокий темно-зелений для ідеального читання тексту */
     background-color: rgba(25, 135, 84, 0.06); 
@@ -4599,7 +4597,7 @@ body.dark .config-mix-toggle-btn.is-gpon:hover {
 /* config mix toggle btn — псевдоелемент ::before */
 .config-mix-toggle-btn.is-epon::before {
     opacity: 1;
-    left: calc(100% - 22px); 
+    left: calc(100% - 27px); 
     background-color: #198754;    /* Насичений зелений квадратик */
     box-shadow: 0 2px 4px rgba(25, 135, 84, 0.3);
 }
