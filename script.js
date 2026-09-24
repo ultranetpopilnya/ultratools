@@ -2104,6 +2104,21 @@ let lastConfirmedOltName = null;
 
     configPanel.addEventListener('mousedown', (e) => e.stopPropagation());
 
+    
+    const storageKey = 'cfg_inputs_' + id;
+
+    function saveInputsLocally() {
+        const dataToSave = {
+            login: configPanel.querySelector('.config-login-input')?.value || '',
+            olt: configPanel.querySelector('.config-olt-select')?.value || '',
+            sn: configPanel.querySelector('.config-sn-input')?.value || '',
+            port: configPanel.querySelector('.config-port-input')?.value || '',
+            vlan: configPanel.querySelector('.config-vlan-input')?.value || '',
+            speed: configPanel.querySelector('.config-speed-dropdown')?.dataset.value || '100M'
+        };
+        localStorage.setItem(storageKey, JSON.stringify(dataToSave));
+    }
+
     // === РОЗУМНЕ ПОЛЕ ЛОГІНА (АВТОГЕНЕРАЦІЯ З ПІБ) ===
     const loginInputBox = configPanel.querySelector('.config-login-input');
     const loginDropdownList = configPanel.querySelector('.login-dropdown-list');
@@ -2183,7 +2198,7 @@ let lastConfirmedOltName = null;
                             showNotification(`Згенеровано: ${variant.login}`, 'success');
                         });
                         
-                        saveTemplates(false);
+                        saveInputsLocally();
                     });
                     loginDropdownList.appendChild(item);
                 });
@@ -2253,7 +2268,7 @@ navigator.clipboard.writeText(newLogin).then(() => {
     showNotification(`Новий варіант: ${newLogin}`);
 });
 
-saveTemplates(false);
+saveInputsLocally();
         });
     }
 
@@ -2406,7 +2421,7 @@ speedItems.forEach(item => {
         speedDropdownNode.dataset.value = item.dataset.value;
         speedValueLabel.textContent = item.textContent;
         speedDropdownNode.classList.remove('open');
-        saveTemplates(false);
+        saveInputsLocally();
     });
 });
 
@@ -2469,6 +2484,32 @@ function resetMixButton(show, isMix = false) {
         // Не примушуємо до великих літер, щоб MAC міг бути маленькими (abcd.efgh.1234)
         let val = e.target.value.replace(/[^a-zA-Z0-9.:-]/g, '');
         e.target.value = val;
+    });
+
+    // === ВІДНОВЛЕННЯ ПОЛІВ ПРИ ЗАВАНТАЖЕННІ (F5) ===
+    const savedInputs = JSON.parse(localStorage.getItem(storageKey) || '{}');
+    if (savedInputs.login) loginInputBox.value = savedInputs.login;
+    if (savedInputs.olt) {
+        oltInputNode.value = savedInputs.olt;
+        lastConfirmedOltName = savedInputs.olt;
+        if (savedInputs.olt.includes('(MIX)')) resetMixButton(true, true);
+    }
+    if (savedInputs.sn) snInputBox.value = savedInputs.sn;
+    if (savedInputs.port) portInputBox.value = savedInputs.port;
+    if (savedInputs.vlan) vlanInputNode.value = savedInputs.vlan;
+    if (savedInputs.speed) {
+        speedDropdownNode.dataset.value = savedInputs.speed;
+        speedValueLabel.textContent = savedInputs.speed;
+        speedItems.forEach(i => i.classList.toggle('active', i.dataset.value === savedInputs.speed));
+    }
+
+    // Зберігаємо локально при друкуванні в будь-якому інпуті
+    let inputDebounceTimer;
+    configPanel.querySelectorAll('input').forEach(input => {
+        input.addEventListener('input', () => {
+            clearTimeout(inputDebounceTimer);
+            inputDebounceTimer = setTimeout(saveInputsLocally, 200);
+        });
     });
 
     // === ВІДНОВЛЕННЯ ТА ЗБЕРЕЖЕННЯ ЗНАЧЕНЬ ПІСЛЯ F5 ===
@@ -2554,6 +2595,7 @@ function renderOltDropdown(filter = '') {
                 vlanInputNode.placeholder = olt.defaultVlan ? `VLAN (${olt.defaultVlan})` : 'VLAN';
                 
                 resetMixButton(true, olt.name.includes('(MIX)'));
+                saveInputsLocally();
 
                 if (isDifferentOlt) {
                     snInputBox.value = '';
@@ -2700,25 +2742,23 @@ const btnClearFields = configPanel.querySelector('.config-clear-fields-btn');
 btnClearFields.addEventListener('click', (e) => {
     e.preventDefault();
     
-    // Очищаємо текстові поля
-    configPanel.querySelector('.config-login-input').value = '';
-    configPanel.querySelector('.config-olt-select').value = '';
-    configPanel.querySelector('.config-sn-input').value = '';
-    configPanel.querySelector('.config-port-input').value = '';
-    configPanel.querySelector('.config-vlan-input').value = '';
+    // 1. Очищаємо поля на екрані
+    loginInputBox.value = '';
+    oltInputNode.value = '';
+    snInputBox.value = '';
+    portInputBox.value = '';
+    vlanInputNode.value = '';
     
-    // Скидаємо системну пам'ять генератора про обраний OLT
     selectedOltObj = null;
     selectedOltSource = null;
     lastConfirmedOltName = null;
     
-    // Ховаємо кнопку вибору технології (MIX), якщо вона була
     resetMixButton(false);
+    vlanInputNode.placeholder = 'VLAN';
     
-    // Повертаємо стандартний плейсхолдер для VLAN
-    configPanel.querySelector('.config-vlan-input').placeholder = 'VLAN';
+    // 2. ПОВНІСТЮ ВИДАЛЯЄМО ЗБЕРЕЖЕНІ ПОЛЯ З ЛОКАЛЬНОЇ ПАМ'ЯТІ
+    localStorage.removeItem(storageKey);
     
-    saveTemplates(false);
     showNotification("Поля очищено");
 });
 
@@ -2909,14 +2949,28 @@ if (!oltObj) {
         }
 
         fieldGroup.dataset.lastGeneratedConfig = finalConfig;
+        fieldGroup.dataset.updatedAt = Date.now();
 
         const savedScroll = textarea.scrollTop;
         const highlighter = fieldGroup.querySelector('.highlighter-backdrop');
-        updateHighlight(textarea, highlighter);
-        updateBookmarksOnTextChange(fieldGroup);
-        saveTemplates();
+        if (highlighter) updateHighlight(textarea, highlighter);
+        if (typeof updateBookmarksOnTextChange === 'function') updateBookmarksOnTextChange(fieldGroup);
+        
+        // Зберігаємо введені поля (SN, Port і т.д.) локально
+        if (typeof saveInputsLocally === 'function') {
+            saveInputsLocally();
+        }
+
+        // Безпечно зберігаємо шаблон у хмару
+        try {
+            saveTemplates(true);
+        } catch (err) {
+            console.error("Помилка збереження після генерації:", err);
+        }
         
         textarea.scrollTop = savedScroll;
+
+        // Показ сповіщення
         showNotification("Конфіг згенеровано!", 'success');
     });
     // ========================================================
@@ -3508,7 +3562,7 @@ function addTemplate() {
             group.dataset.id = currentId;
         }
 
-        templates.push({
+        ttemplates.push({
             id: currentId,
             updatedAt: parseInt(group.dataset.updatedAt, 10) || Date.now(),
             name: nameInput ? nameInput.value : '',
@@ -3524,13 +3578,7 @@ function addTemplate() {
             showSignalMode: group.dataset.showSignalMode === 'true',
             onuMode: group.dataset.onuMode || 'REG',
             isSearchOpen: group.dataset.isSearchOpen === 'true',
-            isConfigOpen: group.dataset.isConfigOpen === 'true',
-            configLogin: group.querySelector('.config-login-input')?.value || '',
-            configOlt: group.querySelector('.config-olt-select')?.value || '',
-            configSn: group.querySelector('.config-sn-input')?.value || '',
-            configPort: group.querySelector('.config-port-input')?.value || '',
-            configVlan: group.querySelector('.config-vlan-input')?.value || '',
-            configSpeed: group.querySelector('.config-speed-dropdown')?.dataset.value || '100M'
+            isConfigOpen: group.dataset.isConfigOpen === 'true'
         });
         
         templateOrder.push(currentId);
