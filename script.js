@@ -250,7 +250,7 @@ function cleanDuplicates(arr, type) {
     return Array.from(uniqueMap.values());
 }
 
-// --- ЗАВАНТАЖЕННЯ ДАНИХ З ХМАРИ ТА ОБ'ЄДНАННЯ З ГОСТЬОВИМИ ---
+// --- ЗАВАНТАЖЕННЯ ДАНИХ З ХМАРИ (ХМАРА — ГОЛОВНИЙ ХАЗЯЇН) ---
 async function loadUserDataFromCloud() {
     if (!currentUser) return;
 
@@ -269,26 +269,35 @@ async function loadUserDataFromCloud() {
             let cloudNotes = cleanDuplicates(cloudData.quickNotes || [], 'notes');
             let cloudHistory = cloudData.loginHistory || [];
 
-            // ОБ'ЄДНАННЯ: якщо гість створив нові шаблони чи нотатки, додаємо їх до хмари
-            let hasNewGuestData = false;
+            // ОБ'ЄДНАННЯ ПРАЦЮЄ ТІЛЬКИ ЯКЩО КОРИСТУВАЧ ЩОЙНО НАТИСНУВ "УВІЙТИ"
+            // (при звичайному F5 воно НЕ спрацює і не воскресить видалені шаблони)
+            if (isExplicitLoginAction) {
+                let hasNewGuestData = false;
 
-            if (localTemplates.length > 0) {
-                const combinedTemplates = cleanDuplicates([...cloudTemplates, ...localTemplates], 'templates');
-                if (combinedTemplates.length > cloudTemplates.length) {
-                    cloudTemplates = combinedTemplates;
-                    hasNewGuestData = true;
+                if (localTemplates.length > 0) {
+                    const combined = cleanDuplicates([...cloudTemplates, ...localTemplates], 'templates');
+                    if (combined.length > cloudTemplates.length) {
+                        cloudTemplates = combined;
+                        hasNewGuestData = true;
+                    }
                 }
+
+                if (localNotes.length > 0) {
+                    const combinedN = cleanDuplicates([...cloudNotes, ...localNotes], 'notes');
+                    if (combinedN.length > cloudNotes.length) {
+                        cloudNotes = combinedN;
+                        hasNewGuestData = true;
+                    }
+                }
+
+                if (hasNewGuestData) {
+                    setTimeout(() => { SyncManager.trigger(); }, 1000);
+                }
+
+                isExplicitLoginAction = false; // Скидаємо прапорець після об'єднання
             }
 
-            if (localNotes.length > 0) {
-                const combinedNotes = cleanDuplicates([...cloudNotes, ...localNotes], 'notes');
-                if (combinedNotes.length > cloudNotes.length) {
-                    cloudNotes = combinedNotes;
-                    hasNewGuestData = true;
-                }
-            }
-
-            // Відновлюємо порядок шаблонів
+            // Відновлюємо порядок (якщо був)
             let cloudTplOrder = cloudData.templateOrder || [];
             if (cloudTplOrder.length > 0) {
                 cloudTemplates.sort((a, b) => {
@@ -298,7 +307,16 @@ async function loadUserDataFromCloud() {
                 });
             }
 
-            // Оновлюємо локальний кеш
+            let cloudNotesOrder = cloudData.quickNotesOrder || [];
+            if (cloudNotesOrder.length > 0) {
+                cloudNotes.sort((a, b) => {
+                    let idxA = cloudNotesOrder.indexOf(a.id);
+                    let idxB = cloudNotesOrder.indexOf(b.id);
+                    return (idxA === -1 ? 9999 : idxA) - (idxB === -1 ? 9999 : idxB);
+                });
+            }
+
+            // ХМАРА ПОВНІСТЮ ПЕРЕЗАПИСУЄ КЕШ (видалене на ПК 1 зникне і на ПК 2!)
             localStorage.setItem('textTemplates', JSON.stringify(cloudTemplates));
             localStorage.setItem('templateOrder', JSON.stringify(cloudTemplates.map(t => t.id)));
             
@@ -308,13 +326,8 @@ async function loadUserDataFromCloud() {
             
             localStorage.setItem('loginHistory', JSON.stringify(cloudHistory));
 
-            // Якщо були нові гостьові дані — синхронізуємо об'єднаний результат назад у хмару
-            if (hasNewGuestData) {
-                setTimeout(() => { SyncManager.trigger(); }, 800);
-            }
-
         } else if (localTemplates.length > 0 || localNotes.length > 0) {
-            // Перший вхід у житті: вивантажуємо все з комп'ютера у порожню хмару
+            // Перший вхід у житті в абсолютно порожній акаунт
             setTimeout(() => { SyncManager.trigger(); }, 1000);
         }
 
@@ -323,12 +336,11 @@ async function loadUserDataFromCloud() {
         renderQuickNotes();
         renderHistory(JSON.parse(localStorage.getItem('loginHistory') || '[]'));
 
-        // Пункт 5: оновлюємо і зберігаємо в кеш точний час синхронізації
         const syncDate = (cloudData && cloudData.updatedAt) ? new Date(cloudData.updatedAt) : new Date();
         localStorage.setItem('lastSyncTime', syncDate.toISOString());
         updateSyncTimeDisplay(syncDate, 'success');
 
-        console.log(`✅ [LOAD DONE] Шаблонів завантажено: ${JSON.parse(localStorage.getItem('textTemplates')).length}`);
+        console.log(`✅ [LOAD DONE] Інтерфейс узгоджено з хмарою. Шаблонів: ${JSON.parse(localStorage.getItem('textTemplates')).length}`);
 
     } catch (error) {
         console.error("❌ [LOAD ERROR] Помилка завантаження з хмари:", error);
@@ -338,10 +350,15 @@ async function loadUserDataFromCloud() {
     }
 }
 
+// Прапорець: чи це був реальний клік по кнопці "Увійти"
+let isExplicitLoginAction = false;
+
 // Функція для кнопки "Увійти"
 function loginWithGoogle() {
+    isExplicitLoginAction = true; // Фіксуємо, що користувач САМ натиснув кнопку входу
     const provider = new firebase.auth.GoogleAuthProvider();
     auth.signInWithPopup(provider).catch((error) => {
+        isExplicitLoginAction = false;
         console.error("Помилка входу:", error);
         showNotification("Помилка входу через Google", 'error');
     });
