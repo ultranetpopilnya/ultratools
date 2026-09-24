@@ -3093,70 +3093,84 @@ body.dark .logout-action-btn:hover { background: var(--danger-bg-dark); }
 }
 
 /* =========================================
-   ІНДИКАТОР СИНХРОНІЗАЦІЇ (Базові стилі)
+   ІНДИКАТОР СТАТУСУ САЙТУ (крапка)
    ========================================= */
-#sync-time-display {
+.site-status-btn {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--inactive-text);
-    white-space: nowrap;
-    
+    justify-content: center;
+    line-height: 1;
+    overflow: visible; /* щоб хвиля не обрізалась краєм кнопки */
+}
+
+.site-status-dot {
+    --dot-color: #27ae60;
+    position: relative;
+    display: block;
+    width: 10px;   /* парний розмір, щоб центр не потрапляв на піврозмір */
+    height: 10px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--dot-color);
+    transform-origin: 50% 50%;
+    transition: background-color 0.4s ease;
+}
+
+/* Хвиля: окремий шар рівно поверх крапки */
+.site-status-dot::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: var(--dot-color);
     opacity: 0;
-    visibility: hidden;
-    transform: translateY(2px);
-    transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease, color 0.3s ease;
+    transform: scale(1);
+    transform-origin: 50% 50%;
+    pointer-events: none;
+    will-change: transform, opacity;
 }
 
-/* Стан видимості */
-#sync-time-display.visible {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
+/* Зелений: спокійне «дихання» */
+.site-status-dot.status-green {
+    --dot-color: #27ae60;
+    animation: dot-breathe-soft 3.2s ease-in-out infinite;
+}
+.site-status-dot.status-green::before {
+    animation: dot-ring-soft 3.2s cubic-bezier(0.22, 0.61, 0.36, 1) infinite;
 }
 
-/* =========================================
-   СТАНИ СИНХРОНІЗАЦІЇ
-   ========================================= */
-
-/* 1. Успіх (Колір іконки та анімація, яку перезапускає JS-хак) */
-#sync-time-display.sync-success {
-    animation: sync-pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+/* Помаранчевий: швидше й помітніше */
+.site-status-dot.status-orange {
+    --dot-color: #f39c12;
+    animation: dot-breathe 1.6s ease-in-out infinite;
 }
-#sync-time-display.sync-success i {
-    color: #27ae60; /* Зелений колір успіху */
+.site-status-dot.status-orange::before {
+    animation: dot-ring 1.6s cubic-bezier(0.22, 0.61, 0.36, 1) infinite;
 }
 
-/* 2. В процесі (Колір тексту під час крутіння) */
-#sync-time-display.syncing {
-    color: var(--primary-accent-color, #3498db);
+@keyframes dot-breathe-soft {
+    0%, 100% { transform: scale(1); }
+    30%      { transform: scale(1.1); }
+}
+@keyframes dot-ring-soft {
+    0%        { transform: scale(1);   opacity: 0.3; }
+    60%, 100% { transform: scale(2.3); opacity: 0; }
+}
+@keyframes dot-breathe {
+    0%, 100% { transform: scale(1); }
+    30%      { transform: scale(1.2); }
+}
+@keyframes dot-ring {
+    0%        { transform: scale(1);   opacity: 0.5; }
+    70%, 100% { transform: scale(2.9); opacity: 0; }
 }
 
-/* 3. Помилка / Офлайн (Спрацьовує візуальний струс) */
-#sync-time-display.sync-error {
-    animation: sync-shake 0.4s ease-in-out;
-    /* Колір #f39c12 задається безпосередньо у вашому JS */
-}
-
-/* =========================================
-   АНІМАЦІЇ ДЛЯ СТАТУСІВ
-   ========================================= */
-
-/* Легка пульсація при успішному збереженні */
-@keyframes sync-pop {
-    0% { transform: scale(0.95); opacity: 0.7; }
-    50% { transform: scale(1.05); opacity: 1; }
-    100% { transform: scale(1); opacity: 1; }
-}
-
-/* Смикання, якщо збережено локально (офлайн/помилка) */
-@keyframes sync-shake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-3px); }
-    50% { transform: translateX(3px); }
-    75% { transform: translateX(-2px); }
+/* Повага до налаштувань «зменшити рух» */
+@media (prefers-reduced-motion: reduce) {
+    .site-status-dot,
+    .site-status-dot::before {
+        animation: none;
+    }
 }
 
 
