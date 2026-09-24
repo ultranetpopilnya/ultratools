@@ -144,25 +144,31 @@ auth.onAuthStateChanged(async (user) => {
     }
 });
 
+// === ЗАМОК СИНХРОНІЗАЦІЇ ===
+// Блокує локальне збереження, поки дані вантажаться з хмари і малюються на екрані
+let isCloudSyncing = false; 
+
 const SyncManager = {
     timeout: null,
     pending: false,
 
     trigger() {
-        if (!currentUser) return;
+        // Якщо ми зараз вантажимо дані з хмари - ігноруємо будь-які спроби збереження!
+        if (!currentUser || isCloudSyncing) return;
+        
         this.pending = true;
         updateSyncTimeDisplay(null, 'syncing');
         clearTimeout(this.timeout);
-        // Зберігаємо майже миттєво (через 400мс після останнього кліку чи літери)
         this.timeout = setTimeout(() => this.flush(), 400);
     },
 
     async flush() {
-        if (!this.pending || !currentUser) return;
+        if (!this.pending || !currentUser || isCloudSyncing) return;
         this.pending = false;
         clearTimeout(this.timeout);
 
         try {
+            // Беремо поточний стан екрану
             const templates = JSON.parse(localStorage.getItem('textTemplates') || '[]');
             const quickNotes = JSON.parse(localStorage.getItem('quickNotesData') || '[]');
             const loginHistory = JSON.parse(localStorage.getItem('loginHistory') || '[]');
@@ -171,7 +177,7 @@ const SyncManager = {
 
             const userRef = db.collection('users').doc(currentUser.uid);
 
-            // Записуємо все в один документ без підколекцій та надгробків
+            // Просто перезаписуємо хмару поточним станом (без надгробків і складних підколекцій)
             await userRef.set({
                 templates: templates,
                 templateOrder: templateOrder,
@@ -209,69 +215,107 @@ const debouncedSaveTemplates = () => {
     }, 400);
 };
 
-// --- ЗАВАНТАЖЕННЯ ДАНИХ З ХМАРИ (ХМАРА — ЄДИНИЙ ХАЗЯЇН) ---
+// --- ФУНКЦІЯ ОЧИЩЕННЯ ВІД ДУБЛІКАТІВ ---
+// Видаляє елементи з однаковим ID або з абсолютно ідентичним текстом, залишаючи найновіші
+function cleanDuplicates(arr, type) {
+    if (!arr || !Array.isArray(arr)) return [];
+    
+    const uniqueMap = new Map();
+    const contentSet = new Set();
+    
+    // Сортуємо від новіших до старіших, щоб при конфлікті зберігся найсвіжіший варіант
+    const sorted = [...arr].sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
+
+    sorted.forEach(item => {
+        if (!item) return;
+        
+        let signature = '';
+        if (type === 'templates') {
+            signature = `${(item.name || '').trim().toLowerCase()}|||${(item.content || '').trim().toLowerCase()}`;
+        } else if (type === 'notes') {
+            signature = (item.text || '').trim().toLowerCase();
+        }
+
+        // Якщо такий ID ще не зустрічався І такий текст ще не зустрічався
+        if (!uniqueMap.has(item.id) && (!signature || !contentSet.has(signature))) {
+            uniqueMap.set(item.id, item);
+            if (signature) contentSet.add(signature);
+        }
+    });
+
+    return Array.from(uniqueMap.values());
+}
+
+// --- ЗАВАНТАЖЕННЯ ДАНИХ З ХМАРИ (ХМАРА — АБСОЛЮТНИЙ ХАЗЯЇН) ---
 async function loadUserDataFromCloud() {
     if (!currentUser) return;
+
+    // ВМИКАЄМО ЗАМОК: Поки ми малюємо інтерфейс, нічого не зберігати!
+    isCloudSyncing = true; 
 
     try {
         const userRef = db.collection('users').doc(currentUser.uid);
         const docSnap = await userRef.get();
         let cloudData = docSnap.exists ? docSnap.data() : null;
 
-        let cloudTemplates = (cloudData && cloudData.templates !== undefined) ? cloudData.templates : null;
-        let cloudNotes = (cloudData && cloudData.quickNotes !== undefined) ? cloudData.quickNotes : null;
-        let cloudHistory = (cloudData && cloudData.loginHistory !== undefined) ? cloudData.loginHistory : null;
-        let cloudTplOrder = (cloudData && cloudData.templateOrder) || [];
-        let cloudNotesOrder = (cloudData && cloudData.quickNotesOrder) || [];
-
         let localTemplates = JSON.parse(localStorage.getItem('textTemplates') || '[]');
 
-        let finalTemplates = [];
+        if (cloudData) {
+            // 1. Отримуємо дані з хмари та ОЧИЩАЄМО їх від багів/дублікатів
+            let cloudTemplates = cleanDuplicates(cloudData.templates || [], 'templates');
+            let cloudNotes = cleanDuplicates(cloudData.quickNotes || [], 'notes');
+            let cloudHistory = cloudData.loginHistory || [];
 
-        // 1. ЯКЩО В ХМАРІ ВЖЕ Є ДАНІ АКАУНТА:
-        // Ми беремо ТІЛЬКИ те, що в хмарі! Ніякого "воскресіння" старого кешу!
-        if (cloudTemplates !== null) {
-            finalTemplates = cloudTemplates;
-        } 
-        // 2. ТІЛЬКИ ЯКЩО ЦЕ ПЕРШИЙ ВХІД (хмара ще взагалі порожня, а на ПК вже були шаблони)
-        else if (localTemplates.length > 0) {
-            finalTemplates = localTemplates;
-            SyncManager.trigger(); // Первинне вивантаження в новий акаунт
+            // 2. Відновлюємо порядок (якщо він був збережений)
+            let cloudTplOrder = cloudData.templateOrder || [];
+            if (cloudTplOrder.length > 0) {
+                cloudTemplates.sort((a, b) => {
+                    let idxA = cloudTplOrder.indexOf(a.id);
+                    let idxB = cloudTplOrder.indexOf(b.id);
+                    return (idxA === -1 ? 9999 : idxA) - (idxB === -1 ? 9999 : idxB);
+                });
+            }
+
+            let cloudNotesOrder = cloudData.quickNotesOrder || [];
+            if (cloudNotesOrder.length > 0) {
+                cloudNotes.sort((a, b) => {
+                    let idxA = cloudNotesOrder.indexOf(a.id);
+                    let idxB = cloudNotesOrder.indexOf(b.id);
+                    return (idxA === -1 ? 9999 : idxA) - (idxB === -1 ? 9999 : idxB);
+                });
+            }
+
+            // 3. ЖОРСТКО ПЕРЕЗАПИСУЄМО ЛОКАЛЬНИЙ КЕШ ДАНИМИ З ХМАРИ
+            localStorage.setItem('textTemplates', JSON.stringify(cloudTemplates));
+            localStorage.setItem('templateOrder', JSON.stringify(cloudTemplates.map(t => t.id)));
+            
+            localStorage.setItem('quickNotesData', JSON.stringify(cloudNotes));
+            localStorage.setItem('quickNotesOrder', JSON.stringify(cloudNotes.map(n => n.id)));
+            quickNotesArray = cloudNotes;
+            
+            localStorage.setItem('loginHistory', JSON.stringify(cloudHistory));
+
+        } else if (localTemplates.length > 0) {
+            // Хмара порожня (перший вхід у житті), а на ПК вже є шаблони
+            // Вивантажуємо локальні шаблони в порожню хмару
+            setTimeout(() => { SyncManager.trigger(); }, 1000);
         }
 
-        // Застосовуємо порядок карток
-        if (cloudTplOrder.length > 0) {
-            finalTemplates.sort((a, b) => {
-                let idxA = cloudTplOrder.indexOf(a.id);
-                let idxB = cloudTplOrder.indexOf(b.id);
-                return (idxA === -1 ? 9999 : idxA) - (idxB === -1 ? 9999 : idxB);
-            });
-        }
-
-        // Оновлюємо пам'ять ПК 2 СВІЖИМИ даними з хмари (старий кеш викидається)
-        localStorage.setItem('textTemplates', JSON.stringify(finalTemplates));
-        localStorage.setItem('templateOrder', JSON.stringify(finalTemplates.map(t => t.id)));
+        // 4. Оновлюємо інтерфейс (малюємо картки на екрані)
         loadTemplates();
-
-        // 2. НОТАТКИ (так само — тільки з хмари)
-        let finalNotes = (cloudNotes !== null) ? cloudNotes : JSON.parse(localStorage.getItem('quickNotesData') || '[]');
-        localStorage.setItem('quickNotesData', JSON.stringify(finalNotes));
-        localStorage.setItem('quickNotesOrder', JSON.stringify(finalNotes.map(n => n.id)));
-        quickNotesArray = finalNotes;
         renderQuickNotes();
-
-        // 3. ІСТОРІЯ
-        let finalHistory = (cloudHistory !== null) ? cloudHistory : JSON.parse(localStorage.getItem('loginHistory') || '[]');
-        localStorage.setItem('loginHistory', JSON.stringify(finalHistory));
-        renderHistory(finalHistory);
+        renderHistory(JSON.parse(localStorage.getItem('loginHistory') || '[]'));
 
         const syncDate = (cloudData && cloudData.updatedAt) ? new Date(cloudData.updatedAt) : new Date();
         updateSyncTimeDisplay(syncDate, 'success');
-        console.log(`✅ [LOAD DONE] ПК оновлено з хмари: ${finalTemplates.length} шаблонів`);
+        console.log(`✅ [LOAD DONE] Інтерфейс оновлено. Шаблонів: ${JSON.parse(localStorage.getItem('textTemplates')).length}`);
 
     } catch (error) {
         console.error("❌ [LOAD ERROR] Помилка завантаження з хмари:", error);
         updateSyncTimeDisplay(null, 'error');
+    } finally {
+        // ЗНІМАЄМО ЗАМОК через 500мс (щоб браузер встиг відмалювати DOM і не запустив випадкових подій збереження)
+        setTimeout(() => { isCloudSyncing = false; }, 500);
     }
 }
 
@@ -286,20 +330,19 @@ function loginWithGoogle() {
 
 function logoutFromGoogle() {
     auth.signOut().then(() => {
-        // 1. Очищаємо картки з екрана
-        const templatesGrid = document.getElementById('templates-grid-wrapper');
-        if (templatesGrid) templatesGrid.innerHTML = '';
-        
-        // 2. Очищаємо пам'ять облікового запису
-        localStorage.removeItem('textTemplates');
-        localStorage.removeItem('templateOrder');
+        // Видаляємо лише мітку часу синхронізації з акаунтом
         localStorage.removeItem('lastSyncTime');
         
-        // 3. ГОЛОВНЕ: викликаємо перевірку, яка побачить 0 карток, 
-        // додасть клас .is-empty і контейнер плавно стиснеться!
+        // Ховаємо статус синхронізації
+        hideSyncTimeDisplay();
+        
+        // Оновлюємо стан контейнера (прибираємо статус авторизованого користувача)
         checkEmptyTemplatesState();
         
         showNotification("Ви вийшли з акаунта", 'info');
+    }).catch((error) => {
+        console.error("Помилка виходу:", error);
+        showNotification("Помилка під час виходу з акаунта", 'error');
     });
 }
 
@@ -3358,6 +3401,9 @@ function addTemplate() {
 }
     
     function saveTemplates() {
+
+        if (typeof isCloudSyncing !== 'undefined' && isCloudSyncing) return;
+
     const templates = [];
     const templateOrder = []; 
     
@@ -5093,23 +5139,20 @@ function editQuickNote(index) {
     input.focus();
 }
 
-// 8. Видалити нотатку
 function deleteQuickNote(index) {
     if (!authStateResolved) {
         showNotification("Зачекайте, перевіряємо стан акаунта...", 'warning');
         return;
     }
 
-    if (confirm("Видалити цю нотатку назавжди (з усіх пристроїв)?")) {
-        const noteId = quickNotesArray[index].id;
-        
-        // === НОВА ЛОГІКА НАДГРОБКІВ З ДАТОЮ ===
-        let tombstones = JSON.parse(localStorage.getItem('tombstones') || '[]');
-        tombstones.push({ id: noteId, deletedAt: Date.now() });
-        localStorage.setItem('tombstones', JSON.stringify(tombstones));
-
+    if (confirm("Видалити цю нотатку назавжди?")) {
+        // Просто видаляємо з масиву
         quickNotesArray.splice(index, 1);
+        
+        // Перезаписуємо локальний кеш
         localStorage.setItem('quickNotesData', JSON.stringify(quickNotesArray));
+        
+        // Відправляємо новий стан у хмару
         syncNotesToCloud();
         
         if (editingNoteIndex === index) {
