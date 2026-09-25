@@ -294,7 +294,6 @@ async function loadUserDataFromCloud() {
                     ct.configSn = local.configSn ?? '';
                     ct.configPort = local.configPort ?? '';
                     ct.configVlan = local.configVlan ?? '';
-                    ct.configSpeed = local.configSpeed ?? '100M';
                 }
             });
 
@@ -1689,7 +1688,6 @@ function centerActiveDropdownItem(dropdownNode) {
         configSn = '',
         configPort = '',
         configVlan = '',
-        configSpeed = '100M'
     } = data;
 
     const container = document.getElementById('templates-grid-wrapper'); 
@@ -2523,12 +2521,6 @@ function resetMixButton(show, isMix = false) {
     if (configPort) portInputBox.value = configPort;
     if (configVlan) vlanInputNode.value = configVlan;
 
-    if (configSpeed) {
-        speedDropdownNode.dataset.value = configSpeed;
-        speedValueLabel.textContent = configSpeed;
-        speedItems.forEach(i => i.classList.toggle('active', i.dataset.value === configSpeed));
-    }
-
     // Зберігаємо тихо без хмари (для відновлення при F5)
     configPanel.querySelectorAll('input').forEach(input => {
         input.addEventListener('input', () => {
@@ -2997,6 +2989,7 @@ if (!oltObj) {
 
     const savedFind = localStorage.getItem('lastSearchTerm') || '';
     const savedReplace = localStorage.getItem('lastReplaceTerm') || '';
+    const savedSearchSpeed = localStorage.getItem('searchSpeed') || '100M';
 
     searchPanel.innerHTML = `
         <div class="search-panel-columns">
@@ -3072,10 +3065,21 @@ speedItemsSearch.forEach(item => {
     item.addEventListener('click', () => {
         speedItemsSearch.forEach(i => i.classList.remove('active'));
         item.classList.add('active');
+
         speedSelect.dataset.value = item.dataset.value;
         speedValueLabelSearch.textContent = item.textContent;
+
+        // Зберігаємо вибрану швидкість тільки локально
+        localStorage.setItem('searchSpeed', item.dataset.value);
+
         speedSelect.classList.remove('open');
     });
+});
+
+speedSelect.dataset.value = savedSearchSpeed;
+speedValueLabelSearch.textContent = savedSearchSpeed;
+speedItemsSearch.forEach(item => {
+    item.classList.toggle('active', item.dataset.value === savedSearchSpeed);
 });
 
 document.addEventListener('click', (e) => {
@@ -4869,10 +4873,10 @@ function renderCalcHistory() {
         return;
     }
     
-    list.innerHTML = calcHistory.map((item, index) => `
+        list.innerHTML = calcHistory.map((item, index) => `
         <div class="hist-item" onclick="useCalcHistoryItem(${index})">
-            <div class="hist-op">${item.op.replace('.', ',')}</div>
-            <div class="hist-res">${item.res.replace('.', ',')}</div>
+            <div class="hist-op">${item.op.replace(/\./g, ',')}</div>
+            <div class="hist-res">${item.res.replace(/\./g, ',')}</div>
         </div>
     `).join('');
 }
@@ -5368,30 +5372,6 @@ function renderQuickNotes() {
 
         list.appendChild(item);
     });
-}
-
-function saveNewOrder() {
-    const list = document.getElementById('qn-list');
-    const items = [...list.querySelectorAll('.qn-item')];
-    
-    const newArray = items.map(item => {
-        const textNode = item.querySelector('.qn-text');
-        return {
-            id: textNode.dataset.id,
-            text: textNode.innerText,
-            updatedAt: Date.now()
-        };
-    });
-
-    quickNotesArray = newArray;
-    localStorage.setItem('quickNotesData', JSON.stringify(quickNotesArray));
-    
-    // НОВЕ: Зберігаємо порядок нотаток
-    const notesOrder = newArray.map(n => n.id);
-    localStorage.setItem('quickNotesOrder', JSON.stringify(notesOrder));
-    
-    syncNotesToCloud(); // Запускаємо синхронізацію після перетягування
-    renderQuickNotes();
 }
 
 // --- ЛОГІКА КОНТЕЙНЕРА ДЛЯ ПЕРЕТЯГУВАННЯ ШАБЛОНІВ ---
