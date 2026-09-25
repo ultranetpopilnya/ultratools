@@ -62,7 +62,6 @@ select {
     /* STATUS */
     --success-color: #16a37a;
     --danger-color: #e25555;
-    --danger-bg-light: rgba(226, 85, 85, 0.10);
     --danger-bg-dark: rgba(240, 107, 107, 0.15);
 
     /* INPUTS */
@@ -72,8 +71,6 @@ select {
     /* TEMPLATES */
     --template-bg-color: #ffffff;
     --template-border-color: #dae0e7;
-    --template-handle-bg: #f1f4f8;
-    --template-handle-border: #cbd5e1;
 
     /* TABS */
     --template-strip-bg: #fbfbff;
@@ -118,7 +115,6 @@ select {
     --glass-white-lg: rgba(255, 255, 255, 0.88);
     --glass-white: rgba(255, 255, 255, 0.28);
     --glass-white-md: rgba(255, 255, 255, 0.72);
-    --glass-dark: rgba(15, 23, 42, 0.05);
     --glass-border: rgba(148, 163, 184, 0.20);
     --glass-border-bright: rgba(148, 163, 184, 0.32);
 
@@ -194,8 +190,6 @@ color-scheme: dark;
     /* TEMPLATES */
 --template-bg-color: #2D2D2D;
     --template-border-color: rgba(255, 255, 255, 0.10);
-    --template-handle-bg: rgba(255, 255, 255, 0.07);
-    --template-handle-border: rgba(255, 255, 255, 0.05);
 
     /* TABS */
 --template-strip-bg: #2B2B2B; 
@@ -239,7 +233,6 @@ color-scheme: dark;
     --glass-white-lg: rgba(255, 255, 255, 0.14);
     --glass-white: rgba(255, 255, 255, 0.06);
     --glass-white-md: rgba(255, 255, 255, 0.10);
-    --glass-dark: rgba(0, 0, 0, 0.18);
     --glass-border: rgba(255, 255, 255, 0.08);
     --glass-border-bright: rgba(255, 255, 255, 0.14);
 
@@ -291,7 +284,6 @@ color-scheme: dark;
 
 /* :root */
 :root {
---layout-max-width: 1100px;
     --scrollbar-corridor: 16px;          /* Загальна ширина зони скролу */
     --scrollbar-thumb-width: 6px;        /* Ширина повзунка (краще парне число) */
     --scrollbar-thumb-width-hover: 8px; /* Ширина при наведенні (краще парне число) */
@@ -1090,64 +1082,6 @@ body.dark .tab-button:focus-visible {
 body.dark .tab-button:hover:not(.active) {
     color: var(--inactive-text);
     background-color: rgba(255, 255, 255, 0.05);
-}
-
-/* Кнопка винесена за межі панелі вкладок на 14px праворуч */
-.site-status-btn {
-    position: absolute;
-    left: calc(100% + 10px);
-    top: 50%;
-    transform: translateY(-50%);
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 6px;
-    margin: 0;
-    outline: none;
-    z-index: 10;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    user-select: none;
-}
-
-/* Крапка рівним шрифтом */
-.site-status-dot {
-    font-family: 'Fira Code', monospace;
-    font-size: 17px;
-    line-height: 1;
-    display: inline-block;
-    transition: all 0.3s ease;
-}
-
-/* 1. Зелений: сайт актуальний */
-.site-status-dot.status-green {
-    color: #22c55e;
-    text-shadow: 0 0 8px rgba(34, 197, 94, 0.7);
-}
-
-/* 2. Жовтий: GitHub зараз обробляє збірку (в процесі) */
-.site-status-dot.status-yellow {
-    color: #eab308;
-    text-shadow: 0 0 10px rgba(234, 179, 8, 0.9);
-    animation: dot-blink 1.1s infinite ease-in-out;
-}
-
-/* 3. Помаранчевий: збірку завершено, новий код в мережі */
-.site-status-dot.status-orange {
-    color: #f97316;
-    text-shadow: 0 0 10px rgba(249, 115, 22, 0.9);
-    animation: font-dot-pulse 1.6s infinite ease-in-out;
-}
-
-@keyframes dot-blink {
-    0%, 100% { opacity: 0.35; transform: scale(0.95); }
-    50% { opacity: 1; transform: scale(1.15); }
-}
-
-@keyframes font-dot-pulse {
-    0%, 100% { transform: scale(1); opacity: 0.86; }
-    50% { transform: scale(1.36); opacity: 1; text-shadow: 0 0 14px rgba(249, 115, 22, 1); }
 }
 
 /* === СТИЛІ ДЛЯ DRAG & DROP (ВИПРАВЛЕНО) === */
@@ -2645,10 +2579,6 @@ body.dark .history-item::before {
     border-color: var(--primary-accent-color);
 }
 
-body.dark .history-item:hover {
-    background-color: var(--tab-strip-bg); /* #303030 */
-}
-
 .history-item:hover::before { opacity: 1; }
 
 .history-item span {
@@ -2853,25 +2783,6 @@ body.dark .history-copy-btn:hover {
     min-width: 620px;
 }
 
-.empty-templates-message {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 40px 24px;
-    text-align: center;
-    border: 2px dashed var(--input-border-color);
-    border-radius: 12px;
-    margin: 10px auto;
-    background-color: rgba(0, 0, 0, 0.02);
-    animation: fadeIn 0.4s ease-in-out;
-}
-
-body.dark .empty-templates-message {
-    border-color: var(--input-border-color);
-    background-color: rgba(255, 255, 255, 0.02);
-}
-
 /* ========================================= */
 /* === СТИЛІ ПОРОЖНЬОГО СТАНУ === */
 /* ========================================= */
@@ -2884,7 +2795,7 @@ body.dark .empty-templates-message {
     text-align: center;
     border: 2px dashed var(--input-border-color);
     border-radius: 12px;
-    margin: auto 42px;
+    margin: auto 60px;
     background-color: rgba(0, 0, 0, 0.02);
     animation: fadeIn 0.4s ease-in-out;
 }
@@ -3137,11 +3048,21 @@ body.dark #sync-time-display.sync-success i {
    ІНДИКАТОР СТАТУСУ САЙТУ (крапка)
    ========================================= */
 .site-status-btn {
-    display: inline-flex;
+    position: absolute;
+    left: calc(100% + 10px);
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+    margin: 0;
+    outline: none;
+    z-index: 10;
+    display: flex;
     align-items: center;
     justify-content: center;
-    line-height: 1;
-    overflow: visible; /* щоб хвиля не обрізалась краєм кнопки */
+    user-select: none;
 }
 
 .site-status-dot {
@@ -3937,19 +3858,16 @@ body.dark .search-inputs-row select option {
     margin: 0 0 0px 6px;
 }
 
-/* btn replace speed */
 .btn-replace-speed {
-    flex: none; /* Ця кнопка не повинна тягнутися, бо в неї свій блок */
+    flex: none;
     width: 100%;
+    background-color: #3b4252;
 }
 
-/* btn replace speed */
 .btn-replace-speed i {
-    color: #ffde00; /* Жовта блискавка */
+    color: #ffde00;
     margin-right: 4px;
 }
-
-.btn-replace-speed { background-color: #3b4252; }
 
 /* Кнопка SWAP (стрілочки) */
 .swap-inputs-btn {
@@ -4136,11 +4054,6 @@ body.dark .template-config-bar.active {
     flex: 1 1 0;
     width: 0;
     min-width: 0;
-}
-
-.config-row .config-port-input {
-    letter-spacing: 2px;
-    font-variant-numeric: tabular-nums;
 }
 
 /* --- Спільне для всіх емодзі --- */
@@ -4907,7 +4820,6 @@ body.dark .config-onu-mode-btn.is-switch:hover {
 
 /* select item — ховер */
 .select-item:hover {
-    background: var(--hover-bg);
     color: var(--primary-color);
 }
 
