@@ -5340,7 +5340,7 @@ body.dark .date-inputs-row {
     flex-grow: 1 !important;
     display: flex !important;
     flex-direction: column;
-    padding-bottom: 30px !important;
+    padding-bottom: 44px !important;
 
     overflow: hidden !important; 
 }
