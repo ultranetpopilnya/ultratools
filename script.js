@@ -5735,7 +5735,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 statusBtn.title = `Доступне оновлення!${timeStr}\nНатисніть сюди для оновлення сторінки (F5)`;
                 scheduleNextCheck(15000);
             } else {
-                // Змін немає
+                
                 isUpdateReady = false;
                 dot.className = 'site-status-dot status-green';
                 scheduleNextCheck(30000);
