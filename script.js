@@ -5645,15 +5645,51 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     let initialVersionTag = null;
+    let initialBuildTime = '';
     let isUpdateReady = false;
     let pollTimer = null;
 
-    // Клік по кнопці: перезавантажує сторінку тільки коли оновлення готове
+    // === ЗРУЧНЕ ФОРМАТУВАННЯ ДАТИ (БЕЗ СЕКУНД) ===
+    function formatBuildDate(dateStr) {
+        if (!dateStr) return '';
+        const d = new Date(dateStr);
+        if (isNaN(d.getTime())) return '';
+
+        const now = new Date();
+        // Лише години та хвилини
+        const time = d.toLocaleTimeString('uk-UA', { 
+            hour: '2-digit', 
+            minute: '2-digit' 
+        });
+
+        // Якщо збірка сьогодні
+        if (d.toDateString() === now.toDateString()) {
+            return `сьогодні о ${time}`;
+        }
+
+        // Якщо вчора
+        const yesterday = new Date(now);
+        yesterday.setDate(now.getDate() - 1);
+        if (d.toDateString() === yesterday.toDateString()) {
+            return `вчора о ${time}`;
+        }
+
+        // Якщо раніше — дата (дд.мм.рррр) та час
+        const datePart = d.toLocaleDateString('uk-UA', { 
+            day: '2-digit', 
+            month: '2-digit', 
+            year: 'numeric' 
+        });
+        return `${datePart} о ${time}`;
+    }
+
+    // Клік по кнопці: оновлює сторінку при наявності апдейту, або показує час збірки
     statusBtn.addEventListener('click', () => {
         if (isUpdateReady) {
             window.location.reload();
         } else {
-            showNotification("Сайт вже оновлений до останньої версії!", "info");
+            const timeInfo = initialBuildTime ? ` (збірка від ${initialBuildTime})` : '';
+            showNotification(`Сайт актуальний${timeInfo}`, "info");
         }
     });
 
@@ -5661,7 +5697,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (document.visibilityState !== 'visible') return;
 
         try {
-            // Робимо надлегкий HEAD-запит до головного файлу сайту в обхід кешу
             const checkUrl = `${window.location.pathname}?_t=${Date.now()}`;
             const res = await fetch(checkUrl, { 
                 method: 'HEAD', 
@@ -5670,34 +5705,37 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (!res.ok) return;
 
-            // Сервер повертає унікальний ETag або точний час останньої збірки
             const currentTag = res.headers.get('etag') || res.headers.get('last-modified');
-            const lastModTime = res.headers.get('last-modified');
+            const lastModHeader = res.headers.get('last-modified');
 
             if (!currentTag) return;
 
-            // 1. Перший запуск при завантаженні сторінки
+            const formattedTime = formatBuildDate(lastModHeader);
+
+            // 1. Перший запуск (сторінка тільки завантажилась)
             if (!initialVersionTag) {
                 initialVersionTag = currentTag;
+                initialBuildTime = formattedTime;
                 isUpdateReady = false;
                 dot.className = 'site-status-dot status-green';
                 
-                const timeStr = lastModTime ? new Date(lastModTime).toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' }) : '';
-                statusBtn.title = `Сайт оновлений ${timeStr ? '(збірка від ' + timeStr + ')' : ''}`;
+                statusBtn.title = formattedTime 
+                    ? `Сайт оновлено • Збірка від ${formattedTime}` 
+                    : 'Сайт оновлений до останньої версії';
                 scheduleNextCheck(30000);
                 return;
             }
 
-            // 2. Якщо ETag на сервері змінився — GitHub Pages щойно розгорнув новий код!
+            // 2. З'явилася нова версія на GitHub
             if (currentTag !== initialVersionTag) {
                 isUpdateReady = true;
                 dot.className = 'site-status-dot status-orange';
                 
-                const timeStr = lastModTime ? new Date(lastModTime).toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' }) : '';
-                statusBtn.title = `Новий код успішно опубліковано на сервері ${timeStr ? '(' + timeStr + ')' : ''}!\nНатисніть сюди для оновлення сторінки (F5)`;
+                const timeStr = formattedTime ? ` (нова збірка від ${formattedTime})` : '';
+                statusBtn.title = `Доступне оновлення!${timeStr}\nНатисніть сюди для оновлення сторінки (F5)`;
                 scheduleNextCheck(15000);
             } else {
-                // Все ще стара версія
+                // Змін немає
                 isUpdateReady = false;
                 dot.className = 'site-status-dot status-green';
                 scheduleNextCheck(30000);
@@ -5714,10 +5752,8 @@ document.addEventListener('DOMContentLoaded', () => {
         pollTimer = setTimeout(checkServerVersion, delay);
     }
 
-    // Перша перевірка через 1.5 сек після відкриття
     setTimeout(checkServerVersion, 1500);
 
-    // Миттєва перевірка при поверненні на вкладку сайту
     document.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'visible') checkServerVersion();
     });
