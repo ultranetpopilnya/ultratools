@@ -3711,13 +3711,13 @@ body.dark .line-marker {
 
 .template-search-bar.active {
     max-height: 220px; 
-    min-height: 65px;
+    min-height: 70px;
     opacity: 1;
     transform: translateY(0) scale(1); 
     pointer-events: auto; 
     
     /* Зберігаємо 6px з боків та додаємо 6px знизу */
-    margin: 0 6px 6px 6px !important;   
+    margin: 0 5px 5px 5px !important;   
     padding: 6px;            
     
     border-width: 1px;
@@ -3744,15 +3744,14 @@ body.dark .template-search-bar.active {
     /* 2. ГОЛОВНЕ ВИПРАВЛЕННЯ: Центруємо весь блок з колонками рівно по центру панелі */
     justify-content: center; 
     
-    margin: 0 auto;   
-    gap: 14px; /* Трохи збільшили відступ між колонками для гармонії */
+    margin: 0px;   
+    gap: 5px;
     box-sizing: border-box;
     align-items: flex-end; 
 }
 
 /* 5. Ліва колонка пошуку */
 .search-col-left {
-    /* flex-grow: 0 забороняє колонці асиметрично розтягуватись, руйнуючи центрування */
     flex: 0 1 380px; 
     width: 100%;
     display: flex;
@@ -3765,7 +3764,7 @@ body.dark .template-search-bar.active {
     /* Фіксуємо праву колонку, щоб вона не стискалась і не розширювалась */
     flex: 0 0 110px; 
     width: 110px;
-    padding-left: 14px; /* Зсунули трохи вправо від пунктирної лінії */
+    padding-left: 5px; /* Зсунули трохи вправо від пунктирної лінії */
     display: flex;
     flex-direction: column;
     gap: 5px;
