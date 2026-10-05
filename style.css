@@ -3716,7 +3716,6 @@ body.dark .line-marker {
     transform: translateY(0) scale(1); 
     pointer-events: auto; 
     
-    /* Зберігаємо 6px з боків та додаємо 6px знизу */
     margin: 0 5px 5px 5px !important;   
     padding: 6px;            
     
