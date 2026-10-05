@@ -3751,7 +3751,7 @@ body.dark .template-search-bar.active {
 
 /* 5. Ліва колонка пошуку */
 .search-col-left {
-    flex: 0 1 380px; 
+    flex: 0 1 384px;
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -3952,9 +3952,12 @@ body.dark .template-config-bar.active {
 }
 
 /* --- ЗАХИСТ ВІД ЗЛАМУ КАРТКИ --- */
-.template-field-group:has(.template-config-bar.active),
-.template-field-group:has(.template-search-bar.active) {
+.template-field-group:has(.template-config-bar.active) {
     min-width: max-content !important; 
+}
+
+.template-field-group:has(.template-search-bar.active) {
+    min-width: 554px !important;
 }
 
 .config-rows-wrapper {

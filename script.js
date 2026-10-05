@@ -1415,6 +1415,13 @@ function initDraggableAndResizable(element) {
 
     interact(element).unset();
 
+    // Реальний коефіцієнт масштабування (враховує body { zoom: 0.85 })
+    function getZoom(el) {
+        const w = el.offsetWidth;
+        const z = w ? el.getBoundingClientRect().width / w : 1;
+        return (z && isFinite(z) && z > 0) ? z : 1;
+    }
+
     interact(element).resizable({
         edges: { left: false, right: true, bottom: true, top: false },
         listeners: {
@@ -1424,9 +1431,11 @@ function initDraggableAndResizable(element) {
             },
             move(event) {
                 let target = event.target;
-                
-                let newWidth = event.rect.width;
-                let newHeight = event.rect.height;
+                const zoom = getZoom(target);
+
+                // Переводимо візуальні пікселі в CSS-пікселі
+                let newWidth = event.rect.width / zoom;
+                let newHeight = event.rect.height / zoom;
 
                 if (!newWidth || isNaN(newWidth) || newWidth < 100) return;
                 if (!newHeight || isNaN(newHeight) || newHeight < 50) return;
@@ -1444,10 +1453,9 @@ function initDraggableAndResizable(element) {
             },
             end(event) {
                 let target = event.target;
-                // Гарантовано знімаємо стан зміни розміру, щоб мишка ніколи не залипала
                 target.classList.remove('is-resizing');
-                target.setAttribute('draggable', 'false'); 
-                
+                target.setAttribute('draggable', 'false');
+
                 try {
                     renderLineMarkers(target);
                     saveTemplates();
@@ -1458,8 +1466,15 @@ function initDraggableAndResizable(element) {
         },
         modifiers: [
             interact.modifiers.restrictSize({
-                min: { width: 450, height: 90 },
-                max: { width: 2000, height: 2000 }
+                // min/max теж у візуальних пікселях, тому множимо на zoom
+                min: () => {
+                    const z = getZoom(element);
+                    return { width: 450 * z, height: 90 * z };
+                },
+                max: () => {
+                    const z = getZoom(element);
+                    return { width: 2000 * z, height: 2000 * z };
+                }
             }),
             interact.modifiers.restrictEdges({
                 outer: 'parent'
