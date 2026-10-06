@@ -33,10 +33,14 @@ show card slotno 1 :: Показати інформацію про OLT (Скіл
 > onu 111 type GPON-1GE sn PTNHUYLO :: Реєстрація ONU за серійним номером на OLT
 > mac add permanent abcd.efgh.1234 gpon gpon-onu_1/1/1:1 vport 1 vlan 99 :: Привязати MAC роутера перманентно
 > mac delete abcd.efgh.1234 :: Видалити перманентно привязану MAC адресу
+
 * pon-onu-mng gpon-onu_1/1/1:1 :: Перехід в режим конфігурації ONU (Далі команди, які вводяться після)
 > interface eth eth_0/1 state lock/unlock :: Очистка сесії без відєднування ethernet кабелю
 > reboot :: Перезавантаження ONU віддалено
 
+* gpon :: Вводиться після команди conf t
+> profile tcont 300M type 4 maximum 307200 :: Додати профіль швидкості 300 мбіт на OLT
+> profile traffic 300M sir 307200 pir 307200 :: Ця команда вводиться відразу після попередньої!
 
 [epon]
 show onu unauthentication :: Пошук незареєстрованих ONU
