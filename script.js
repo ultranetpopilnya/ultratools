@@ -2411,6 +2411,7 @@ if (!isDeleting) {
     };
     
     const oltInputNode = configPanel.querySelector('.config-olt-select');
+    enableOltAutoScroll(oltInputNode)
 const vlanInputNode = configPanel.querySelector('.config-vlan-input');
 const oltDropdownList = configPanel.querySelector('.olt-dropdown-list');
 
@@ -2590,6 +2591,7 @@ function renderOltDropdown(filter = '') {
                 const isDifferentOlt = (lastConfirmedOltName !== null && lastConfirmedOltName !== olt.name);
 
                 oltInputNode.value = olt.name;
+                oltInputNode._startScroll?.();
                 selectedOltObj = olt;
                 selectedOltSource = source;
                 lastConfirmedOltName = olt.name;
@@ -5773,3 +5775,157 @@ document.addEventListener('DOMContentLoaded', () => {
         if (document.visibilityState === 'visible') checkServerVersion();
     });
 });
+
+// Автопрокрутка тексту в полі вводу (універсальна, працює з будь-яким <input type="text">)
+function enableOltAutoScroll(input) {
+    if (!input || input._autoScrollInit) return;
+    input._autoScrollInit = true;
+
+    let timer = null;
+    let pauseTimer = null;
+    let resizeDebounce = null;
+    let isHovered = false;
+    let isFocused = false;
+    let dir = 1;
+
+    const stop = () => {
+        if (timer) { clearInterval(timer); timer = null; }
+        if (pauseTimer) { clearTimeout(pauseTimer); pauseTimer = null; }
+    };
+
+    const getMax = () => input.scrollWidth - input.clientWidth;
+
+    const tick = () => {
+        if (!input.isConnected) { stop(); return; }
+        if (isHovered || isFocused) return;
+
+        const max = getMax();
+        if (max <= 2) {
+            input.scrollLeft = 0;
+            stop();
+            return;
+        }
+
+        input.scrollLeft += dir;
+
+        // Дійшли до краю — пауза і розворот
+        if ((dir === 1 && input.scrollLeft >= max) || (dir === -1 && input.scrollLeft <= 0)) {
+            if (timer) { clearInterval(timer); timer = null; }
+            pauseTimer = setTimeout(() => {
+                pauseTimer = null;
+                dir = -dir;
+                resume();
+            }, 1200);
+        }
+    };
+
+    const resume = () => {
+        if (isHovered || isFocused || !input.isConnected) return;
+
+        if (getMax() <= 2) {
+            input.scrollLeft = 0;
+            stop();
+            return;
+        }
+
+        // Захист від дублювання інтервалів
+        if (timer) clearInterval(timer);
+        timer = setInterval(tick, 25);
+    };
+
+    const restart = (delay = 400) => {
+        stop();
+        input.scrollLeft = 0;
+        dir = 1;
+        pauseTimer = setTimeout(() => {
+            pauseTimer = null;
+            resume();
+        }, delay);
+    };
+
+    // === СТЕЖИМО ЗА ЗМІНОЮ ШИРИНИ ПОЛЯ (РЕСАЙЗ ШАБЛОНУ) ===
+    let prevWidth = 0;
+    const resizeObserver = new ResizeObserver(entries => {
+        if (!input.isConnected) {
+            resizeObserver.disconnect();
+            stop();
+            return;
+        }
+
+        const currentWidth = entries[0].contentRect.width;
+        if (Math.abs(currentWidth - prevWidth) < 2) return;
+        prevWidth = currentWidth;
+
+        if (isFocused) return;
+
+        // Debounce: чекаємо, поки користувач закінчить тягнути край
+        clearTimeout(resizeDebounce);
+        resizeDebounce = setTimeout(() => {
+            if (isFocused || !input.isConnected) return;
+
+            stop();
+            const max = getMax();
+
+            if (max <= 2) {
+                // Текст помістився — прокрутка не потрібна
+                input.scrollLeft = 0;
+            } else {
+                // Текст не влазить — коригуємо позицію і запускаємо заново
+                if (input.scrollLeft > max) input.scrollLeft = max;
+                if (input.scrollLeft <= 0) dir = 1;
+                if (!isHovered) {
+                    pauseTimer = setTimeout(() => {
+                        pauseTimer = null;
+                        resume();
+                    }, 300);
+                }
+            }
+        }, 120);
+    });
+    resizeObserver.observe(input);
+
+    // Фокус / редагування
+    input.addEventListener('focus', () => {
+        isFocused = true;
+        stop();
+        input.scrollLeft = 0;
+    });
+
+    input.addEventListener('blur', () => {
+        isFocused = false;
+        restart(400);
+    });
+
+    // Пауза при наведенні
+    input.addEventListener('mouseenter', () => {
+        isHovered = true;
+        stop();
+    });
+
+    // Продовження руху, коли прибрали мишку
+    input.addEventListener('mouseleave', () => {
+        isHovered = false;
+        if (isFocused) return;
+
+        const max = getMax();
+        if (input.scrollLeft <= 0) dir = 1;
+        else if (input.scrollLeft >= max) dir = -1;
+
+        stop();
+        pauseTimer = setTimeout(() => {
+            pauseTimer = null;
+            resume();
+        }, 500);
+    });
+
+    // Для вибору зі списку: закриває введення і перезапускає прокрутку
+    input._startScroll = () => {
+        input.blur();
+        restart(400);
+    };
+
+    // Для програмної зміни тексту (input.value = '...'): перезапускає прокрутку без blur
+    input._refreshScroll = () => {
+        if (!isFocused) restart(400);
+    };
+}
