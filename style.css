@@ -698,7 +698,6 @@ select:focus,
 .config-clear-fields-btn,
 .config-login-regen-btn,
 .config-login-copy-btn,
-.extension-info-btn,
 .extension-download-btn,
 #add-template-button,
 #import-templates-button,
@@ -737,7 +736,6 @@ select:focus,
 .config-clear-fields-btn:hover,
 .config-login-copy-btn:hover,
 .config-login-regen-btn:hover,
-.extension-info-btn:hover,
 .extension-download-btn:hover,
 #add-template-button:hover,
 #import-templates-button:hover,
@@ -784,7 +782,6 @@ select:focus,
 .config-clear-fields-btn:active,
 .config-mix-toggle-btn:active,
 .config-onu-mode-btn:active,
-.extension-info-btn:active,
 .extension-download-btn:active,
 .segment-btn:not(.active):active,
 #add-template-button:active,
@@ -818,7 +815,6 @@ body.dark .unified-pill:has(#login-google-btn:not(.auth-hidden)):active,
 body.dark .config-clear-fields-btn:active,
 body.dark .config-mix-toggle-btn:active,
 body.dark .config-onu-mode-btn:active,
-body.dark .extension-info-btn:active,
 body.dark .extension-download-btn:active,
 body.dark .segment-btn:not(.active):active,
 body.dark #add-template-button:active,
@@ -1645,7 +1641,11 @@ body.dark .version-number {
 .extension-description { font-size: 12px; color: var(--text-color); line-height: 1.4; margin-bottom: 15px; }
 
 /* extension actions */
-.extension-actions { display: flex; align-items: center; justify-content: space-between; }
+.extension-actions { 
+    display: flex; 
+    align-items: center; 
+    justify-content: flex-end; /* Розміщення праворуч */
+}
 
 /* extension buttons group */
 .extension-buttons-group { display: flex; align-items: center; gap: 6px; }
@@ -1663,24 +1663,6 @@ body.dark .version-number {
 .extension-download-btn:hover { 
     background-color: #4058d8;
      color: white; }
-
-/* extension info btn */
-.extension-info-btn {
-    display: inline-flex; align-items: center; justify-content: center;
-    padding: 6px 10px; background-color: transparent; color: var(--text-color);
-    border: 1px solid var(--input-border-color); border-radius: 8px;
-    text-decoration: none; transition: all 0.2s ease-in-out; font-size: 14px;
-}
-
-/* extension info btn — ховер */
-.extension-info-btn:hover { background-color: var(--input-bg-color); color: var(--primary-accent-color); border-color: var(--primary-accent-color); box-shadow: 0 2px 4px rgba(0, 123, 255, 0.1); }
-
-/* extension version badge */
-.extension-version-badge {
-    font-weight: 300; font-family: 'FixelDisplay', monospace; font-size: 13px;
-    background-color: rgba(0, 123, 255, 0.1); color: var(--primary-accent-color);
-    padding: 4px 10px; border-radius: 8px;
-}
 
 /* =========================================================
    ТЕМНА ТЕМА
@@ -1730,15 +1712,6 @@ body.dark .extension-download-btn { background-color: var(--secondary-accent-col
 
 /* Темна тема: extension download btn — ховер */
 body.dark .extension-download-btn:hover { background-color: #ffb74d; color: #1b1c1d; }
-
-/* Темна тема: extension info btn */
-body.dark .extension-info-btn { color: #aaa; border-color: rgba(255, 255, 255, 0.2); }
-
-/* Темна тема: extension info btn — ховер */
-body.dark .extension-info-btn:hover { background-color: rgba(255, 255, 255, 0.05); color: var(--secondary-accent-color); border-color: var(--secondary-accent-color); }
-
-/* Темна тема: extension version badge */
-body.dark .extension-version-badge { background-color: rgba(230, 162, 46, 0.15); color: var(--secondary-accent-color); }
 
 /* Стиль для роздільника версій (Тільки номер) */
 .history-separator {
