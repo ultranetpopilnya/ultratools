@@ -1490,11 +1490,8 @@ body.dark .drag-handle:hover {
 /* version pill */
 .version-pill.is-open, .extension-pill.is-open {
     width: 358px; 
-    border-radius: 16px; 
-    
-    background-color: rgba(255, 255, 255, 0.7); 
-    
-   
+    border-radius: 16px;
+    background-color: rgba(255, 255, 255, 0.7);
     border: 1px solid var(--glass-white-lg);
     
     /* Тіні та відблиски */
@@ -1515,7 +1512,7 @@ body.dark .drag-handle:hover {
 /* extension pill */
 .extension-pill.is-open {
     min-height: 165px;
-    max-height: 165px; 
+    max-height: 400px; 
 }
 
 /* 5. ІКОНКИ */
