@@ -51,7 +51,7 @@ show pon power attenuation epon-onu_1/1/1:1 :: Показати сигнал ONU
 show pon power onu-rx epon-olt_1/1/1 :: Показати сигнали всіх ONU на PON
 show mac epon onu epon-onu_1/1/1:1 :: Показати Mac адресу роутера
 show ip dhcp snooping port epon-onu_1/1/1:1 :: Показати Mac адресу, IP та VLAN роутера
-show remote onu port info epon-onu_1/2/1:1 :: Перевірка зєднання між ONU та роутером (Лінк)
+show remote onu port info epon-onu_1/1/1:1 :: Перевірка зєднання між ONU та роутером (Лінк)
 show remote onu port info eth epon-onu_1/1/1:1 :: Перевірка зєднання між ONU та роутером (На нових прошивках)
 
 * conf t :: Зайти в налаштування OLT (Далі команди, які вводяться після)
