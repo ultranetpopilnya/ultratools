@@ -503,7 +503,7 @@ window.changeDeviceType = function(event, deviceName) {
             
             activeContent.style.setProperty('--local-width', defaultWidth);
             activeContent.style.setProperty('--local-height', defaultHeight);
-            document.querySelector('.tab-content-wrapper').style.minHeight = defaultHeight;
+                        document.querySelector('.tab-content-wrapper').style.minHeight = '0px';
             
             if (tabId === 'gpon-commands') {
      const commandOutput = document.getElementById('command-output');
@@ -5535,15 +5535,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateDivider() {
         // Перевіряємо, чи включені 2 колонки і чи ми не на мобільному
-        if (outputContainer.classList.contains('two-columns') && window.innerWidth > 1366) {
+                if (outputContainer.classList.contains('two-columns')) {
             
             // Якщо лінії ще немає в DOM - додаємо
             if (!divider.parentElement) {
                 listContainer.appendChild(divider);
             }
             
-            // Задаємо висоту = загальна висота всього контенту всередині скролу мінус відступ 16px
+                        // Спочатку стискаємо лінію, щоб вона не впливала на scrollHeight,
+            // і тільки тоді міряємо реальну висоту контенту
+            divider.style.height = '0px';
             divider.style.height = `${listContainer.scrollHeight - 16}px`;
+
+            // Прибираємо власні зміни стилю з черги observer, щоб не було циклу оновлень
+            observer.takeRecords();
             
         } else {
             // Видаляємо лінію на мобільних пристроях або якщо це 1 колонка
