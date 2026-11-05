@@ -5708,9 +5708,25 @@ document.addEventListener('DOMContentLoaded', () => {
         return `${datePart} о ${time}`;
     }
 
-    // Клік по кнопці: оновлює сторінку при наявності апдейту, або показує час збірки
-    statusBtn.addEventListener('click', () => {
+        statusBtn.addEventListener('click', async () => {
         if (isUpdateReady) {
+            statusBtn.style.pointerEvents = 'none'; // захист від повторних кліків
+
+            try {
+                // Сама сторінка + всі підключені скрипти та стилі з цього ж сайту
+                const urls = [
+                    window.location.href,
+                    ...Array.from(document.querySelectorAll('script[src], link[rel="stylesheet"]'))
+                        .map(el => el.src || el.href)
+                        .filter(u => u.startsWith(window.location.origin))
+                ];
+
+                // cache: 'reload' = завантажити з сервера в обхід кешу і оновити кеш
+                await Promise.all(urls.map(u => fetch(u, { cache: 'reload' }).catch(() => {})));
+            } catch (e) {
+                console.warn('Не вдалося оновити кеш перед перезавантаженням:', e);
+            }
+
             window.location.reload();
         } else {
             const timeInfo = initialBuildTime ? ` (збірка від ${initialBuildTime})` : '';
@@ -5722,18 +5738,38 @@ document.addEventListener('DOMContentLoaded', () => {
         if (document.visibilityState !== 'visible') return;
 
         try {
-            const checkUrl = `${window.location.pathname}?_t=${Date.now()}`;
-            const res = await fetch(checkUrl, { 
-                method: 'HEAD', 
-                cache: 'no-store' 
-            });
+                        // Сторінка + всі скрипти та стилі з цього ж сайту (Firebase CDN та ін. пропускаємо)
+            const watchedUrls = [
+                window.location.pathname,
+                ...Array.from(document.querySelectorAll('script[src], link[rel="stylesheet"]'))
+                    .map(el => el.src || el.href)
+                    .filter(u => u.startsWith(window.location.origin))
+            ];
 
-            if (!res.ok) return;
+            const responses = await Promise.all(watchedUrls.map(u => {
+                const sep = u.includes('?') ? '&' : '?';
+                return fetch(`${u}${sep}_t=${Date.now()}`, {
+                    method: 'HEAD',
+                    cache: 'no-store'
+                });
+            }));
 
-            const currentTag = res.headers.get('etag') || res.headers.get('last-modified');
-            const lastModHeader = res.headers.get('last-modified');
+            // Якщо хоч один файл не відповів - пропускаємо перевірку, щоб не було хибного "оновлення"
+            if (responses.some(r => !r.ok)) return;
 
-            if (!currentTag) return;
+            const tags = responses.map(r => r.headers.get('etag') || r.headers.get('last-modified') || '');
+            if (tags.every(t => !t)) return;
+
+            // Один спільний "відбиток" усіх файлів
+            const currentTag = tags.join('|');
+
+            // Час збірки = дата найновішого з файлів
+            const lastModHeader = responses
+                .map(r => r.headers.get('last-modified'))
+                .filter(Boolean)
+                .map(h => new Date(h))
+                .filter(d => !isNaN(d.getTime()))
+                .sort((a, b) => b - a)[0]?.toUTCString() || null;
 
             const formattedTime = formatBuildDate(lastModHeader);
 
