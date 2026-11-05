@@ -169,8 +169,7 @@ const SyncManager = {
             return;
         }
 
-        updateSyncTimeDisplay(null, 'syncing');
-        this.timeout = setTimeout(() => this.flush(), 3000);
+        this.timeout = setTimeout(() => this.flush(), 8000);
     },
 
     async flush() {
@@ -3341,7 +3340,10 @@ document.addEventListener('click', (e) => {
     const selectionHandler = () => requestAnimationFrame(() => updateHighlight(textarea, highlighter));
     textarea.addEventListener('mouseup', selectionHandler);
     textarea.addEventListener('keyup', selectionHandler);
-    textarea.addEventListener('blur', () => updateHighlight(textarea, highlighter));
+    textarea.addEventListener('blur', () => {
+    updateHighlight(textarea, highlighter);
+    if (SyncManager.pending) SyncManager.flush();
+});
 
     gutter.onclick = (event) => {
         // ... (Стара логіка gutter залишається без змін) ...
