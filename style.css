@@ -1512,18 +1512,11 @@ body.dark .drag-handle:hover {
     --scrollbar-thumb-width: 2px;          /* було 4px */
     --scrollbar-thumb-width-hover: 2px;
     --scrollbar-track: rgba(0, 0, 0, 0.1);
-    --scrollbar-thumb: rgba(0, 0, 0, 0.35);
-    --scrollbar-thumb-hover: var(--primary-accent-color);
-    --scrollbar-thumb-active: var(--primary-accent-color);
-
     scrollbar-gutter: stable;
 }
 
 body.dark .version-pill.is-open {
     --scrollbar-track: rgba(255, 255, 255, 0.12);
-    --scrollbar-thumb: rgba(255, 255, 255, 0.4);
-    --scrollbar-thumb-hover: var(--secondary-accent-color);
-    --scrollbar-thumb-active: var(--secondary-accent-color);
 }
 
 /* Трек: суцільна заокруглена смужка тієї ж товщини (4px), по центру коридору */
