@@ -169,7 +169,7 @@ const SyncManager = {
             return;
         }
 
-        this.timeout = setTimeout(() => this.flush(), 8000);
+        this.timeout = setTimeout(() => this.flush(), 3000);
     },
 
     async flush() {
