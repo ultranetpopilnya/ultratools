@@ -1486,7 +1486,7 @@ body.dark .drag-handle:hover {
 
 /* version pill */
 .version-pill.is-open, .extension-pill.is-open {
-    width: 358px; 
+    width: 400px; 
     border-radius: 16px;
     background-color: rgba(255, 255, 255, 0.7);
     border: 1px solid var(--glass-white-lg);
@@ -1504,6 +1504,38 @@ body.dark .drag-handle:hover {
     max-height: 480px; 
     overflow-y: auto; 
     overflow-x: hidden;
+}
+
+/* Скролбар чейнджлогу: тонкий трек + повзунок однакової товщини */
+.version-pill.is-open {
+    --scrollbar-corridor: 8px;             /* було 10px */
+    --scrollbar-thumb-width: 2px;          /* було 4px */
+    --scrollbar-thumb-width-hover: 2px;
+    --scrollbar-track: rgba(0, 0, 0, 0.1);
+    --scrollbar-thumb: rgba(0, 0, 0, 0.35);
+    --scrollbar-thumb-hover: var(--primary-accent-color);
+    --scrollbar-thumb-active: var(--primary-accent-color);
+
+    scrollbar-gutter: stable;
+}
+
+body.dark .version-pill.is-open {
+    --scrollbar-track: rgba(255, 255, 255, 0.12);
+    --scrollbar-thumb: rgba(255, 255, 255, 0.4);
+    --scrollbar-thumb-hover: var(--secondary-accent-color);
+    --scrollbar-thumb-active: var(--secondary-accent-color);
+}
+
+/* Трек: суцільна заокруглена смужка тієї ж товщини (4px), по центру коридору */
+.version-pill.is-open::-webkit-scrollbar-track {
+    background-image: none;
+    background-color: var(--scrollbar-track);
+    background-clip: padding-box;
+    border: 0 solid transparent;
+    border-left-width: 3px;                /* (8 - 2) / 2 */
+    border-right-width: 3px;
+    border-radius: 100px;
+    margin: 12px 0;                        /* не впирається в округлі кути вікна */
 }
 
 /* extension pill */
@@ -1531,8 +1563,8 @@ body.dark .drag-handle:hover {
 
 /* 6. КОНТЕНТ */
 .version-content, .extension-content {
-    width: 260px; 
-    min-width: 260px;
+    width: auto; 
+    min-width: 0;
     
     /* Стан закритого вікна: текст швидко ховається (швидше, ніж згортається вікно) */
     opacity: 0;
@@ -1540,7 +1572,8 @@ body.dark .drag-handle:hover {
     transition: opacity 0.2s ease, transform 0.2s ease;
     pointer-events: none; /* Щоб не можна було клікнути по невидимому тексту */
     
-    margin: 14px 18px 14px 48px; 
+    margin: 0;
+    padding: 9px 14px 20px 20px;
     user-select: text; cursor: auto;
 }
 
@@ -1557,8 +1590,10 @@ body.dark .drag-handle:hover {
 /* ШАПКИ */
 .version-header, .extension-header {
     display: flex; justify-content: space-between; align-items: center;
-    border-bottom: 1px solid rgba(0,0,0,0.08); 
-    padding-bottom: 10px; margin-bottom: 12px;
+    min-height: 42px;          
+    padding: 0 0 10px 34px;   
+    margin-bottom: 12px;
+    border-bottom: 1px solid rgba(0,0,0,0.08);
 }
 
 /* version title */
@@ -1605,19 +1640,24 @@ body.dark .version-number {
     list-style-type: none !important;
 }
 
-/* log item */
 .log-item { 
-    margin-bottom: 8px; 
+    margin-bottom: 10px; 
     display: grid; 
-    grid-template-columns: 34px 1fr; /* 34px під бейдж, решта - текст */
-    gap: 10px; 
+    grid-template-columns: 38px 1fr;  /* було 34px: бейджам дихати легше */
+    gap: 12px; 
     align-items: start; 
 }
 
-/* Бейджі */
+.log-item:last-child { margin-bottom: 0; }
+
+/* рядок-роздільник версії не має ділитися на колонки бейджа */
+.log-item:has(> .history-separator) { display: block; }
+
 .badge {
     font-size: 10px; font-weight: 800; line-height: 12px;
-    padding: 3px 0; border-radius: 6px; color: #fff; width: 100%; text-align: center;
+    padding: 3px 0; border-radius: 6px; color: #fff;
+    width: 100%; text-align: center;
+    letter-spacing: 0.3px;
 }
 
 /* badge */
@@ -1632,7 +1672,7 @@ body.dark .version-number {
 /* =========================================================
    РОЗШИРЕННЯ: КНОПКИ ТА ОПИС
    ========================================================= */
-.extension-description { font-size: 12px; color: var(--text-color); line-height: 1.4; margin-bottom: 15px; }
+.extension-description { font-size: 12px; color: var(--text-color); line-height: 1.5; margin-bottom: 14px; }
 
 /* extension actions */
 .extension-actions { 
@@ -1709,20 +1749,16 @@ body.dark .extension-download-btn:hover { background-color: #ffb74d; color: #1b1
 
 /* Стиль для роздільника версій (Тільки номер) */
 .history-separator {
-    margin-top: 15px;      
-    margin-bottom: 8px;    
-    padding-bottom: 4px;   /* Трохи більше місця під текстом */
-    
+    margin-top: 16px;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    padding-left: 0;                 /* було 2px */
     border-bottom: 1px solid var(--input-border-color); 
-    
     font-weight: 300;      
     font-family: 'FixelDisplay', monospace; 
     color: var(--primary-accent-color);          
     font-size: 14px;
-    
-    /* --- ВИПРАВЛЕННЯ --- */
-    text-align: left;      /* Вирівнюємо вліво, як і верхню версію */
-    padding-left: 2px;     /* Мікро-відступ для краси */
+    text-align: left;      
     opacity: 0.8;
 }
 
