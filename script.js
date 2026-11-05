@@ -159,20 +159,34 @@ const SyncManager = {
     trigger() {
         // Якщо ми зараз вантажимо дані з хмари - ігноруємо будь-які спроби збереження!
         if (!currentUser || isCloudSyncing) return;
-        
+
         this.pending = true;
-        updateSyncTimeDisplay(null, 'syncing');
         clearTimeout(this.timeout);
-        this.timeout = setTimeout(() => this.flush(), 400);
+
+        // Офлайн: дані вже збережені локально, у хмару підуть, коли з'явиться інтернет
+        if (!navigator.onLine) {
+            updateSyncTimeDisplay(null, 'error');
+            return;
+        }
+
+        updateSyncTimeDisplay(null, 'syncing');
+        this.timeout = setTimeout(() => this.flush(), 3000);
     },
 
     async flush() {
         if (!this.pending || !currentUser || isCloudSyncing) return;
-        this.pending = false;
         clearTimeout(this.timeout);
 
+        // Офлайн: pending залишаємо true, щоб відправити при поверненні мережі
+        if (!navigator.onLine) {
+            updateSyncTimeDisplay(null, 'error');
+            return;
+        }
+
+        this.pending = false;
+        updateSyncTimeDisplay(null, 'syncing');
+
         try {
-            // Беремо поточний стан екрану
             const templates = JSON.parse(localStorage.getItem('textTemplates') || '[]');
             const quickNotes = JSON.parse(localStorage.getItem('quickNotesData') || '[]');
             const loginHistory = JSON.parse(localStorage.getItem('loginHistory') || '[]');
@@ -181,8 +195,7 @@ const SyncManager = {
 
             const userRef = db.collection('users').doc(currentUser.uid);
 
-            // Просто перезаписуємо хмару поточним станом (без надгробків і складних підколекцій)
-            await userRef.set({
+            const writePromise = userRef.set({
                 templates: templates,
                 templateOrder: templateOrder,
                 quickNotes: quickNotes,
@@ -190,6 +203,22 @@ const SyncManager = {
                 loginHistory: loginHistory,
                 updatedAt: Date.now()
             }, { merge: true });
+
+            // Якщо сервер не підтвердив запис за 5 сек - вважаємо, що мережі немає
+            const result = await Promise.race([
+                writePromise.then(() => 'ok'),
+                new Promise(resolve => setTimeout(() => resolve('timeout'), 5000))
+            ]);
+
+            if (result === 'timeout') {
+                updateSyncTimeDisplay(null, 'error');
+                // Запис стоїть у черзі Firebase; коли мережа повернеться - оновимо статус
+                writePromise.then(() => {
+                    console.log('☁️ [SYNC] Відкладений запис дійшов до хмари');
+                    markSyncedNow();
+                }).catch(() => {});
+                return;
+            }
 
             console.log(`☁️ [SYNC] Успішно збережено в хмару: ${templates.length} шаблонів`);
             markSyncedNow();
@@ -200,6 +229,18 @@ const SyncManager = {
         }
     }
 };
+
+// Інтернет зник / повернувся
+window.addEventListener('offline', () => {
+    if (currentUser && SyncManager.pending) updateSyncTimeDisplay(null, 'error');
+});
+window.addEventListener('online', () => {
+    if (!currentUser) return;
+    if (SyncManager.pending) {
+        updateSyncTimeDisplay(null, 'syncing');
+        SyncManager.flush();
+    }
+});
 
 window.addEventListener('beforeunload', () => {
     if (SyncManager.pending) {
