@@ -847,7 +847,6 @@ body.dark .qn-add-btn:active {
    ==================================================================== */
 
 /* 1. Готуємо елементи: позиціонування та обрізка хвилі по краях */
-
 .unified-pill:has(#login-google-btn:not(.auth-hidden)),
 .variant-dropdown-item,
 .speed-dropdown-item,
@@ -863,22 +862,23 @@ body.dark .qn-add-btn:active {
 .sub-command-item {
     position: relative;
     overflow: hidden;
+    isolation: isolate;
 }
 
 /* 2. Піднімаємо всі внутрішні елементи (текст, іконки), щоб хвиля протікала ПІД ними */
-.unified-pill #login-google-btn:not(.auth-hidden) > *,
-.variant-dropdown-item > *,
-.speed-dropdown-item > *,
-.add-tab-item > *,
+.unified-pill #login-google-btn:not(.auth-hidden) > :not(.ripple),
+.variant-dropdown-item > :not(.ripple),
+.speed-dropdown-item > :not(.ripple),
+.add-tab-item > :not(.ripple),
 .tab-button > :not(.ripple):not(.close-tab-btn),
-.olt-dropdown-item > *,
-#login-autoclear-btn > *,
-.calc-action-button > *,
-.stepper-btn > *,
-#auto-reset-button > *,
-.segment-btn > *,
-.command-item > *,
-.sub-command-item > * {
+.olt-dropdown-item > :not(.ripple),
+#login-autoclear-btn > :not(.ripple),
+.calc-action-button > :not(.ripple),
+.stepper-btn > :not(.ripple),
+#auto-reset-button > :not(.ripple),
+.segment-btn > :not(.ripple),
+.command-item > :not(.ripple),
+.sub-command-item > :not(.ripple) {
     position: relative;
     z-index: 2;
     pointer-events: none;
@@ -890,54 +890,40 @@ body.dark .qn-add-btn:active {
     pointer-events: auto !important;
 }
 
-/* 3. Базовий стиль самої хвилі (Світла тема) */
-.unified-pill:has(#login-google-btn:not(.auth-hidden)) .ripple,
-.variant-dropdown-item .ripple,
-.speed-dropdown-item .ripple,
-.add-tab-item .ripple,
-.tab-button .ripple,
-.olt-dropdown-item .ripple,
-#login-autoclear-btn .ripple,
-.calc-action-button .ripple,
-.stepper-btn .ripple,
-#auto-reset-button .ripple,
-.segment-btn .ripple,
-.command-item .ripple,
-.sub-command-item .ripple {
+/* 3. Базовий стиль хвилі (Світла тема) */
+.ripple {
     position: absolute;
     border-radius: 50%;
     transform: scale(0);
     background-color: color-mix(in srgb, currentColor 20%, transparent);
     pointer-events: none;
-    z-index: 1;
-    animation: ripple-wave 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: -1;
+    animation: ripple-wave 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* 4. Колір хвилі для Темної теми */
-body.dark .unified-pill:has(#login-google-btn:not(.auth-hidden)) .ripple,
-body.dark .variant-dropdown-item .ripple,
-body.dark .speed-dropdown-item .ripple,
-body.dark .add-tab-item .ripple,
-body.dark .tab-button .ripple,
-body.dark .olt-dropdown-item .ripple,
-body.dark #login-autoclear-btn .ripple,
-body.dark .calc-action-button .ripple,
-body.dark .stepper-btn .ripple,
-body.dark #auto-reset-button .ripple,
-body.dark .segment-btn .ripple,
-body.dark .command-item .ripple,
-body.dark .sub-command-item .ripple {
+body.dark .ripple {
     background-color: color-mix(in srgb, currentColor 15%, transparent);
 }
 
-/* 5. Унікальні кольори хвиль для окремих станів (за бажанням) */
-/* Якщо автоочищення увімкнене, хвиля при кліку стає червоною, щоб попередити про вимкнення */
-
+/* 5. Перемикач GPON / EPON / BDCOM / MX80: свої кольори хвилі */
+.segment-btn:not(.active) .ripple {
+    background-color: color-mix(in srgb, var(--primary-accent-color) 35%, transparent);
+}
+.segment-btn.active .ripple {
+    background-color: rgba(255, 255, 255, 0.45);
+}
+body.dark .segment-btn:not(.active) .ripple {
+    background-color: color-mix(in srgb, var(--secondary-accent-color) 35%, transparent);
+}
+body.dark .segment-btn.active .ripple {
+    background-color: rgba(255, 255, 255, 0.5);
+}
 
 /* 6. Анімація розширення хвилі */
 @keyframes ripple-wave {
-    0% { transform: scale(0); opacity: 1; }
-    100% { transform: scale(4); opacity: 0; }
+    from { transform: scale(0); opacity: 1; }
+    to   { transform: scale(1); opacity: 0; }
 }
 
 /* --- ГРУПА 5: СТАН DISABLED (Вимкнені елементи) --- */

@@ -5511,56 +5511,39 @@ document.addEventListener('DOMContentLoaded', () => {
 // ==========================================
 // УНІВЕРСАЛЬНИЙ ЕФЕКТ ХВИЛІ (RIPPLE EFFECT)
 // ==========================================
-// Додано { capture: true }, щоб хвиля спрацьовувала ДО того, 
-// як інші панелі (наприклад configPanel) заблокують клік через stopPropagation.
+const RIPPLE_SELECTOR = `
+    .unified-pill:has(#login-google-btn:not(.auth-hidden)),
+    .variant-dropdown-item, .speed-dropdown-item, .add-tab-item,
+    .command-item, .sub-command-item, .tab-button, .olt-dropdown-item,
+    #login-autoclear-btn, .calc-action-button, .stepper-btn,
+    #auto-reset-button, .segment-btn
+`;
+
 document.addEventListener('mousedown', function (e) {
-    // Перевіряємо, чи клік був по одному з вказаних класів/ID
-    const targetBtn = e.target.closest(`
-        .unified-pill:has(#login-google-btn:not(.auth-hidden)),
-        .variant-dropdown-item,
-        .speed-dropdown-item,
-        .add-tab-item,
-        .command-item,
-        .sub-command-item ,
-        .tab-button, 
-        .olt-dropdown-item, 
-        #login-autoclear-btn, 
-        .calc-action-button, 
-        .stepper-btn, 
-        #auto-reset-button, 
-        .segment-btn
-    `);
+    if (e.button !== 0) return;                          // тільки ліва кнопка
 
-    // Якщо клік був по потрібній кнопці
-    if (targetBtn) {
-        // Отримуємо координати кнопки відносно екрану
-        const rect = targetBtn.getBoundingClientRect();
-        
-        // Вираховуємо координати кліку ВНУТРІШНЬО самій кнопці
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
+    const btn = e.target.closest(RIPPLE_SELECTOR);
+    if (!btn) return;
 
-        // Створюємо елемент хвилі
-        const ripple = document.createElement('span');
-        ripple.classList.add('ripple');
+    const rect = btn.getBoundingClientRect();
+    const w = btn.offsetWidth, h = btn.offsetHeight;
+    const zoom = w ? rect.width / w : 1;                 // враховує body { zoom }
 
-        // Робимо розмір кола рівним найбільшій стороні елемента
-        const diameter = Math.max(rect.width, rect.height);
-        const radius = diameter / 2;
+    const x = (e.clientX - rect.left) / zoom;
+    const y = (e.clientY - rect.top) / zoom;
 
-        ripple.style.width = ripple.style.height = `${diameter}px`;
-        ripple.style.left = `${x - radius}px`;
-        ripple.style.top = `${y - radius}px`;
+    // радіус до найдальшого кута: хвиля накриває всю кнопку
+    const radius = Math.hypot(Math.max(x, w - x), Math.max(y, h - y));
 
-        // Додаємо хвилю
-        targetBtn.appendChild(ripple);
+    const ripple = document.createElement('span');
+    ripple.className = 'ripple';
+    ripple.style.width = ripple.style.height = `${radius * 2}px`;
+    ripple.style.left = `${x - radius}px`;
+    ripple.style.top = `${y - radius}px`;
+    btn.appendChild(ripple);
 
-        // Видаляємо елемент після завершення анімації (600мс)
-        setTimeout(() => {
-            ripple.remove();
-        }, 600);
-    }
-}, true); 
+    ripple.addEventListener('animationend', () => ripple.remove(), { once: true });
+}, true);
 
 document.addEventListener('DOMContentLoaded', () => {
     const listContainer = document.querySelector('.command-list');
