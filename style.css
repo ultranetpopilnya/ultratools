@@ -2341,35 +2341,18 @@ body.dark .login-generator-container .result-type-badge {
 .login-generator-container .result-item .regenerate-login-btn:hover {
     background-color: var(--primary-accent-color);
     color: #ffffff;
-    box-shadow: 0 2px 6px rgba(79, 109, 245, 0.25);
 }
 
 /* Кнопка регенерації — повертаємо соковитий фірмовий бурштин */
 body.dark .login-generator-container .result-item .regenerate-login-btn {
     background-color: var(--secondary-accent-color);
-    color: #ffffff; /* Біла іконка як раніше (або #141414, якщо хочете темну) */
+    color: #ffffff;
     border: none;
-    box-shadow: 0 2px 6px rgba(214, 155, 45, 0.25);
 }
 
 body.dark .login-generator-container .result-item .regenerate-login-btn:hover {
     background-color: #e0ab45;
     color: #ffffff;
-    box-shadow: 0 4px 10px rgba(214, 155, 45, 0.4);
-}
-
-/* Кнопка копіювання — соковитий зелений */
-body.dark .login-generator-container .result-item .copy-login-btn {
-    background-color: var(--success-color);
-    color: #ffffff;
-    border: none;
-    box-shadow: 0 2px 6px rgba(22, 163, 122, 0.25);
-}
-
-body.dark .login-generator-container .result-item .copy-login-btn:hover {
-    background-color: #38a17b;
-    color: #ffffff;
-    box-shadow: 0 4px 10px rgba(22, 163, 122, 0.4);
 }
 
 /* Копіювання: легкий зелений фон із зеленою іконкою */
@@ -2381,12 +2364,23 @@ body.dark .login-generator-container .result-item .copy-login-btn:hover {
 .login-generator-container .result-item .copy-login-btn:hover {
     background-color: var(--success-color);
     color: #ffffff;
-    box-shadow: 0 2px 6px rgba(22, 163, 122, 0.25);
 }
 
 .login-generator-container .result-item .copy-login-btn.copied {
     background-color: var(--success-color);
     filter: brightness(1.2);
+}
+
+/* Кнопка копіювання — соковитий зелений */
+body.dark .login-generator-container .result-item .copy-login-btn {
+    background-color: var(--success-color);
+    color: #ffffff;
+    border: none;
+}
+
+body.dark .login-generator-container .result-item .copy-login-btn:hover {
+    background-color: #3fb388;
+    color: #ffffff;
 }
 
 .login-generator-container .content-card > p {
