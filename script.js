@@ -5550,9 +5550,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             
                         // Спочатку стискаємо лінію, щоб вона не впливала на scrollHeight,
-            // і тільки тоді міряємо реальну висоту контенту
+            // потім міряємо реальну висоту області прокрутки
             divider.style.height = '0px';
-            divider.style.height = `${listContainer.scrollHeight - 16}px`;
+            const dividerTop = divider.offsetTop;
+            divider.style.height = `${listContainer.scrollHeight - dividerTop}px`;
 
             // Прибираємо власні зміни стилю з черги observer, щоб не було циклу оновлень
             observer.takeRecords();
@@ -5579,6 +5580,12 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // 2. Слідкуємо за зміною розміру вікна
     window.addEventListener('resize', updateDivider);
+
+    // Стежимо за розміром і списку, і самої області прокрутки: це ловить
+    // анімацію ширини контейнера (GPON ↔ EPON), акордеон і зміну висоти картки
+    const dividerResizeObserver = new ResizeObserver(() => updateDivider());
+    dividerResizeObserver.observe(outputContainer);
+    dividerResizeObserver.observe(listContainer);
     
     // 3. Додаткова перестраховка при кліках (оскільки акордеон має CSS-анімацію ~0.4с)
     listContainer.addEventListener('click', (e) => {

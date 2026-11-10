@@ -474,8 +474,8 @@ h1 {
     color: var(--header-color);
     margin: 1rem;
     text-align: center;
-    font-size: 2.5rem;
-	line-height: 1.2;
+    font-size: 2.3rem;
+	line-height: 1.1;
 }
 
 /* Глобальне вирівнювання для всіх заголовків h2 в контейнерах */
@@ -490,8 +490,8 @@ h1 {
     justify-content: center;
     width: 100%;                    /* <-- 2. Заголовок займає 100% ширини і тримає центр */
     margin: 0;
-    padding-top: 16px;
-    padding-bottom: 16px;
+    padding-top: 12px;
+    padding-bottom: 12px;
     box-sizing: border-box;
 }
 
@@ -3152,7 +3152,7 @@ body.dark .fancy-divider {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 11px;
     padding-right: 20px;
 }
 
@@ -3291,7 +3291,7 @@ body.dark #clear-all-templates-button:hover {
     gap: 5px; 
     width: 100%;
  
-    padding: 16px 6px 150px 6px;
+    padding: 12px 6px 150px 6px;
 }
 
 #templates-grid-wrapper .template-field-group .highlighting-container textarea,
@@ -6528,7 +6528,7 @@ body.dark .segment-btn.active {
     overflow-x: hidden;
     min-height: 0;          /* критично для скролу всередині flex-колонки */
     width: 100%;
-    padding: 16px 0px 0px 0px;
+    padding: 14px 0px 0px 0px;
 }
 
 /* Темна тема: command list */
@@ -7449,7 +7449,7 @@ body.holiday-mode .page-title .isp-e-color-s {
 
     /* 2. Коригуємо шапку (щоб не займала зайву висоту) */
     h1.page-title {
-        font-size: 1.8rem !important;
+        font-size: 1.6rem !important;
         margin: 6px auto 4px auto !important;
     }
 
