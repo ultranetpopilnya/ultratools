@@ -6131,7 +6131,6 @@ body.dark .calc-copy-btn:hover {
     background-color: #f8fafc;
     border-color: #cbd5e1;
     box-shadow: 0 4px 8px rgba(0,0,0,0.06);
-    z-index: 2;
 }
 
 .c-btn:active {
@@ -6165,6 +6164,16 @@ body.dark .calc-copy-btn:hover {
     background-color: #fef2f2; 
     color: #dc2626; 
 }
+
+.c-btn.action-back {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-family: Arial, "Segoe UI Symbol", sans-serif !important;
+    line-height: 1 !important;
+    padding: 0 !important;
+}
+
 .c-btn.action-clear:hover, .c-btn.action-back:hover { 
     background-color: #fee2e2; 
 }
