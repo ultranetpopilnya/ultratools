@@ -1566,6 +1566,11 @@ body.dark .version-pill.is-open {
     pointer-events: auto;
 }
 
+/* Симетричний відступ: 17px + 3px треку = 20px, як зліва */
+.version-pill.is-open .version-content {
+    padding-right: 17px;
+}
+
 /* ШАПКИ */
 .version-header, .extension-header {
     display: flex; justify-content: space-between; align-items: center;
@@ -2952,7 +2957,7 @@ body.dark .unified-pill:hover {
 }
 
 .auth-btn-divider {
-    width: 1px; height: 14px; background-color: var(--input-border-color); margin: 0 2px;
+    width: 1px; height: 14px; background-color: var(--input-border-color); margin: 0 0 0 6px;
 }
 
 .logout-action-btn {
@@ -3108,15 +3113,6 @@ body.dark #sync-time-display.sync-success i {
     0%        { transform: scale(1);   opacity: 0.5; }
     70%, 100% { transform: scale(2.9); opacity: 0; }
 }
-
-/* Повага до налаштувань «зменшити рух» */
-@media (prefers-reduced-motion: reduce) {
-    .site-status-dot,
-    .site-status-dot::before {
-        animation: none;
-    }
-}
-
 
 /* =========================================================
    УНІВЕРСАЛЬНИЙ ГРАДІЄНТНИЙ РОЗДІЛЮВАЧ (В ПОТОЦІ)
@@ -4862,7 +4858,7 @@ body.dark .select-group-title {
 }
 
 .olt-dropdown-list {
-    padding: 6px;
+    padding: 6px 3px 6px 6px;
     /* ЗАМІСТЬ display: none; використовуємо ці 4 рядки: */
     visibility: hidden;
     opacity: 0;
@@ -4900,6 +4896,30 @@ body.dark .olt-dropdown-list {
     opacity: 1;
     transform: translateY(0);
     pointer-events: auto; /* Дозволяємо клікати, коли відкрито */
+}
+
+/* Скролбар списку OLT: такий самий, як в історії версій */
+.olt-dropdown-list {
+    --scrollbar-corridor: 8px;
+    --scrollbar-thumb-width: 2px;
+    --scrollbar-thumb-width-hover: 2px;
+    --scrollbar-track: rgba(0, 0, 0, 0.1);
+    scrollbar-gutter: stable;
+}
+
+body.dark .olt-dropdown-list {
+    --scrollbar-track: rgba(255, 255, 255, 0.12);
+}
+
+.olt-dropdown-list::-webkit-scrollbar-track {
+    background-image: none;
+    background-color: var(--scrollbar-track);
+    background-clip: padding-box;
+    border: 0 solid transparent;
+    border-left-width: 3px;
+    border-right-width: 3px;
+    border-radius: 100px;
+    margin: 6px 0;
 }
 
 /* Заголовок групи (Ultranet / ISP Energy) */
@@ -5107,18 +5127,39 @@ body.dark .scroll-nav-btn.visible:hover {
     top: calc(100% + 3px);
     left: 0;
     right: 0;
-    padding: 6px;
+    padding: 6px 3px 6px 6px;
     background-color: var(--menu-bg);
     border: 1px solid var(--input-border-color);
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04);
     max-height: 240px;
     overflow-y: auto;
+    overflow-x: hidden;
     z-index: 9999;
 }
 
-.speed-dropdown-list::-webkit-scrollbar {
-    display: none;
+/* Скролбар списку швидкості: такий самий, як в історії версій */
+.speed-dropdown-list {
+    --scrollbar-corridor: 8px;
+    --scrollbar-thumb-width: 2px;
+    --scrollbar-thumb-width-hover: 2px;
+    --scrollbar-track: rgba(0, 0, 0, 0.1);
+    scrollbar-gutter: stable;
+}
+
+body.dark .speed-dropdown-list {
+    --scrollbar-track: rgba(255, 255, 255, 0.12);
+}
+
+.speed-dropdown-list::-webkit-scrollbar-track {
+    background-image: none;
+    background-color: var(--scrollbar-track);
+    background-clip: padding-box;
+    border: 0 solid transparent;
+    border-left-width: 3px;
+    border-right-width: 3px;
+    border-radius: 100px;
+    margin: 6px 0;
 }
 
 body.dark .speed-dropdown-list {
@@ -7166,7 +7207,8 @@ body.dark .qn-edit-btn:hover { color: var(--secondary-accent-color); background-
     pointer-events: none;
     z-index: 0;
     overflow: hidden;
-    display: none; /* ЗА ЗАМОВЧУВАННЯМ ВИМКНЕНО */
+    contain: layout paint style;
+    display: none;
 }
 
 /* Вмикаємо тільки якщо є клас holiday-mode */
@@ -7196,11 +7238,11 @@ body.holiday-mode #snow-container {
 
 /* Анімація хитання з боку в бік */
 @keyframes sway {
-    0%, 100% { margin-left: 0; }
-    50% { margin-left: 50px; }
+    0%, 100% { translate: 0 0; }
+    50% { translate: 50px 0; }
 }
 
-/* 1. ШАПКА САНТИ (Правий верхній кут) - Тільки в режимі свята */
+/* 1. ШАПКА САНТИ*/
 body.holiday-mode .tabs::after {
     content: '';
     position: absolute;
@@ -7208,29 +7250,29 @@ body.holiday-mode .tabs::after {
     right: -25px;
     width: 58px;
     height: 58px;
-    background-image: url('https://cdn-icons-png.flaticon.com/512/744/744546.png');
+    background-image: url('/images/hat.png');
     background-size: contain;
     background-repeat: no-repeat;
     transform: rotate(20deg);
     pointer-events: none;
-    z-index: 20;
+    z-index: -1;
     filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.2));
 }
 
-/* holiday mode — псевдоелемент ::before */
+/* Ялинка */
 body.holiday-mode .tabs::before {
     content: '';
     position: absolute;
     bottom: 0px;
-    left: -21px;
+    left: -40px;
     width: 64px;
     height: 64px;
-    background-image: url('https://pics.clipartpng.com/midle/Christmas_Tree_with_Gifts_PNG_Clipart-16.png');
+    background-image: url('/images/tree.png');
     background-size: contain;
     background-repeat: no-repeat;
     transform: rotate(0deg);
     pointer-events: none;
-    z-index: 100 !important;
+    z-index: -1;
     filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.2));
 }
 
@@ -7243,7 +7285,6 @@ body.holiday-mode .page-title {
     border: none !important;
     box-shadow: none !important;
     padding: 0 !important;
-    margin-top: -20px !important; 
     transition: all 0.5s ease;
     
     /* --- НАЛАШТУВАННЯ ДЛЯ СВІТЛОЇ ТЕМИ (НОВИЙ ПІДХІД) --- */
@@ -7275,7 +7316,7 @@ body.dark.holiday-mode .page-title {
     /* Стан "Увімкнено" (Яскрава плазма) */
     --bulb-on-opacity: 1;
     --bulb-on-filter: none;
-    --bulb-on-shadow: 0 0 15px currentColor, 0 0 30px currentColor, 0 0 45px currentColor;
+        --bulb-on-shadow: 0 0 12px currentColor, 0 0 28px currentColor;
     --bulb-on-color: #fff; /* Біле ядро */
 }
 

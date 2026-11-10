@@ -4499,81 +4499,62 @@ if (initialTab === 'gpon-commands') {
      displayCommands(getActiveDeviceType());
 }
 	
-// === ВИПРАВЛЕНИЙ РОЗУМНИЙ СНІГОПАД ===
-    function createSnowflakes() {
-        const container = document.getElementById('snow-container');
-        
-        // Перевірка, чи існує контейнер в HTML
-        if (!container) {
-            console.error("Помилка: Не знайдено <div id='snow-container'>");
-            return;
-        }
+// === СВЯТКОВИЙ РЕЖИМ (керується з Firebase: config/site → holidayMode) ===
+(function () {
+    const CACHE_KEY = 'holiday-mode-cache';
+    const CHARACTERS = ['❄', '❅', '❆'];
+    const container = document.getElementById('snow-container');
 
-        const snowflakeCount = 45; 
-        // Я змінив назву ключа на 'snow-v5', щоб скинути старі помилкові дані
-        const STORAGE_KEY = 'snow-v5'; 
-
-        let snowData = null;
-        
-        try {
-            // Пробуємо дістати дані
-            snowData = JSON.parse(localStorage.getItem(STORAGE_KEY));
-        } catch (e) {
-            console.log("Помилка читання даних, створюємо нові");
-        }
-
-        // Якщо даних немає або їх кількість не співпадає — генеруємо заново
-        if (!snowData || !Array.isArray(snowData) || snowData.length !== snowflakeCount) {
-            snowData = [];
-            const characters = ['❄', '❅', '❆'];
-
-            for (let i = 0; i < snowflakeCount; i++) {
-                const char = characters[Math.floor(Math.random() * characters.length)];
-                const size = Math.floor(Math.random() * 15 + 10) + 'px';
-                const leftPos = Math.floor(Math.random() * 100) + 'vw';
-                const opacity = (Math.random() * 0.5 + 0.3).toFixed(2);
-                
-                // Тривалість анімації
-                const durationFall = (Math.random() * 10 + 10).toFixed(2) + 's'; // Повільніше (10-20с)
-                const durationSway = (Math.random() * 4 + 3).toFixed(2) + 's';
-                
-                // Затримка (від'ємна, щоб сніг був відразу на екрані)
-                // Генеруємо від -20s до 0s
-                const delayFall = (Math.random() * -20).toFixed(2) + 's';
-                const delaySway = (Math.random() * -5).toFixed(2) + 's';
-
-                snowData.push({
-                    char, size, leftPos, opacity, 
-                    durationFall, durationSway, 
-                    delayFall, delaySway
-                });
-            }
-
-            // Зберігаємо нові чисті дані
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(snowData));
-        }
-
-        // Очищаємо і малюємо
-        container.innerHTML = ''; 
-        snowData.forEach(data => {
-            const flake = document.createElement('div');
-            flake.classList.add('snowflake');
-            flake.textContent = data.char; // Використовуємо textContent замість innerHTML (швидше)
-            
-            flake.style.fontSize = data.size;
-            flake.style.left = data.leftPos;
-            flake.style.opacity = data.opacity;
-            
-            // Встановлюємо анімацію
-            flake.style.animationDuration = `${data.durationFall}, ${data.durationSway}`;
-            flake.style.animationDelay = `${data.delayFall}, ${data.delaySway}`;
-            
-            container.appendChild(flake);
-        });
+    if (!container) {
+        console.error("Помилка: Не знайдено <div id='snow-container'>");
+        return;
     }
 
-    // ВАЖЛИВО: Цей рядок запускає сніг!
-    createSnowflakes();
+    const rand = (min, max) => Math.random() * (max - min) + min;
+
+            function getFlakeCount() {
+        if (window.innerWidth < 800) return 20;
+        if (window.innerHeight <= 800) return 30;
+        return 45;
+    }
+
+    function createSnowflakes() {
+        const fragment = document.createDocumentFragment();
+        const count = getFlakeCount();
+
+        for (let i = 0; i < count; i++) {
+            const flake = document.createElement('div');
+            flake.className = 'snowflake';
+            flake.textContent = CHARACTERS[Math.floor(Math.random() * CHARACTERS.length)];
+            flake.style.fontSize = Math.floor(rand(10, 25)) + 'px';
+            flake.style.left = Math.floor(rand(0, 100)) + 'vw';
+            flake.style.opacity = rand(0.3, 0.8).toFixed(2);
+            // fall, sway: дві тривалості та дві затримки
+            flake.style.animationDuration = `${rand(10, 20).toFixed(2)}s, ${rand(3, 7).toFixed(2)}s`;
+            flake.style.animationDelay = `${(-rand(0, 20)).toFixed(2)}s, ${(-rand(0, 5)).toFixed(2)}s`;
+            fragment.appendChild(flake);
+        }
+        container.replaceChildren(fragment);
+    }
+
+        function applyHolidayMode(enabled) {
+        document.body.classList.toggle('holiday-mode', enabled);
+
+        if (enabled && container.childElementCount === 0) createSnowflakes();
+        if (!enabled) container.replaceChildren();
+
+        try { localStorage.setItem(CACHE_KEY, enabled ? 'on' : 'off'); } catch (e) {}
+    }
+
+    // 1. Миттєво застосовуємо останнє відоме значення, щоб не було мигання при завантаженні
+    try { applyHolidayMode(localStorage.getItem(CACHE_KEY) === 'on'); } catch (e) {}
+
+    // 2. Слухаємо актуальне значення з Firebase (оновлюється й без перезавантаження)
+    db.collection('config').doc('site').onSnapshot(
+        (snap) => applyHolidayMode(snap.exists && snap.data().holidayMode === true),
+        (err) => console.warn('Не вдалося прочитати налаштування свята:', err)
+    );
+})();
 	
 // === ЛОГІКА КНОПОК ПРОКРУТКИ ===
     const scrollUpBtn = document.getElementById('scroll-up-btn');

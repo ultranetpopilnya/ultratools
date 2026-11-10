@@ -5,7 +5,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
 	<meta charset="UTF-8">
     <title>Набір інструментів для Ультранет Груп та ISP Energy</title>
-    <link rel="icon" href="imgs/tools.png" type="image/png">
+    <link rel="icon" href="images/tools.png" type="image/png">
     
     <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.2.0/css/all.min.css" rel="stylesheet">
 
@@ -25,25 +25,26 @@
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
 
 </head>
-<body class="holiday-modee">
-
+<body>
      <script>
         if (localStorage.getItem('theme') === 'dark') {
             document.body.classList.add('dark');
         }
     </script>
 
+<div id="snow-container"></div>
+
     <div class="theme-pill-container">
     <div class="theme-pill" id="themeToggle" title="Змінити тему">
-    <img src="imgs/sun_3d.png" class="theme-emoji sun-icon" alt="sun">
-    <img src="imgs/crescent_moon_3d.png" class="theme-emoji moon-icon" alt="moon">
+    <img src="images/sun_3d.png" class="theme-emoji sun-icon" alt="sun">
+    <img src="images/crescent_moon_3d.png" class="theme-emoji moon-icon" alt="moon">
 </div>
 </div>
  
     <div class="side-pills-container"> 
 <div class="version-pill">
     <!-- Іконка, яка завжди видима -->
-    <img src="imgs/glass.png" alt="" class="version-emoji">
+    <img src="images/glass.png" alt="" class="version-emoji">
     
     <!-- Прихований контейнер, що виїжджає при наведенні -->
     <div class="version-content">
@@ -62,7 +63,7 @@
 <!-- ПІГУЛКА РОЗШИРЕННЯ -->
 <div class="extension-pill">
     <!-- Іконка розширення (можете замінити на <img> якщо є своя іконка) -->
-    <img src="imgs/extension.png" alt="" class="extension-emoji">
+    <img src="images/extension.png" alt="" class="extension-emoji">
     
     <div class="extension-content">
         <!-- Шапка: Назва -->
@@ -136,7 +137,7 @@
 
             <div class="container login-generator-container active" data-content="login-generator" data-default-width="780px">
 			<div class="content-card">
-                <h2 style="text-align: center;"><img src="imgs/locked_with_key_3d.png" class="emoji-png">Генератор логінів</h2>
+                <h2 style="text-align: center;"><img src="images/locked_with_key_3d.png" class="emoji-png">Генератор логінів</h2>
                 <p style="text-align: center;">Введіть повністю одне або декілька ПІБ, кожне — з нового рядка.<br>Також можливий трансліт: ФОП, ТОВ, ТзОВ, ПП, АТ, ПрАТ, ПАТ, ВАТ, ЗАТ, ТДВ, КБ, ГО, <br>ГС, КП, ДП, ФГ, СФГ, ОСББ, ЖБК, БФ, НВП, ЗОШ, НВК, ДНЗ, ЦРЛ.</p>
 
                 <textarea id="fullNameInput" rows="1" placeholder="Прізвище, Ім'я, та по Батькові"></textarea>
@@ -144,7 +145,7 @@
                 <div class="login-actions-block">
     <!-- Підпис блоку -->
         <div class="actions-block-title">
-        <img src="imgs/gear_3d.png" class="emoji-png" alt="settings">Налаштування генерації
+        <img src="images/gear_3d.png" class="emoji-png" alt="settings">Налаштування генерації
     </div>
     
     <!-- Контейнер для самих кнопок -->
@@ -163,7 +164,7 @@
         <button id="history-toggle-btn" class="history-toggle-btn" onclick="toggleHistory()">
             <span class="history-title">
     <i class="fa-solid fa-angle-right" id="history-arrow"></i> 
-    <img src="imgs/page_facing_up_3d.png" class="emoji-png">Історія логінів (<span id="history-count">0</span>)
+    <img src="images/page_facing_up_3d.png" class="emoji-png">Історія логінів (<span id="history-count">0</span>)
              </span>
         </button>
         
@@ -188,7 +189,7 @@
             
             <!-- Ліва частина: Заголовок -->
             <h2 class="template-main-title">
-                <img src="imgs/bookmark_tabs_3d.png" class="emoji-png">Текстовий простір
+                <img src="images/bookmark_tabs_3d.png" class="emoji-png">Текстовий простір
             </h2>
 
             <!-- Права частина: Панель керування (Все в один рядок) -->
@@ -255,7 +256,7 @@
 
 <!-- Повідомлення, коли шаблонів немає -->
 <div id="empty-templates-message" class="empty-templates-message" style="display: none;">
-    <img src="imgs/page_facing_up_3d.png" class="emoji-png" alt="Empty">
+    <img src="images/page_facing_up_3d.png" class="emoji-png" alt="Empty">
     <h3>У вас ще немає текстових шаблонів</h3>
     <p>Натисніть <strong><i class="fa-regular fa-square-plus"></i></strong> зверху, щоб створити перший шаблон, або імпортуйте існуючі з файлу.</p>
 </div>
@@ -275,7 +276,7 @@
         <!-- === ПОЧАТОК ЗМІНЕНОГО БЛОКУ DATE CALCULATOR === -->
 <div class="container date-calculator-container" data-content="date-calculator" data-default-width="826px">
     <div class="content-card">
-        <h2 style="text-align: center; width: 100%;"><img src="imgs/spiral_calendar_3d.png" class="emoji-png"><img src="imgs/abacus_3d.png" class="emoji-png">Комбінований калькулятор</h2>
+        <h2 style="text-align: center; width: 100%;"><img src="images/spiral_calendar_3d.png" class="emoji-png"><img src="images/abacus_3d.png" class="emoji-png">Комбінований калькулятор</h2>
         
         <!-- ГНУЧКА ОБГОРТКА ДЛЯ ДВОХ КОЛОНОК -->
         <div class="calc-flex-wrapper">
@@ -284,13 +285,13 @@
             <div class="date-calc-column">
                 <div class="date-inputs-row">
                     <div class="date-input-group">
-                        <label for="start-date"><img src="imgs/calendar_3d.png" class="emoji-png">Початкова дата:</label>
+                        <label for="start-date"><img src="images/calendar_3d.png" class="emoji-png">Початкова дата:</label>
                         <input type="date" id="start-date" name="start-date" onchange="handleInputAndTimer()" required>
                         <input type="time" id="start-time" name="start-time" onchange="handleInputAndTimer()" value="00:00" required>
                     </div>
 
                     <div class="date-input-group">
-                        <label for="end-date"><img src="imgs/hourglass_done_3d.png" class="emoji-png">Кінцева дата:</label>
+                        <label for="end-date"><img src="images/hourglass_done_3d.png" class="emoji-png">Кінцева дата:</label>
                         <input type="date" id="end-date" name="end-date" onchange="handleInputAndTimer()" required>
                         <input type="time" id="end-time" name="end-time" onchange="handleInputAndTimer()" value="00:00" required>
                     </div>
@@ -298,7 +299,7 @@
 
                     <div class="calculator-actions-block">
                         <div class="actions-block-title">
-        <img src="imgs/control_knobs_3d.png" class="emoji-png" alt="settings">Керування датами і часом
+        <img src="images/control_knobs_3d.png" class="emoji-png" alt="settings">Керування датами і часом
                        </div>
     
     <!-- 2. Обгортаємо всі ваші кнопки таймера/скидання у цей контейнер -->
@@ -351,7 +352,7 @@
 </div> <!-- ВАЖЛИВО: цей тег закриває calculator-actions-block -->
 
                     <div id="result-section">
-                        <h2><img src="imgs/stopwatch_3d.png" class="emoji-png">Результат дати</h2>
+                        <h2><img src="images/stopwatch_3d.png" class="emoji-png">Результат дати</h2>
                         <div id="result-display">Оберіть дати...</div>
                     </div>
             </div> <!-- ВАЖЛИВО: цей тег закриває date-calc-column (ЛІВУ КОЛОНКУ) -->
@@ -446,7 +447,7 @@
 <div class="container gpon-commands-container" data-content="gpon-commands">
     <div class="content-card">
         <h2 style="text-align: center;">
-    <img src="imgs/desktop_computer_3d.png" class="emoji-png">Команди GPON/EPON/BDCOM/MX80
+    <img src="images/desktop_computer_3d.png" class="emoji-png">Команди GPON/EPON/BDCOM/MX80
 </h2>
 
         <!-- Блок перемикачів -->
