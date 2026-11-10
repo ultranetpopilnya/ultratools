@@ -5536,6 +5536,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const divider = document.createElement('div');
     divider.id = 'dynamic-center-divider';
     divider.className = 'dynamic-center-divider';
+    divider.style.pointerEvents = 'none'; // лінія не перехоплює кліки
     
     // Робимо контейнер зі скролом відносним, щоб лінія горталась разом з ним
     listContainer.style.position = 'relative';

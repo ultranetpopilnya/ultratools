@@ -1932,6 +1932,9 @@ body.dark .moon-icon {
 
     z-index: 9999;
     overflow: hidden; /* для прогрес-бару нижче */
+
+    pointer-events: none; /* невидиме сповіщення не перехоплює кліки */
+    user-select: none;
 }
 
 .notification.show {
@@ -7491,16 +7494,6 @@ body.holiday-mode .page-title .isp-e-color-s {
         width: 96% !important;
         max-width: 96% !important;
     }
-
-    /*#command-output.two-columns {
-        column-count: 1 !important;
-        column-gap: 0 !important;
-        column-rule: none !important;
-    }
-
-    .dynamic-center-divider {
-        display: none !important;
-    } */
 
     /* 7. ШАБЛОНИ (TEXT-TEMPLATES): якщо є шаблони - 100% ширини */
     .container[data-content="text-templates"]:not(.is-empty) {
