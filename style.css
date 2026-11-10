@@ -6140,7 +6140,6 @@ body.dark .calc-copy-btn:hover {
     background-color: #f8fafc;
     border-color: #cbd5e1;
     box-shadow: 0 4px 8px rgba(0,0,0,0.06);
-    transform: translateY(-2px);
     z-index: 2;
 }
 
@@ -6192,7 +6191,6 @@ body.dark .calc-copy-btn:hover {
     background-color: rgba(79, 109, 245, 0.12);
     color: var(--primary-accent-color);
     border: 1px solid rgba(79, 109, 245, 0.25);
-    box-shadow: none !important; /* Повністю прибираємо тінь */
     transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
 }
 
@@ -6200,14 +6198,12 @@ body.dark .calc-copy-btn:hover {
     background-color: rgba(79, 109, 245, 0.22);
     border-color: rgba(79, 109, 245, 0.4);
     color: var(--primary-accent-color);
-    transform: none; /* Не підіймаємо кнопку */
-    box-shadow: none !important;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.06);
 }
 
 .c-btn.equal:active { 
     background-color: rgba(79, 109, 245, 0.3);
     transform: scale(0.98);
-    box-shadow: none !important;
 }
 
 /* === ТЕМНА ТЕМА ДЛЯ КНОПОК === */
@@ -6245,21 +6241,20 @@ body.dark .c-btn.equal {
     background-color: rgba(214, 155, 45, 0.15);
     color: var(--secondary-accent-color);
     border: 1px solid rgba(214, 155, 45, 0.3);
-    box-shadow: none !important; /* Повністю прибираємо тінь */
 }
 
 body.dark .c-btn.equal:hover {
     background-color: rgba(214, 155, 45, 0.25);
     border-color: rgba(214, 155, 45, 0.45);
     color: var(--secondary-accent-color);
-    transform: none;
-    box-shadow: none !important;
+        box-shadow:
+        0 4px 8px rgba(82, 67, 39, 0.7),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
 body.dark .c-btn.equal:active {
     background-color: rgba(214, 155, 45, 0.35);
     transform: scale(0.98);
-    box-shadow: none !important;
 }
 
 body.dark .hist-empty {
@@ -6372,8 +6367,19 @@ body.dark .hist-item:hover {
     border-style: solid;
 }
 
+/* hist close btn — натискання */
+.hist-close-btn:active {
+    background-color: rgba(0,0,0,0.1);
+    border-style: solid;
+    transform: scale(0.98);
+}
+
 /* Темна тема: hist close btn — ховер */
 body.dark .hist-close-btn:hover { background-color: rgba(255,255,255,0.05); }
+
+body.dark .hist-close-btn:active {
+    background-color: rgba(255,255,255,0.1);
+}
 
 .hist-op { font-size: 12px; color: var(--inactive-text); margin-bottom: 3px; }
 
