@@ -2319,30 +2319,69 @@ body.dark .login-generator-container .result-type-badge {
 /* --- ТВОЇ СТИЛІ КНОПОК --- */
 .login-generator-container .result-item .regenerate-login-btn,
 .login-generator-container .result-item .copy-login-btn {
-    border: none;
+    border: 1px solid transparent;
     border-radius: 9999px;
     cursor: pointer;
-    transition: filter 0.2s;
-    width: 44px; 
+    transition: all 0.2s ease;
+    width: 40px; 
     height: 28px;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 1rem;
-    color: white;
+    font-size: 0.95rem;
     padding: 0;
 }
 
+/* Регенерація: легкий синій фон із синьою іконкою */
 .login-generator-container .result-item .regenerate-login-btn {
+    background-color: rgba(79, 109, 245, 0.12);
+    color: var(--primary-accent-color);
+    border-color: rgba(79, 109, 245, 0.25);
+}
+.login-generator-container .result-item .regenerate-login-btn:hover {
     background-color: var(--primary-accent-color);
+    color: #ffffff;
+    box-shadow: 0 2px 6px rgba(79, 109, 245, 0.25);
 }
 
+/* Кнопка регенерації — повертаємо соковитий фірмовий бурштин */
 body.dark .login-generator-container .result-item .regenerate-login-btn {
     background-color: var(--secondary-accent-color);
+    color: #ffffff; /* Біла іконка як раніше (або #141414, якщо хочете темну) */
+    border: none;
+    box-shadow: 0 2px 6px rgba(214, 155, 45, 0.25);
 }
 
-.login-generator-container .result-item .copy-login-btn {
+body.dark .login-generator-container .result-item .regenerate-login-btn:hover {
+    background-color: #e0ab45;
+    color: #ffffff;
+    box-shadow: 0 4px 10px rgba(214, 155, 45, 0.4);
+}
+
+/* Кнопка копіювання — соковитий зелений */
+body.dark .login-generator-container .result-item .copy-login-btn {
     background-color: var(--success-color);
+    color: #ffffff;
+    border: none;
+    box-shadow: 0 2px 6px rgba(22, 163, 122, 0.25);
+}
+
+body.dark .login-generator-container .result-item .copy-login-btn:hover {
+    background-color: #38a17b;
+    color: #ffffff;
+    box-shadow: 0 4px 10px rgba(22, 163, 122, 0.4);
+}
+
+/* Копіювання: легкий зелений фон із зеленою іконкою */
+.login-generator-container .result-item .copy-login-btn {
+    background-color: rgba(22, 163, 122, 0.12);
+    color: var(--success-color);
+    border-color: rgba(22, 163, 122, 0.25);
+}
+.login-generator-container .result-item .copy-login-btn:hover {
+    background-color: var(--success-color);
+    color: #ffffff;
+    box-shadow: 0 2px 6px rgba(22, 163, 122, 0.25);
 }
 
 .login-generator-container .result-item .copy-login-btn.copied {
@@ -2452,8 +2491,8 @@ body.dark #history-arrow {
 
 .history-toggle-btn.active #history-arrow {
     transform: rotate(90deg);
-    background: var(--primary-accent-color);
-    color: #fff;
+    background: rgba(79, 109, 245, 0.2); /* М'яке підсвічування замість суцільної заливки */
+    color: var(--primary-accent-color);
 }
 
 body.dark .history-toggle-btn.active #history-arrow {
@@ -3217,20 +3256,25 @@ body.dark .fancy-divider {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-weight: bold;
-    padding: 0;
-    background-color: var(--primary-accent-color);
-    color: white;
-    border: 1px solid var(--primary-accent-color);
+    
+    /* Повертаємо жирність 700 (Bold) та line-height: 1 для точного центру */
+    font-weight: 700;
     font-size: 1.4rem;
-    box-shadow: 0 2px 5px rgba(0, 123, 255, 0.3);
+    line-height: 1;
+    
+    padding: 0;
+    background-color: rgba(79, 109, 245, 0.12);
+    color: var(--primary-accent-color);
+    border: 1px solid rgba(79, 109, 245, 0.3);
+    box-shadow: none;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* add template button — ховер */
 #add-template-button:hover {
-    background-color:#4058d8;
-    border-color: #4058d8;
-    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.4);
+    background-color: var(--primary-accent-color);
+    border-color: var(--primary-accent-color);
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(79, 109, 245, 0.3);
 }
 
 /* 2. Кнопки Імпорт/Експорт - ТЕМНА */
@@ -3751,32 +3795,112 @@ body.dark .template-search-bar.active {
     border-left: 1px dashed var(--input-border-color);
 }
 
-/* ВСІ КНОПКИ ДІЙ */
+/* ВСІ КНОПКИ ДІЙ (М'який пастельний стиль для світлої теми) */
 .search-cmd-btn {
-    flex: 1; /* Робить кнопки Знайти/Замінити широкими */
+    flex: 1;
     height: 30px; 
     padding: 0;
-    border: none;
+    border: 1px solid transparent; /* Тонка рамка в колір для чіткості */
     border-radius: 8px; 
     font-size: 13px;
     font-weight: 600; 
     cursor: pointer;
-    color: rgb(241, 241, 241);
-    transition: filter 0.2s, transform 0.1s;
+    transition: all 0.2s ease;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    box-shadow: none;
 }
 
 /* Кольори кнопок */
-.btn-find { background-color: #4f6df5; }
+.btn-find { 
+    background-color: rgba(79, 109, 245, 0.12); 
+    color: #3b5bdb; 
+    border-color: rgba(79, 109, 245, 0.25);
+}
+.btn-find:hover { 
+    background-color: rgba(79, 109, 245, 0.22); 
+    color: #2b44b8;
+}
 
-/* btn replace */
-.btn-replace { background-color: var(--secondary-accent-color); }
+.btn-replace { 
+    background-color: rgba(214, 155, 45, 0.14); 
+    color: #b47818; 
+    border-color: rgba(214, 155, 45, 0.3);
+}
+.btn-replace:hover { 
+    background-color: rgba(214, 155, 45, 0.24); 
+    color: #925f0e;
+}
 
 /* btn replace all */
-.btn-replace-all { background-color: var(--success-color); }
+.btn-replace-all { 
+    background-color: rgba(22, 163, 122, 0.12); 
+    color: #128261; 
+    border-color: rgba(22, 163, 122, 0.25);
+}
+.btn-replace-all:hover { 
+    background-color: rgba(22, 163, 122, 0.22); 
+    color: #0c6148;
+}
+
+/* =========================================================
+   ТЕМНА ТЕМА: КНОПКИ ПАНЕЛІ ПОШУКУ
+   ========================================================= */
+
+/* 1. Знайти — фірмовий синій колір із чітким білим текстом */
+body.dark .btn-find {
+    background-color: #4f6df5;
+    color: #ffffff;
+    border-color: #4f6df5;
+    box-shadow: 0 2px 6px rgba(79, 109, 245, 0.3);
+}
+body.dark .btn-find:hover {
+    background-color: #637ef7;
+    border-color: #637ef7;
+    color: #ffffff;
+}
+
+/* 2. Замінити — теплий золотисто-бурштиновий колір */
+body.dark .btn-replace {
+    background-color: var(--secondary-accent-color);
+    color: #141414; /* Темний текст для ідеального контрасту на золотому */
+    border-color: var(--secondary-accent-color);
+    box-shadow: 0 2px 6px rgba(214, 155, 45, 0.3);
+}
+body.dark .btn-replace:hover {
+    background-color: #e0ab45;
+    border-color: #e0ab45;
+    color: #141414;
+}
+
+/* 3. Замінити все — насичений смарагдовий зелений */
+body.dark .btn-replace-all {
+    background-color: var(--success-color);
+    color: #ffffff;
+    border-color: var(--success-color);
+    box-shadow: 0 2px 6px rgba(22, 163, 122, 0.3);
+}
+body.dark .btn-replace-all:hover {
+    background-color: #38a17b;
+    border-color: #38a17b;
+    color: #ffffff;
+}
+
+/* 4. Замінити швидкість — графітовий фон під тему з золотою блискавкою */
+body.dark .btn-replace-speed {
+    background-color: var(--btn-bg); /* #3A3A3A */
+    color: var(--text-color);
+    border-color: var(--input-border-color);
+}
+body.dark .btn-replace-speed i {
+    color: #fbbf24; /* Яскраво-золота блискавка */
+}
+body.dark .btn-replace-speed:hover {
+    background-color: #454545;
+    border-color: var(--secondary-accent-color);
+    color: #ffffff;
+}
 
 /* Обгортки всередині лівої колонки */
 .search-inputs-row,
@@ -3840,12 +3964,17 @@ body.dark .search-inputs-row select option {
 .btn-replace-speed {
     flex: none;
     width: 100%;
-    background-color: #3b4252;
+    background-color: rgba(100, 116, 139, 0.12);
+    color: #334155;
+    border-color: rgba(100, 116, 139, 0.2);
 }
-
 .btn-replace-speed i {
-    color: #ffde00;
-    margin-right: 4px;
+    color: #d97706; /* Теплий бурштин замість кислотно-жовтого */
+    margin-right: 5px;
+}
+.btn-replace-speed:hover {
+    background-color: rgba(100, 116, 139, 0.2);
+    color: #0f172a;
 }
 
 /* Кнопка SWAP (стрілочки) */
@@ -4275,26 +4404,31 @@ body.dark .config-login-copy-btn .success-copy {
     color: var(--success-color);
 }
 
-/* --- КНОПКА ГЕНЕРАЦІЇ (ДВОПОВЕРХОВА) --- */
+/* Кнопка генерації — акуратний напівпрозорий смарагдовий стиль */
 .config-generate-btn {
     flex: 0 0 100px;
     height: 30px; 
     padding: 0;
     
-    background-color: var(--success-color);
-    color: white;
-    
-    border: none;
+    background-color: rgba(22, 163, 122, 0.12);
+    color: var(--success-color);
+    border: 1px solid rgba(22, 163, 122, 0.3);
     border-radius: 8px;
     cursor: pointer;
     
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 20px;
+    font-size: 18px;
     
-    box-shadow: 0 2px 4px rgba(40, 167, 69, 0.2);
+    box-shadow: none;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.config-generate-btn:hover {
+    background-color: var(--success-color);
+    color: #ffffff;
+    box-shadow: 0 3px 8px rgba(22, 163, 122, 0.25);
 }
 
 /* Темна тема для кнопки */
@@ -4330,10 +4464,18 @@ body.dark .config-generate-btn {
 }
 
 .config-clear-fields-btn {
-    background-color: var(--secondary-accent-color);
-    color: white;
-    border-color: var(--secondary-accent-color);
+    background-color: rgba(214, 155, 45, 0.12);
+    color: #b47818;
+    border: 1px solid rgba(214, 155, 45, 0.28);
 }
+
+.config-clear-fields-btn:hover {
+    background-color: rgba(214, 155, 45, 0.22);
+    color: #925f0e;
+    border-color: rgba(214, 155, 45, 0.45);
+    box-shadow: none;
+}
+
 body.dark .config-clear-fields-btn {
     background-color: var(--primary-white-accent-color);
     color: white;
@@ -6037,19 +6179,35 @@ body.dark .calc-copy-btn:hover {
     background-color: #fee2e2; 
 }
 
-/* Дорівнює - Головний акцент */
+/* Дорівнює — гармонійний м'який акцент замість важкого синього моноліту */
 .c-btn.equal { 
     grid-column: span 4; 
-    background-color: #3b82f6; 
-    color: #ffffff; 
-    font-weight: 600;
+    height: 46px;
     margin-top: 4px; 
+    border-radius: 10px;
     font-size: 24px;
-    border: none;
-    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    
+    background-color: rgba(79, 109, 245, 0.12);
+    color: var(--primary-accent-color);
+    border: 1px solid rgba(79, 109, 245, 0.25);
+    box-shadow: none !important; /* Повністю прибираємо тінь */
+    transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
 }
+
 .c-btn.equal:hover { 
-    background-color: #2563eb;
+    background-color: rgba(79, 109, 245, 0.22);
+    border-color: rgba(79, 109, 245, 0.4);
+    color: var(--primary-accent-color);
+    transform: none; /* Не підіймаємо кнопку */
+    box-shadow: none !important;
+}
+
+.c-btn.equal:active { 
+    background-color: rgba(79, 109, 245, 0.3);
+    transform: scale(0.98);
+    box-shadow: none !important;
 }
 
 /* === ТЕМНА ТЕМА ДЛЯ КНОПОК === */
@@ -6084,12 +6242,24 @@ body.dark .c-btn.action-clear,
 body.dark .c-btn.action-back { color: #ff6b6b; }
 
 body.dark .c-btn.equal {
-    background-color: #d69b2d;
-    color: #1a1a1a;
-    border-color: transparent;
+    background-color: rgba(214, 155, 45, 0.15);
+    color: var(--secondary-accent-color);
+    border: 1px solid rgba(214, 155, 45, 0.3);
+    box-shadow: none !important; /* Повністю прибираємо тінь */
 }
+
 body.dark .c-btn.equal:hover {
-    background-color: #e0ab45;
+    background-color: rgba(214, 155, 45, 0.25);
+    border-color: rgba(214, 155, 45, 0.45);
+    color: var(--secondary-accent-color);
+    transform: none;
+    box-shadow: none !important;
+}
+
+body.dark .c-btn.equal:active {
+    background-color: rgba(214, 155, 45, 0.35);
+    transform: scale(0.98);
+    box-shadow: none !important;
 }
 
 body.dark .hist-empty {
@@ -6308,7 +6478,7 @@ body.dark .hist-close-btn:hover { background-color: rgba(255,255,255,0.05); }
 /* Стилі для статичного напису-підказки */
 #static-clarification-message {
     font-style: italic; 
-    color: #1e9e12;
+    color: var(--success-color); /* Замість жорсткого #1e9e12 використовуємо благородний смарагдовий */
     text-align: center;
     margin: 0 0 12px 0;
     padding: 0;
@@ -6316,14 +6486,10 @@ body.dark .hist-close-btn:hover { background-color: rgba(255,255,255,0.05); }
     font-size: 0.9em;
     user-select: none;
     font-weight: 600;
-    
-    /* === НОВІ НАЛАШТУВАННЯ === */
-    display: block;       /* Робимо звичайним блоком */
-    width: 100%;          /* На всю ширину */
-    
-    /* Зберігаємо на одному рядку, але ДОЗВОЛЯЄМО плавно їздити без обрізки */
+    display: block;
+    width: 100%;
     white-space: nowrap; 
-    transform: translateZ(0); /* Тримаємо на відеокарті для максимальної плавності */
+    transform: translateZ(0);
 }
 
 body.dark #static-clarification-message {
@@ -7015,16 +7181,22 @@ body.dark #qn-input:focus {
 
 .qn-add-btn {
     align-self: flex-end;
-    padding: 8px 16px;
-    background: var(--primary-accent-color);
-    color: #fff;
-    border: none;
+    padding: 7px 16px;
+    background-color: rgba(79, 109, 245, 0.12);
+    color: var(--primary-accent-color);
+    border: 1px solid rgba(79, 109, 245, 0.28);
     border-radius: 9999px;
     cursor: pointer;
     font-size: 13px;
     font-weight: 600;
     transition: all 0.2s ease;
-    box-shadow: 0 2px 6px rgba(79, 109, 245, 0.25);
+    box-shadow: none;
+}
+
+.qn-add-btn:hover {
+    background-color: var(--primary-accent-color);
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(79, 109, 245, 0.25);
 }
 
 /* Темна тема: qn add btn */
