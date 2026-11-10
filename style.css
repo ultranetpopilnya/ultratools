@@ -693,6 +693,7 @@ select:focus,
 
 /* --- ГРУПА 0: ПЛАВНЕ ВІДТИСКАННЯ (БАЗОВИЙ СТАН) --- */
 /* Цей блок відповідає за плавне повернення кнопки на місце після кліку чи наведення */
+.hist-close-btn,
 .logout-btn,
 .unified-pill:has(#login-google-btn:not(.auth-hidden)),
 .config-clear-fields-btn,
@@ -778,6 +779,7 @@ select:focus,
 
 /* --- ГРУПА 3: СУЦІЛЬНІ КНОПКИ (Active - Ефект механічного натискання) --- */
 /* Отримують внутрішню тінь (inset) для ефекту глибини */
+.hist-close-btn:active,
 .unified-pill:has(#login-google-btn:not(.auth-hidden)):active,
 .config-clear-fields-btn:active,
 .config-mix-toggle-btn:active,
@@ -804,13 +806,14 @@ select:focus,
 .stepper-btn:active,
 #auto-reset-button:active,
 .qn-add-btn:active {          
-    transform: translateY(1px) scale(0.96) !important;
+    transform: translateY(1px) scale(0.98) !important;
     box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.2) !important;
     filter: brightness(0.9);
     transition: all 0.05s ease-out !important; 
 }
 
 /* Темна тема: Коригування внутрішньої тіні для суцільних кнопок */
+body.dark .hist-close-btn:active,
 body.dark .unified-pill:has(#login-google-btn:not(.auth-hidden)):active,
 body.dark .config-clear-fields-btn:active,
 body.dark .config-mix-toggle-btn:active,
@@ -1357,7 +1360,7 @@ body.dark .add-tab-btn.menu-open:active {
     /* Анімація появи */
     opacity: 0;
     visibility: hidden;
-    transform: translateY(-10px) scale(0.96);
+    transform: translateY(-10px) scale(0.98);
     transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
     transform-origin: top right;
 }
@@ -2964,7 +2967,7 @@ body.dark .unified-pill:hover {
     
 }
 #login-google-btn:hover i { transform: scale(1.14); }
-#login-google-btn:active { transform: scale(0.96); }
+#login-google-btn:active { transform: scale(0.98); }
 
 #user-info-wrapper {
     padding: 0 4px 0 4px;
@@ -6203,7 +6206,6 @@ body.dark .calc-copy-btn:hover {
 
 .c-btn.equal:active { 
     background-color: rgba(79, 109, 245, 0.3);
-    transform: scale(0.98);
 }
 
 /* === ТЕМНА ТЕМА ДЛЯ КНОПОК === */
@@ -6254,7 +6256,6 @@ body.dark .c-btn.equal:hover {
 
 body.dark .c-btn.equal:active {
     background-color: rgba(214, 155, 45, 0.35);
-    transform: scale(0.98);
 }
 
 body.dark .hist-empty {
@@ -6371,7 +6372,6 @@ body.dark .hist-item:hover {
 .hist-close-btn:active {
     background-color: rgba(0,0,0,0.1);
     border-style: solid;
-    transform: scale(0.98);
 }
 
 /* Темна тема: hist close btn — ховер */
