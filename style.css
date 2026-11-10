@@ -2633,14 +2633,12 @@ body.dark .history-item::before {
     color: #fff;
     border-color: var(--primary-accent-color);
     transform: scale(1.1) rotate(-5deg);
-    box-shadow: 0 4px 10px var(--primary-accent-shadow);
 }
 
 body.dark .history-copy-btn:hover {
     background: var(--secondary-accent-color);
     color: #1a1a1a;
     border-color: var(--secondary-accent-color);
-    box-shadow: 0 4px 10px var(--primary-accent-shadow);
 }
 
 .clear-history-footer-btn {
@@ -3881,21 +3879,6 @@ body.dark .btn-replace-all:hover {
     color: #ffffff;
 }
 
-/* 4. Замінити швидкість — графітовий фон під тему з золотою блискавкою */
-body.dark .btn-replace-speed {
-    background-color: var(--btn-bg); /* #3A3A3A */
-    color: var(--text-color);
-    border-color: var(--input-border-color);
-}
-body.dark .btn-replace-speed i {
-    color: #fbbf24; /* Яскраво-золота блискавка */
-}
-body.dark .btn-replace-speed:hover {
-    background-color: #454545;
-    border-color: var(--secondary-accent-color);
-    color: #ffffff;
-}
-
 /* Обгортки всередині лівої колонки */
 .search-inputs-row,
 .search-buttons-row {
@@ -3958,17 +3941,31 @@ body.dark .search-inputs-row select option {
 .btn-replace-speed {
     flex: none;
     width: 100%;
-    background-color: rgba(100, 116, 139, 0.12);
-    color: #334155;
-    border-color: rgba(100, 116, 139, 0.2);
+    background-color: rgba(107, 33, 168, 0.1);
+    color: #3b0764;
+    border-color: rgba(107, 33, 168, 0.3);
 }
 .btn-replace-speed i {
-    color: #d97706; /* Теплий бурштин замість кислотно-жовтого */
+    color: #ca8a04;
     margin-right: 5px;
 }
 .btn-replace-speed:hover {
-    background-color: rgba(100, 116, 139, 0.2);
-    color: #0f172a;
+    background-color: rgba(107, 33, 168, 0.18);
+    color: #2e0551;
+}
+
+body.dark .btn-replace-speed {
+    background-color: #581c87;
+    color: #ffffff;
+    border-color: #581c87;
+}
+body.dark .btn-replace-speed i {
+    color: #fbbf24;
+}
+body.dark .btn-replace-speed:hover {
+    background-color: #6b21a8;
+    border-color: #6b21a8;
+    color: #ffffff;
 }
 
 /* Кнопка SWAP (стрілочки) */
