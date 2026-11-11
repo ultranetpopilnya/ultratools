@@ -3859,14 +3859,13 @@ body.dark .btn-find:hover {
 /* 2. Замінити — теплий золотисто-бурштиновий колір */
 body.dark .btn-replace {
     background-color: var(--secondary-accent-color);
-    color: #141414; /* Темний текст для ідеального контрасту на золотому */
+    color: #fff;
     border-color: var(--secondary-accent-color);
     box-shadow: 0 2px 6px rgba(214, 155, 45, 0.3);
 }
 body.dark .btn-replace:hover {
     background-color: #e0ab45;
     border-color: #e0ab45;
-    color: #141414;
 }
 
 /* 3. Замінити все — насичений смарагдовий зелений */
@@ -3877,8 +3876,8 @@ body.dark .btn-replace-all {
     box-shadow: 0 2px 6px rgba(22, 163, 122, 0.3);
 }
 body.dark .btn-replace-all:hover {
-    background-color: #38a17b;
-    border-color: #38a17b;
+    background-color: #3fb388;
+    border-color: #3fb388;
     color: #ffffff;
 }
 
