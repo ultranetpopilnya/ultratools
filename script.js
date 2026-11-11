@@ -5654,7 +5654,8 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    let initialVersionTag = null;
+    let baselineStamp = 0;   // найновіший Last-Modified на момент завантаження
+    let newerHits = 0;       // скільки перевірок поспіль бачили новішу версію
     let initialBuildTime = '';
     let isUpdateReady = false;
     let pollTimer = null;
@@ -5719,11 +5720,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    async function checkServerVersion() {
+        async function checkServerVersion() {
         if (document.visibilityState !== 'visible') return;
+        if (isUpdateReady) return; // оранжева лишається, доки сторінку не оновлять
 
         try {
-                        // Сторінка + всі скрипти та стилі з цього ж сайту (Firebase CDN та ін. пропускаємо)
+            // Сторінка + всі скрипти та стилі з цього ж сайту (Firebase CDN та ін. пропускаємо)
             const watchedUrls = [
                 window.location.pathname,
                 ...Array.from(document.querySelectorAll('script[src], link[rel="stylesheet"]'))
@@ -5739,53 +5741,48 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             }));
 
-            // Якщо хоч один файл не відповів - пропускаємо перевірку, щоб не було хибного "оновлення"
-            if (responses.some(r => !r.ok)) return;
+            // Помилка відповіді — просто пробуємо пізніше (раніше тут зупинялись перевірки назавжди)
+            if (responses.some(r => !r.ok)) { scheduleNextCheck(30000); return; }
 
-            const tags = responses.map(r => r.headers.get('etag') || r.headers.get('last-modified') || '');
-            if (tags.every(t => !t)) return;
+            // Порівнюємо ЛИШЕ Last-Modified (ETag різний на різних вузлах CDN)
+            const stamps = responses
+                .map(r => new Date(r.headers.get('last-modified') || '').getTime())
+                .filter(t => !isNaN(t));
+            if (!stamps.length) { scheduleNextCheck(30000); return; }
 
-            // Один спільний "відбиток" усіх файлів
-            const currentTag = tags.join('|');
-
-            // Час збірки = дата найновішого з файлів
-            const lastModHeader = responses
-                .map(r => r.headers.get('last-modified'))
-                .filter(Boolean)
-                .map(h => new Date(h))
-                .filter(d => !isNaN(d.getTime()))
-                .sort((a, b) => b - a)[0]?.toUTCString() || null;
-
-            const formattedTime = formatBuildDate(lastModHeader);
+            const currentStamp = Math.max(...stamps);
+            const formattedTime = formatBuildDate(new Date(currentStamp).toUTCString());
 
             // 1. Перший запуск (сторінка тільки завантажилась)
-            if (!initialVersionTag) {
-                initialVersionTag = currentTag;
+            if (!baselineStamp) {
+                baselineStamp = currentStamp;
                 initialBuildTime = formattedTime;
                 isUpdateReady = false;
                 dot.className = 'site-status-dot status-green';
-                
-                statusBtn.title = formattedTime 
-                    ? `Сайт оновлено • Збірка від ${formattedTime}` 
+                statusBtn.title = formattedTime
+                    ? `Сайт оновлено • Збірка від ${formattedTime}`
                     : 'Сайт оновлений до останньої версії';
                 scheduleNextCheck(30000);
                 return;
             }
 
-            // 2. З'явилася нова версія на GitHub
-            if (currentTag !== initialVersionTag) {
-                isUpdateReady = true;
-                dot.className = 'site-status-dot status-orange';
-                
-                const timeStr = formattedTime ? ` (нова збірка від ${formattedTime})` : '';
-                statusBtn.title = `Доступне оновлення!${timeStr}\nНатисніть сюди для оновлення сторінки (F5)`;
-                scheduleNextCheck(15000);
-            } else {
-                
-                isUpdateReady = false;
-                dot.className = 'site-status-dot status-green';
-                scheduleNextCheck(30000);
+            // 2. Нова версія: строго новіший час, підтверджений двічі поспіль
+            if (currentStamp > baselineStamp) {
+                newerHits++;
+                if (newerHits >= 2) {
+                    isUpdateReady = true;
+                    dot.className = 'site-status-dot status-orange';
+                    const timeStr = formattedTime ? ` (нова збірка від ${formattedTime})` : '';
+                    statusBtn.title = `Доступне оновлення!${timeStr}\nНатисніть сюди для оновлення сторінки (F5)`;
+                    return; // далі опитувати не треба
+                }
+                scheduleNextCheck(10000);
+                return;
             }
+
+            // 3. Те саме або старіше (старий вузол CDN) — ігноруємо, крапка не змінюється
+            newerHits = 0;
+            scheduleNextCheck(30000);
 
         } catch (err) {
             console.warn("Перевірка версії:", err);
