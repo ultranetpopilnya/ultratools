@@ -2344,6 +2344,7 @@ body.dark .login-generator-container .result-type-badge {
 .login-generator-container .result-item .regenerate-login-btn:hover {
     background-color: var(--primary-accent-color);
     color: #ffffff;
+    box-shadow: 0 2px 6px rgba(79, 109, 245, 0.3);
 }
 
 /* Кнопка регенерації — повертаємо соковитий фірмовий бурштин */
@@ -2356,6 +2357,7 @@ body.dark .login-generator-container .result-item .regenerate-login-btn {
 body.dark .login-generator-container .result-item .regenerate-login-btn:hover {
     background-color: #e0ab45;
     color: #ffffff;
+    box-shadow: 0 2px 6px rgba(230, 162, 46, 0.3);
 }
 
 /* Копіювання: легкий зелений фон із зеленою іконкою */
@@ -2367,6 +2369,7 @@ body.dark .login-generator-container .result-item .regenerate-login-btn:hover {
 .login-generator-container .result-item .copy-login-btn:hover {
     background-color: var(--success-color);
     color: #ffffff;
+    box-shadow: 0 2px 6px rgba(22, 163, 122, 0.3);
 }
 
 .login-generator-container .result-item .copy-login-btn.copied {
@@ -2384,6 +2387,7 @@ body.dark .login-generator-container .result-item .copy-login-btn {
 body.dark .login-generator-container .result-item .copy-login-btn:hover {
     background-color: #3fb388;
     color: #ffffff;
+    box-shadow: 0 2px 6px rgba(22, 163, 122, 0.3);
 }
 
 .login-generator-container .content-card > p {
@@ -3816,6 +3820,7 @@ body.dark .template-search-bar.active {
 .btn-find:hover { 
     background-color: rgba(79, 109, 245, 0.22); 
     color: #2b44b8;
+    box-shadow: 0 2px 6px rgba(79, 109, 245, 0.25);
 }
 
 .btn-replace { 
@@ -3826,6 +3831,7 @@ body.dark .template-search-bar.active {
 .btn-replace:hover { 
     background-color: rgba(214, 155, 45, 0.24); 
     color: #925f0e;
+    box-shadow: 0 2px 6px rgba(214, 155, 45, 0.25);
 }
 
 /* btn replace all */
@@ -3837,6 +3843,7 @@ body.dark .template-search-bar.active {
 .btn-replace-all:hover { 
     background-color: rgba(22, 163, 122, 0.22); 
     color: #0c6148;
+    box-shadow: 0 2px 6px rgba(22, 163, 122, 0.25);
 }
 
 /* =========================================================
@@ -3848,12 +3855,12 @@ body.dark .btn-find {
     background-color: #4f6df5;
     color: #ffffff;
     border-color: #4f6df5;
-    box-shadow: 0 2px 6px rgba(79, 109, 245, 0.3);
 }
 body.dark .btn-find:hover {
     background-color: #637ef7;
     border-color: #637ef7;
     color: #ffffff;
+    box-shadow: 0 2px 6px rgba(79, 109, 245, 0.3);
 }
 
 /* 2. Замінити — теплий золотисто-бурштиновий колір */
@@ -3861,11 +3868,11 @@ body.dark .btn-replace {
     background-color: var(--secondary-accent-color);
     color: #fff;
     border-color: var(--secondary-accent-color);
-    box-shadow: 0 2px 6px rgba(214, 155, 45, 0.3);
 }
 body.dark .btn-replace:hover {
     background-color: #e0ab45;
     border-color: #e0ab45;
+    box-shadow: 0 2px 6px rgba(214, 155, 45, 0.3);
 }
 
 /* 3. Замінити все — насичений смарагдовий зелений */
@@ -3873,12 +3880,12 @@ body.dark .btn-replace-all {
     background-color: var(--success-color);
     color: #ffffff;
     border-color: var(--success-color);
-    box-shadow: 0 2px 6px rgba(22, 163, 122, 0.3);
 }
 body.dark .btn-replace-all:hover {
     background-color: #3fb388;
     border-color: #3fb388;
     color: #ffffff;
+    box-shadow: 0 2px 6px rgba(22, 163, 122, 0.3);
 }
 
 /* Обгортки всередині лівої колонки */
@@ -3954,6 +3961,7 @@ body.dark .search-inputs-row select option {
 .btn-replace-speed:hover {
     background-color: rgba(107, 33, 168, 0.18);
     color: #2e0551;
+    box-shadow: 0 2px 6px rgba(107, 33, 168, 0.25);
 }
 
 body.dark .btn-replace-speed {
@@ -3968,6 +3976,7 @@ body.dark .btn-replace-speed:hover {
     background-color: #6b21a8;
     border-color: #6b21a8;
     color: #ffffff;
+    box-shadow: 0 2px 6px rgba(169, 85, 247, 0.212);
 }
 
 /* Кнопка SWAP (стрілочки) */
@@ -4403,9 +4412,9 @@ body.dark .config-login-copy-btn .success-copy {
     height: 30px; 
     padding: 0;
     
-    background-color: rgba(22, 163, 122, 0.12);
+    background-color: rgba(22, 163, 122, 0.18);
     color: var(--success-color);
-    border: 1px solid rgba(22, 163, 122, 0.3);
+    border: 1px solid var(--success-color);
     border-radius: 8px;
     cursor: pointer;
     
@@ -4419,16 +4428,15 @@ body.dark .config-login-copy-btn .success-copy {
 }
 
 .config-generate-btn:hover {
-    background-color: var(--success-color);
-    color: #ffffff;
-    box-shadow: 0 3px 8px rgba(22, 163, 122, 0.25);
+    background-color: rgba(22, 163, 122, 0.3);
+    color: #0c6148;
+    box-shadow: 0 3px 8px rgba(22, 163, 122, 0.3);
 }
 
 /* Темна тема для кнопки */
 body.dark .config-generate-btn {
     background-color: #3f8f6b;
     color: white;
-    box-shadow: 0 2px 4px rgba(63, 143, 107, 0.25);
 }
 
 /* --- КНОПКИ-ТУМБЛЕРИ --- */
@@ -4606,7 +4614,6 @@ body.dark .config-mix-toggle-btn.is-gpon {
 /* Темна тема: config mix toggle btn — псевдоелемент ::before */
 body.dark .config-mix-toggle-btn.is-gpon::before {
     background-color: var(--secondary-accent-color);
-    /* Звичайна легка тінь вниз, як у всіх інших кнопок */
     box-shadow: 0 2px 4px rgba(230, 162, 46, 0.25);
 }
 

@@ -3053,11 +3053,11 @@ if (!oltObj) {
             <!-- Ліва колонка: Стандартний пошук -->
             <div class="search-col-left">
                 <div class="search-inputs-row">
-                    <input type="text" class="input-find" placeholder="Знайти..." value="${savedFind}">
+                    <input type="text" class="input-find" placeholder="Що знайти..." value="${savedFind}">
                     <button class="swap-inputs-btn" title="Поміняти місцями">
                         <i class="fa-solid fa-right-left"></i>
                     </button>
-                    <input type="text" class="input-replace" placeholder="Замінити..." value="${savedReplace}">
+                    <input type="text" class="input-replace" placeholder="Замінити на..." value="${savedReplace}">
                 </div>
                 <div class="search-buttons-row">
                     <button class="search-cmd-btn btn-find">Знайти</button>
