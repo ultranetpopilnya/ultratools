@@ -4435,8 +4435,16 @@ body.dark .config-login-copy-btn .success-copy {
 
 /* Темна тема для кнопки */
 body.dark .config-generate-btn {
-    background-color: #3f8f6b;
-    color: white;
+    background-color: var(--success-color);
+    color: #ffffff;
+    border-color: var(--success-color);
+}
+
+body.dark .config-generate-btn:hover {
+    background-color: #3fb388;
+    border-color: #3fb388;
+    color: #ffffff;
+    box-shadow: 0 3px 8px rgba(22, 163, 122, 0.3);
 }
 
 /* --- КНОПКИ-ТУМБЛЕРИ --- */
