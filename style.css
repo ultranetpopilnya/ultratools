@@ -3799,7 +3799,7 @@ body.dark .template-search-bar.active {
     flex: 1;
     height: 30px; 
     padding: 0;
-    border: 1px solid transparent; /* Тонка рамка в колір для чіткості */
+    border: 1px solid transparent; 
     border-radius: 8px; 
     font-size: 13px;
     font-weight: 600; 
@@ -3808,6 +3808,7 @@ body.dark .template-search-bar.active {
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 6px;
     box-shadow: none;
 }
 
@@ -3956,7 +3957,6 @@ body.dark .search-inputs-row select option {
 }
 .btn-replace-speed i {
     color: #ca8a04;
-    margin-right: 5px;
 }
 .btn-replace-speed:hover {
     background-color: rgba(107, 33, 168, 0.18);

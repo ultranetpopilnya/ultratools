@@ -3060,9 +3060,20 @@ if (!oltObj) {
                     <input type="text" class="input-replace" placeholder="Замінити на..." value="${savedReplace}">
                 </div>
                 <div class="search-buttons-row">
-                    <button class="search-cmd-btn btn-find">Знайти</button>
-                    <button class="search-cmd-btn btn-replace">Замінити</button>
-                    <button class="search-cmd-btn btn-replace-all">Замінити все</button>
+                <!-- Кнопка Знайти (Лупа) -->
+<button class="search-cmd-btn btn-find">
+    <i class="fa-solid fa-magnifying-glass"></i> Знайти
+</button>
+
+<!-- Кнопка Замінити (Олівець з квадратом) -->
+<button class="search-cmd-btn btn-replace">
+    <i class="fa-solid fa-pen-to-square"></i> Замінити
+</button>
+
+<!-- Кнопка Замінити все (Подвійна галочка) -->
+<button class="search-cmd-btn btn-replace-all">
+    <i class="fa-solid fa-check-double"></i> Замінити все
+</button>
                 </div>
             </div>
             
