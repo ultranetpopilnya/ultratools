@@ -3955,9 +3955,7 @@ body.dark .search-inputs-row select option {
     color: #3b0764;
     border-color: rgba(107, 33, 168, 0.3);
 }
-.btn-replace-speed i {
-    color: #ca8a04;
-}
+
 .btn-replace-speed:hover {
     background-color: rgba(107, 33, 168, 0.18);
     color: #2e0551;
@@ -3969,9 +3967,7 @@ body.dark .btn-replace-speed {
     color: #ffffff;
     border-color: #581c87;
 }
-body.dark .btn-replace-speed i {
-    color: #fbbf24;
-}
+
 body.dark .btn-replace-speed:hover {
     background-color: #6b21a8;
     border-color: #6b21a8;
