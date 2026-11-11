@@ -1345,26 +1345,18 @@ body.dark .add-tab-btn.menu-open:active {
     top: calc(100% + 12px);
     right: 2px;
     min-width: 210px;
-    
-    /* Використовуємо рідні кольори додатку замість "скла" */
     background-color: var(--menu-bg); 
     border: 1px solid var(--input-border-color);
     border-radius: 12px;
-    
-    /* М'яка, глибока тінь для відриву від фону */
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.05);
-    
     padding: 6px;
     z-index: 2000;
-    
     /* Анімація появи */
     opacity: 0;
     visibility: hidden;
     transform: translateY(-10px);
     transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0.25s;
     transform-origin: top right;
-        will-change: transform, opacity;
-    backface-visibility: hidden;
 }
 
 /* --- ТЕМНА ТЕМА ДЛЯ МЕНЮ --- */
