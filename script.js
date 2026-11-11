@@ -3062,17 +3062,17 @@ if (!oltObj) {
                 <div class="search-buttons-row">
                 <!-- Кнопка Знайти (Лупа) -->
 <button class="search-cmd-btn btn-find">
-    <i class="fa-solid fa-magnifying-glass"></i> Знайти
+    <i class="fa-solid fa-magnifying-glass"></i>Знайти
 </button>
 
 <!-- Кнопка Замінити (Олівець з квадратом) -->
 <button class="search-cmd-btn btn-replace">
-    <i class="fa-solid fa-pen-to-square"></i> Замінити
+    <i class="fa-solid fa-pen-to-square"></i>Замінити
 </button>
 
 <!-- Кнопка Замінити все (Подвійна галочка) -->
 <button class="search-cmd-btn btn-replace-all">
-    <i class="fa-solid fa-check-double"></i> Замінити все
+    <i class="fa-solid fa-check-double"></i>Замінити все
 </button>
                 </div>
             </div>

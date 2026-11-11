@@ -3761,12 +3761,8 @@ body.dark .template-search-bar.active {
 /* 4. Внутрішня сітка пошуку (АБСОЛЮТНЕ ЦЕНТРУВАННЯ ВМІСТУ) */
 .search-panel-columns {
     display: flex;
-    width: 100%;
-    max-width: 100%; /* Знімаємо жорстке обмеження */
-    
-    /* 2. ГОЛОВНЕ ВИПРАВЛЕННЯ: Центруємо весь блок з колонками рівно по центру панелі */
-    justify-content: center; 
-    
+    width: max-content; /* ВАЖЛИВО: тримає кнопки разом по центру */
+    max-width: 100%;    /* ВАЖЛИВО: не дає їм вилізти за 6px при звуженні */
     margin: 0px;   
     gap: 5px;
     box-sizing: border-box;
@@ -3775,7 +3771,7 @@ body.dark .template-search-bar.active {
 
 /* 5. Ліва колонка пошуку */
 .search-col-left {
-    flex: 0 1 384px;
+    flex: 0 1 420px; /* БУЛО 384px. Збільшили через додані іконки */
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -3808,7 +3804,7 @@ body.dark .template-search-bar.active {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
+    gap: 6px; 
     box-shadow: none;
 }
 
@@ -4065,7 +4061,7 @@ body.dark .template-config-bar.active {
 }
 
 .template-field-group:has(.template-search-bar.active) {
-    min-width: 554px !important;
+    min-width: 553px !important;
 }
 
 .config-rows-wrapper {
