@@ -589,6 +589,9 @@ body.dark ::placeholder {
 
     overflow: auto;
 
+    backdrop-filter: blur(6px) saturate(150%);
+-webkit-backdrop-filter: blur(6px) saturate(150%);
+
     transform: translateZ(0);
     -webkit-transform: translateZ(0);
     backface-visibility: hidden;
@@ -891,25 +894,36 @@ body.dark .qn-add-btn:active {
     pointer-events: auto !important;
 }
 
-/* 3. Базовий стиль хвилі (Світла тема) */
+/* 3. Маска-контейнер хвилі (повторює точні заокруглення кожної кнопки) */
 .ripple {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    overflow: hidden;
+    overflow: clip;
+    pointer-events: none;
+    z-index: -1;
+    transform: translateZ(0);
+    -webkit-mask-image: -webkit-radial-gradient(white, black);
+}
+
+/* Сама хвиля всередині маски */
+.ripple-wave {
     position: absolute;
     border-radius: 50%;
     transform: scale(0);
     opacity: 1;
     background-color: color-mix(in srgb, currentColor 20%, transparent);
-    pointer-events: none;
-    z-index: -1;
     animation: ripple-expand 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
     transition: opacity 0.35s ease-out;
 }
 
-.ripple.is-leaving {
+.ripple-wave.is-leaving {
     opacity: 0;
 }
 
 /* 4. Колір хвилі для Темної теми */
-body.dark .ripple {
+body.dark .ripple-wave {
     background-color: color-mix(in srgb, currentColor 15%, transparent);
 }
 
@@ -940,8 +954,8 @@ button:disabled, input:disabled, select:disabled {
     align-items: center;
     background-color: var(--tabstrip-bg);
     background-image: var(--reflection-top);
-    backdrop-filter: blur(20px) saturate(150%); 
-    -webkit-backdrop-filter: blur(20px) saturate(150%);
+    backdrop-filter: blur(6px) saturate(150%); 
+    -webkit-backdrop-filter: blur(6px) saturate(150%);
     padding: 0px 2px;
     border-radius: 9999px;
     margin: 0;
@@ -959,8 +973,6 @@ button:disabled, input:disabled, select:disabled {
 }
 
 body.dark .tabs {
-    backdrop-filter: blur(20px) saturate(150%); 
-    -webkit-backdrop-filter: blur(20px) saturate(150%);
     background-color: var(--tabstrip-bg);
     background-image: none;
     border: 1px solid var(--panel-border);
@@ -1015,22 +1027,16 @@ body.dark .tabs {
 .tab-button.active {
     background-color: var(--active-bg);
     color: var(--primary-accent-color);
-    backdrop-filter: blur(20px) saturate(150%); 
-    -webkit-backdrop-filter: blur(20px) saturate(150%);
     font-weight: 500;
     text-shadow: 0 0 0.65px currentColor;
     -webkit-text-stroke: 0;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.10), inset 0 1px 1px rgba(255, 255, 255, 0.5);
-
     transform: translateZ(0);
     -webkit-transform: translateZ(0);
-
     border-radius: 9999px;
 }
 
 body.dark .tab-button.active {
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
     background-color: var(--active-bg);
     color: var(--primary-accent-color);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.06);
@@ -7421,14 +7427,14 @@ body.holiday-mode #snow-container {
 body.holiday-mode .tabs::after {
     content: '';
     position: absolute;
-    top: -32px;
-    right: -25px;
-    width: 58px;
-    height: 58px;
+    top: -38px;
+    right: -24px;
+    width: 62px;
+    height: 62px;
     background-image: url('/images/hat.png');
     background-size: contain;
     background-repeat: no-repeat;
-    transform: rotate(20deg);
+    transform: rotate(15deg);
     pointer-events: none;
     z-index: -1;
     filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.2));
@@ -7438,10 +7444,10 @@ body.holiday-mode .tabs::after {
 body.holiday-mode .tabs::before {
     content: '';
     position: absolute;
-    bottom: 0px;
-    left: -40px;
-    width: 64px;
-    height: 64px;
+    bottom: -1px;
+    left: -45px;
+    width: 70px;
+    height: 70px;
     background-image: url('/images/tree.png');
     background-size: contain;
     background-repeat: no-repeat;

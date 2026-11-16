@@ -4513,6 +4513,7 @@ if (initialTab === 'gpon-commands') {
 // === СВЯТКОВИЙ РЕЖИМ (керується з Firebase: config/site → holidayMode) ===
 (function () {
     const CACHE_KEY = 'holiday-mode-cache';
+    const LOCAL_KEY = 'holiday-mode-local';
     const CHARACTERS = ['❄', '❅', '❆'];
     const container = document.getElementById('snow-container');
 
@@ -4523,7 +4524,7 @@ if (initialTab === 'gpon-commands') {
 
     const rand = (min, max) => Math.random() * (max - min) + min;
 
-            function getFlakeCount() {
+    function getFlakeCount() {
         if (window.innerWidth < 800) return 20;
         if (window.innerHeight <= 800) return 30;
         return 45;
@@ -4548,25 +4549,59 @@ if (initialTab === 'gpon-commands') {
         container.replaceChildren(fragment);
     }
 
-        function applyHolidayMode(enabled) {
+    let serverHolidayMode = false;
+    let localHolidayMode = false;
+
+    try {
+        serverHolidayMode = localStorage.getItem(CACHE_KEY) === 'on';
+        localHolidayMode = localStorage.getItem(LOCAL_KEY) === 'on';
+    } catch (e) {}
+
+    function applyHolidayMode(enabled) {
         document.body.classList.toggle('holiday-mode', enabled);
 
         if (enabled && container.childElementCount === 0) createSnowflakes();
         if (!enabled) container.replaceChildren();
-
-        try { localStorage.setItem(CACHE_KEY, enabled ? 'on' : 'off'); } catch (e) {}
     }
 
-    // 1. Миттєво застосовуємо останнє відоме значення, щоб не було мигання при завантаженні
-    try { applyHolidayMode(localStorage.getItem(CACHE_KEY) === 'on'); } catch (e) {}
+    // 1. Миттєво застосовуємо останній відомий стан, щоб не було мигання при завантаженні
+    applyHolidayMode(serverHolidayMode || localHolidayMode);
 
     // 2. Слухаємо актуальне значення з Firebase (оновлюється й без перезавантаження)
     db.collection('config').doc('site').onSnapshot(
-        (snap) => applyHolidayMode(snap.exists && snap.data().holidayMode === true),
+        (snap) => {
+            serverHolidayMode = snap.exists && snap.data().holidayMode === true;
+            try { localStorage.setItem(CACHE_KEY, serverHolidayMode ? 'on' : 'off'); } catch (e) {}
+            applyHolidayMode(serverHolidayMode || localHolidayMode);
+        },
         (err) => console.warn('Не вдалося прочитати налаштування свята:', err)
     );
+
+    // 3. Ctrl + Shift + H — локальний перемикач (працює лише коли глобальний режим вимкнено)
+    document.addEventListener('keydown', (e) => {
+        if (e.repeat) return;
+        if ((e.ctrlKey || e.metaKey) && e.shiftKey && !e.altKey && e.code === 'KeyH') {
+            e.preventDefault();
+
+            // Якщо режим увімкнено глобально у Firebase — нічого не перемикаємо і не вимикаємо
+            if (serverHolidayMode) return;
+
+            localHolidayMode = !localHolidayMode;
+            try { localStorage.setItem(LOCAL_KEY, localHolidayMode ? 'on' : 'off'); } catch (err) {}
+            applyHolidayMode(localHolidayMode);
+
+            if (typeof showNotification === 'function') {
+                showNotification(
+                    localHolidayMode
+                        ? 'Святковий режим увімкнено (тільки для вас)'
+                        : 'Святковий режим вимкнено',
+                    localHolidayMode ? 'success' : 'info'
+                );
+            }
+        }
+    });
 })();
-	
+
 // === ЛОГІКА КНОПОК ПРОКРУТКИ ===
     const scrollUpBtn = document.getElementById('scroll-up-btn');
     const scrollDownBtn = document.getElementById('scroll-down-btn');
@@ -5529,11 +5564,16 @@ document.addEventListener('mousedown', function (e) {
 
     const ripple = document.createElement('span');
     ripple.className = 'ripple';
-    ripple.style.width = ripple.style.height = `${radius * 2}px`;
-    ripple.style.left = `${x - radius}px`;
-    ripple.style.top = `${y - radius}px`;
+
+    const wave = document.createElement('span');
+    wave.className = 'ripple-wave';
+    wave.style.width = wave.style.height = `${radius * 2}px`;
+    wave.style.left = `${x - radius}px`;
+    wave.style.top = `${y - radius}px`;
+
+    ripple.appendChild(wave);
     btn.appendChild(ripple);
-    void ripple.offsetWidth; // фіксуємо початковий opacity: 1 до моменту відпускання
+    void wave.offsetWidth; // фіксуємо початковий opacity: 1
 
     let released = false;
     const release = () => {
@@ -5546,12 +5586,12 @@ document.addEventListener('mousedown', function (e) {
         btn.removeEventListener('mouseleave', release);
 
         requestAnimationFrame(() => {
-            ripple.classList.add('is-leaving');
+            wave.classList.add('is-leaving');
         });
 
         const cleanup = () => ripple.remove();
-        ripple.addEventListener('transitionend', cleanup, { once: true });
-        setTimeout(cleanup, 400); // страховка, якщо меню/елемент закрився раніше
+        wave.addEventListener('transitionend', cleanup, { once: true });
+        setTimeout(cleanup, 400);
     };
 
     window.addEventListener('mouseup', release, true);
