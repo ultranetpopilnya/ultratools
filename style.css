@@ -7518,7 +7518,7 @@ body.dark.holiday-mode {
 /* ========================================= */
 /* === НОВОРІЧНИЙ ЗАГОЛОВОК: АДАПТИВНИЙ КОНТРАСТ === */
 /* ========================================= */
-/* 1. БАЗОВІ НАЛАШТУВАННЯ (СВІТЛА ТЕМА — ДЕННИЙ LED-ЕФЕКТ) */
+/* 1. БАЗОВІ НАЛАШТУВАННЯ (СВІТЛА ТЕМА — СКЛЯНІ ЛАМПОЧКИ ВДЕНЬ) */
 body.holiday-mode .page-title {
     background: transparent !important;
     border: none !important;
@@ -7526,72 +7526,64 @@ body.holiday-mode .page-title {
     padding: 0 !important;
     transition: all 0.5s ease;
 
-    /* Стан "Вимкнено" (Тьмяне кольорове скло, як у темній темі) */
-    --bulb-off-opacity: 0.32;
-    --bulb-off-filter: saturate(0.65);
-    --bulb-off-shadow: 0 0 2px color-mix(in srgb, currentColor 25%, transparent);
+    /* Вимкнено: глибокий приглушений колір без бляклої прозорості */
+    --bulb-off-opacity: 0.88;
+    --bulb-off-filter: saturate(0.45) brightness(0.74);
+    --bulb-off-shadow: none;
+    --breathe-off-opacity: 0.88;
 
-    /* Стан "Увімкнено" (Яскравий LED + аура + відблиск на поверхню) */
+    /* Увімкнено: яскраве чисте світло + м'який ореол */
     --bulb-on-opacity: 1;
-    --bulb-on-filter: saturate(1.45) brightness(1.22);
+    --bulb-on-filter: saturate(1.35) brightness(1.06);
     --bulb-on-shadow:
-        0 0 4px color-mix(in srgb, currentColor 75%, transparent),
-        0 0 16px color-mix(in srgb, currentColor 45%, transparent),
-        0 6px 14px color-mix(in srgb, currentColor 32%, transparent);
+        0 0 5px color-mix(in srgb, currentColor 40%, transparent),
+        0 0 16px color-mix(in srgb, currentColor 28%, transparent);
 }
 
-/* 2. НАЛАШТУВАННЯ ДЛЯ ТЕМНОЇ ТЕМИ (З ФІКСОМ БІЛОГО ЯДРА) */
+/* 2. НАЛАШТУВАННЯ ДЛЯ ТЕМНОЇ ТЕМИ (З БІЛИМ НЕОНОВИМ ЯДРОМ) */
 body.dark.holiday-mode .page-title {
-    /* Стан "Вимкнено" (Тьмяний неон) */
-    --bulb-off-opacity: 0.3;
+    --bulb-off-opacity: 0.32;
     --bulb-off-filter: none;
     --bulb-off-shadow: 0 0 3px currentColor;
+    --breathe-off-opacity: 0.6;
 
-    /* Стан "Увімкнено" (Яскрава плазма з білим ядром) */
     --bulb-on-opacity: 1;
     --bulb-on-filter: brightness(1.35);
     --bulb-on-shadow: 0 0 3px #fff, 0 0 12px currentColor, 0 0 28px currentColor;
 }
 
-/* ПРИБИРАЄМО ЗАЙВЕ */
+/* ПРИБИРАЄМО ЗАЙВЕ ТА ФІКСУЄМО РОЗМІР */
 body.holiday-mode .page-title::before { display: none !important; }
 
-/* holiday mode */
-body.holiday-mode .page-title span { display: inline-block; transform: none !important; }
+body.holiday-mode .page-title span {
+    display: inline-block;
+    transform: none !important;
+    will-change: opacity, filter;
+}
 
-/* === АНІМАЦІЇ (СПІЛЬНІ ДЛЯ ОБОХ ТЕМ, ПЛАВНІ 4 СЕКУНДИ) === */
-/* Для I та P (1 пік) */
+/* === АНІМАЦІЇ (ЧИСТА ХВИЛЯ I → S → P → S → I, 3.6 СЕКУНДИ) === */
+/* Для I та P */
 @keyframes soft-side {
     0%, 100% {
         opacity: var(--bulb-on-opacity);
         filter: var(--bulb-on-filter);
         text-shadow: var(--bulb-on-shadow);
     }
-    50% {
+    25%, 75% {
         opacity: var(--bulb-off-opacity);
         filter: var(--bulb-off-filter);
         text-shadow: var(--bulb-off-shadow);
     }
 }
 
-/* Для S (2 піки) */
+/* Для S */
 @keyframes soft-center {
-    0%, 100% {
+    0%, 50%, 100% {
         opacity: var(--bulb-off-opacity);
         filter: var(--bulb-off-filter);
         text-shadow: var(--bulb-off-shadow);
     }
-    25% {
-        opacity: var(--bulb-on-opacity);
-        filter: var(--bulb-on-filter);
-        text-shadow: var(--bulb-on-shadow);
-    }
-    50% {
-        opacity: var(--bulb-off-opacity);
-        filter: var(--bulb-off-filter);
-        text-shadow: var(--bulb-off-shadow);
-    }
-    75% {
+    25%, 75% {
         opacity: var(--bulb-on-opacity);
         filter: var(--bulb-on-filter);
         text-shadow: var(--bulb-on-shadow);
@@ -7601,7 +7593,7 @@ body.holiday-mode .page-title span { display: inline-block; transform: none !imp
 /* Для Ультранет */
 @keyframes soft-breathe {
     0%, 100% {
-        opacity: 0.6;
+        opacity: var(--breathe-off-opacity);
         filter: var(--bulb-off-filter);
         text-shadow: var(--bulb-off-shadow);
     }
@@ -7614,58 +7606,43 @@ body.holiday-mode .page-title span { display: inline-block; transform: none !imp
 
 /* === КОЛЬОРИ === */
 body.holiday-mode .page-title { color: var(--header-color); text-shadow: none !important; }
-
-/* Темна тема: page title */
 body.dark.holiday-mode .page-title { color: #fff; }
 
-/* holiday mode */
+/* Ультранет */
 body.holiday-mode .page-title .ultranet-color { color: #811e71 !important; }
-
-/* Темна тема: page title */
 body.dark.holiday-mode .page-title .ultranet-color { color: #e040fb !important; }
 
-/* Жовтий для світлої теми (теплий золотий) */
-body.holiday-mode .page-title .isp-e-color-i { color: #e5a500 !important; }
-
-/* Темна тема: page title */
+/* I — теплий бурштиново-золотий */
+body.holiday-mode .page-title .isp-e-color-i { color: #f59e0b !important; }
 body.dark.holiday-mode .page-title .isp-e-color-i { color: #ffeb3b !important; }
 
-/* holiday mode */
-body.holiday-mode .page-title .isp-e-color-s { color: #28a745 !important; }
-
-/* Темна тема: page title */
+/* S — соковитий смарагдовий */
+body.holiday-mode .page-title .isp-e-color-s { color: #10b981 !important; }
 body.dark.holiday-mode .page-title .isp-e-color-s { color: #00e676 !important; }
 
-/* holiday mode */
-body.holiday-mode .page-title .isp-e-color-p { color: #007bff !important; }
-
-/* Темна тема: page title */
+/* P — чистий сапфіровий синій */
+body.holiday-mode .page-title .isp-e-color-p { color: #3b82f6 !important; }
 body.dark.holiday-mode .page-title .isp-e-color-p { color: #00b0ff !important; }
 
-/* === ТАЙМІНГ (ПОВІЛЬНИЙ, 4 СЕКУНДИ) === */
-/* Ультранет */
+/* === ТАЙМІНГ === */
 body.holiday-mode .page-title .ultranet-color {
     animation: soft-breathe 5s infinite ease-in-out;
 }
 
-/* I (Жовтий) */
 body.holiday-mode .page-title .isp-e-color-i {
-    animation: soft-side 4s infinite ease-in-out;
+    animation: soft-side 3.6s infinite ease-in-out;
     animation-delay: 0s;
 }
 
-/* P (Синій) */
 body.holiday-mode .page-title .isp-e-color-p {
-    animation: soft-side 4s infinite ease-in-out;
-    animation-delay: -2s;
+    animation: soft-side 3.6s infinite ease-in-out;
+    animation-delay: -1.8s;
 }
 
-/* S (Зелений) */
 body.holiday-mode .page-title .isp-e-color-s {
-    animation: soft-center 4s infinite ease-in-out;
+    animation: soft-center 3.6s infinite ease-in-out;
     animation-delay: 0s;
 }
-
 
 /* ================================================================
    11. АДАПТИВНІСТЬ ДЛЯ РОБОЧИХ ЕКРАНІВ (Full HD 1080p та Ноутбук 1366x768)
