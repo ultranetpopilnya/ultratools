@@ -6508,24 +6508,22 @@ body.dark #static-clarification-message {
 }
 
 #controls-and-clarification {
-    position: relative; 
-    height: 38px;       
+    position: relative;
+    height: 38px;
     width: 100%;
-    display: block;     
-    flex-shrink: 0 !important;   
-    min-height: 38px !important; 
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    flex-shrink: 0 !important;
+    min-height: 38px !important;
     z-index: 20;
     margin-bottom: 16px;
 }
 
 .switch-with-info {
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%); 
     display: flex;
     align-items: center;
-    gap: 8px; 
+    gap: 8px;
 }
 
 .info-tooltip-wrapper {
@@ -6654,11 +6652,13 @@ body.dark .segmented-control {
     background: transparent;
     border: none;
     border-radius: 8px;
-    font-size: 13.5px; /* Трохи акуратніший шрифт */
+    font-family: inherit;   /* єдиний шрифт FixelDisplay, як на інших кнопках */
+    font-size: 14px;        /* ціле значення замість 13.5px */
+    line-height: 1;         /* без дробового line-height: normal */
     font-weight: 600;
     color: var(--inactive-text);
     cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+    transform: translateZ(0); /* одразу ставить правильну растеризацію */
 }
 
 /* НАВЕДЕННЯ НА НЕАКТИВНУ вкладку (Світла тема) */
@@ -7477,50 +7477,42 @@ body.dark.holiday-mode {
         radial-gradient(ellipse 45% 40% at 50% 50%, rgba(76, 29, 149, 0.08) 0%, transparent 70%);
 }
 
-
-
 /* ========================================= */
 /* === НОВОРІЧНИЙ ЗАГОЛОВОК: АДАПТИВНИЙ КОНТРАСТ === */
 /* ========================================= */
-/* 1. БАЗОВІ НАЛАШТУВАННЯ ТА СКИНУТТЯ */
+/* 1. БАЗОВІ НАЛАШТУВАННЯ (СВІТЛА ТЕМА — ДЕННИЙ LED-ЕФЕКТ) */
 body.holiday-mode .page-title {
     background: transparent !important;
     border: none !important;
     box-shadow: none !important;
     padding: 0 !important;
     transition: all 0.5s ease;
-    
-    /* --- НАЛАШТУВАННЯ ДЛЯ СВІТЛОЇ ТЕМИ (НОВИЙ ПІДХІД) --- */
-    /* 
-       Замість розмитого світіння ми робимо акцент на НАСИЧЕНОСТІ (Saturate).
-       "Вимкнена" буква стає сірою і блідою.
-       "Увімкнена" - соковитою і яскравою.
-    */
-    
-    /* Стан "Вимкнено" (Холодне скло) */
-    --bulb-off-opacity: 0.4; 
-    --bulb-off-filter: saturate(0.2) brightness(0.9); /* Майже сірий */
-    --bulb-off-shadow: none;
-    
-    /* Стан "Увімкнено" (Соковитий колір) */
+
+    /* Стан "Вимкнено" (Тьмяне кольорове скло, як у темній темі) */
+    --bulb-off-opacity: 0.32;
+    --bulb-off-filter: saturate(0.65);
+    --bulb-off-shadow: 0 0 2px color-mix(in srgb, currentColor 25%, transparent);
+
+    /* Стан "Увімкнено" (Яскравий LED + аура + відблиск на поверхню) */
     --bulb-on-opacity: 1;
-    --bulb-on-filter: saturate(2.0) brightness(1.05); /* Подвійна насиченість кольору! */
-    --bulb-on-shadow: none; /* Жодних тіней, тільки чистий колір */
-    --bulb-on-color: currentColor; /* Колір не змінюється на білий, залишається рідним */
+    --bulb-on-filter: saturate(1.45) brightness(1.22);
+    --bulb-on-shadow:
+        0 0 4px color-mix(in srgb, currentColor 75%, transparent),
+        0 0 16px color-mix(in srgb, currentColor 45%, transparent),
+        0 6px 14px color-mix(in srgb, currentColor 32%, transparent);
 }
 
-/* 2. НАЛАШТУВАННЯ ДЛЯ ТЕМНОЇ ТЕМИ (ЗАЛИШАЄМО ЯК БУЛО) */
+/* 2. НАЛАШТУВАННЯ ДЛЯ ТЕМНОЇ ТЕМИ (З ФІКСОМ БІЛОГО ЯДРА) */
 body.dark.holiday-mode .page-title {
     /* Стан "Вимкнено" (Тьмяний неон) */
-    --bulb-off-opacity: 0.3; 
+    --bulb-off-opacity: 0.3;
     --bulb-off-filter: none;
-    --bulb-off-shadow: 0 0 3px currentColor; 
-    
-    /* Стан "Увімкнено" (Яскрава плазма) */
+    --bulb-off-shadow: 0 0 3px currentColor;
+
+    /* Стан "Увімкнено" (Яскрава плазма з білим ядром) */
     --bulb-on-opacity: 1;
-    --bulb-on-filter: none;
-        --bulb-on-shadow: 0 0 12px currentColor, 0 0 28px currentColor;
-    --bulb-on-color: #fff; /* Біле ядро */
+    --bulb-on-filter: brightness(1.35);
+    --bulb-on-shadow: 0 0 3px #fff, 0 0 12px currentColor, 0 0 28px currentColor;
 }
 
 /* ПРИБИРАЄМО ЗАЙВЕ */
@@ -7529,20 +7521,18 @@ body.holiday-mode .page-title::before { display: none !important; }
 /* holiday mode */
 body.holiday-mode .page-title span { display: inline-block; transform: none !important; }
 
-/* === АНІМАЦІЇ (ПЛАВНІ 4 СЕКУНДИ) === */
+/* === АНІМАЦІЇ (СПІЛЬНІ ДЛЯ ОБОХ ТЕМ, ПЛАВНІ 4 СЕКУНДИ) === */
 /* Для I та P (1 пік) */
 @keyframes soft-side {
     0%, 100% {
         opacity: var(--bulb-on-opacity);
         filter: var(--bulb-on-filter);
         text-shadow: var(--bulb-on-shadow);
-        color: var(--bulb-on-color);
     }
     50% {
         opacity: var(--bulb-off-opacity);
         filter: var(--bulb-off-filter);
         text-shadow: var(--bulb-off-shadow);
-        color: currentColor;
     }
 }
 
@@ -7552,32 +7542,36 @@ body.holiday-mode .page-title span { display: inline-block; transform: none !imp
         opacity: var(--bulb-off-opacity);
         filter: var(--bulb-off-filter);
         text-shadow: var(--bulb-off-shadow);
-        color: currentColor;
     }
-    25% { 
+    25% {
         opacity: var(--bulb-on-opacity);
         filter: var(--bulb-on-filter);
         text-shadow: var(--bulb-on-shadow);
-        color: var(--bulb-on-color);
     }
     50% {
         opacity: var(--bulb-off-opacity);
         filter: var(--bulb-off-filter);
         text-shadow: var(--bulb-off-shadow);
-        color: currentColor;
     }
-    75% { 
+    75% {
         opacity: var(--bulb-on-opacity);
         filter: var(--bulb-on-filter);
         text-shadow: var(--bulb-on-shadow);
-        color: var(--bulb-on-color);
     }
 }
 
 /* Для Ультранет */
 @keyframes soft-breathe {
-    0%, 100% { opacity: 0.6; filter: var(--bulb-off-filter); text-shadow: var(--bulb-off-shadow); }
-    50% { opacity: 1; filter: var(--bulb-on-filter); text-shadow: var(--bulb-on-shadow); }
+    0%, 100% {
+        opacity: 0.6;
+        filter: var(--bulb-off-filter);
+        text-shadow: var(--bulb-off-shadow);
+    }
+    50% {
+        opacity: 1;
+        filter: var(--bulb-on-filter);
+        text-shadow: var(--bulb-on-shadow);
+    }
 }
 
 /* === КОЛЬОРИ === */
@@ -7592,8 +7586,8 @@ body.holiday-mode .page-title .ultranet-color { color: #811e71 !important; }
 /* Темна тема: page title */
 body.dark.holiday-mode .page-title .ultranet-color { color: #e040fb !important; }
 
-/* Жовтий зробив трохи темнішим для світлої теми, щоб краще читався */
-body.holiday-mode .page-title .isp-e-color-i { color: #dcb000 !important; }
+/* Жовтий для світлої теми (теплий золотий) */
+body.holiday-mode .page-title .isp-e-color-i { color: #e5a500 !important; }
 
 /* Темна тема: page title */
 body.dark.holiday-mode .page-title .isp-e-color-i { color: #ffeb3b !important; }
@@ -7617,19 +7611,19 @@ body.holiday-mode .page-title .ultranet-color {
 }
 
 /* I (Жовтий) */
-body.holiday-mode .page-title .isp-e-color-i { 
+body.holiday-mode .page-title .isp-e-color-i {
     animation: soft-side 4s infinite ease-in-out;
     animation-delay: 0s;
 }
 
 /* P (Синій) */
-body.holiday-mode .page-title .isp-e-color-p { 
+body.holiday-mode .page-title .isp-e-color-p {
     animation: soft-side 4s infinite ease-in-out;
-    animation-delay: -2s; 
+    animation-delay: -2s;
 }
 
 /* S (Зелений) */
-body.holiday-mode .page-title .isp-e-color-s { 
+body.holiday-mode .page-title .isp-e-color-s {
     animation: soft-center 4s infinite ease-in-out;
     animation-delay: 0s;
 }
