@@ -729,7 +729,7 @@ select:focus,
 .segment-btn,
 #login-autoclear-btn,
 #auto-reset-button {
-    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out, filter 0.2s ease-out !important;
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out, filter 0.2s ease-out, background-color 0.2s ease-out, border-color 0.2s ease-out, color 0.2s ease-out !important;
 }
 
 /* --- ГРУПА 1: УНІВЕРСАЛЬНИЙ HOVER (Ефект "спливання" вгору) --- */
@@ -4458,6 +4458,7 @@ body.dark .config-generate-btn:hover {
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Кнопка очищення полів — світла тема */
 .config-clear-fields-btn {
     background-color: rgba(214, 155, 45, 0.12);
     color: #b47818;
@@ -4468,21 +4469,23 @@ body.dark .config-generate-btn:hover {
     background-color: rgba(214, 155, 45, 0.22);
     color: #925f0e;
     border-color: rgba(214, 155, 45, 0.45);
-    box-shadow: none;
+    box-shadow: 0 2px 4px rgba(255, 196, 0, 0.15);
+    z-index: 2;
 }
 
+/* Кнопка очищення полів — темна тема */
 body.dark .config-clear-fields-btn {
     background-color: var(--primary-white-accent-color);
     color: white;
     border-color: var(--primary-white-accent-color);
 }
 
-.config-clear-fields-btn:hover {
-    box-shadow: 0 2px 4px rgba(255, 196, 0, 0.15);    
-}
-
 body.dark .config-clear-fields-btn:hover {
-    box-shadow: 0 2px 4px rgba(79, 109, 245, 0.15);
+    background-color: #637ef7;
+    border-color: #637ef7;
+    color: white;
+    box-shadow: 0 2px 6px rgba(79, 109, 245, 0.3);
+    z-index: 2;
 }
 
 /* config replace mode btn — активний стан */
