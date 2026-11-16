@@ -1317,9 +1317,10 @@ body.dark .add-tab-btn.menu-open:active {
 
 /* Відкритий стан */
 .add-tab-wrapper.open .add-tab-menu {
-    opacity: 1;
     visibility: visible;
+    opacity: 1;
     transform: translateY(0);
+    pointer-events: auto;
 }
 
 /* Стрілочка меню (Хвостик) */
@@ -1352,11 +1353,11 @@ body.dark .add-tab-btn.menu-open:active {
     padding: 6px;
     z-index: 2000;
     /* Анімація появи */
+        visibility: hidden;
     opacity: 0;
-    visibility: hidden;
-    transform: translateY(-10px);
-    transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0.25s;
-    transform-origin: top right;
+    transform: translateY(-4px);
+    pointer-events: none;
+    transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s ease;
 }
 
 /* --- ТЕМНА ТЕМА ДЛЯ МЕНЮ --- */
