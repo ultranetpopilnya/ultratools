@@ -5533,8 +5533,31 @@ document.addEventListener('mousedown', function (e) {
     ripple.style.left = `${x - radius}px`;
     ripple.style.top = `${y - radius}px`;
     btn.appendChild(ripple);
+    void ripple.offsetWidth; // фіксуємо початковий opacity: 1 до моменту відпускання
 
-    ripple.addEventListener('animationend', () => ripple.remove(), { once: true });
+    let released = false;
+    const release = () => {
+        if (released) return;
+        released = true;
+
+        window.removeEventListener('mouseup', release, true);
+        window.removeEventListener('blur', release);
+        window.removeEventListener('dragend', release, true);
+        btn.removeEventListener('mouseleave', release);
+
+        requestAnimationFrame(() => {
+            ripple.classList.add('is-leaving');
+        });
+
+        const cleanup = () => ripple.remove();
+        ripple.addEventListener('transitionend', cleanup, { once: true });
+        setTimeout(cleanup, 400); // страховка, якщо меню/елемент закрився раніше
+    };
+
+    window.addEventListener('mouseup', release, true);
+    window.addEventListener('blur', release);
+    window.addEventListener('dragend', release, true);
+    btn.addEventListener('mouseleave', release);
 }, true);
 
 document.addEventListener('DOMContentLoaded', () => {
