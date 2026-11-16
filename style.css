@@ -904,7 +904,6 @@ body.dark .qn-add-btn:active {
     pointer-events: none;
     z-index: -1;
     transform: translateZ(0);
-    -webkit-mask-image: -webkit-radial-gradient(white, black);
 }
 
 /* Сама хвиля всередині маски */
@@ -7423,38 +7422,77 @@ body.holiday-mode #snow-container {
     50% { translate: 50px 0; }
 }
 
-/* 1. ШАПКА САНТИ*/
-body.holiday-mode .tabs::after {
-    content: '';
+/* === СВЯТКОВІ ПРИКРАСИ НА ВКЛАДКАХ (ялинка + шапка) === */
+.holiday-deco {
+    display: none;
     position: absolute;
-    top: -38px;
-    right: -24px;
-    width: 62px;
-    height: 62px;
-    background-image: url('/images/hat.png');
     background-size: contain;
     background-repeat: no-repeat;
-    transform: rotate(15deg);
-    pointer-events: none;
     z-index: -1;
-    filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.2));
+    pointer-events: none; /* Сама картинка з прозорими полями не реагує на мишку */
+    filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.2));
+    will-change: transform;
 }
 
-/* Ялинка */
-body.holiday-mode .tabs::before {
-    content: '';
+body.holiday-mode .holiday-deco {
+    display: block;
+}
+
+.holiday-hitbox {
     position: absolute;
+    pointer-events: auto;
+    cursor: pointer;
+    /* Розкоментуйте рядок нижче на час тесту, щоб бачити червону зону спрацювання: */
+    /* background: rgba(255, 0, 0, 1); */
+}
+
+.holiday-tree {
     bottom: -1px;
     left: -45px;
     width: 70px;
     height: 70px;
     background-image: url('/images/tree.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    transform: rotate(0deg);
+    transform-origin: 50% 100%;
+}
+
+/* Трикутна зменшена зона чітко по центру ялинки */
+.holiday-tree .holiday-hitbox {
+    inset: 14px 14px 6px 14px; /* відступи: зверху, справа, знизу, зліва */
+    clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+}
+
+.holiday-hat {
+    top: -42px;
+    right: -18px;
+    width: 62px;
+    height: 62px;
+    background-image: url('/images/hat.png');
+    transform: rotate(15deg);
+    transform-origin: 35% 85%;
+}
+
+/* Округла зменшена зона по центру шапки */
+.holiday-hat .holiday-hitbox {
+    inset: 14px 12px 12px 14px;
+    border-radius: 50%;
+}
+
+/* === ГІРЛЯНДА ЗВЕРХУ (holiday mode) === */
+body.holiday-mode::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 70px;
+    background: url('/images/garland.svg') repeat-x center top / 800px 70px;
     pointer-events: none;
-    z-index: -1;
-    filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.2));
+    z-index: 0; /* під контентом, над шумом */
+    filter: drop-shadow(0 3px 3px rgba(0, 0, 0, 0.18));
+}
+
+body.dark.holiday-mode::after {
+    filter: brightness(1.15) drop-shadow(0 0 6px rgba(255, 255, 255, 0.05));
 }
 
 /* === СВЯТКОВЕ ТЛО (світла тема) === */
@@ -7627,6 +7665,7 @@ body.holiday-mode .page-title .isp-e-color-s {
     animation: soft-center 4s infinite ease-in-out;
     animation-delay: 0s;
 }
+
 
 /* ================================================================
    11. АДАПТИВНІСТЬ ДЛЯ РОБОЧИХ ЕКРАНІВ (Full HD 1080p та Ноутбук 1366x768)

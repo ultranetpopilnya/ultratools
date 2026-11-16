@@ -4602,6 +4602,126 @@ if (initialTab === 'gpon-commands') {
     });
 })();
 
+// === Святкові прикраси: ялинка + шапка зі звуком ===
+(function () {
+    // Налаштування для кожного елемента:
+    // src       — файл у папці sounds/
+    // volume    — гучність від 0.0 до 1.0
+    // shakeMs   — загальна тривалість тряски в мс (1500 = 1.5 сек)
+    // amplitude — сила розмаху в градусах
+    // baseAngle — початковий кут нахилу елемента з CSS (ялинка: 0, шапка: 15)
+    const EFFECTS = {
+        tree: { src: 'sounds/jingle.mp3', volume: 0.4, shakeMs: 1200, amplitude: 6, baseAngle: 0 },
+        hat:  { src: 'sounds/jingle1.mp3',  volume: 0.5, shakeMs: 1000, amplitude: 6, baseAngle: 15 }
+    };
+    const COOLDOWN_MS = 800; // Затримка між повторними спрацюваннями
+    const SHAKE_SPEED = 0.018; // Швидкість хитання (більше = частіше трясеться)
+
+    const audioCache = {};
+    const lastPlayed = {};
+    const shakeState = new WeakMap();
+
+    function getAudio(name) {
+        const cfg = EFFECTS[name];
+        if (!cfg || !cfg.src) return null;
+
+        if (!audioCache[name]) {
+            const audio = new Audio(cfg.src);
+            audio.preload = 'auto';
+            audioCache[name] = audio;
+        }
+        audioCache[name].volume = Math.max(0, Math.min(1, cfg.volume ?? 0.5));
+        return audioCache[name];
+    }
+
+    function triggerShake(el, cfg) {
+        if (!el || !cfg || !cfg.shakeMs) return;
+
+        const prev = shakeState.get(el);
+        if (prev?.rafId) cancelAnimationFrame(prev.rafId);
+
+        const state = {
+            rafId: null,
+            offset: prev ? prev.offset : 0 // Беремо поточний кут, щоб навіть повторне наведення було без ривка
+        };
+        shakeState.set(el, state);
+
+        const startOffset = state.offset;
+        const startTime = performance.now();
+        const duration = cfg.shakeMs;
+        const maxAmp = cfg.amplitude ?? 6;
+        const base = cfg.baseAngle ?? 0;
+
+        function step(now) {
+            const elapsed = now - startTime;
+            const progress = Math.min(1, elapsed / duration);
+
+            // Плавний старт (перші 100 мс) і плавне згасання до повного нуля в кінці
+            const fadeIn = Math.min(1, elapsed / 100);
+            const fadeOut = Math.pow(1 - progress, 1.5);
+
+            const wave = Math.sin(elapsed * SHAKE_SPEED) * maxAmp * fadeOut;
+            state.offset = startOffset * (1 - fadeIn) + wave * fadeIn;
+
+            el.style.transform = `rotate(${(base + state.offset).toFixed(2)}deg)`;
+
+            if (progress < 1) {
+                state.rafId = requestAnimationFrame(step);
+            } else {
+                state.offset = 0;
+                state.rafId = null;
+                el.style.transform = ''; // Повертаємо чистий CSS-стан
+            }
+        }
+
+        state.rafId = requestAnimationFrame(step);
+    }
+
+    function play(name, el) {
+        const now = Date.now();
+        if (now - (lastPlayed[name] || 0) < COOLDOWN_MS) return;
+
+        lastPlayed[name] = now;
+        triggerShake(el, EFFECTS[name]);
+
+        const audio = getAudio(name);
+        if (!audio) return;
+
+        audio.currentTime = 0;
+        audio.play().catch(() => {});
+    }
+
+    function ensureDecorations() {
+        const tabs = document.querySelector('.tabs');
+        if (!tabs) return;
+        [['holiday-tree', 'tree'], ['holiday-hat', 'hat']].forEach(([cls, name]) => {
+            if (tabs.querySelector('.' + cls)) return;
+            const el = document.createElement('div');
+            el.className = 'holiday-deco ' + cls;
+            el.setAttribute('aria-hidden', 'true');
+
+            const hitbox = document.createElement('span');
+            hitbox.className = 'holiday-hitbox';
+            hitbox.addEventListener('mouseenter', () => play(name, el));
+
+            el.appendChild(hitbox);
+            tabs.appendChild(el);
+        });
+    }
+
+    function init() {
+        ensureDecorations();
+        const tabs = document.querySelector('.tabs');
+        if (tabs) new MutationObserver(ensureDecorations).observe(tabs, { childList: true });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+})();
+
 // === ЛОГІКА КНОПОК ПРОКРУТКИ ===
     const scrollUpBtn = document.getElementById('scroll-up-btn');
     const scrollDownBtn = document.getElementById('scroll-down-btn');
