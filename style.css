@@ -7451,7 +7451,7 @@ body.holiday-mode .holiday-deco {
     left: -45px;
     width: 70px;
     height: 70px;
-    background-image: url('/images/tree.png');
+    background-image: url('./images/tree.png');
     transform-origin: 50% 100%;
 }
 
@@ -7466,7 +7466,7 @@ body.holiday-mode .holiday-deco {
     right: -18px;
     width: 62px;
     height: 62px;
-    background-image: url('/images/hat.png');
+    background-image: url('./images/hat.png');
     transform: rotate(15deg);
     transform-origin: 35% 85%;
 }
@@ -7485,7 +7485,7 @@ body.holiday-mode::after {
     left: 0;
     width: 100%;
     height: 70px;
-    background: url('/images/garland.svg') repeat-x center top / 800px 70px;
+    background: url('./images/garland.svg') repeat-x center top / 800px 70px;
     pointer-events: none;
     z-index: 0; /* під контентом, над шумом */
     filter: drop-shadow(0 3px 3px rgba(0, 0, 0, 0.18));
