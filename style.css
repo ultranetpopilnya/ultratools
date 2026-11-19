@@ -815,6 +815,10 @@ body.dark {
    ==================================================================== */
 
 /* 1. Готуємо елементи: позиціонування та обрізка хвилі по краях */
+.btn-find,
+.btn-replace,
+.btn-replace-all,
+.btn-replace-speed,
 .qn-add-btn,
 .unified-pill:has(#login-google-btn:not(.auth-hidden)),
 .variant-dropdown-item,
@@ -835,6 +839,10 @@ body.dark {
 }
 
 /* 2. Піднімаємо всі внутрішні елементи (текст, іконки), щоб хвиля протікала ПІД ними */
+.btn-find > :not(.ripple),
+.btn-replace > :not(.ripple),
+.btn-replace-all > :not(.ripple),
+.btn-replace-speed > :not(.ripple),
 .qn-add-btn > :not(.ripple),
 .unified-pill #login-google-btn:not(.auth-hidden) > :not(.ripple),
 .variant-dropdown-item > :not(.ripple),

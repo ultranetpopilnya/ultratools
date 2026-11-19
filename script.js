@@ -5663,8 +5663,8 @@ const RIPPLE_SELECTOR = `
     .variant-dropdown-item, .speed-dropdown-item, .add-tab-item,
     .command-item, .sub-command-item, .tab-button, .olt-dropdown-item,
     #login-autoclear-btn, .calc-action-button, .stepper-btn,
-    #auto-reset-button, .segment-btn, .qn-add-btn
-`;
+    #auto-reset-button, .segment-btn, .qn-add-btn, .btn-find, 
+    .btn-replace, .btn-replace-all, .btn-replace-speed, .config-generate-btn`;
 
 document.addEventListener('mousedown', function (e) {
     if (e.button !== 0) return;                          // тільки ліва кнопка
