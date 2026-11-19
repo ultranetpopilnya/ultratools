@@ -801,7 +801,7 @@ body.dark {
     .swap-inputs-btn:hover {
         border-color: rgba(var(--fx-rgb), 0.55);
         background-color: color-mix(in srgb, var(--btn-bg) 92%, rgb(var(--fx-rgb)) 8%);
-        box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.10);
+        box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.12);
     }
 
     #login-autoclear-btn:hover:not(.active) i {
@@ -1083,7 +1083,7 @@ body.dark .tab-button:hover:not(.active) {
     cursor: pointer;
     border-radius: 8px;
     color: var(--text-color);
-    font-size: 13.5px;
+    font-size: 13px;
     font-weight: 500;
     transition: all 0.2s ease;
     background-color: transparent;
@@ -2054,7 +2054,7 @@ body.dark .actions-block-title::after {
     color: var(--text-color);
 
     font-family: inherit;
-    font-size: 13.5px;
+    font-size: 14px;
     font-weight: 500;
     letter-spacing: 0.1px;
     white-space: nowrap;
@@ -3136,130 +3136,110 @@ body.dark .fancy-divider {
     padding-right: 20px;
 }
 
-/* Базові налаштування для всіх кнопок */
+/* Базові налаштування для всіх кнопок керування шаблонами */
 #add-template-button,
 #import-templates-button,
 #export-templates-button,
 #clear-all-templates-button {
     position: relative;
     top: 5px;
-    padding: 0;
-    border-radius: 9999px; /* Капсула */
-    font-size: 1.1rem;
-    cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     width: 56px;
     height: 30px;
+    padding: 0;
+    box-sizing: border-box;
+
     display: flex;
     justify-content: center;
     align-items: center;
-}
 
-/* 2. Кнопки Імпорт/Експорт - СВІТЛА ТЕМА */
-#import-templates-button,
-#export-templates-button {
-    background-color: var(--btn-bg); 
-    border: 1px solid var(--input-border-color); 
-    color: var(--description-color);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-}
-
-/* При наведенні у світлій темі */
-#import-templates-button:hover,
-#export-templates-button:hover {
-    border-color: var(--primary-accent-color);
-    color: var(--primary-accent-color);
-    background-color: #f0f7ff; /* Дуже світлий блакитний фон */
-    box-shadow: 0 2px 4px rgba(79, 109, 245, 0.15);
-}
-
-/* 3. Кнопка Очистити - СВІТЛА ТЕМА */
-#clear-all-templates-button {
-    background-color: var(--btn-bg); 
-    border: 1px solid var(--input-border-color); 
-    color: var(--danger-color);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-}
-
-/* clear all templates button — ховер */
-#clear-all-templates-button:hover {
-    background-color: var(--danger-color);
-    border-color: var(--danger-color);
-    color: white;
-    box-shadow: 0 2px 6px rgba(220, 53, 69, 0.3);
+    border-radius: 9999px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
 /* 1. ГОЛОВНА КНОПКА (ДОДАТИ) */
 #add-template-button {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    
-    /* Повертаємо жирність 700 (Bold) та line-height: 1 для точного центру */
     font-weight: 700;
     font-size: 1.4rem;
     line-height: 1;
-    
-    padding: 0;
-    background-color: rgba(79, 109, 245, 0.12);
-    color: var(--primary-accent-color);
-    border: 1px solid rgba(79, 109, 245, 0.3);
-    box-shadow: none;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
 
-#add-template-button:hover {
-    background-color: var(--primary-accent-color);
-    border-color: var(--primary-accent-color);
-    color: #ffffff;
-    box-shadow: 0 2px 8px rgba(79, 109, 245, 0.3);
-}
-
-/* 2. Кнопки Імпорт/Експорт - ТЕМНА */
-body.dark #import-templates-button,
-body.dark #export-templates-button {
-    background-color: rgba(255, 255, 255, 0.05); /* Ефект скла */
-    border: 1px solid rgba(255, 255, 255, 0.2); /* Напівпрозора біла рамка */
-    color: #f0f0f0; /* Майже біла іконка */
+    background-color: rgba(var(--fx-rgb), 0.12);
+    color: #3b5bdb;
+    border: 1px solid rgba(var(--fx-rgb), 0.25);
     box-shadow: none;
 }
 
-/* Темна тема: import templates button — ховер */
-body.dark #import-templates-button:hover,
-body.dark #export-templates-button:hover {
-    border-color: var(--secondary-accent-color);
-    color: var(--secondary-accent-color);
-    background-color: rgba(230, 162, 46, 0.15);
-    box-shadow: 0 0 8px rgba(230, 162, 46, 0.1);
-}
-
-/* 1. Головна кнопка (Додати) - ТЕМНА */
 body.dark #add-template-button {
     background-color: var(--secondary-accent-color);
-    color: #1b1c1d;
     border-color: var(--secondary-accent-color);
-    box-shadow: 0 2px 8px rgba(230, 162, 46, 0.25);
+    color: #1b1c1d;
 }
 
-/* Темна тема: add template button — ховер */
-body.dark #add-template-button:hover {
-    background-color: #ffb74d; 
-    border-color: #ffb74d;
+/* 2. КНОПКИ ІМПОРТ / ЕКСПОРТ (нейтральні в стилі #login-autoclear-btn) */
+#import-templates-button,
+#export-templates-button {
+    background-color: var(--btn-bg);
+    border: 1px solid var(--input-border-color);
+    color: var(--text-color);
+    box-shadow: var(--fx-shadow);
 }
 
-/* 3. Кнопка Очистити - ТЕМНА */
-body.dark #clear-all-templates-button {
-    background-color: rgba(220, 53, 69, 0.15); /* Трохи більше заливки */
-    border: 1px solid rgba(255, 107, 107, 0.6); /* Яскравіша рамка */
-    color: #ff6b6b;
+/* 3. КНОПКА ОЧИСТИТИ ВСЕ */
+#clear-all-templates-button {
+    --fx-rgb: 226, 85, 85;
+    background-color: rgba(var(--fx-rgb), 0.12);
+    border: 1px solid rgba(var(--fx-rgb), 0.28);
+    color: #c93b3b;
     box-shadow: none;
 }
 
-/* Темна тема: clear all templates button — ховер */
-body.dark #clear-all-templates-button:hover {
-    background-color: var(--danger-color);
-    border-color: var(--danger-color);
-    color: white;
+body.dark #clear-all-templates-button {
+    --fx-rgb: 240, 90, 80;
+    background-color: rgba(var(--fx-rgb), 0.14);
+    border-color: rgba(var(--fx-rgb), 0.42);
+    color: color-mix(in srgb, rgb(var(--fx-rgb)) 65%, #ffffff 35%);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+/* === HOVER ДЛЯ ВСІХ 4 КНОПОК (єдиний стандарт 0.12) === */
+@media (hover: hover) {
+    #add-template-button:hover {
+        background-color: rgba(var(--fx-rgb), 0.22);
+        border-color: rgba(var(--fx-rgb), 0.45);
+        color: #2b44b8;
+        box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.12);
+    }
+
+    body.dark #add-template-button:hover {
+        background-color: #e0ab45;
+        border-color: #e0ab45;
+        color: #1b1c1d;
+        box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.12);
+    }
+
+    #import-templates-button:hover,
+    #export-templates-button:hover {
+        border-color: rgba(var(--fx-rgb), 0.55);
+        background-color: color-mix(in srgb, var(--btn-bg) 92%, rgb(var(--fx-rgb)) 8%);
+        color: rgb(var(--fx-rgb));
+        box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.12);
+    }
+
+    #clear-all-templates-button:hover {
+        background-color: rgba(var(--fx-rgb), 0.22);
+        border-color: rgba(var(--fx-rgb), 0.45);
+        color: #a82828;
+        box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.12);
+    }
+
+    body.dark #clear-all-templates-button:hover {
+        background-color: rgba(var(--fx-rgb), 0.24);
+        border-color: rgba(var(--fx-rgb), 0.7);
+        color: color-mix(in srgb, rgb(var(--fx-rgb)) 45%, #ffffff 55%);
+        box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.12);
+    }
 }
 
 #templates-grid-wrapper {
@@ -3729,7 +3709,7 @@ body.dark .line-marker {
     border-radius: 999px;
 
     font-family: inherit;
-    font-size: 13.5px;
+    font-size: 13px;
     font-weight: 500;
     letter-spacing: 0.1px;
     white-space: nowrap;
@@ -3820,27 +3800,6 @@ body.dark .btn-replace-speed {
         background-color: rgba(107, 33, 168, 0.18);
         color: #2e0551;
         box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.12);
-    }
-
-    body.dark .btn-find:hover {
-        background-color: #637ef7;
-        border-color: #637ef7;
-        color: #ffffff;
-    }
-    body.dark .btn-replace:hover {
-        background-color: #e0ab45;
-        border-color: #e0ab45;
-        color: #ffffff;
-    }
-    body.dark .btn-replace-all:hover {
-        background-color: #3fb388;
-        border-color: #3fb388;
-        color: #ffffff;
-    }
-    body.dark .btn-replace-speed:hover {
-        background-color: #6b21a8;
-        border-color: #6b21a8;
-        color: #ffffff;
     }
 }
 
@@ -4462,9 +4421,9 @@ body.dark .config-clear-fields-btn {
 body.dark .config-replace-mode-btn,
 body.dark .config-pon-onu-btn,
 body.dark .config-show-signal-btn {
-    background-color: color-mix(in srgb, var(--btn-bg) 62%, rgb(var(--fx-rgb)) 38%);
-    border-color: rgba(var(--fx-rgb), 0.5);
-    color: rgba(255, 255, 255, 0.88);
+    background-color: var(--input-bg-color);
+    border-color: var(--input-border-color);
+    color: var(--inactive-text);
 }
 
 body.dark .config-replace-mode-btn.active,
@@ -4473,7 +4432,7 @@ body.dark .config-show-signal-btn.active {
     background-color: rgb(var(--fx-rgb));
     border-color: rgb(var(--fx-rgb));
     color: #ffffff;
-    box-shadow: 0 0 0 2px rgba(var(--fx-rgb), 0.18);
+    box-shadow: 0 0 0 2px rgba(var(--fx-rgb), 0.10);
 }
 
 @media (hover: hover) {
@@ -4494,12 +4453,12 @@ body.dark .config-show-signal-btn.active {
         box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.16);
     }
 
-    body.dark .config-replace-mode-btn:hover,
+        body.dark .config-replace-mode-btn:hover,
     body.dark .config-pon-onu-btn:hover,
     body.dark .config-show-signal-btn:hover {
-        background-color: color-mix(in srgb, var(--btn-bg) 50%, rgb(var(--fx-rgb)) 50%);
-        border-color: rgb(var(--fx-rgb));
-        color: #ffffff;
+        background-color: color-mix(in srgb, var(--input-bg-color) 85%, rgb(var(--fx-rgb)) 15%);
+        border-color: rgba(var(--fx-rgb), 0.6);
+        color: var(--text-color);
     }
 
     body.dark .config-replace-mode-btn.active:hover,
@@ -4507,7 +4466,7 @@ body.dark .config-show-signal-btn.active {
     body.dark .config-show-signal-btn.active:hover {
         background-color: rgb(var(--fx-rgb));
         filter: brightness(1.12);
-        box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.24);
+        box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.16);
     }
 }
 
@@ -4620,7 +4579,6 @@ body.dark .config-mix-toggle-btn.is-epon::before {
     body.dark .config-mix-toggle-btn.is-epon:hover {
         background-color: rgb(var(--fx-rgb));
         filter: brightness(1.12);
-        box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.24);
     }
 }
 
@@ -4748,7 +4706,7 @@ body.dark .config-mix-toggle-btn.shake-it {
     flex: 0 0 auto !important; 
     display: inline-flex;
     align-items: center;
-    width: 118px; /* Ширина для ідеальної математики */
+    width: fit-content;
     box-sizing: border-box; 
     border-radius: 999px !important;
     border: 1px solid var(--input-border-color);
@@ -4812,14 +4770,14 @@ body.dark .config-mix-toggle-btn.shake-it {
    ========================================================= */
 .config-onu-mode-btn.is-switch {
     --fx-rgb: 124, 58, 237;
-    padding: 0 49px 0 22px !important;
+    padding: 0 28px 0 6px !important;
     background-color: rgba(var(--fx-rgb), 0.12);
     border-color: rgba(var(--fx-rgb), 0.5);
     color: #6d28d9;
 }
 
 .config-onu-mode-btn.is-switch::before {
-    left: 78px;
+    left: 63px;
     background-color: rgb(var(--fx-rgb));
     box-shadow: 0 2px 4px rgba(var(--fx-rgb), 0.3);
 }
@@ -4850,7 +4808,6 @@ body.dark .config-onu-mode-btn.is-switch::before {
     body.dark .config-onu-mode-btn.is-switch:hover {
         background-color: rgb(var(--fx-rgb));
         filter: brightness(1.12);
-        box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.24);
     }
 }
 
@@ -5501,7 +5458,7 @@ body.dark .date-calculator-container #result-section h2 {
 
     color: rgb(var(--fx-rgb));
     font-family: inherit;
-    font-size: 13.5px;
+    font-size: 14px;
     font-weight: 500;
     letter-spacing: 0.1px;
     cursor: pointer;
@@ -5569,7 +5526,7 @@ body.dark .calc-action-button {
 
     color: rgb(var(--fx-rgb));
     font-family: inherit;
-    font-size: 13.5px;
+    font-size: 14px;
     font-weight: 500;
     cursor: pointer;
     user-select: none;
@@ -5668,7 +5625,7 @@ body.dark .action-divider {
 
     color: var(--text-color);
     font-family: inherit;
-    font-size: 13.5px;
+    font-size: 14px;
     font-weight: 500;
     letter-spacing: 0.1px;
     white-space: nowrap;
@@ -5686,7 +5643,7 @@ body.dark .action-divider {
     #auto-reset-button:hover:not(.active) {
         border-color: rgba(var(--fx-rgb), 0.55);
         background-color: color-mix(in srgb, var(--btn-bg) 92%, rgb(var(--fx-rgb)) 8%);
-        box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.10);
+        box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.12);
     }
 
     #auto-reset-button:hover:not(.active) .timer-icon {
@@ -5704,7 +5661,7 @@ body.dark .action-divider {
 
 /* Іконка */
 #auto-reset-button .timer-icon {
-    font-size: 13px;
+    font-size: 14px;
     color: var(--text-color);
     transition: color 0.2s ease;
     z-index: 2;
@@ -6543,7 +6500,7 @@ body.dark .info-tooltip-text::before {
     border: none;
     border-radius: 8px;
     font-family: inherit;   /* єдиний шрифт FixelDisplay, як на інших кнопках */
-    font-size: 14px;        /* ціле значення замість 13.5px */
+    font-size: 14px;       
     line-height: 1;         /* без дробового line-height: normal */
     font-weight: 600;
     color: var(--inactive-text);
@@ -7008,7 +6965,7 @@ body.dark .qn-close-btn:active {
     padding: 10px 12px;
     border-radius: 12px;
     font-family: inherit;
-    font-size: 13.5px;
+    font-size: 13px;
     line-height: 1.4;
     outline: none;
     
@@ -7177,7 +7134,7 @@ body.dark .qn-placeholder {
 .qn-text {
     flex: 1;
     min-width: 0;
-    font-size: 13.5px;
+    font-size: 14px;
     line-height: 1.4;
     color: var(--text-color);
     word-break: break-word;

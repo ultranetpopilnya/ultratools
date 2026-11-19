@@ -2713,7 +2713,7 @@ const btnOnuMode = configPanel.querySelector('.config-onu-mode-btn');
 
 function updateOnuModeUI() {
     if (currentOnuMode === 'REG') {
-        btnOnuMode.textContent = 'РЕЄСТРАЦІЯ';
+        btnOnuMode.textContent = 'РЕЄСТР';
         btnOnuMode.className = 'config-onu-mode-btn active is-reg'; // Додаємо класи для твого майбутнього CSS
     } else {
         btnOnuMode.textContent = 'ЗАМІНА';
