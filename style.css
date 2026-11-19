@@ -815,6 +815,7 @@ body.dark {
    ==================================================================== */
 
 /* 1. Готуємо елементи: позиціонування та обрізка хвилі по краях */
+.config-generate-btn,
 .btn-find,
 .btn-replace,
 .btn-replace-all,
@@ -839,6 +840,7 @@ body.dark {
 }
 
 /* 2. Піднімаємо всі внутрішні елементи (текст, іконки), щоб хвиля протікала ПІД ними */
+.config-generate-btn > :not(.ripple),
 .btn-find > :not(.ripple),
 .btn-replace > :not(.ripple),
 .btn-replace-all > :not(.ripple),
@@ -2829,7 +2831,7 @@ body.dark .empty-templates-message {
 }
 
 /* =========================================
-   ОБГОРТКА ПІГУЛКИ (Сам фон і рамка)
+   ОБГОРТКА ПІГУЛКИ (коли увійшов + коли гість)
    ========================================= */
 .unified-pill {
     position: relative;
@@ -2846,13 +2848,9 @@ body.dark .empty-templates-message {
 }
 
 @media (hover: hover) {
-    /* Коли користувач увійшов (звичайна пігулка профілю) */
-    .unified-pill:hover {
-        border-color: rgba(var(--fx-rgb), 0.55);
-    }
-
-    /* Коли це кнопка «Увійти» — повний стиль як у #login-autoclear-btn та Імпорт/Експорт */
-    .unified-pill:has(#login-google-btn:not(.auth-hidden)):hover {
+    /* Кнопка «Увійти» (гість) ТА пігулка профілю (увійшов, крім наведення на кнопку виходу) */
+    .unified-pill:has(#login-google-btn:not(.auth-hidden)):hover,
+    .unified-pill:not(:has(.logout-action-btn:hover)):hover {
         border-color: rgba(var(--fx-rgb), 0.55);
         background-color: color-mix(in srgb, var(--btn-bg) 92%, rgb(var(--fx-rgb)) 8%);
         box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.12);
