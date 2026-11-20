@@ -3957,9 +3957,9 @@ body.dark .search-inputs-row select option {
     border: none;
     background: transparent;
     color: var(--text-color); /* Використовуємо основний колір тексту */
-        opacity: 0.75;
+    opacity: 0.75;
     cursor: pointer;
-    border-radius: 8px;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
