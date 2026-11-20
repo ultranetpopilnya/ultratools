@@ -62,7 +62,6 @@ select {
     /* STATUS */
     --success-color: #16a37a;
     --danger-color: #e25555;
-    --danger-bg-dark: rgba(240, 107, 107, 0.15);
 
     /* INPUTS */
     --input-border-color: #d9e0ea;
@@ -178,7 +177,6 @@ color-scheme: dark;
 
     /* STATUS */
     --danger-color: #df3333;
-    --danger-bg-dark: rgba(240, 107, 107, 0.15);
     --success-color: #38A17B;
 
     /* INPUTS */
@@ -284,7 +282,6 @@ color-scheme: dark;
     --scrollbar-thumb-width: 6px;        /* Ширина повзунка (краще парне число) */
     --scrollbar-thumb-width-hover: 8px; /* Ширина при наведенні (краще парне число) */
     --scrollbar-line: 2px;               /* Товщина лінії треку (змінено на 2px для чіткості) */
-    --scrollbar-edge-gap: 0px;           /* Відступ зверху та знизу */
 }
 
 /* ================================================================
@@ -424,8 +421,6 @@ body {
 }
 
 body.dark {
-    color-scheme: dark;
-
     /* --- ТЕМНА ТЕМА: глибоке космічне змішування --- */
     background-color: #0b0f19;
     background-image:
@@ -731,13 +726,11 @@ select:focus,
    ==================================================================== */
 :root {
     --fx-rgb: 79, 109, 245;   /* світла тема: базовий акцент */
-    --fx-icon: #7b8aa0;
     --fx-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
 }
 
 body.dark {
     --fx-rgb: 214, 155, 45;   /* темна тема: базовий бурштиновий акцент */
-    --fx-icon: #9aa4b2;
     --fx-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
 }
 
@@ -1106,8 +1099,34 @@ body.dark .add-tab-item:hover i {
     color: var(--secondary-accent-color);
 }
 
+/* --- 2. КНОПКА ЗАКРИТТЯ (ХРЕСТИК) --- */
+.close-tab-btn {
+    --fx-rgb: 226, 85, 85;
+    position: absolute;
+    right: 14px;
+
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+
+    opacity: 0;
+    color: var(--text-color);
+    transition: transform 0.2s ease, opacity 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+
+    z-index: 3 !important;
+}
+
+body.dark .close-tab-btn {
+    --fx-rgb: 240, 90, 80;
+}
+
 /* Приховуємо стандартні іконки/текст (якщо є в HTML) */
-.close-tab-btn i, 
+.close-tab-btn i,
 .close-tab-btn span {
     display: none !important;
 }
@@ -1121,28 +1140,17 @@ body.dark .add-tab-item:hover i {
     left: 50%;
     width: 14px;
     height: 1.5px;
-    background-color: currentColor; 
+    background-color: currentColor;
     border-radius: 1px;
 }
 
-/* close tab btn — псевдоелемент ::before */
 .close-tab-btn::before { transform: translate(-50%, -50%) rotate(45deg); }
-
-/* close tab btn — псевдоелемент ::after */
-.close-tab-btn::after { transform: translate(-50%, -50%) rotate(-45deg); }
+.close-tab-btn::after  { transform: translate(-50%, -50%) rotate(-45deg); }
 
 /* Показуємо при наведенні на саму вкладку */
 .tab-button:hover .close-tab-btn,
 .tab-button.active .close-tab-btn {
     opacity: 0.6;
-}
-
-.close-tab-btn {
-    --fx-rgb: 226, 85, 85;
-}
-
-body.dark .close-tab-btn {
-    --fx-rgb: 240, 90, 80;
 }
 
 @media (hover: hover) {
@@ -2161,7 +2169,7 @@ body.dark .actions-block-title::after {
     margin-bottom: 0px;
     height: auto;
     overflow: visible !important;
-
+    flex-shrink: 0;
 }
 
 /* 4. Результати та Історія: рівно по центру */
@@ -2170,12 +2178,6 @@ body.dark .actions-block-title::after {
     width: 90%;
     margin-left: auto;
     margin-right: auto;
-}
-
-/* Гарантуємо, що результати не стискаються */
-#results-container {
-    flex-shrink: 0;
-    margin-bottom: 20px;
 }
 
 /* login generator container */
@@ -4761,43 +4763,6 @@ body.dark .config-onu-mode-btn.is-switch::before {
     color: var(--inactive-text);
     text-align: center;
     font-style: italic;
-}
-
-/* select item — ховер */
-.select-item:hover {
-    color: var(--primary-color);
-}
-
-/* select item */
-.select-item.hidden {
-    display: none;
-}
-
-/* Темна тема: select group title */
-body.dark .select-group-title {
-    background: rgba(255, 255, 255, 0.05);
-}
-
-/* config custom select */
-.config-custom-select .select-arrow {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--text-color);
-    opacity: 0.5;
-    pointer-events: none;
-    transition: transform 0.2s;
-}
-
-/* config custom select — відкритий стан */
-.config-custom-select.open .select-arrow {
-    transform: translateY(-50%) rotate(180deg);
-}
-
-/* config custom select — відкритий стан */
-.config-custom-select.open .config-select-dropdown {
-    display: block;
 }
 
 /* olt dropdown wrapper */
