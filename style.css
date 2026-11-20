@@ -3970,12 +3970,31 @@ body.dark .search-inputs-row select option {
     box-shadow: inset 0 0 0 1px rgba(var(--fx-rgb), 0.35);
 }
 
-.swap-inputs-btn:hover i {
-    transform: rotate(180deg);
+.swap-inputs-btn i {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;              /* парний квадрат під 30px кнопку: (30 - 16) / 2 = 7px з кожного боку */
+    height: 16px;
+    margin: 0;
+    padding: 0;
+    font-size: 14px;
+    line-height: 1;
+    transform-origin: 50% 50%;
+    transform: translateZ(0); /* постійний GPU-шар, щоб після анімації не було стрибка */
+    will-change: transform;
+    backface-visibility: hidden;
+    pointer-events: none;
+    transition: transform 0.3s cubic-bezier(0.34, 1.4, 0.64, 1);
 }
 
-.swap-inputs-btn i {
-    transition: transform 0.3s cubic-bezier(0.34, 1.4, 0.64, 1);
+.swap-inputs-btn i::before {
+    display: block;
+    line-height: 1;
+}
+
+.swap-inputs-btn:hover i {
+    transform: translateZ(0) rotate(180deg);
 }
 
 .swap-inputs-btn:active {
@@ -4361,6 +4380,32 @@ body.dark .variant-badge {
     justify-content: center;
     transition: all 0.2s ease;
     outline: none;
+}
+
+/* Іконка строго по центру кола: квадратна коробка, обертання навколо центру */
+.config-login-regen-btn i,
+.config-login-regen-btn svg,
+.config-login-copy-btn i,
+.config-login-copy-btn svg {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 12px;        /* парне число, 22 - 12 = 10 (рівно по 5px відступу) */
+    height: 12px;
+    margin: 0;
+    padding: 0;
+    font-size: 12px;    /* збігається з width/height без залишку 0.5px (або 14px для обох) */
+    line-height: 1;
+    transform-origin: 50% 50%;
+    will-change: transform;   /* тримає іконку на одному шарі до, під час і після обертання */
+    backface-visibility: hidden;
+    pointer-events: none;
+}
+
+.config-login-regen-btn i::before,
+.config-login-copy-btn i::before {
+    display: block;
+    line-height: 1;
 }
 
 body.dark .config-login-regen-btn,
@@ -5888,7 +5933,9 @@ body.dark #auto-reset-button:focus-visible {
 body.dark .calc-title { color: var(--text-color); }
 
 /* Кнопка історії (КАЛЬКУЛЯТОР - ВИПРАВЛЕНО КОНФЛІКТ) */
+/* Кнопка історії (і база для кнопок у шапці калькулятора) */
 .calc-head-history-btn {
+    --calc-btn-color: #667085;
     background: transparent;
     border: none;
     box-shadow: none;
@@ -5899,22 +5946,27 @@ body.dark .calc-title { color: var(--text-color); }
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    color: #667085;
-    transition: background-color 0.2s, color 0.2s;
+    color: var(--calc-btn-color);
     padding: 0;
     margin: 0;
 }
 
-/* calc head history btn */
+/* Темна тема: міняємо змінну, щоб НЕ перебивати :hover та :active */
+body.dark .calc-head-history-btn {
+    --calc-btn-color: #aaa;
+}
+
 .calc-head-history-btn i {
     font-size: 18px;
     pointer-events: none;
 }
 
-.calc-head-history-btn:hover {
-    background-color: rgba(var(--fx-rgb), 0.14);
-    color: rgb(var(--fx-rgb));
-    box-shadow: inset 0 0 0 1px rgba(var(--fx-rgb), 0.35);
+@media (hover: hover) {
+    .calc-head-history-btn:hover {
+        background-color: rgba(var(--fx-rgb), 0.14);
+        color: rgb(var(--fx-rgb));
+        box-shadow: inset 0 0 0 1px rgba(var(--fx-rgb), 0.35);
+    }
 }
 
 .calc-head-history-btn:active {
@@ -5925,29 +5977,47 @@ body.dark .calc-title { color: var(--text-color); }
     transition: box-shadow 0.08s ease-out, filter 0.08s ease-out, background-color 0.08s ease-out !important;
 }
 
-/* Темна тема: calc head history btn */
-body.dark .calc-head-history-btn { color: #aaa; }
-
-
-/* calc auto clear btn */
+/* Кнопка автоочищення */
 #calc-auto-clear-btn {
     position: relative;
-    transition: color 0.2s, background-color 0.2s;
 }
 
-/* Стан увімкненої кнопки (підсвічуємо червоним) */
+/* Стан увімкненої кнопки (червоний акцент, як у решти небезпечних кнопок) */
 #calc-auto-clear-btn.active {
-    color: var(--danger-color);
+    --fx-rgb: 226, 85, 85;
+    color: rgb(var(--fx-rgb));
+    background-color: rgba(var(--fx-rgb), 0.12);
+    box-shadow: inset 0 0 0 1px rgba(var(--fx-rgb), 0.30);
 }
 
-/* Темна тема: calc auto clear btn — активний стан */
 body.dark #calc-auto-clear-btn.active {
-    color: #ff6b6b;
+    --fx-rgb: 240, 90, 80;
+}
+
+@media (hover: hover) {
+    #calc-auto-clear-btn.active:hover {
+        background-color: rgba(var(--fx-rgb), 0.20);
+        color: rgb(var(--fx-rgb));
+        box-shadow: inset 0 0 0 1px rgba(var(--fx-rgb), 0.48);
+    }
+}
+
+#calc-auto-clear-btn.active:active {
+    background-color: rgba(var(--fx-rgb), 0.28);
+    color: rgb(var(--fx-rgb));
+    box-shadow: inset 0 0 0 2px rgba(var(--fx-rgb), 0.55) !important;
 }
 
 /* Стан "Тільки що стерто" (Зелена галочка) */
 #calc-auto-clear-btn.just-cleared {
-    color: var(--success-color) !important;
+    --fx-rgb: 22, 163, 122;
+    color: rgb(var(--fx-rgb)) !important;
+    background-color: rgba(var(--fx-rgb), 0.14);
+    box-shadow: inset 0 0 0 1px rgba(var(--fx-rgb), 0.35);
+}
+
+body.dark #calc-auto-clear-btn.just-cleared {
+    --fx-rgb: 56, 161, 123;
 }
 
 /* === ЕКРАН === */
@@ -6330,28 +6400,31 @@ body.dark .hist-item:hover {
     border: 1px dashed var(--input-border-color);
     border-radius: 8px;
     color: var(--text-color);
+    opacity: 0.75;
     font-size: 14px;
     cursor: pointer;
     transition: all 0.2s;
 }
 
-/* hist close btn — ховер */
-.hist-close-btn:hover {
-    background-color: rgba(0,0,0,0.05);
-    border-style: solid;
+@media (hover: hover) {
+    .hist-close-btn:hover {
+        opacity: 1;
+        background-color: rgba(var(--fx-rgb), 0.14);
+        border-style: solid;
+        border-color: rgba(var(--fx-rgb), 0.35);
+        color: rgb(var(--fx-rgb));
+    }
 }
 
-/* hist close btn — натискання */
 .hist-close-btn:active {
-    background-color: rgba(0,0,0,0.1);
+    opacity: 1;
+    background-color: rgba(var(--fx-rgb), 0.22);
     border-style: solid;
-}
-
-/* Темна тема: hist close btn — ховер */
-body.dark .hist-close-btn:hover { background-color: rgba(255,255,255,0.05); }
-
-body.dark .hist-close-btn:active {
-    background-color: rgba(255,255,255,0.1);
+    border-color: rgba(var(--fx-rgb), 0.45);
+    color: rgb(var(--fx-rgb));
+    box-shadow: inset 0 0 0 1px rgba(var(--fx-rgb), 0.45) !important;
+    filter: brightness(0.95);
+    transition: box-shadow 0.08s ease-out, filter 0.08s ease-out, background-color 0.08s ease-out !important;
 }
 
 .hist-op { font-size: 12px; color: var(--inactive-text); margin-bottom: 3px; }
