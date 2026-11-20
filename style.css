@@ -4612,13 +4612,14 @@ body.dark .config-clear-fields-btn {
     }
 }
 
+/* Темна тема: залитий фон + 2px тінь для активних тумблерів конфігуратора */
 body.dark .config-replace-mode-btn.active,
 body.dark .config-pon-onu-btn.active,
 body.dark .config-show-signal-btn.active {
     background-color: var(--secondary-accent-color);
     border-color: var(--secondary-accent-color);
     color: #ffffff;
-    box-shadow: none;
+    box-shadow: 0 0 0 2px rgba(var(--fx-rgb), 0.10); /* 2px, бо gap: 5px */
 }
 
 @media (hover: hover) {
