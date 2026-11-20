@@ -2128,8 +2128,6 @@ let lastConfirmedOltName = null;
             <div class="config-row">
                 <button type="button" class="config-onu-mode-btn" title="Режим (Реєстрація або Заміна ону)">РЕЄСТРАЦІЯ</button>
 
-                <button type="button" class="config-mix-toggle-btn" style="display: none;" title="Оберіть технологію (GPON або EPON)">MIX ?</button>
-
                 <button type="button" class="config-replace-mode-btn active" title="Заміняти попередньо доданий конфіг на новий">
                     <i class="fa-solid fa-arrows-rotate"></i>
                 </button>
@@ -2483,62 +2481,30 @@ document.addEventListener('click', (e) => {
     if (!speedDropdownNode.contains(e.target)) speedDropdownNode.classList.remove('open');
 });
 
-// === ЛОГІКА КНОПКИ MIX ===
-let currentMixState = null; // За замовчуванням вибору немає
-const btnMixToggle = configPanel.querySelector('.config-mix-toggle-btn');
+function detectTechFromSn(rawVal) {
+    const val = (rawVal || '').trim();
+    if (!val) return null;
 
-btnMixToggle.addEventListener('click', (e) => {
-    e.preventDefault();
-    
-    // Знімаємо клас помилки (струсу), якщо він був
-    btnMixToggle.classList.remove('shake-it');
-
-    // Якщо натиснули вперше (знімаємо пульсацію і ставимо GPON)
-    if (currentMixState === null) {
-        currentMixState = 'GPON';
-        btnMixToggle.textContent = 'GPON';
-        btnMixToggle.className = 'config-mix-toggle-btn is-gpon';
-    } 
-    // Звичайне перемикання GPON -> EPON
-    else if (currentMixState === 'GPON') {
-        currentMixState = 'EPON';
-        btnMixToggle.textContent = 'EPON';
-        btnMixToggle.className = 'config-mix-toggle-btn is-epon';
-    } 
-    // Звичайне перемикання EPON -> GPON
-    else {
-        currentMixState = 'GPON';
-        btnMixToggle.textContent = 'GPON';
-        btnMixToggle.className = 'config-mix-toggle-btn is-gpon';
+    // 1. EPON (MAC): 6c68.a466.df98 або 6c:68:a4:66:df:98 або 6c-68-a4-66-df-98
+    if (/^([0-9a-f]{4}\.){2}[0-9a-f]{4}$/i.test(val) || /^([0-9a-f]{2}[:-]){5}[0-9a-f]{2}$/i.test(val)) {
+        return 'EPON';
     }
-});
 
-// Допоміжна функція для скидання кнопки
-function resetMixButton(show, isMix = false) {
-    // Спочатку скидаємо будь-які анімації помилок
-    btnMixToggle.classList.remove('shake-it');
-
-    if (show && isMix) {
-        btnMixToggle.style.display = 'inline-flex'; 
-        
-        // ВАЖЛИВО: Ставимо стан "Нуль", щоб примусити обрати!
-        currentMixState = null;
-        btnMixToggle.innerHTML = 'ОБЕРІТЬ !?';
-        btnMixToggle.className = 'config-mix-toggle-btn is-attention';
-    } else {
-        btnMixToggle.style.display = 'none';
-        currentMixState = null; 
+    // 2. GPON (SN): без роздільників, 12-16 символів (напр. FHTT6A9AB9B0)
+    //    або від 8 символів із літерою поза hex (g-z)
+    if (/^[a-z0-9]{12,16}$/i.test(val) || (/^[a-z0-9]{8,}$/i.test(val) && /[g-z]/i.test(val))) {
+        return 'GPON';
     }
+
+    return null;
 }
 
 // === РОЗУМНЕ ФОРМАТУВАННЯ SN / MAC ===
-    const snInputBox = configPanel.querySelector('.config-sn-input');
-    snInputBox.addEventListener('input', (e) => {
-        // Дозволяємо англійські літери, цифри, крапки, двокрапки та дефіси
-        // Не примушуємо до великих літер, щоб MAC міг бути маленькими (abcd.efgh.1234)
-        let val = e.target.value.replace(/[^a-zA-Z0-9.:-]/g, '');
-        e.target.value = val;
-    });
+const snInputBox = configPanel.querySelector('.config-sn-input');
+snInputBox.addEventListener('input', (e) => {
+    let val = e.target.value.replace(/[^a-zA-Z0-9.:-]/g, '');
+    e.target.value = val;
+});
 
     // === ВІДНОВЛЕННЯ ПОЛІВ ПРИ ЗАВАНТАЖЕННІ (F5) ===
     const savedInputs = JSON.parse(localStorage.getItem(storageKey) || '{}');
@@ -2546,7 +2512,6 @@ function resetMixButton(show, isMix = false) {
     if (savedInputs.olt) {
         oltInputNode.value = savedInputs.olt;
         lastConfirmedOltName = savedInputs.olt;
-        if (savedInputs.olt.includes('(MIX)')) resetMixButton(true, true);
     }
     if (savedInputs.sn) snInputBox.value = savedInputs.sn;
     if (savedInputs.port) portInputBox.value = savedInputs.port;
@@ -2571,7 +2536,6 @@ function resetMixButton(show, isMix = false) {
     if (configOlt) {
         oltInputNode.value = configOlt;
         lastConfirmedOltName = configOlt;
-        if (configOlt.includes('(MIX)')) resetMixButton(true, true);
     }
     if (configSn) snInputBox.value = configSn;
     if (configPort) portInputBox.value = configPort;
@@ -2643,15 +2607,13 @@ function renderOltDropdown(filter = '') {
                 
                 vlanInputNode.placeholder = olt.defaultVlan ? `VLAN (${olt.defaultVlan})` : 'VLAN';
                 
-                resetMixButton(true, olt.name.includes('(MIX)'));
-                saveInputsLocally();
-
                 if (isDifferentOlt) {
                     snInputBox.value = '';
                     portInputBox.value = '';
                     vlanInputNode.value = '';
                     
                 }
+                saveInputsLocally();
                 saveTemplates(false);
             });
             oltDropdownList.appendChild(item);
@@ -2683,7 +2645,6 @@ oltInputNode.addEventListener('input', async (e) => { // ДОДАНО async
     selectedOltObj = null;
     selectedOltSource = null;
     vlanInputNode.placeholder = 'VLAN';
-    resetMixButton(false); // Ховаємо кнопку
     
     // ПЕРЕВІРКА: Якщо база порожня (був збій мережі при запуску) - вантажимо знову
     if (OLT_CONFIGS.ultranet.length === 0 && OLT_CONFIGS.energy.length === 0) {
@@ -2798,7 +2759,6 @@ btnClearFields.addEventListener('click', (e) => {
     selectedOltSource = null;
     lastConfirmedOltName = null;
     
-    resetMixButton(false);
     vlanInputNode.placeholder = 'VLAN';
     
     // 2. ПОВНІСТЮ ВИДАЛЯЄМО ЗБЕРЕЖЕНІ ПОЛЯ З ЛОКАЛЬНОЇ ПАМ'ЯТІ
@@ -2870,24 +2830,18 @@ if (!oltObj) {
 
         let currentTemplateName = oltObj.templateName; 
 
-        // === НОВА ЛОГІКА ТЕХНОЛОГІЇ (ТУМБЛЕР) ДЛЯ MIX OLT ===
+        // === АВТОВИЗНАЧЕННЯ ТЕХНОЛОГІЇ ДЛЯ MIX OLT ===
         if (oltObj.name.includes('(MIX)')) {
-            // Перевіряємо, чи користувач клацнув тумблер
-            if (currentMixState === null) {
-                showNotification("Помилка! Оберіть тип (GPON чи EPON).", 'error');
-                
-                // Візуальний струс кнопки
-                btnMixToggle.classList.remove('shake-it');
-                void btnMixToggle.offsetWidth; // Магія для перезапуску анімації
-                btnMixToggle.classList.add('shake-it');
-                
-                return; // ⛔ ЗУПИНЯЄМО ГЕНЕРАЦІЮ!
+            const autoTech = detectTechFromSn(snVal);
+
+            if (!autoTech) {
+                showNotification("Помилка! Невірний формат SN або MAC (не вдалося визначити GPON/EPON).", 'error');
+                return;
             }
 
-            // Якщо вибрав, підміняємо слово в назві шаблону
-            if (currentMixState === 'GPON') {
+            if (autoTech === 'GPON') {
                 currentTemplateName = currentTemplateName.replace(/EPON/i, 'GPON');
-            } else if (currentMixState === 'EPON') {
+            } else if (autoTech === 'EPON') {
                 currentTemplateName = currentTemplateName.replace(/GPON/i, 'EPON');
             }
         }

@@ -686,7 +686,6 @@ select:focus,
 .logout-action-btn,
 .unified-pill:has(#login-google-btn:not(.auth-hidden)),
 .config-clear-fields-btn,
-.config-mix-toggle-btn,
 .config-onu-mode-btn,
 .config-login-regen-btn,
 .config-login-copy-btn,
@@ -746,7 +745,6 @@ body.dark {
 .hist-close-btn:active,
 .unified-pill:has(#login-google-btn:not(.auth-hidden)):active,
 .config-clear-fields-btn:active,
-.config-mix-toggle-btn:active,
 .config-onu-mode-btn:active,
 .extension-download-btn:active,
 #add-template-button:active,
@@ -768,7 +766,7 @@ body.dark {
 .qn-add-btn:active,
 #auto-reset-button:active {
     box-shadow: 0 0 0 4px rgba(var(--fx-rgb), 0.22) !important;
-    filter: brightness(0.95);
+    filter: brightness(0.95) !important;
     transition: box-shadow 0.08s ease-out, filter 0.08s ease-out !important;
 }
 
@@ -777,7 +775,7 @@ body.dark {
 .qn-drag-handle:active,
 .qn-close-btn:active {
    box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.22) !important;
-    filter: brightness(0.95);
+    filter: brightness(0.95) !important;
     transition: box-shadow 0.08s ease-out, filter 0.08s ease-out !important;
 }
 
@@ -2332,11 +2330,13 @@ body.dark .login-generator-container .result-item .regenerate-login-btn:hover {
 
 .login-generator-container .result-item .copy-login-btn.copied {
     background-color: var(--success-color);
+    color: #ffffff; 
     filter: brightness(1.2);
 }
 
 /* Кнопка копіювання — соковитий зелений */
 body.dark .login-generator-container .result-item .copy-login-btn {
+    --fx-rgb: 56, 178, 134; 
     background-color: var(--success-color);
     color: #ffffff;
     border: none;
@@ -3240,7 +3240,7 @@ body.dark #add-template-button {
     background-color: var(--btn-bg);
     border: 1px solid var(--input-border-color);
     color: var(--text-color);
-    box-shadow: var(--fx-shadow), 0 0 0 0 rgba(var(--fx-rgb), 0);
+    box-shadow: none; 
 }
 
 /* 3. КНОПКА ОЧИСТИТИ ВСЕ */
@@ -3277,12 +3277,12 @@ body.dark #clear-all-templates-button {
         box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.12);
     }
 
-    #import-templates-button:hover,
+        #import-templates-button:hover,
     #export-templates-button:hover {
         border-color: rgba(var(--fx-rgb), 0.55);
         background-color: color-mix(in srgb, var(--btn-bg) 92%, rgb(var(--fx-rgb)) 8%);
         color: rgb(var(--fx-rgb));
-                box-shadow: var(--fx-shadow), 0 0 0 3px rgba(var(--fx-rgb), 0.12);
+        box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.12); /* без var(--fx-shadow) */
     }
 
     #clear-all-templates-button:hover {
@@ -3791,6 +3791,7 @@ body.dark .line-marker {
     border-color: rgba(79, 109, 245, 0.25);
 }
 body.dark .btn-find {
+    --fx-rgb: 99, 134, 255;
     background-color: #4f6df5;
     color: #ffffff;
     border-color: #4f6df5;
@@ -3798,12 +3799,13 @@ body.dark .btn-find {
 
 /* Замінити */
 .btn-replace {
-    --fx-rgb: 214, 155, 45;
+    --fx-rgb: 196, 134, 24;
     background-color: rgba(214, 155, 45, 0.12);
     color: #b47818;
     border-color: rgba(214, 155, 45, 0.25);
 }
 body.dark .btn-replace {
+    --fx-rgb: 214, 155, 45;
     background-color: var(--secondary-accent-color);
     color: #ffffff;
     border-color: var(--secondary-accent-color);
@@ -3817,6 +3819,7 @@ body.dark .btn-replace {
     border-color: rgba(22, 163, 122, 0.25);
 }
 body.dark .btn-replace-all {
+    --fx-rgb: 56, 178, 134;
     background-color: var(--success-color);
     color: #ffffff;
     border-color: var(--success-color);
@@ -3824,7 +3827,7 @@ body.dark .btn-replace-all {
 
 /* Замінити зі швидкістю */
 .btn-replace-speed {
-    --fx-rgb: 107, 33, 168;
+    --fx-rgb: 124, 58, 237;
     flex: none;
     width: 100%;
         background-color: rgba(107, 33, 168, 0.12);
@@ -4433,7 +4436,6 @@ body.dark .config-login-copy-btn .success-copy {
 }
 
 /* Кнопка генерації — акуратний напівпрозорий смарагдовий стиль */
-/* ===== Кнопка генерації ===== */
 .config-generate-btn {
     --fx-rgb: 22, 163, 122;
     flex: 0 0 100px;
@@ -4466,6 +4468,7 @@ body.dark .config-login-copy-btn .success-copy {
 
 /* Темна тема: генерація */
 body.dark .config-generate-btn {
+    --fx-rgb: 56, 178, 134;
     background-color: var(--success-color);
     color: #ffffff;
     border-color: var(--success-color);
@@ -4510,7 +4513,6 @@ body.dark .config-generate-btn {
 .config-clear-fields-btn,
 .config-replace-mode-btn,
 .config-pon-onu-btn,
-.config-mix-toggle-btn,
 .config-show-signal-btn {
     flex: 0 0 50px;
     height: 30px;
@@ -4533,14 +4535,14 @@ body.dark .config-generate-btn {
 
 /* ===== Очищення полів ===== */
 .config-clear-fields-btn {
-    --fx-rgb: 214, 155, 45;
+     --fx-rgb: 196, 134, 24;
     background-color: rgba(214, 155, 45, 0.12);
     color: #b47818;
     border-color: rgba(214, 155, 45, 0.25);
 }
 
 body.dark .config-clear-fields-btn {
-    --fx-rgb: 79, 109, 245;
+    --fx-rgb: 99, 134, 255;
     background-color: var(--primary-white-accent-color);
     color: #ffffff;
     border-color: var(--primary-white-accent-color);
@@ -4556,57 +4558,38 @@ body.dark .config-clear-fields-btn {
     }
 
         body.dark .config-clear-fields-btn:hover {
-        background-color: rgb(var(--fx-rgb));
-        border-color: rgb(var(--fx-rgb));
+        background-color: var(--primary-white-accent-color); 
+        border-color: var(--primary-white-accent-color);   
         filter: brightness(1.12);
         color: #ffffff;
         box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.12);
     }
 }
 
-/* ===== Тумблери: replace / pon-onu / signal ===== */
-/* Світла тема: вимкнено — ледь помітна пастель, увімкнено — насиченіша */
+/* ===== Тумблери: replace / pon-onu / signal (ідентичні #login-autoclear-btn та #auto-reset-button) ===== */
 .config-replace-mode-btn,
 .config-pon-onu-btn,
 .config-show-signal-btn {
-    background-color: rgba(var(--fx-rgb), 0.06);
-    border-color: rgba(var(--fx-rgb), 0.22);
+    background-color: var(--btn-bg);
+    border-color: var(--input-border-color);
     color: var(--text-color);
 }
 
 .config-replace-mode-btn.active,
 .config-pon-onu-btn.active,
 .config-show-signal-btn.active {
-    background-color: rgba(var(--fx-rgb), 0.18);
-    border-color: rgba(var(--fx-rgb), 0.55);
     color: rgb(var(--fx-rgb));
-    box-shadow: 0 0 0 2px rgba(var(--fx-rgb), 0.10);
-}
-
-/* Темна тема: суцільна заливка (вимкнено — приглушена, увімкнено — насичена) */
-body.dark .config-replace-mode-btn,
-body.dark .config-pon-onu-btn,
-body.dark .config-show-signal-btn {
-    background-color: var(--input-bg-color);
-    border-color: var(--input-border-color);
-    color: var(--inactive-text);
-}
-
-body.dark .config-replace-mode-btn.active,
-body.dark .config-pon-onu-btn.active,
-body.dark .config-show-signal-btn.active {
-    background-color: rgb(var(--fx-rgb));
-    border-color: rgb(var(--fx-rgb));
-    color: #ffffff;
-    box-shadow: 0 0 0 2px rgba(var(--fx-rgb), 0.10);
+    border-color: rgba(var(--fx-rgb), 0.5);
+    background-color: rgba(var(--fx-rgb), 0.06);
+    box-shadow: 0 0 0 2px rgba(var(--fx-rgb), 0.10); /* 2px, бо gap: 5px */
 }
 
 @media (hover: hover) {
-    .config-replace-mode-btn:hover,
-    .config-pon-onu-btn:hover,
-    .config-show-signal-btn:hover {
-        background-color: rgba(var(--fx-rgb), 0.12);
-        border-color: rgba(var(--fx-rgb), 0.5);
+    .config-replace-mode-btn:not(.active):hover,
+    .config-pon-onu-btn:not(.active):hover,
+    .config-show-signal-btn:not(.active):hover {
+        border-color: rgba(var(--fx-rgb), 0.55);
+        background-color: color-mix(in srgb, var(--btn-bg) 92%, rgb(var(--fx-rgb)) 8%);
         color: rgb(var(--fx-rgb));
         box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.12);
         z-index: 2;
@@ -4615,247 +4598,12 @@ body.dark .config-show-signal-btn.active {
     .config-replace-mode-btn.active:hover,
     .config-pon-onu-btn.active:hover,
     .config-show-signal-btn.active:hover {
-        background-color: rgba(var(--fx-rgb), 0.26);
-        box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.16);
-    }
-
-        body.dark .config-replace-mode-btn:hover,
-    body.dark .config-pon-onu-btn:hover,
-    body.dark .config-show-signal-btn:hover {
-        background-color: color-mix(in srgb, var(--input-bg-color) 85%, rgb(var(--fx-rgb)) 15%);
         border-color: rgba(var(--fx-rgb), 0.6);
-        color: var(--text-color);
-    }
-
-    body.dark .config-replace-mode-btn.active:hover,
-    body.dark .config-pon-onu-btn.active:hover,
-    body.dark .config-show-signal-btn.active:hover {
-        background-color: rgb(var(--fx-rgb));
-        filter: brightness(1.12);
+        background-color: rgba(var(--fx-rgb), 0.14);
+        color: rgb(var(--fx-rgb));
         box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.16);
+        z-index: 2;
     }
-}
-
-/* === НОВІ СТИЛІ ДЛЯ КНОПКИ MIX (МЕХАНІЧНИЙ ПЕРЕМИКАЧ) === */
-/* 1. БАЗОВИЙ КЛАС КНОПКИ (оновлюємо transition та додаємо overflow) */
-.config-mix-toggle-btn {
-    flex: 0 0 auto !important; 
-    display: inline-flex;
-    align-items: center;
-    width: 82px; 
-    border-radius: 999px !important;
-    border: 1px solid var(--input-border-color);
-    background-color: var(--input-bg-color);
-    font-size: 13px;
-    font-weight: 400;
-    cursor: pointer;
-    position: relative;
-    box-shadow: none;
-
-    /* --- ДОДАНО ДЛЯ АНІМАЦІЇ РОЗСУВАННЯ --- */
-    overflow: hidden !important;     /* Щоб текст не вилазив, коли кнопка стискається */
-    white-space: nowrap !important;  /* Щоб текст не стрибав на 2 рядки */
-    
-    /* Перераховуємо все, що впливає на ширину, для плавного розсування */
-    transition: 
-        min-width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-        max-width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-        padding 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-        border-width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-        margin 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-        opacity 0.25s ease-in-out,
-        transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-        display 0.3s allow-discrete !important; /* Магія для JS display: none */
-}
-
-/* Підняття всієї кнопки при наведенні (ідентично до сусідніх кнопок) */
-.config-mix-toggle-btn:hover {
-    transform: translateY(0px);
-    z-index: 2;
-}
-
-/* Сам "повзунок" (тепер це квадратний блок) */
-.config-mix-toggle-btn::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 16px;
-    height: 16px;
-    border-radius: 4px; /* Легке закруглення самого повзунка */
-    transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-    opacity: 0;
-}
-
-/* --- Стан 2: Вибрано GPON (Повзунок ЗЛІВА) --- */
-/* --- Стан 2: GPON (повзунок ЗЛІВА) --- */
-.config-mix-toggle-btn.is-gpon {
-    --fx-rgb: 79, 109, 245;
-    padding: 0 6px 0 29px !important;
-    background-color: rgba(var(--fx-rgb), 0.12);
-    border-color: rgba(var(--fx-rgb), 0.5);
-    color: #3b5bdb;
-}
-.config-mix-toggle-btn.is-gpon::before {
-    opacity: 1;
-    left: 10px;
-    background-color: rgb(var(--fx-rgb));
-    box-shadow: 0 2px 4px rgba(var(--fx-rgb), 0.3);
-}
-
-/* --- Стан 3: EPON (повзунок СПРАВА) --- */
-.config-mix-toggle-btn.is-epon {
-    --fx-rgb: 25, 135, 84;
-    padding: 0 28px 0 6px !important;
-    background-color: rgba(var(--fx-rgb), 0.12);
-    border-color: rgba(var(--fx-rgb), 0.5);
-    color: #146c43;
-}
-.config-mix-toggle-btn.is-epon::before {
-    opacity: 1;
-    left: calc(100% - 27px);
-    background-color: rgb(var(--fx-rgb));
-    box-shadow: 0 2px 4px rgba(var(--fx-rgb), 0.3);
-}
-
-/* Темна тема: суцільна заливка, білий повзунок */
-body.dark .config-mix-toggle-btn.is-gpon {
-    --fx-rgb: 214, 155, 45;
-}
-body.dark .config-mix-toggle-btn.is-gpon,
-body.dark .config-mix-toggle-btn.is-epon {
-    background-color: rgb(var(--fx-rgb));
-    border-color: rgb(var(--fx-rgb));
-    color: #ffffff;
-}
-body.dark .config-mix-toggle-btn.is-gpon::before,
-body.dark .config-mix-toggle-btn.is-epon::before {
-    background-color: #ffffff;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-}
-
-@media (hover: hover) {
-    .config-mix-toggle-btn.is-gpon:hover,
-    .config-mix-toggle-btn.is-epon:hover {
-        background-color: rgba(var(--fx-rgb), 0.22);
-        box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.12);
-    }
-
-    body.dark .config-mix-toggle-btn.is-gpon:hover,
-    body.dark .config-mix-toggle-btn.is-epon:hover {
-        background-color: rgb(var(--fx-rgb));
-        filter: brightness(1.12);
-    }
-}
-
-/* 2. СТАН ПОЯВИ (кнопка виростає з 0, розсуваючи сусідів) */
-@starting-style {
-    .config-mix-toggle-btn {
-        opacity: 0;
-        transform: scale(0.8);
-        min-width: 0 !important;
-        max-width: 0 !important;
-        padding-left: 0 !important;
-        padding-right: 0 !important;
-        margin-left: 0 !important;
-        margin-right: 0 !important;
-        border-width: 0 !important;
-    }
-}
-
-/* 3. СТАН ЗНИКАННЯ (кнопка здувається до 0, сусіди з'їжджаються) */
-.config-mix-toggle-btn[style*="display: none"],
-.config-mix-toggle-btn[style*="display:none"] {
-    opacity: 0 !important;
-    transform: scale(0.8) !important;
-    
-    /* Фізично "знищуємо" розмір, щоб сусіди посунулися на її місце */
-    min-width: 0 !important;
-    max-width: 0 !important;
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-    margin-left: 0 !important;
-    margin-right: 0 !important;
-    border-width: 0 !important;
-}
-
-/* =========================================================
-   СТАН ОЧІКУВАННЯ ВИБОРУ (ДЛЯ MIX OLT) 
-   ========================================================= */
-/* Плавна пульсація для СВІТЛОЇ теми (М'який бурштин) */
-@keyframes pulse-attention-light {
-    0%, 100% {
-        border-color: #f59e0b; /* Amber 500 */
-        background-color: rgba(245, 158, 11, 0.05);
-        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.04);
-    }
-    50% {
-        border-color: #d97706; /* Amber 600 */
-        background-color: rgba(245, 158, 11, 0.15);
-        box-shadow: 0 0 10px rgba(245, 158, 11, 0.25), inset 0 1px 3px rgba(0, 0, 0, 0.04);
-    }
-}
-
-/* Плавна пульсація для ТЕМНОЇ теми (Яскравий жовто-помаранчевий) */
-@keyframes pulse-attention-dark {
-    0%, 100% {
-        background-color: #d97706;
-        border-color: #d97706;
-        box-shadow: 0 0 0 0 rgba(251, 191, 36, 0);
-    }
-    50% {
-        background-color: #f59e0b;
-        border-color: #fbbf24;
-        box-shadow: 0 0 12px rgba(251, 191, 36, 0.45);
-    }
-}
-
-/* config mix toggle btn */
-.config-mix-toggle-btn.is-attention {
-    justify-content: center !important; /* Текст рівно по центру */
-    padding: 0 6px !important; 
-    color: #b45309; /* Темно-помаранчевий для ідеального читання */
-    animation: pulse-attention-light 2s infinite ease-in-out;
-}
-
-body.dark .config-mix-toggle-btn.is-attention {
-    --fx-rgb: 251, 191, 36;
-    color: #ffffff;
-    animation: pulse-attention-dark 2s infinite ease-in-out;
-}
-
-/* Ховаємо квадратний повзунок у стані очікування (плавно зменшуємо) */
-.config-mix-toggle-btn.is-attention::before {
-    opacity: 0;
-    transform: translateY(-50%) scale(0);
-}
-
-/* =========================================================
-   СТАН ПОМИЛКИ (КРИТИЧНИЙ СТРУС)
-   ========================================================= */
-@keyframes shake-error-mix {
-    0%, 100% { transform: translateX(0); }
-    20%, 60% { transform: translateX(-3px); }
-    40%, 80% { transform: translateX(3px); }
-}
-
-/* config mix toggle btn */
-.config-mix-toggle-btn.shake-it {
-    /* Більш жорстка анімація струсу */
-    animation: shake-error-mix 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both !important;
-    
-    border-color: #ef4444 !important; /* Red 500 */
-    color: #ef4444 !important;
-    background-color: rgba(239, 68, 68, 0.08) !important;
-    box-shadow: 0 0 12px rgba(239, 68, 68, 0.4) !important;
-}
-
-body.dark .config-mix-toggle-btn.shake-it {
-    --fx-rgb: 239, 68, 68;
-    border-color: #ef4444 !important;
-    color: #ffffff !important;
-    background-color: #dc2626 !important;
-    box-shadow: 0 0 12px rgba(239, 68, 68, 0.5) !important;
 }
 
 /* =========================================================
@@ -4970,6 +4718,13 @@ body.dark .config-onu-mode-btn.is-switch::before {
     body.dark .config-onu-mode-btn.is-switch:hover {
         background-color: rgb(var(--fx-rgb));
         filter: brightness(1.12);
+    }
+
+    body.dark .config-onu-mode-btn.is-reg:hover {             
+        box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.16);
+    }
+    body.dark .config-onu-mode-btn.is-switch:hover {         
+        box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.16);
     }
 }
 
@@ -5715,12 +5470,12 @@ body.dark .date-calculator-container #result-section h2 {
 /* Натискання: зовнішнє кільце 4px на групі, як в інших кнопках */
 .month-stepper:has(.stepper-btn:active) {
     box-shadow: 0 0 0 4px rgba(var(--fx-rgb), 0.22);
-    transition: box-shadow 0.08s ease-out, border-color 0.08s ease-out;
+    filter: brightness(0.95);
+    transition: box-shadow 0.08s ease-out, border-color 0.08s ease-out, filter 0.08s ease-out;
 }
 
 .stepper-btn:active {
-    filter: brightness(0.95);
-    transition: filter 0.08s ease-out !important;
+    transition: background-color 0.08s ease-out !important;
 }
 
 .quick-add-row { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; align-items: center; width: 100%; }
