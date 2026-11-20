@@ -5549,7 +5549,6 @@ body.dark .date-calculator-container #result-section h2 {
     background-color: var(--btn-bg);
     border: 1px solid var(--input-border-color);
     border-radius: 999px;
-    box-shadow: var(--fx-shadow);
 
     color: var(--text-color);
     font-family: inherit;
@@ -5589,7 +5588,6 @@ body.dark .date-calculator-container #result-section h2 {
     background-color: var(--btn-bg);
     border: 1px solid var(--input-border-color);
     border-radius: 999px;
-    box-shadow: var(--fx-shadow);
     overflow: hidden;
     isolation: isolate;
     transition: border-color 0.2s ease-out, box-shadow 0.2s ease-out;
