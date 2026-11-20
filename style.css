@@ -882,15 +882,21 @@ body.dark {
     transform: translateZ(0);
 }
 
-/* Сама хвиля всередині маски */
 .ripple-wave {
     position: absolute;
     border-radius: 50%;
     transform: scale(0);
     opacity: 1;
-    background-color: color-mix(in srgb, currentColor 20%, transparent);
-    animation: ripple-expand 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-    transition: opacity 0.35s ease-out;
+    /* М'який радіальний градієнт: яскравіше в центрі, плавно згасає до країв */
+    background: radial-gradient(
+        circle,
+        color-mix(in srgb, currentColor 20%, transparent) 0%,
+        color-mix(in srgb, currentColor 12%, transparent) 55%,
+        color-mix(in srgb, currentColor 4%, transparent) 100%
+    );
+    will-change: transform, opacity;
+    animation: ripple-expand 0.7s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+    transition: opacity 0.55s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .ripple-wave.is-leaving {
@@ -899,12 +905,17 @@ body.dark {
 
 /* 4. Колір хвилі для Темної теми */
 body.dark .ripple-wave {
-    background-color: color-mix(in srgb, currentColor 15%, transparent);
+    background: radial-gradient(
+        circle,
+        color-mix(in srgb, currentColor 20%, transparent) 0%,
+        color-mix(in srgb, currentColor 12%, transparent) 55%,
+        color-mix(in srgb, currentColor 4%, transparent) 100%
+    );
 }
 
 /* 6. Анімація розширення хвилі (утримується, поки кнопка затиснута) */
 @keyframes ripple-expand {
-    from { transform: scale(0); }
+    from { transform: scale(0.15); }
     to   { transform: scale(1); }
 }
 
@@ -1175,7 +1186,6 @@ body.dark .add-tab-item:hover i {
 
 /* Активний стан (клік) - стискається і стає червоним */
 .close-tab-btn:active {
-    transform: scale(0.88); 
     background-color: var(--danger-color) !important;
     color: white !important;
     transition: transform 0.05s ease-out, background-color 0s; 
@@ -1254,14 +1264,14 @@ body.dark .close-tab-btn:active {
 
 /* Ефект кліку: Ледь помітне втискання */
 .add-tab-btn:active {
-    transform: rotate(90deg) scale(0.90);
+   transform: rotate(90deg);
     background-color: rgba(0, 0, 0, 0.1);
     transition: all 0.05s ease-out;
 }
 
 /* add tab btn — активний стан */
 .add-tab-btn.menu-open:active {
-    transform: rotate(135deg) scale(0.95);
+    transform: rotate(135deg);
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
@@ -1426,7 +1436,7 @@ body.dark .drag-handle:hover {
 .extension-pill:hover:not(.is-open) {
     background-color: var(--glass-white-md);
     border-color: var(--glass-white-lg); 
-    transform: scale(1.02) translateY(-2px);
+    transform: translateY(-2px);
     box-shadow: 
         var(--shadow-float), 
         var(--reflection-inner);
@@ -1770,7 +1780,7 @@ body.dark .history-separator {
     background-color: var(--glass-white-md);
     border-color: var(--glass-white-lg);
     box-shadow: var(--shadow-float), var(--reflection-inner);
-    transform: scale(1.05) translateY(-2px);
+    transform: translateY(-2px);
 }
 
 /* ТЕМНЕ СКЛО ДЛЯ ТЕМНОЇ ТЕМИ */
@@ -1792,7 +1802,6 @@ body.dark .theme-pill:hover {
         0 20px 60px rgba(0, 0, 0, 0.6),
         inset 0 1px 1px rgba(255, 255, 255, 0.2),
         inset 0 -1px 1px rgba(0, 0, 0, 0.3);
-    transform: scale(1.05) translateY(-2px);
 }
 
 /* =========================================
@@ -2085,19 +2094,18 @@ body.dark .actions-block-title::after {
 /* --- УВІМКНЕНО --- */
 #login-autoclear-btn.active {
     color: rgb(var(--fx-rgb));
-    border-color: rgba(var(--fx-rgb), 0.5);
-    background-color: color-mix(in srgb, var(--btn-bg) 86%, rgb(var(--fx-rgb)) 14%);
+        border-color: rgba(var(--fx-rgb), 0.5);
+    background-color: rgba(var(--fx-rgb), 0.06);
     box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.10);
 }
-
 #login-autoclear-btn.active i {
     color: rgb(var(--fx-rgb));
-    transform: rotate(-14deg) scale(1.1);
+    transform: rotate(-14deg);
 }
 
 @media (hover: hover) {
-    #login-autoclear-btn.active:hover {
-        background-color: color-mix(in srgb, var(--btn-bg) 78%, rgb(var(--fx-rgb)) 22%);
+        #login-autoclear-btn.active:hover {
+        background-color: rgba(var(--fx-rgb), 0.14);
         box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.16);
     }
 }
@@ -2114,7 +2122,7 @@ body.dark #login-autoclear-btn {
 body.dark #login-autoclear-btn.active {
     color: var(--text-color);
     border-color: rgba(var(--fx-rgb), 0.45);
-    background-color: color-mix(in srgb, var(--btn-bg) 90%, rgb(var(--fx-rgb)) 10%);
+    background-color: rgba(var(--fx-rgb), 0.07);
     box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.10);
 }
 
@@ -2123,9 +2131,9 @@ body.dark #login-autoclear-btn.active i {
 }
 
 @media (hover: hover) {
-    body.dark #login-autoclear-btn.active:hover {
+        body.dark #login-autoclear-btn.active:hover {
         border-color: rgba(var(--fx-rgb), 0.6);
-        background-color: color-mix(in srgb, var(--btn-bg) 84%, rgb(var(--fx-rgb)) 16%);
+        background-color: rgba(var(--fx-rgb), 0.15);
         box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.16);
     }
 }
@@ -2460,7 +2468,6 @@ body.dark .history-toggle-btn.active #history-arrow {
 .clear-history-header-btn:hover {
     color: var(--danger-color);
     background-color: rgba(220, 38, 38, 0.1);
-    transform: scale(1.06);
 }
 
 .empty-history-msg {
@@ -2545,7 +2552,6 @@ body.dark .history-item::before {
 }
 
 .history-item:hover {
-    transform: translateY(-1px);
     border-color: var(--primary-accent-color);
 }
 
@@ -2579,7 +2585,7 @@ body.dark .history-item::before {
     background: var(--primary-accent-color);
     color: #fff;
     border-color: var(--primary-accent-color);
-    transform: scale(1.1) rotate(-5deg);
+    transform: rotate(-5deg);
 }
 
 body.dark .history-copy-btn:hover {
@@ -2912,7 +2918,6 @@ body.dark .empty-templates-message {
     transition: transform 0.2s ease;
     
 }
-#login-google-btn:hover i { transform: scale(1.14); }
 
 #user-info-wrapper {
     padding: 0 4px 0 4px;
@@ -2961,7 +2966,6 @@ body.dark .empty-templates-message {
     cursor: pointer; transition: all 0.2s;
 }
 .logout-action-btn:hover { background: rgba(220, 38, 38, 0.1); color: var(--danger-color); }
-.logout-action-btn:active { transform: scale(0.9); }
 body.dark .logout-action-btn:hover { background: var(--danger-bg-dark); }
 
 /* =========================================
@@ -4595,11 +4599,6 @@ body.dark .config-mix-toggle-btn.is-epon::before {
     }
 }
 
-/* При натисканні "втискаємо" повзунок всередині */
-.config-mix-toggle-btn:active::before {
-    transform: translateY(-50%) scale(0.85);
-}
-
 /* 2. СТАН ПОЯВИ (кнопка виростає з 0, розсуваючи сусідів) */
 @starting-style {
     .config-mix-toggle-btn {
@@ -4720,6 +4719,7 @@ body.dark .config-mix-toggle-btn.shake-it {
     display: inline-flex;
     align-items: center;
     width: fit-content;
+    min-width: 90px;
     box-sizing: border-box; 
     border-radius: 999px !important;
     border: 1px solid var(--input-border-color);
@@ -4749,9 +4749,9 @@ body.dark .config-mix-toggle-btn.shake-it {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    width: 16px;
-    height: 16px;
-    border-radius: 4px;
+        width: 10px;
+    height: 10px;
+    border-radius: 50%;
     opacity: 1; 
     
     /* Плавна анімація ковзання (left) */
@@ -4773,9 +4773,9 @@ body.dark .config-mix-toggle-btn.shake-it {
 }
 
 .config-onu-mode-btn.is-reg::before {
-    left: 6px;
+    left: 9px;
     background-color: rgb(var(--fx-rgb));
-    box-shadow: 0 2px 4px rgba(var(--fx-rgb), 0.3);
+    box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.18);
 }
 
 /* =========================================================
@@ -4790,9 +4790,9 @@ body.dark .config-mix-toggle-btn.shake-it {
 }
 
 .config-onu-mode-btn.is-switch::before {
-    left: 63px;
+    left: 66px;
     background-color: rgb(var(--fx-rgb));
-    box-shadow: 0 2px 4px rgba(var(--fx-rgb), 0.3);
+    box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.18);
 }
 
 /* Темна тема: суцільна заливка, білий текст і повзунок */
@@ -4806,7 +4806,7 @@ body.dark .config-onu-mode-btn.is-switch {
 body.dark .config-onu-mode-btn.is-reg::before,
 body.dark .config-onu-mode-btn.is-switch::before {
     background-color: #ffffff;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.22);
 }
 
 /* Hover */
@@ -5072,7 +5072,6 @@ body.dark .olt-dropdown-item.active {
     border-color: var(--primary-accent-color);
     color: var(--primary-accent-color);
     box-shadow: 0 6px 16px rgba(0,0,0,0.2);
-    transform: scale(1.1);
 }
 
 /* Темна тема */
@@ -5464,7 +5463,7 @@ body.dark .date-calculator-container #result-section h2 {
     padding: 0 12px;
     box-sizing: border-box;
 
-    background-color: rgba(var(--fx-rgb), 0.12);
+    background-color: rgba(var(--fx-rgb), 0.06);
     border: 1px solid rgba(var(--fx-rgb), 0.28);
     border-radius: 999px;
     box-shadow: none;
@@ -5484,23 +5483,22 @@ body.dark .date-calculator-container #result-section h2 {
     color: inherit;
 }
 
-/* Темна тема: напівпрозорий відтінок + світліший колір тексту */
 body.dark .calc-action-button {
-    background-color: rgba(var(--fx-rgb), 0.14);
+    background-color: rgba(var(--fx-rgb), 0.07);
     border-color: rgba(var(--fx-rgb), 0.42);
     color: color-mix(in srgb, rgb(var(--fx-rgb)) 65%, #ffffff 35%);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
 @media (hover: hover) {
-    .calc-action-button:hover {
-        background-color: rgba(var(--fx-rgb), 0.22);
+        .calc-action-button:hover {
+        background-color: rgba(var(--fx-rgb), 0.14);
         border-color: rgba(var(--fx-rgb), 0.45);
         box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.12);
     }
 
-        body.dark .calc-action-button:hover {
-        background-color: rgba(var(--fx-rgb), 0.24);
+            body.dark .calc-action-button:hover {
+        background-color: rgba(var(--fx-rgb), 0.15);
         border-color: rgba(var(--fx-rgb), 0.7);
         color: color-mix(in srgb, rgb(var(--fx-rgb)) 45%, #ffffff 55%);
         filter: none;
@@ -5516,11 +5514,11 @@ body.dark .calc-action-button {
     height: 30px;
     box-sizing: border-box;
 
-    background-color: rgba(var(--fx-rgb), 0.12);
+    background-color: rgba(var(--fx-rgb), 0.06);
     border: 1px solid rgba(var(--fx-rgb), 0.28);
     border-radius: 999px;
     box-shadow: none;
-    overflow: hidden;   /* сегменти не виходять за капсулу */
+    overflow: hidden;
     isolation: isolate;
 }
 
@@ -5565,7 +5563,7 @@ body.dark .calc-action-button {
 
 /* Темна тема: напівпрозора група з кольоровими розділювачами */
 body.dark .month-stepper {
-    background-color: rgba(var(--fx-rgb), 0.14);
+    background-color: rgba(var(--fx-rgb), 0.07);
     border-color: rgba(var(--fx-rgb), 0.42);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
@@ -5578,11 +5576,11 @@ body.dark .stepper-btn:not(:last-child)::after {
 
 /* Hover: підсвічується лише сегмент, усередині групи */
 @media (hover: hover) {
-    .stepper-btn:hover {
-        background-color: rgba(var(--fx-rgb), 0.16);
+        .stepper-btn:hover {
+        background-color: rgba(var(--fx-rgb), 0.14);
     }
         body.dark .stepper-btn:hover {
-        background-color: rgba(var(--fx-rgb), 0.22);
+        background-color: rgba(var(--fx-rgb), 0.15);
         color: color-mix(in srgb, rgb(var(--fx-rgb)) 45%, #ffffff 55%);
     }
 }
@@ -5668,7 +5666,7 @@ body.dark .action-divider {
 #auto-reset-button.active {
     color: rgb(var(--fx-rgb));
     border-color: rgba(var(--fx-rgb), 0.5);
-    background-color: color-mix(in srgb, var(--btn-bg) 86%, rgb(var(--fx-rgb)) 14%);
+        background-color: rgba(var(--fx-rgb), 0.06);
     box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.10);
 }
 
@@ -5707,7 +5705,7 @@ body.dark .action-divider {
 /* 3. Hover увімкненої кнопки (світла тема) */
 @media (hover: hover) {
     #auto-reset-button.active:hover {
-        background-color: color-mix(in srgb, var(--btn-bg) 78%, rgb(var(--fx-rgb)) 22%);
+                background-color: rgba(var(--fx-rgb), 0.14);
         box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.16);
     }
 }
@@ -5716,7 +5714,7 @@ body.dark .action-divider {
 body.dark #auto-reset-button.active {
     color: var(--text-color);
     border-color: rgba(var(--fx-rgb), 0.45);
-    background-color: color-mix(in srgb, var(--btn-bg) 90%, rgb(var(--fx-rgb)) 10%);
+    background-color: rgba(var(--fx-rgb), 0.07);
     box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.10);
 }
 
@@ -5725,9 +5723,9 @@ body.dark #auto-reset-button.active .timer-icon {
 }
 
 @media (hover: hover) {
-    body.dark #auto-reset-button.active:hover {
+        body.dark #auto-reset-button.active:hover {
         border-color: rgba(var(--fx-rgb), 0.6);
-        background-color: color-mix(in srgb, var(--btn-bg) 84%, rgb(var(--fx-rgb)) 16%);
+        background-color: rgba(var(--fx-rgb), 0.15);
         box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.16);
     }
 }
@@ -6411,7 +6409,6 @@ body.dark #static-clarification-message {
 
 .info-tooltip-wrapper:hover .info-icon {
     color: var(--primary-accent-color);
-    transform: scale(1.1);
 }
 
 /* Показуємо при наведенні */
@@ -6945,7 +6942,6 @@ body.dark .qn-header { border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
 
 /* Активний стан (клік) - стискається і стає червоним */
 .qn-close-btn:active {
-    transform: scale(0.88); 
     background-color: var(--danger-color) !important;
     color: white !important;
     transition: transform 0.05s ease-out, background-color 0s; 
