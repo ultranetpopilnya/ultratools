@@ -5371,7 +5371,7 @@ function resetQuickNoteForm() {
     if (input && btn) {
         input.value = '';
         btn.innerHTML = 'Додати';
-        btn.style.backgroundColor = '';
+        btn.classList.remove('is-editing');
         editingNoteIndex = -1;
     }
 }
@@ -5397,9 +5397,9 @@ function copyQuickNote(index) {
 function editQuickNote(index) {
     const input = document.getElementById('qn-input');
     const btn = document.querySelector('.qn-add-btn');
-    input.value = quickNotesArray[index].text; // ЗМІНЕНО
+    input.value = quickNotesArray[index].text;
     btn.innerHTML = 'Зберегти';
-    btn.style.backgroundColor = '#f39c12';
+    btn.classList.add('is-editing');
     editingNoteIndex = index;
     input.focus();
 }
@@ -5452,9 +5452,9 @@ function renderQuickNotes() {
             <div class="qn-drag-handle" title="Потягніть, щоб перемістити"><i class="fa-solid fa-grip-vertical"></i></div>
             <div class="qn-text" data-id="${note.id}">${escapeHtml(note.text)}</div>
             <div class="qn-actions">
-                <button class="qn-action-btn" onclick="copyQuickNote(${index})"><i class="fa-solid fa-copy"></i></button>
-                <button class="qn-action-btn" onclick="editQuickNote(${index})"><i class="fa-solid fa-pen"></i></button>
-                <button class="qn-action-btn" onclick="deleteQuickNote(${index})"><i class="fa-solid fa-trash"></i></button>
+                <button class="qn-action-btn qn-copy-btn" onclick="copyQuickNote(${index})" title="Копіювати"><i class="fa-solid fa-copy"></i></button>
+                <button class="qn-action-btn qn-edit-btn" onclick="editQuickNote(${index})" title="Редагувати"><i class="fa-solid fa-pen"></i></button>
+                <button class="qn-action-btn qn-del-btn" onclick="deleteQuickNote(${index})" title="Видалити"><i class="fa-solid fa-trash"></i></button>
             </div>
         `;
 

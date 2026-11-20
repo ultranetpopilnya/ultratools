@@ -3412,8 +3412,12 @@ body.dark #clear-all-templates-button {
 /* copy template btn — ховер */
 .copy-template-btn:hover { background-color: var(--success-color); }
 
+.copy-template-btn:disabled {
+    opacity: 1;
+}
+
 .copy-template-btn:disabled i {
-  color: var(--text-color);
+    color: var(--success-color);
 }
 
 /* paste login btn — ховер */
@@ -3838,25 +3842,28 @@ body.dark .btn-replace-speed {
     border-color: #581c87;
 }
 
-/* --- HOVER кнопок пошуку: однакова схема (світліша заливка + кільце кольору кнопки) --- */
 @media (hover: hover) {
     .btn-find:hover {
         background-color: rgba(79, 109, 245, 0.22);
+        border-color: rgba(79, 109, 245, 0.45);
         color: #2b44b8;
         box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.12);
     }
     .btn-replace:hover {
         background-color: rgba(214, 155, 45, 0.22);
+        border-color: rgba(214, 155, 45, 0.45);
         color: #925f0e;
         box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.12);
     }
     .btn-replace-all:hover {
         background-color: rgba(22, 163, 122, 0.22);
+        border-color: rgba(22, 163, 122, 0.45);
         color: #0c6148;
         box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.12);
     }
     .btn-replace-speed:hover {
         background-color: rgba(107, 33, 168, 0.22);
+        border-color: rgba(107, 33, 168, 0.45);
         color: #2e0551;
         box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.12);
     }
@@ -4620,7 +4627,7 @@ body.dark .config-show-signal-btn.active {
         border-color: var(--secondary-accent-color);
         color: #ffffff;
         filter: brightness(1.12);
-        box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.16);
+        box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.12);
         z-index: 2;
     }
 }
@@ -5329,7 +5336,7 @@ body.dark .date-calculator-container #result-section h2 {
     /* Темна тема: світло-помаранчевий фон, яскраво-помаранчевий текст */
     background-color: rgba(230, 162, 46, 0.15);
     color: var(--secondary-accent-color);
-    border-bottom: 1px solid rgba(230, 163, 46, 0.986);
+    border-bottom: 1px solid rgba(214, 155, 45, 0.25);
 }
 
 .date-calculator-container #result-display {
