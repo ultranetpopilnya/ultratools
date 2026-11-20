@@ -773,14 +773,9 @@ body.dark {
 }
 
 /* Малі іконкові кнопки */
-.logout-action-btn:active,
 .config-login-copy-btn:active,
 .config-login-regen-btn:active,
 .history-copy-btn:active,
-.clear-history-header-btn:active,
-.calc-head-history-btn:active,
-.calc-copy-btn:active,
-.hist-clear-btn:active,
 .qn-action-btn:active,
 .qn-drag-handle:active,
 .qn-close-btn:active,
@@ -2128,38 +2123,21 @@ body.dark .actions-block-title::after {
 
 /* --- УВІМКНЕНО --- */
 #login-autoclear-btn.active {
-    color: rgb(var(--fx-rgb));
-        border-color: rgba(var(--fx-rgb), 0.5);
+    color: var(--text-color);
+    border-color: rgba(var(--fx-rgb), 0.5);
     background-color: rgba(var(--fx-rgb), 0.06);
     box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.10);
 }
+
 #login-autoclear-btn.active i {
     color: rgb(var(--fx-rgb));
     transform: rotate(-14deg);
 }
 
 @media (hover: hover) {
-        #login-autoclear-btn.active:hover {
-        background-color: rgba(var(--fx-rgb), 0.14);
-        box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.16);
-    }
-}
-
-body.dark #login-autoclear-btn.active {
-    color: var(--text-color);
-    border-color: rgba(var(--fx-rgb), 0.45);
-    background-color: rgba(var(--fx-rgb), 0.07);
-    box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.10);
-}
-
-body.dark #login-autoclear-btn.active i {
-    color: rgb(var(--fx-rgb));
-}
-
-@media (hover: hover) {
-        body.dark #login-autoclear-btn.active:hover {
+    #login-autoclear-btn.active:hover {
         border-color: rgba(var(--fx-rgb), 0.6);
-        background-color: rgba(var(--fx-rgb), 0.15);
+        background-color: rgba(var(--fx-rgb), 0.14);
         box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.16);
     }
 }
@@ -2492,14 +2470,16 @@ body.dark .history-toggle-btn.active #history-arrow {
 }
 
 .clear-history-header-btn {
+    --fx-rgb: 226, 85, 85;
     background: transparent;
+    opacity: 0.75;
     border: none;
     color: var(--text-color);
     cursor: pointer;
     width: 32px;
     height: 32px;
     margin: 0 7px 0 0;
-    border-radius: 8px;
+    border-radius: 50%;
     font-size: 1rem;
     display: flex;
     align-items: center;
@@ -2507,12 +2487,20 @@ body.dark .history-toggle-btn.active #history-arrow {
     transition: color 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
 }
 
-.clear-history-header-btn { --fx-rgb: 226, 85, 85; }
-
 .clear-history-header-btn:hover {
+    opacity: 1;
     color: rgb(var(--fx-rgb));
     background-color: rgba(var(--fx-rgb), 0.14);
-    box-shadow: 0 0 0 2px rgba(var(--fx-rgb), 0.12);
+    box-shadow: inset 0 0 0 1px rgba(var(--fx-rgb), 0.35);
+}
+
+.clear-history-header-btn:active {
+    opacity: 1;
+    background-color: rgba(var(--fx-rgb), 0.22);
+    color: rgb(var(--fx-rgb));
+    box-shadow: inset 0 0 0 2px rgba(var(--fx-rgb), 0.45) !important;
+    filter: brightness(0.95);
+    transition: box-shadow 0.08s ease-out, filter 0.08s ease-out, background-color 0.08s ease-out !important;
 }
 
 .empty-history-msg {
@@ -3013,16 +3001,25 @@ body.dark .empty-templates-message {
     color: var(--inactive-text);
     font-size: 12.5px;
     cursor: pointer;
+    transition: transform 0.2s ease-out, background-color 0.2s ease-out, color 0.2s ease-out, box-shadow 0.2s ease-out;
 }
 
 body.dark .logout-action-btn { --fx-rgb: 240, 90, 80; }
 
 @media (hover: hover) {
         .logout-action-btn:hover {
-        background: rgba(var(--fx-rgb), 0.14);
-        color: rgb(var(--fx-rgb));
-        box-shadow: 0 0 0 2px rgba(var(--fx-rgb), 0.12);
-    }
+    background-color: rgba(var(--fx-rgb), 0.14);
+    color: rgb(var(--fx-rgb));
+    box-shadow: inset 0 0 0 1px rgba(var(--fx-rgb), 0.35);
+}
+}
+
+.logout-action-btn:active {
+    background-color: rgba(var(--fx-rgb), 0.22);
+    color: rgb(var(--fx-rgb));
+    box-shadow: inset 0 0 0 2px rgba(var(--fx-rgb), 0.45) !important;
+    filter: brightness(0.95);
+    transition: box-shadow 0.08s ease-out, filter 0.08s ease-out, background-color 0.08s ease-out !important;
 }
 
 /* =========================================
@@ -3962,7 +3959,7 @@ body.dark .search-inputs-row select option {
     display: flex;
     align-items: center;
     justify-content: center;
-        transition: transform 0.2s ease-out, background-color 0.2s ease-out, color 0.2s ease-out, box-shadow 0.2s ease-out, opacity 0.2s ease-out;
+    transition: transform 0.2s ease-out, background-color 0.2s ease-out, color 0.2s ease-out, box-shadow 0.2s ease-out, opacity 0.2s ease-out;
     font-size: 14px;
 }
 
@@ -3970,7 +3967,7 @@ body.dark .search-inputs-row select option {
     background-color: rgba(var(--fx-rgb), 0.14);
     opacity: 1;
     color: rgb(var(--fx-rgb));
-        box-shadow: inset 0 0 0 1px rgba(var(--fx-rgb), 0.35);
+    box-shadow: inset 0 0 0 1px rgba(var(--fx-rgb), 0.35);
 }
 
 .swap-inputs-btn:hover i {
@@ -4346,20 +4343,47 @@ body.dark .variant-badge {
     padding-right: 58px !important; 
 }
 
-/* Оформлення самих кнопок */
 .config-login-regen-btn,
 .config-login-copy-btn {
+    --fx-rgb: 79, 109, 245;
+    width: 22px;
+    height: 22px;
+    padding: 0;
     background: transparent;
     border: none;
+    border-radius: 50%;
     cursor: pointer;
-    padding: 0;
     color: var(--text-color);
-    font-size: 14px;
+    opacity: 0.75;
+    font-size: 13px;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.2s ease;
     outline: none;
+}
+
+body.dark .config-login-regen-btn,
+body.dark .config-login-copy-btn { --fx-rgb: 214, 155, 45; }
+
+@media (hover: hover) {
+    .config-login-regen-btn:hover,
+    .config-login-copy-btn:hover {
+        opacity: 1;
+        background-color: rgba(var(--fx-rgb), 0.14);
+        color: rgb(var(--fx-rgb));
+        box-shadow: inset 0 0 0 1px rgba(var(--fx-rgb), 0.35);
+    }
+}
+
+.config-login-regen-btn:active,
+.config-login-copy-btn:active {
+    opacity: 1;
+    background-color: rgba(var(--fx-rgb), 0.22);
+    color: rgb(var(--fx-rgb));
+    box-shadow: inset 0 0 0 2px rgba(var(--fx-rgb), 0.45) !important;
+    filter: brightness(0.95);
+    transition: box-shadow 0.08s ease-out, filter 0.08s ease-out, background-color 0.08s ease-out !important;
 }
 
 /* Зелена галочка при успішному копіюванні */
@@ -4489,7 +4513,7 @@ body.dark .config-clear-fields-btn {
     }
 
         body.dark .config-clear-fields-btn:hover {
-                background-color: rgb(var(--fx-rgb));
+        background-color: rgb(var(--fx-rgb));
         border-color: rgb(var(--fx-rgb));
         filter: brightness(1.12);
         color: #ffffff;
@@ -5610,6 +5634,7 @@ body.dark .date-calculator-container #result-section h2 {
     font-family: inherit;
     font-size: 14px;
     font-weight: 500;
+    letter-spacing: 0.1px;
     cursor: pointer;
     user-select: none;
     -webkit-tap-highlight-color: transparent;
@@ -5632,7 +5657,7 @@ body.dark .date-calculator-container #result-section h2 {
     z-index: 1;
 }
 
-/* Hover: рамка й кільце на всій групі, підсвічується лише сегмент */
+/* Hover: рамка й кільце на всій групі, сегмент підсвічується як у calc-action-button */
 @media (hover: hover) {
     .month-stepper:hover {
         border-color: rgba(var(--fx-rgb), 0.55);
@@ -5640,20 +5665,19 @@ body.dark .date-calculator-container #result-section h2 {
     }
 
     .stepper-btn:hover {
-        background-color: rgba(var(--fx-rgb), 0.10);
-        color: rgb(var(--fx-rgb));
+        background-color: rgba(var(--fx-rgb), 0.08);
     }
 }
 
-/* Натискання: внутрішнє кільце сегмента (без виходу за межі групи) */
-.stepper-btn:active {
-    background-color: rgba(var(--fx-rgb), 0.24);
-    box-shadow: inset 0 0 0 2px rgba(var(--fx-rgb), 0.45);
-    transition: all 0.08s ease-out !important;
+/* Натискання: зовнішнє кільце 4px на групі, як в інших кнопках */
+.month-stepper:has(.stepper-btn:active) {
+    box-shadow: 0 0 0 4px rgba(var(--fx-rgb), 0.22);
+    transition: box-shadow 0.08s ease-out, border-color 0.08s ease-out;
 }
-body.dark .stepper-btn:active {
-    background-color: rgba(var(--fx-rgb), 0.18);
-    box-shadow: inset 0 0 0 2px rgba(var(--fx-rgb), 0.45);
+
+.stepper-btn:active {
+    filter: brightness(0.95);
+    transition: filter 0.08s ease-out !important;
 }
 
 .quick-add-row { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; align-items: center; width: 100%; }
@@ -5764,27 +5788,8 @@ body.dark .action-divider {
 /* 3. Hover увімкненої кнопки (світла тема) */
 @media (hover: hover) {
     #auto-reset-button.active:hover {
-                background-color: rgba(var(--fx-rgb), 0.14);
-        box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.16);
-    }
-}
-
-/* ================== ТЕМНА ТЕМА: #auto-reset-button ================== */
-body.dark #auto-reset-button.active {
-    color: var(--text-color);
-    border-color: rgba(var(--fx-rgb), 0.45);
-    background-color: rgba(var(--fx-rgb), 0.07);
-    box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.10);
-}
-
-body.dark #auto-reset-button.active .timer-icon {
-    color: rgb(var(--fx-rgb));
-}
-
-@media (hover: hover) {
-        body.dark #auto-reset-button.active:hover {
         border-color: rgba(var(--fx-rgb), 0.6);
-        background-color: rgba(var(--fx-rgb), 0.15);
+        background-color: rgba(var(--fx-rgb), 0.14);
         box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.16);
     }
 }
@@ -5889,7 +5894,7 @@ body.dark .calc-title { color: var(--text-color); }
     box-shadow: none;
     width: 30px;
     height: 30px;
-    border-radius: 8px;
+    border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -5906,20 +5911,23 @@ body.dark .calc-title { color: var(--text-color); }
     pointer-events: none;
 }
 
-/* calc head history btn — ховер */
 .calc-head-history-btn:hover {
-    background-color: rgba(0, 0, 0, 0.08);
-    color: var(--primary-accent-color);
+    background-color: rgba(var(--fx-rgb), 0.14);
+    color: rgb(var(--fx-rgb));
+    box-shadow: inset 0 0 0 1px rgba(var(--fx-rgb), 0.35);
+}
+
+.calc-head-history-btn:active {
+    background-color: rgba(var(--fx-rgb), 0.22);
+    color: rgb(var(--fx-rgb));
+    box-shadow: inset 0 0 0 2px rgba(var(--fx-rgb), 0.45) !important;
+    filter: brightness(0.95);
+    transition: box-shadow 0.08s ease-out, filter 0.08s ease-out, background-color 0.08s ease-out !important;
 }
 
 /* Темна тема: calc head history btn */
 body.dark .calc-head-history-btn { color: #aaa; }
 
-/* Темна тема: calc head history btn — ховер */
-body.dark .calc-head-history-btn:hover {
-    background-color: rgba(255, 255, 255, 0.15);
-    color: var(--secondary-accent-color);
-}
 
 /* calc auto clear btn */
 #calc-auto-clear-btn {
@@ -6005,26 +6013,38 @@ body.dark .calc-display-container {
     position: absolute;
     top: 8px;
     left: 8px;
-    z-index: 10; /* НОВЕ: Завжди поверх тексту */
+    z-index: 10; /* Завжди поверх тексту */
+
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
     background: transparent;
     border: none;
+    border-radius: 50%;
     color: #bbb;
     cursor: pointer;
-    font-size: 16px; 
-    padding: 5px;
-    border-radius: 8px;
-    transition: all 0.2s;
+    font-size: 18px;
+    line-height: 1;
 }
 
 /* calc copy btn — ховер */
 .calc-copy-btn:hover {
-    color: var(--primary-accent-color);
-    background-color: rgba(0, 0, 0, 0.08);
+    background-color: rgba(var(--fx-rgb), 0.14);
+    color: rgb(var(--fx-rgb));
+    box-shadow: inset 0 0 0 1px rgba(var(--fx-rgb), 0.35);
 }
 
-body.dark .calc-copy-btn:hover {
-    background-color: rgba(255, 255, 255, 0.15);
-    color: var(--secondary-accent-color);
+/* calc copy btn — натискання */
+.calc-copy-btn:active {
+    background-color: rgba(var(--fx-rgb), 0.22);
+    color: rgb(var(--fx-rgb));
+    box-shadow: inset 0 0 0 2px rgba(var(--fx-rgb), 0.45) !important;
+    filter: brightness(0.95);
+    transition: box-shadow 0.08s ease-out, filter 0.08s ease-out, background-color 0.08s ease-out !important;
 }
 
 /* === КНОПКИ (СІТКА) === */
@@ -6239,12 +6259,40 @@ body.dark .calc-history-panel {
 .hist-header span { font-weight: bold; font-size: 16px; color: var(--text-color); }
 
 .hist-clear-btn {
-    background: none; border: none; cursor: pointer; color: var(--inactive-text);
-    padding: 6px; border-radius: 8px; transition: color 0.2s; font-size: 15px;
+    --fx-rgb: 226, 85, 85;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    color: var(--inactive-text);
+    font-size: 15px;
+    opacity: 0.75;
 }
 
-/* hist clear btn — ховер */
-.hist-clear-btn:hover { color: var(--danger-color); background-color: rgba(220,53,69,0.1); }
+body.dark .hist-clear-btn { --fx-rgb: 240, 90, 80; }
+
+.hist-clear-btn:hover {
+    opacity: 1;
+    background-color: rgba(var(--fx-rgb), 0.14);
+    color: rgb(var(--fx-rgb));
+    box-shadow: inset 0 0 0 1px rgba(var(--fx-rgb), 0.35);
+}
+
+.hist-clear-btn:active {
+    opacity: 1;
+    background-color: rgba(var(--fx-rgb), 0.22);
+    color: rgb(var(--fx-rgb));
+    box-shadow: inset 0 0 0 2px rgba(var(--fx-rgb), 0.45) !important;
+    filter: brightness(0.95);
+    transition: box-shadow 0.08s ease-out, filter 0.08s ease-out, background-color 0.08s ease-out !important;
+}
 
 .hist-empty {
     text-align: center; color: #94a3b8; margin-top: 50%; 
@@ -7248,23 +7296,40 @@ body.dark .qn-placeholder {
 
 /* Стиль кнопок дій (Редагувати / Копіювати / Видалити) */
 .qn-action-btn {
+    width: 30px;
+    height: 30px;
+    padding: 0;
     background: transparent;
     border: none;
+    border-radius: 50%;
     cursor: pointer;
-    padding: 6px;
-    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
     color: var(--text-color);
+    opacity: 0.75;
     transition: all 0.2s ease;
 }
 
-/* qn action btn */
-.qn-action-btn i, .qn-action-btn svg {
-    width: 16px;
-    height: 16px;
+/* Іконки (14px, як у swap-inputs-btn) */
+.qn-action-btn i,
+.qn-action-btn svg {
+    width: 14px;
+    height: 14px;
     display: block;
+    margin: 0;
+    pointer-events: none;
+}
+
+.qn-action-btn i {
+    font-size: 14px;
+    line-height: 14px;
+    text-align: center;
+}
+
+.qn-action-btn i::before {
+    display: block;
+    line-height: 14px;
 }
 
 .qn-edit-btn { --fx-rgb: 79, 109, 245; }
@@ -7273,11 +7338,21 @@ body.dark .qn-edit-btn { --fx-rgb: 214, 155, 45; }
 .qn-del-btn  { --fx-rgb: 226, 85, 85; }
 
 @media (hover: hover) {
-    .qn-action-btn:hover {
+    .qn-actions .qn-action-btn:hover {
+        opacity: 1;
         background-color: rgba(var(--fx-rgb), 0.14);
         color: rgb(var(--fx-rgb));
-        box-shadow: 0 0 0 2px rgba(var(--fx-rgb), 0.12);
+        box-shadow: inset 0 0 0 1px rgba(var(--fx-rgb), 0.35);
     }
+}
+
+.qn-actions .qn-action-btn:active {
+    opacity: 1;
+    background-color: rgba(var(--fx-rgb), 0.22);
+    color: rgb(var(--fx-rgb));
+    box-shadow: inset 0 0 0 2px rgba(var(--fx-rgb), 0.45) !important;
+    filter: brightness(0.95);
+    transition: box-shadow 0.08s ease-out, filter 0.08s ease-out, background-color 0.08s ease-out !important;
 }
 
 /* ================================================================
