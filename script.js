@@ -87,7 +87,7 @@ function hideSyncTimeDisplay() {
     // Через 250мс (коли анімація завершиться) фізично ховаємо його
     setTimeout(() => {
         el.classList.remove('visible', 'syncing', 'sync-success', 'sync-error');
-        // Очищаємо інлайн-стилі, щоб при наступному вході анімація появи спрацювала чисто
+        el.innerHTML = '';
         el.style.opacity = '';
         el.style.transform = '';
         el.style.transition = '';

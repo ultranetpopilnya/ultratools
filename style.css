@@ -3026,7 +3026,7 @@ body.dark .logout-action-btn { --fx-rgb: 240, 90, 80; }
    ІНДИКАТОР СИНХРОНІЗАЦІЇ (Базові стилі)
    ========================================= */
 #sync-time-display {
-    display: inline-flex;
+    display: none;
     align-items: center;
     gap: 6px;
     font-size: 13px;
@@ -3042,6 +3042,7 @@ body.dark .logout-action-btn { --fx-rgb: 240, 90, 80; }
 
 /* Стан видимості */
 #sync-time-display.visible {
+    display: inline-flex;
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
