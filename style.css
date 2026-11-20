@@ -735,7 +735,6 @@ body.dark {
 }
 
 /* Великі кнопки (4px обведення) */
-.hist-close-btn:active,
 .unified-pill:has(#login-google-btn:not(.auth-hidden)):active,
 .config-clear-fields-btn:active,
 .config-onu-mode-btn:active,
@@ -2408,10 +2407,13 @@ body.dark .login-generator-container .result-item .copy-login-btn:hover {
     gap: 14px;
     color: var(--text-color);
     font-weight: 700;
-    font-size: 1.05rem;
+    font-size: 16px;
+    line-height: 1.2;
     letter-spacing: 0.2px;
     outline: none;
     transition: color 0.2s ease;
+    transform: translateZ(0);
+    backface-visibility: hidden;
 }
 
 .history-toggle-btn:hover { color: var(--primary-accent-color); }
@@ -4587,7 +4589,7 @@ body.dark .config-clear-fields-btn {
     color: rgb(var(--fx-rgb));
     border-color: rgba(var(--fx-rgb), 0.5);
     background-color: rgba(var(--fx-rgb), 0.06);
-    box-shadow: 0 0 0 2px rgba(var(--fx-rgb), 0.10); /* 2px, бо gap: 5px */
+    box-shadow: 0 0 0 2px rgba(var(--fx-rgb), 0.10); 
 }
 
 @media (hover: hover) {
@@ -4619,7 +4621,7 @@ body.dark .config-show-signal-btn.active {
     background-color: var(--secondary-accent-color);
     border-color: var(--secondary-accent-color);
     color: #ffffff;
-    box-shadow: 0 0 0 2px rgba(var(--fx-rgb), 0.10); /* 2px, бо gap: 5px */
+    box-shadow: 0 0 0 2px rgba(var(--fx-rgb), 0.10); 
 }
 
 @media (hover: hover) {
