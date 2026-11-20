@@ -4603,6 +4603,28 @@ body.dark .config-clear-fields-btn {
     }
 }
 
+body.dark .config-replace-mode-btn.active,
+body.dark .config-pon-onu-btn.active,
+body.dark .config-show-signal-btn.active {
+    background-color: var(--secondary-accent-color);
+    border-color: var(--secondary-accent-color);
+    color: #ffffff;
+    box-shadow: none;
+}
+
+@media (hover: hover) {
+    body.dark .config-replace-mode-btn.active:hover,
+    body.dark .config-pon-onu-btn.active:hover,
+    body.dark .config-show-signal-btn.active:hover {
+        background-color: var(--secondary-accent-color);
+        border-color: var(--secondary-accent-color);
+        color: #ffffff;
+        filter: brightness(1.12);
+        box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.16);
+        z-index: 2;
+    }
+}
+
 /* =========================================================
    КНОПКА РЕЖИМІВ ОНУ (РЕЄСТРАЦІЯ / ЗАМІНА)
    ========================================================= */
