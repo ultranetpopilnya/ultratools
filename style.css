@@ -2095,7 +2095,6 @@ body.dark .actions-block-title::after {
     background-color: var(--btn-bg);
     border: 1px solid var(--input-border-color);
     border-radius: 999px;
-    box-shadow: var(--fx-shadow);
     color: var(--text-color);
 
     font-family: inherit;
@@ -3258,7 +3257,7 @@ body.dark #add-template-button {
     background-color: var(--btn-bg);
     border: 1px solid var(--input-border-color);
     color: var(--text-color);
-    box-shadow: var(--fx-shadow);
+    box-shadow: var(--fx-shadow), 0 0 0 0 rgba(var(--fx-rgb), 0);
 }
 
 /* 3. КНОПКА ОЧИСТИТИ ВСЕ */
@@ -3300,7 +3299,7 @@ body.dark #clear-all-templates-button {
         border-color: rgba(var(--fx-rgb), 0.55);
         background-color: color-mix(in srgb, var(--btn-bg) 92%, rgb(var(--fx-rgb)) 8%);
         color: rgb(var(--fx-rgb));
-        box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.12);
+                box-shadow: var(--fx-shadow), 0 0 0 3px rgba(var(--fx-rgb), 0.12);
     }
 
     #clear-all-templates-button:hover {
@@ -4802,7 +4801,6 @@ body.dark .config-mix-toggle-btn.shake-it {
     display: inline-flex;
     align-items: center;
     width: fit-content;
-    min-width: 90px;
     box-sizing: border-box; 
     border-radius: 999px !important;
     border: 1px solid var(--input-border-color);
@@ -4831,8 +4829,9 @@ body.dark .config-mix-toggle-btn.shake-it {
     content: '';
     position: absolute;
     top: 50%;
+    left: 14px;
     transform: translateY(-50%);
-        width: 10px;
+    width: 10px;
     height: 10px;
     border-radius: 50%;
     opacity: 1; 
@@ -4849,14 +4848,14 @@ body.dark .config-mix-toggle-btn.shake-it {
    ========================================================= */
 .config-onu-mode-btn.is-reg {
     --fx-rgb: 13, 148, 136;
-    padding: 0 6px 0 28px !important;
+    padding: 0 8px 0 29px !important;
     background-color: rgba(var(--fx-rgb), 0.12);
     border-color: rgba(var(--fx-rgb), 0.5);
     color: #0f766e;
 }
 
 .config-onu-mode-btn.is-reg::before {
-    left: 9px;
+    left: 11px;
     background-color: rgb(var(--fx-rgb));
     box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.18);
 }
@@ -4866,14 +4865,14 @@ body.dark .config-mix-toggle-btn.shake-it {
    ========================================================= */
 .config-onu-mode-btn.is-switch {
     --fx-rgb: 124, 58, 237;
-    padding: 0 28px 0 6px !important;
+    padding: 0 30px 0 9px !important;
     background-color: rgba(var(--fx-rgb), 0.12);
     border-color: rgba(var(--fx-rgb), 0.5);
     color: #6d28d9;
 }
 
 .config-onu-mode-btn.is-switch::before {
-    left: 66px;
+    left: calc(100% - 21px);
     background-color: rgb(var(--fx-rgb));
     box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.18);
 }
@@ -5535,6 +5534,7 @@ body.dark .date-calculator-container #result-section h2 {
    --- 3. РОЗДІЛЕНИЙ ПЕРЕМИКАЧ (+1, -1, +3 місяці) ---
    ========================================================= */
 /* ===== Окремі кнопки калькулятора ===== */
+/* ===== Окремі кнопки калькулятора ===== */
 .calc-action-button {
     display: flex;
     flex: 1;
@@ -5546,12 +5546,12 @@ body.dark .date-calculator-container #result-section h2 {
     padding: 0 12px;
     box-sizing: border-box;
 
-    background-color: rgba(var(--fx-rgb), 0.06);
-    border: 1px solid rgba(var(--fx-rgb), 0.25);
+    background-color: var(--btn-bg);
+    border: 1px solid var(--input-border-color);
     border-radius: 999px;
-    box-shadow: none;
+    box-shadow: var(--fx-shadow);
 
-    color: rgb(var(--fx-rgb));
+    color: var(--text-color);
     font-family: inherit;
     font-size: 14px;
     font-weight: 500;
@@ -5563,31 +5563,18 @@ body.dark .date-calculator-container #result-section h2 {
 
 .calc-action-button i {
     font-size: 14px;
-    color: inherit;
-}
-
-body.dark .calc-action-button {
-    background-color: var(--btn-bg);
-    border-color: var(--input-border-color);
     color: var(--text-color);
-    box-shadow: var(--fx-shadow);
+    transition: color 0.2s ease;
 }
 
 @media (hover: hover) {
-        .calc-action-button:hover {
-        background-color: rgba(var(--fx-rgb), 0.14);
-        border-color: rgba(var(--fx-rgb), 0.45);
-        box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.12);
-    }
-
-        body.dark .calc-action-button:hover {
-        background-color: color-mix(in srgb, var(--btn-bg) 92%, rgb(var(--fx-rgb)) 8%);
+    .calc-action-button:hover {
         border-color: rgba(var(--fx-rgb), 0.55);
-        color: var(--text-color);
+        background-color: color-mix(in srgb, var(--btn-bg) 92%, rgb(var(--fx-rgb)) 8%);
         box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.12);
     }
 
-    body.dark .calc-action-button:hover i {
+    .calc-action-button:hover i {
         color: rgb(var(--fx-rgb));
     }
 }
@@ -5599,12 +5586,13 @@ body.dark .calc-action-button {
     height: 30px;
     box-sizing: border-box;
 
-    background-color: rgba(var(--fx-rgb), 0.06);
-    border: 1px solid rgba(var(--fx-rgb), 0.25);
+    background-color: var(--btn-bg);
+    border: 1px solid var(--input-border-color);
     border-radius: 999px;
-    box-shadow: none;
+    box-shadow: var(--fx-shadow);
     overflow: hidden;
     isolation: isolate;
+    transition: border-color 0.2s ease-out, box-shadow 0.2s ease-out;
 }
 
 .stepper-btn {
@@ -5620,7 +5608,7 @@ body.dark .calc-action-button {
     border-radius: 0;
     box-shadow: none;
 
-    color: rgb(var(--fx-rgb));
+    color: var(--text-color);
     font-family: inherit;
     font-size: 14px;
     font-weight: 500;
@@ -5641,35 +5629,19 @@ body.dark .calc-action-button {
     top: 22%;
     height: 56%;
     width: 1px;
-    background-color: rgba(var(--fx-rgb), 0.3);
+    background-color: var(--input-border-color);
     pointer-events: none;
     z-index: 1;
 }
 
-/* Темна тема: напівпрозора група з кольоровими розділювачами */
-body.dark .month-stepper {
-    background-color: var(--btn-bg);
-    border-color: var(--input-border-color);
-    box-shadow: var(--fx-shadow);
-}
-body.dark .stepper-btn {
-    color: var(--text-color);
-}
-body.dark .stepper-btn:not(:last-child)::after {
-    background-color: var(--input-border-color);
-}
-
-/* Hover: підсвічується лише сегмент, усередині групи */
+/* Hover: рамка й кільце на всій групі, підсвічується лише сегмент */
 @media (hover: hover) {
-        .stepper-btn:hover {
-        background-color: rgba(var(--fx-rgb), 0.14);
-    }
-        body.dark .month-stepper:hover {
+    .month-stepper:hover {
         border-color: rgba(var(--fx-rgb), 0.55);
         box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.12);
     }
 
-    body.dark .stepper-btn:hover {
+    .stepper-btn:hover {
         background-color: rgba(var(--fx-rgb), 0.10);
         color: rgb(var(--fx-rgb));
     }
@@ -5722,7 +5694,6 @@ body.dark .action-divider {
     background-color: var(--btn-bg);
     border: 1px solid var(--input-border-color);
     border-radius: 999px;
-    box-shadow: var(--fx-shadow);
 
     color: var(--text-color);
     font-family: inherit;
@@ -5754,9 +5725,9 @@ body.dark .action-divider {
 
 /* Увімкнена */
 #auto-reset-button.active {
-    color: rgb(var(--fx-rgb));
+    color: var(--text-color);
     border-color: rgba(var(--fx-rgb), 0.5);
-        background-color: rgba(var(--fx-rgb), 0.06);
+    background-color: rgba(var(--fx-rgb), 0.06);
     box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.10);
 }
 
