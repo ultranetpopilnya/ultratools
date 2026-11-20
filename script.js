@@ -5668,6 +5668,7 @@ const RIPPLE_SELECTOR = `
 
 document.addEventListener('mousedown', function (e) {
     if (e.button !== 0) return;                          // тільки ліва кнопка
+    if (e.target.closest('.close-tab-btn')) return;      // не запускаємо хвилю при кліку по хрестику
 
     const btn = e.target.closest(RIPPLE_SELECTOR);
     if (!btn) return;

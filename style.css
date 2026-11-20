@@ -6830,7 +6830,7 @@ body.dark .command-item:hover {
 .sub-command-list.always-open {
     max-height: 2000px; 
     opacity: 1;
-    transform: translateY(0);
+    transform: none;
     transition: none; 
     
     /* Зміна бокової лінії на штрихпунктирну */
