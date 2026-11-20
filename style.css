@@ -2963,8 +2963,8 @@ body.dark .empty-templates-message {
 }
 
 @keyframes sync-pop {
-    0%   { transform: scale(0.92); }
-    60%  { transform: scale(1.06); }
+    0%   { transform: scale(0.6); opacity: 0.4; }
+    65%  { transform: scale(1.15); opacity: 1; }
     100% { transform: scale(1); }
 }
 
@@ -3052,10 +3052,6 @@ body.dark .logout-action-btn { --fx-rgb: 240, 90, 80; }
    СТАНИ СИНХРОНІЗАЦІЇ
    ========================================= */
 
-/* 1. Успіх (Колір іконки та анімація, яку перезапускає JS-хак) */
-#sync-time-display.sync-success {
-    animation: sync-pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
 #sync-time-display.sync-success i {
     color: var(--success-color);
 }
