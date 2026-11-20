@@ -1225,19 +1225,22 @@ body.dark .close-tab-btn:active {
     align-items: center;
     font-size: 18px;
     margin: 4px 2px;
-    transition: all 0.2s ease-out;
+    line-height: 1;
+    backface-visibility: hidden;
+    will-change: transform;
 }
 
 @media (hover: hover) {
-        .add-tab-btn:not(.menu-open):hover {
+    .add-tab-btn:not(.menu-open):hover {
         background-color: rgba(var(--fx-rgb), 0.14);
         color: rgb(var(--fx-rgb));
         box-shadow: inset 0 0 0 1px rgba(var(--fx-rgb), 0.45);
     }
 
-        .add-tab-btn.menu-open:hover {
-        background-color: rgba(var(--fx-rgb), 0.26);
-        box-shadow: inset 0 0 0 1px rgba(var(--fx-rgb), 0.6);
+    .add-tab-btn.menu-open:hover {
+        background-color: rgb(var(--fx-rgb));
+        filter: brightness(1.10);
+        box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.16);
     }
 
     body.dark .add-tab-btn.menu-open:hover {
@@ -1249,10 +1252,10 @@ body.dark .close-tab-btn:active {
 
 /* Меню відкрито: Кнопка стає хрестиком */
 .add-tab-btn.menu-open {
-        background-color: rgba(var(--fx-rgb), 0.18);
-    color: rgb(var(--fx-rgb));
+    background-color: rgb(var(--fx-rgb));
+    color: #ffffff;
     transform: rotate(135deg);
-    box-shadow: inset 0 0 0 1px rgba(var(--fx-rgb), 0.5);
+    box-shadow: 0 2px 6px rgba(var(--fx-rgb), 0.30);
 }
 
 .add-tab-btn:not(.menu-open):active {
@@ -1265,13 +1268,13 @@ body.dark .close-tab-btn:active {
 
 .add-tab-btn.menu-open:active {
     transform: rotate(135deg);
-        box-shadow: inset 0 0 0 2px rgba(var(--fx-rgb), 0.5) !important;
-    filter: brightness(0.95);
+    box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.22) !important;
+    filter: brightness(0.92);
     transition: box-shadow 0.08s ease-out, filter 0.08s ease-out !important;
 }
 
 body.dark .add-tab-btn.menu-open {
-        background-color: rgb(var(--fx-rgb));
+    background-color: rgb(var(--fx-rgb));
     color: #1b1c1d;
     box-shadow: none;
 }
