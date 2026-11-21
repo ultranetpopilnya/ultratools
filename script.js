@@ -2129,20 +2129,24 @@ let lastConfirmedOltName = null;
                 <button type="button" class="config-onu-mode-btn" title="Режим (Реєстрація або Заміна ону)">РЕЄСТРАЦІЯ</button>
 
                 <button type="button" class="config-replace-mode-btn active" title="Заміняти попередньо доданий конфіг на новий">
-                    <i class="fa-solid fa-arrows-rotate"></i>
-                </button>
+    <i class="fa-solid fa-arrows-rotate"></i>
+    <span>Перезапис</span>
+</button>
 
-                <button type="button" class="config-pon-onu-btn" title="Додати PON-ONU до конфігу">
-                    <i class="fa-solid fa-wave-square"></i>
-                </button>
-                
-                <button type="button" class="config-show-signal-btn" title="Зберегти та показати сигнал (додати Write та Pon-power)">
-                    <i class="fa-solid fa-signal"></i>
-                </button>
+<button type="button" class="config-pon-onu-btn" title="Додати Pon-onu до конфігу">
+    <i class="fa-solid fa-wave-square"></i>
+    <span>Pon-onu</span>
+</button>
 
-                                <button type="button" class="config-clear-fields-btn" title="Очистити поля (Login, OLT, SN, Port, Vlan)">
-                    <i class="fa-solid fa-broom"></i>
-                </button>
+<button type="button" class="config-show-signal-btn" title="Зберегти та показати сигнал (додати Write та Pon-power)">
+    <i class="fa-solid fa-signal"></i>
+    <span>Сигнал</span>
+</button>
+
+               <button type="button" class="config-clear-fields-btn" title="Очистити поля (Login, OLT, SN, Port, Vlan)">
+    <i class="fa-solid fa-broom"></i>
+    <span>Очистити</span>
+</button>
                 
                 <!-- Кнопка генерації -->
                 <button type="button" class="config-generate-btn" title="Згенерувати конфіг">
@@ -2674,10 +2678,10 @@ const btnOnuMode = configPanel.querySelector('.config-onu-mode-btn');
 
 function updateOnuModeUI() {
     if (currentOnuMode === 'REG') {
-        btnOnuMode.textContent = 'РЕЄСТР';
+        btnOnuMode.textContent = 'Реєстр';
         btnOnuMode.className = 'config-onu-mode-btn active is-reg'; // Додаємо класи для твого майбутнього CSS
     } else {
-        btnOnuMode.textContent = 'ЗАМІНА';
+        btnOnuMode.textContent = 'Заміна';
         btnOnuMode.className = 'config-onu-mode-btn active is-switch';
     }
     
