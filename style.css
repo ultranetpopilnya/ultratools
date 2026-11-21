@@ -478,11 +478,11 @@ h1 {
 .container[data-content="text-templates"] h2, 
 .date-calculator-container h2, 
 .gpon-commands-container h2 {
-    position: relative;             /* <-- 1. Робить заголовок базою для позиціонування */
+    position: relative;             
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 100%;                    /* <-- 2. Заголовок займає 100% ширини і тримає центр */
+    width: 100%;                
     margin: 0;
     padding-top: 12px;
     padding-bottom: 12px;
@@ -700,7 +700,7 @@ select:focus,
     --btn-solid-bg-active: #dfe5ee;
     --btn-solid-border: rgba(15, 23, 42, 0.12);
     --btn-solid-border-hover: rgba(15, 23, 42, 0.18);
-    --btn-solid-text: #1e293b;
+    --btn-solid-text: #334155;
     --btn-solid-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.85),
         0 1px 2px rgba(15, 23, 42, 0.05);
@@ -806,6 +806,32 @@ body :is(
 /* Текст всередині Google-пігулки та фіксовані іконки кнопок */
 body .unified-pill .pill-content {
     color: var(--btn-solid-text);
+}
+
+.config-generate-btn {
+    --btn-solid-bg: #4f8f6e;
+    --btn-solid-bg-hover: #589c79;
+    --btn-solid-bg-active: #437b5e;
+    --btn-solid-border: rgba(15, 23, 42, 0.12);
+    --btn-solid-border-hover: rgba(15, 23, 42, 0.18);
+    --btn-solid-text: #ffffff;
+    --btn-solid-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.26),
+        0 1px 2px rgba(15, 23, 42, 0.10);
+    --btn-active-ring-color: #4f8f6e;
+}
+
+body.dark .config-generate-btn {
+    --btn-solid-bg: #33664e;
+    --btn-solid-bg-hover: #3b755a;
+    --btn-solid-bg-active: #2a5440;
+    --btn-solid-border: rgba(255, 255, 255, 0.14);
+    --btn-solid-border-hover: rgba(255, 255, 255, 0.22);
+    --btn-solid-text: #f1f5f9;
+    --btn-solid-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.12),
+        0 1px 3px rgba(0, 0, 0, 0.30);
+    --btn-active-ring-color: #4b8c6d;
 }
 
 body :is(
@@ -951,8 +977,6 @@ body :is(
     filter: none;
     transform: none;
     box-shadow: var(--btn-solid-shadow);
-
-    outline-color: var(--btn-active-ring-color);
 }
 
 /* 1.5. Зелене підтвердження після копіювання логіна */
@@ -970,7 +994,6 @@ html body .template-global-actions #clear-all-templates-button i {
 html body .template-global-actions #clear-all-templates-button:active {
     background-color: var(--btn-danger-bg-active) !important;
     border-color: rgba(var(--btn-danger-rgb), 0.55) !important;
-    outline-color: rgb(var(--btn-danger-rgb)) !important;
 }
 
 html body .template-global-actions #clear-all-templates-button:active i {
@@ -979,6 +1002,30 @@ html body .template-global-actions #clear-all-templates-button:active i {
 
 body .template-global-actions #clear-all-templates-button:active i {
     color: rgb(var(--btn-danger-rgb)) !important;
+}
+
+.extension-download-btn {
+    --btn-solid-bg: #2f6cc4;
+    --btn-solid-bg-hover: #3776d1;
+    --btn-solid-bg-active: #2558a3;
+    --btn-solid-border: rgba(15, 23, 42, 0.12);
+    --btn-solid-border-hover: rgba(15, 23, 42, 0.18);
+    --btn-solid-text: #ffffff;
+    --btn-solid-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.24),
+        0 1px 2px rgba(15, 23, 42, 0.12);
+}
+
+body.dark .extension-download-btn {
+    --btn-solid-bg: #29528a;
+    --btn-solid-bg-hover: #3161a3;
+    --btn-solid-bg-active: #214373;
+    --btn-solid-border: rgba(255, 255, 255, 0.14);
+    --btn-solid-border-hover: rgba(255, 255, 255, 0.22);
+    --btn-solid-text: #f1f5f9;
+    --btn-solid-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.12),
+        0 1px 3px rgba(0, 0, 0, 0.30);
 }
 
 /* ================================================================
@@ -1129,7 +1176,6 @@ body .month-stepper:has(.stepper-btn:active) {
     border-color: var(--btn-solid-border);
     box-shadow: var(--btn-solid-shadow);
     filter: none;
-    outline-color: var(--btn-active-ring-color);
     transition:
         background-color 0.22s cubic-bezier(0.4, 0, 0.2, 1),
         border-color 0.22s cubic-bezier(0.4, 0, 0.2, 1),
@@ -1202,7 +1248,6 @@ body:is(.dark, :not(.dark)) .config-onu-mode-btn:is(.is-reg, .is-switch):active 
     color: var(--btn-solid-text);
     filter: none;
     box-shadow: var(--btn-solid-shadow);
-    outline-color: var(--btn-active-ring-color);
 }
 
 /* ================================================================
@@ -1244,7 +1289,6 @@ body:is(.dark, :not(.dark)) .segment-btn:not(.active):active {
     border-color: var(--btn-solid-border);
     color: var(--btn-solid-text);
     box-shadow: var(--btn-solid-shadow);
-    outline-color: var(--btn-active-ring-color);
 }
 
 /* 5.4. Активна кнопка: зберігає акцентну заливку + 1px зовнішнє кільце */
@@ -1304,7 +1348,6 @@ body .add-tab-btn:active {
     background-color: var(--btn-ghost-bg-hover);
     color: var(--text-color);
     box-shadow: none;
-    outline-color: var(--btn-active-ring-color);
 }
 
 body .add-tab-btn.menu-open:active {
