@@ -86,7 +86,6 @@ select {
    --calc-duration-color: #188038;
     --calc-hours-color:    #1a73e8; 
     --calc-days-color:     #d93025; 
-    --button-paste-bg: #0d9488;
 
     /* MISC */
     --resize-handle-color: rgba(0, 0, 0, 0.22);
@@ -106,7 +105,6 @@ select {
     
     /* BUTTON */
     --btn-bg: #FFFFFF;
---btn-bg-hover: #FFFFFF;
     
     /* GLASS */
     --glass-white-lg: rgba(255, 255, 255, 0.88);
@@ -132,10 +130,6 @@ select {
     inset 0 3px 8px rgba(0, 0, 0, 0.03), 
     inset 0 1px 2px rgba(0, 0, 0, 0.02);
     --glass-shadow-input-focus: inset 0 1px 2px rgba(0, 0, 0, 0.03), 0 0 0 3px rgba(0, 0, 0, 0.04), 0 4px 15px rgba(0, 0, 0, 0.08);    
-    
-    --templates-shadow-inner:
-    inset 0 3px 8px rgba(0, 0, 0, 0.03), 
-    inset 0 1px 2px rgba(0, 0, 0, 0.02);
     
     --content-card-shadow:
         inset 0 1px 1px 0 rgba(255, 255, 255, 0.9),
@@ -173,7 +167,6 @@ color-scheme: dark;
     --primary-accent-color: #d69b2d;
     --primary-accent-shadow: #705521;
     --secondary-accent-color: #d69b2d;
-    --primary-white-accent-color: #4f6df5;
 
     /* STATUS */
     --danger-color: #df3333;
@@ -209,8 +202,7 @@ color-scheme: dark;
     --snow-color: #cbd5e1;
     
     /*BUTTON */
---btn-bg:          #3A3A3A;   
---btn-bg-hover:     #3A3A3A;   
+--btn-bg:          #3A3A3A;     
 
     /* BACKGROUNDS */
 --panel-bg:          #262626;
@@ -248,10 +240,6 @@ color-scheme: dark;
     inset 0 1px 2px rgba(0, 0, 0, 0.1);
 
     --glass-shadow-input-focus: inset 0 1px 2px rgba(0, 0, 0, 0.2), 0 0 0 3px rgba(255, 255, 255, 0.08), 0 4px 15px rgba(0, 0, 0, 0.25);
-    
-    --templates-shadow-inner:
-    inset 0 3px 8px rgba(0, 0, 0, 0.15), 
-    inset 0 1px 2px rgba(0, 0, 0, 0.1);
 
     --content-card-shadow:
         inset 0 1px 1px 0 rgba(255, 255, 255, 0.06),
@@ -643,14 +631,11 @@ input, textarea, select, .date-input-group input, #fullNameInput {
 }
 
 .speed-dropdown.open .speed-dropdown-toggle,
-.template-field-group:focus-within,
-#qn-input:focus,
 input:focus:not([type="button"]):not([type="submit"]),
 textarea:focus,
 select:focus,
 .textarea-wrapper:focus,
-.date-input-group input:focus,
-#fullNameInput:focus {
+.date-input-group input:focus {
     border-color: var(--input-focus-border-color) !important;
     box-shadow: var(--glass-shadow-input-focus);
     transition: box-shadow 0.3s ease, border-color 0.3s ease;
@@ -1006,10 +991,6 @@ html body .template-global-actions #clear-all-templates-button:active {
     border-color: rgba(var(--btn-danger-rgb), 0.55) !important;
 }
 
-html body .template-global-actions #clear-all-templates-button:active i {
-    color: rgb(var(--btn-danger-rgb)) !important;
-}
-
 body .template-global-actions #clear-all-templates-button:active i {
     color: rgb(var(--btn-danger-rgb)) !important;
 }
@@ -1137,6 +1118,51 @@ body :is(
 ):active {
     background-color: var(--btn-danger-bg-active) !important;
     color: rgb(var(--btn-danger-rgb)) !important;
+}
+
+/* ================================================================
+   2.5. КНОПКА АВТООЧИЩЕННЯ КАЛЬКУЛЯТОРА (#calc-auto-clear-btn)
+   ================================================================ */
+
+body #calc-auto-clear-btn {
+    position: relative;
+    border: 1px solid transparent; /* резервує місце всередині 30px, без стрибка розміру */
+    transition:
+        background-color 0.22s cubic-bezier(0.4, 0, 0.2, 1),
+        color 0.22s cubic-bezier(0.4, 0, 0.2, 1),
+        border-color var(--btn-ring-speed) ease !important;
+}
+
+/* Увімкнена: легка червона заливка + червона іконка + внутрішній червоний бордер */
+body #calc-auto-clear-btn.active {
+    background-color: rgba(var(--btn-danger-rgb), 0.12);
+    color: rgb(var(--btn-danger-rgb));
+    border-color: rgb(var(--btn-danger-rgb));
+    box-shadow: none;
+}
+
+@media (hover: hover) {
+    body #calc-auto-clear-btn.active:hover {
+        background-color: rgba(var(--btn-danger-rgb), 0.18);
+        color: rgb(var(--btn-danger-rgb));
+        border-color: rgb(var(--btn-danger-rgb));
+        box-shadow: none;
+    }
+}
+
+body #calc-auto-clear-btn.active:active {
+    background-color: rgba(var(--btn-danger-rgb), 0.25);
+    color: rgb(var(--btn-danger-rgb));
+    border-color: rgb(var(--btn-danger-rgb));
+    box-shadow: none;
+}
+
+/* Стан "Тільки що стерто" (зелена галочка + внутрішній зелений бордер) */
+body #calc-auto-clear-btn.just-cleared {
+    background-color: color-mix(in srgb, var(--success-color) 12%, transparent);
+    color: var(--success-color) !important;
+    border-color: var(--success-color);
+    box-shadow: none;
 }
 
 /* ================================================================
@@ -1505,9 +1531,7 @@ button:disabled, input:disabled, select:disabled {
 }
 
 body.dark .tabs {
-    background-color: var(--tabstrip-bg);
     background-image: none;
-    border: 1px solid var(--panel-border);
 }
 
 .tab-button {
@@ -1569,8 +1593,6 @@ body.dark .tabs {
 }
 
 body.dark .tab-button.active {
-    background-color: var(--active-bg);
-    color: var(--primary-accent-color);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.06);
 }
 
@@ -1682,129 +1704,6 @@ body.dark .tab-button:hover:not(.active) {
     transition: all 0.05s ease-out;
 }
 
-body.dark .add-tab-item:hover {
-    background-color: var(--text-hover); 
-    color: var(--secondary-accent-color);
-}
-
-/* Темна тема: add tab item — ховер */
-body.dark .add-tab-item:hover i {
-    color: var(--secondary-accent-color);
-}
-
-/* --- 2. КНОПКА ЗАКРИТТЯ (ХРЕСТИК) --- */
-.close-tab-btn {
-    --fx-rgb: 226, 85, 85;
-    position: absolute;
-    right: 14px;
-
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-
-    border: none;
-    background: transparent;
-    cursor: pointer;
-    padding: 0;
-
-    opacity: 0;
-    color: var(--text-color);
-    transition: transform 0.2s ease, opacity 0.2s ease, background-color 0.2s ease, color 0.2s ease;
-
-    z-index: 3 !important;
-}
-
-body.dark .close-tab-btn {
-    --fx-rgb: 240, 90, 80;
-}
-
-/* Приховуємо стандартні іконки/текст (якщо є в HTML) */
-.close-tab-btn i,
-.close-tab-btn span {
-    display: none !important;
-}
-
-/* Малюємо хрестик через CSS */
-.close-tab-btn::before,
-.close-tab-btn::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 14px;
-    height: 1.5px;
-    background-color: currentColor;
-    border-radius: 1px;
-}
-
-.close-tab-btn::before { transform: translate(-50%, -50%) rotate(45deg); }
-.close-tab-btn::after  { transform: translate(-50%, -50%) rotate(-45deg); }
-
-/* Показуємо при наведенні на саму вкладку */
-.tab-button:hover .close-tab-btn,
-.tab-button.active .close-tab-btn {
-    opacity: 0.6;
-}
-
-@media (hover: hover) {
-    .close-tab-btn:hover {
-        opacity: 1 !important;
-        background-color: rgba(var(--fx-rgb), 0.14);
-        color: rgb(var(--fx-rgb));
-        box-shadow: 0 0 0 2px rgba(var(--fx-rgb), 0.12);
-    }
-
-    body.dark .close-tab-btn:hover {
-        background-color: rgba(var(--fx-rgb), 0.18);
-        color: #ffffff;
-        box-shadow: 0 0 0 2px rgba(var(--fx-rgb), 0.12);
-    }
-}
-
-.close-tab-btn:active,
-body.dark .close-tab-btn:active {
-    background-color: var(--danger-color) !important;
-    color: white !important;
-}
-
-/* --- 2. КНОПКА ЗАКРИТТЯ ВКЛАДКИ (ХРЕСТИК) --- */
-.close-tab-btn {
-    position: absolute;
-    right: 14px;
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    cursor: pointer;
-    padding: 0;
-    opacity: 0;
-    z-index: 3 !important;
-}
-
-.close-tab-btn i,
-.close-tab-btn span {
-    display: none !important;
-}
-
-.close-tab-btn::before,
-.close-tab-btn::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 14px;
-    height: 1.5px;
-    background-color: currentColor;
-    border-radius: 1px;
-}
-
-.close-tab-btn::before { transform: translate(-50%, -50%) rotate(45deg); }
-.close-tab-btn::after  { transform: translate(-50%, -50%) rotate(-45deg); }
-
-.tab-button:hover .close-tab-btn,
-.tab-button.active .close-tab-btn {
-    opacity: 0.75;
-}
-
 /* --- 3. КНОПКА ДОДАТИ ВКЛАДКУ (ПЛЮС) --- */
 .add-tab-wrapper {
     position: relative;
@@ -1882,7 +1781,6 @@ body.dark .close-tab-btn:active {
 /* --- ТЕМНА ТЕМА ДЛЯ МЕНЮ --- */
 body.dark .add-tab-menu {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 2px 10px rgba(0, 0, 0, 0.3);
-    background-color: var(--menu-bg);
 }
 
 /* --- КНОПКА-РУЧКА --- */
@@ -2493,16 +2391,6 @@ body.dark .moon-icon {
     to   { transform: scaleX(0); }
 }
 
-/* --- Фолбек на системну тему, якщо data-theme ще не виставлено --- */
-@media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-        --notification-bg: rgba(30, 30, 32, 0.75);
-        --notification-text: #f2f2f2;
-        --notification-border: rgba(255, 255, 255, 0.12);
-        --notification-shine: rgba(255, 255, 255, 0.08);
-    }
-}
-
 /* ================================================================
    5. ІНСТРУМЕНТ — ГЕНЕРАТОР ЛОГІНІВ ТА ІСТОРІЯ
    Стилі для генерації ПІБ, панель керування логінами та блок історії 
@@ -2510,11 +2398,15 @@ body.dark .moon-icon {
    ================================================================ */
 
 /* Налаштування контейнера */
-
-.login-generator-container .content-card {
+.container.login-generator-container .content-card {
+    height: auto !important;
+    max-height: 100% !important;
+    display: flex !important;
+    flex-direction: column;
+    min-height: 0;
     padding-bottom: 0px;
     overflow-y: auto !important;
-    scrollbar-gutter: stable both-edges; 
+    scrollbar-gutter: stable both-edges;
 }
 
 .container.login-generator-container.active {
@@ -2526,26 +2418,6 @@ body.dark .moon-icon {
     flex-direction: column;
     justify-content: flex-start !important;
     padding-bottom: 0 !important;
-}
-
-/* Біла картка зі скролом */
-.container.login-generator-container .content-card {
-    height: auto !important;
-    max-height: 100% !important;
-    
-    display: flex !important;
-    flex-direction: column;
-    min-height: 0;
-    
-    padding-bottom: 0px;
-    overflow-y: auto !important;
-    scrollbar-gutter: stable both-edges;
-}
-
-/* Активний стан картки зі скролом */
-.container.login-generator-container.active .content-card {
-    overflow-y: auto !important;
-    scrollbar-gutter: stable both-edges;
 }
 
 /* === ПАНЕЛЬ КНОПОК ПІД ПОЛЕМ ВВОДУ ПІБ === */
@@ -2839,7 +2711,6 @@ body.dark .login-generator-container .result-type-badge {
 }
 
 .history-toggle-btn:hover { color: var(--primary-accent-color); }
-body.dark .history-toggle-btn:hover { color: var(--secondary-accent-color); }
 
 .history-title {
     display: inline-flex;
@@ -2971,10 +2842,6 @@ body.dark .history-item {
     background-color: var(--menu-bg);   /* #363636 — світліше за panel-bg, картка "спливає" */
 }
 
-body.dark .history-item::before {
-    background: var(--secondary-accent-color);
-}
-
 .history-item:hover {
     border-color: var(--primary-accent-color);
 }
@@ -3088,15 +2955,6 @@ body.dark .history-item::before {
    підсвітка синтаксису (highlighter), пошук/заміна тексту та 
    генератор GPON конфігів з випадаючим списком OLT.
    ================================================================ */
-
-/* container */
-.container[data-content="text-templates"] {
-    height: 100%;
-    width: 100%;
-    scrollbar-gutter: auto;
-    overflow: hidden !important; 
-}
-
 /* Об'єднаний та чистий стиль */
 .container[data-content="text-templates"] .content-card {
     overflow: hidden !important;
@@ -3128,14 +2986,16 @@ body.dark .history-item::before {
 /* === СТАН 3: Є ХОЧА Б 1 ШАБЛОН -> ПОВНА ШИРИНА (100%) === */
 /* ======================================================== */
 .container[data-content="text-templates"] {
+    height: 100%;
+    width: 100% !important;
+    margin: 0 auto;
+    scrollbar-gutter: auto;
+    overflow: hidden !important;
     transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1),
                 height 0.4s ease,
                 transform 0.3s ease-in-out,
                 opacity 0.3s ease-in-out,
                 visibility 0.3s !important;
-
-    width: 100% !important; /* Коли є шаблони — завжди 100% */
-    margin: 0 auto;
 }
 
 /* ======================================================== */
@@ -3174,7 +3034,6 @@ body.dark .history-item::before {
 }
 
 body.dark .empty-templates-message {
-    border-color: var(--input-border-color);
     background-color: rgba(255, 255, 255, 0.02);
 }
 
@@ -3743,12 +3602,6 @@ body.dark .template-drag-placeholder {
     border-color: var(--primary-accent-color) !important;
 }
 
-/* Темна тема: підсвічуємо оранжевим ТІЛЬКИ активне поле вводу */
-body.dark .template-field-group .template-name-input:focus,
-body.dark .template-field-group .textarea-wrapper:focus-within {
-    border-color: var(--secondary-accent-color) !important;
-}
-
 /* === СТИЛІ ДЛЯ НОВОЇ ФУНКЦІЇ ПІДСВІТКИ СЛІВ === */
 .highlighting-container {
     position: relative;
@@ -3774,34 +3627,23 @@ body.dark .template-field-group .textarea-wrapper:focus-within {
     border-radius: 4px;
 }
 
-/* Темна тема: highlighter backdrop */
-body.dark .highlighter-backdrop mark {
-background-color: var(--highlight-bg-color);
-color: transparent;
-z-index: 3;
-}
-
 .template-field-group .highlighting-container textarea:focus {
     box-shadow: none !important;
 }
 
 .highlighter-backdrop, .template-field-group textarea {
-    /* Синхронізація геометрії */
     margin: 0;
     padding: 10px;
-    border: none; /* Внутрішній бордер тепер не потрібен */
+    border: none; 
     border-radius: 0;
     width: 100%;
     height: 100%;
     
-    /* Синхронізація шрифтів */
     font-family: 'Fira Code', monospace !important; 
     font-size: 14px;
     line-height: 1.5;
     letter-spacing: normal;
     white-space: pre-wrap;
-    overflow-wrap: normal;
-    word-break: normal;
 }
 
 .textarea-wrapper {
@@ -3814,8 +3656,7 @@ z-index: 3;
     border-radius: 12px;
     overflow: hidden;
     contain: paint layout;
-
-    box-shadow: var(--templates-shadow-inner)
+    box-shadow: var(--glass-shadow-input);
 }
 
 .line-marker-gutter {
@@ -4052,12 +3893,6 @@ body.dark .line-marker {
     flex: 1;
 }
 
-/* search inputs row — фокус */
-.search-inputs-row input:focus,
-.search-inputs-row select:focus {
-    border-color: var(--primary-accent-color);
-}
-
 /* Темна тема: search inputs row */
 body.dark .search-inputs-row select option {
     background-color: var(--input-bg-color);
@@ -4213,7 +4048,6 @@ body.dark .search-inputs-row select option {
 /* config row — фокус */
 .config-row input:focus,
 .config-row select:focus {
-    border-color: var(--primary-accent-color);
     box-shadow: 0 0 0 2px rgba(79, 109, 245, 0.15);
 }
 
@@ -4345,8 +4179,6 @@ body.dark .search-inputs-row select option {
 
 body.dark .login-dropdown-list {
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25), 0 1px 4px rgba(0, 0, 0, 0.15);
-    background-color: var(--menu-bg);
-    border-color: var(--input-border-color);
 }
 
 /* 3. Відкритий стан */
@@ -4577,7 +4409,6 @@ body.dark .variant-badge {
 }
 
 .config-onu-mode-btn:hover {
-    transform: translateY(0px);
     z-index: 2;
 }
 
@@ -4655,9 +4486,8 @@ body.dark .variant-badge {
 
 /* Темна тема: olt dropdown list */
 body.dark .olt-dropdown-list {
+    --scrollbar-track: rgba(255, 255, 255, 0.12);
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25), 0 1px 4px rgba(0, 0, 0, 0.15);
-    border: 1px solid var(--input-border-color);
-    background-color: var(--menu-bg);
 }
 
 /* olt dropdown list — відкритий стан */
@@ -4675,10 +4505,6 @@ body.dark .olt-dropdown-list {
     --scrollbar-thumb-width-hover: 2px;
     --scrollbar-track: rgba(0, 0, 0, 0.1);
     scrollbar-gutter: stable;
-}
-
-body.dark .olt-dropdown-list {
-    --scrollbar-track: rgba(255, 255, 255, 0.12);
 }
 
 .olt-dropdown-list::-webkit-scrollbar-track {
@@ -4703,11 +4529,6 @@ body.dark .olt-dropdown-list {
     opacity: 0.7;
     user-select: none;
     pointer-events: none;
-}
-
-/* Темна тема: olt group header */
-body.dark .olt-group-header {
-    color: var(--secondary-accent-color);
 }
 
 /* Роздільник між групами */
@@ -4760,13 +4581,6 @@ body.dark .olt-group-header {
 .olt-dropdown-item.active {
     background-color: var(--text-hover);
     color: var(--primary-accent-color);
-}
-
-/* Темна тема: olt dropdown item — ховер */
-body.dark .olt-dropdown-item:hover,
-body.dark .olt-dropdown-item.active {
-    background-color: var(--text-hover);
-    color: var(--secondary-accent-color);
 }
 
 /* === КНОПКИ ПРОКРУТКИ ДЛЯ ШАБЛОНІВ === */
@@ -4925,12 +4739,6 @@ body.dark .speed-dropdown-list {
     color: var(--primary-accent-color);
 }
 
-body.dark .speed-dropdown-item:hover,
-body.dark .speed-dropdown-item.active {
-    background-color: var(--text-hover);
-    color: var(--secondary-accent-color);
-}
-
 /* Ширина під конкретні місця використання */
 .config-row .speed-dropdown.config-speed-dropdown {
     flex: 0 0 100px;
@@ -5086,11 +4894,6 @@ body.dark .date-calculator-container .date-input-group input[type="time"] {
     box-shadow: var(--glass-shadow-outer);
 }
 
-body.dark .date-calculator-container #result-section {
-    border: 1px solid var(--input-border-color);
-    box-shadow: var(--glass-shadow-outer); 
-}
-
 /* Стилізуємо заголовок-шапку з високим контрастом */
 .date-calculator-container #result-section h2 {
     margin: 0;
@@ -5108,12 +4911,6 @@ body.dark .date-calculator-container #result-section {
     padding: 15px;
     background-color: var(--panel-bg);
 	border-radius: 0px; 
-}
-
-
-/* Темна тема: date calculator container */
-body.dark .date-calculator-container #result-section #result-display {
-    background-color: var(--panel-bg);
 }
 
 /* Темна тема: date calculator container */
@@ -5311,8 +5108,6 @@ body.dark #auto-reset-button:focus-visible {
 
 #auto-reset-button:disabled {
     opacity: 0.5;
-    cursor: not-allowed;
-    pointer-events: none;
     box-shadow: none;
 }
 
@@ -5344,7 +5139,6 @@ body.dark #auto-reset-button:focus-visible {
 /* Спокійний стан кільця */
 .progress-ring-bg { stroke: rgba(128, 128, 128, 0.25); }
 .progress-ring-fg {
-    stroke: rgb(var(--fx-rgb));
     stroke-dasharray: 69.1; 
     stroke-dashoffset: 69.1;
 }
@@ -5424,48 +5218,6 @@ body.dark .calc-title { color: var(--text-color); }
     backface-visibility: hidden;
 }
 
-/* Кнопка автоочищення */
-#calc-auto-clear-btn {
-    position: relative;
-    border: none;
-    outline: var(--btn-ring-width) solid transparent;
-    outline-offset: var(--btn-ring-offset);
-    transition:
-        background-color 0.22s cubic-bezier(0.4, 0, 0.2, 1),
-        color 0.22s cubic-bezier(0.4, 0, 0.2, 1),
-        outline-color var(--btn-ring-speed) ease !important;
-}
-
-/* Увімкнений стан: акцент теми + зовнішнє 1px кільце (без старої червоної inset-рамки) */
-#calc-auto-clear-btn.active {
-    background-color: var(--btn-ghost-bg);
-    color: rgb(var(--btn-accent-rgb));
-    box-shadow: none;
-    outline-color: var(--btn-active-ring-color);
-}
-
-@media (hover: hover) {
-    #calc-auto-clear-btn.active:hover {
-        background-color: var(--btn-ghost-bg-hover);
-        color: rgb(var(--btn-accent-rgb));
-        box-shadow: none;
-    }
-}
-
-#calc-auto-clear-btn.active:active {
-    background-color: var(--btn-ghost-bg-active);
-    color: rgb(var(--btn-accent-rgb));
-    box-shadow: none;
-}
-
-/* Стан "Тільки що стерто" (зелена галочка + зелене 1px кільце) */
-#calc-auto-clear-btn.just-cleared {
-    background-color: var(--btn-ghost-bg);
-    color: var(--success-color) !important;
-    box-shadow: none;
-    outline-color: var(--success-color);
-}
-
 /* === ЕКРАН === */
 .calc-display-container {
     background-color: var(--input-bg-color); 
@@ -5480,11 +5232,6 @@ body.dark .calc-title { color: var(--text-color); }
     flex-direction: column;
     justify-content: flex-end;
     box-shadow: var(--glass-shadow-input);
-}
-
-/* Темна тема: calc display container */
-body.dark .calc-display-container {
-    border-color: var(--input-border-color);
 }
 
 #calc-prev-operation {
@@ -5791,7 +5538,6 @@ body.dark .calc-history-panel {
 /* Темна тема: hist item — ховер */
 body.dark .hist-item:hover {
     background-color: rgba(255,255,255,0.08);
-    border-right-color: var(--secondary-accent-color);
 }
 
 /* Кнопка "Приховати" у стилі клавіш калькулятора Win11 */
@@ -5858,77 +5604,53 @@ body.dark .hist-close-btn:active {
    обладнання, підкоманди, що розгортаються (акордеон).
    ================================================================ */
 
-.container.gpon-commands-container {
-    /* Висота "авто" (по контенту), але не більше екрана */
-    height: auto !important; 
-    max-height: 100%; 
-    min-height: 0;
-    
-    display: flex !important;
-    flex-direction: column;
-    justify-content: flex-start !important;
-    padding-bottom: 0 !important;
-    
-    /* Забороняємо скрол на самому контейнері, щоб не було подвійних смуг */
-    overflow: hidden !important;
-    
-}
-
-/* Налаштування контейнера */
-.container.gpon-commands-container.active {
-    height: auto !important;
-    max-height: 100%;
-    min-height: 0 !important;
-    
-    display: flex !important;
-    flex-direction: column;
-    justify-content: flex-start !important;
-    padding-bottom: 0 !important;
-}
-
-/* Біла картка (скрол прихований) */
-.container.gpon-commands-container .content-card {
-    height: auto !important;
-    max-height: 100% !important;
-    
-    display: flex !important;
-    flex-direction: column;
-    min-height: 0;
-    
-    overflow: hidden !important;
-}
-
-/* Активний стан картки */
-.container.gpon-commands-container.active .content-card {
-    overflow: hidden !important;
-}
-
-/* ========================================= */
-/* === РОЗУМНІ КОЛОНКИ ДЛЯ КОМАНД (АВТО-ШИРИНА) === */
-/* ========================================= */
 /* 1. Базовий контейнер */
 .container.gpon-commands-container {
-    /* Центруємо надійно, без зсувів, щоб уникнути конфлікту з шириною */
     left: 0;
     right: 0;
-    
-    /* Залишаємо тільки scale для закритого стану (без translateX) */
-    transform: scale(0.97); 
-    
-    --dynamic-width: 94%; 
+    --dynamic-width: 94%;
     max-width: var(--dynamic-width);
-    
+
+    /* Висота "авто" (по контенту), але не більше екрана */
+    height: auto !important;
+    max-height: 100%;
+    min-height: 0;
+
+    display: flex !important;
+    flex-direction: column;
+    justify-content: flex-start !important;
+    padding-bottom: 0 !important;
+    overflow: hidden !important;
+
+    /* Залишаємо тільки scale для закритого стану (без translateX) */
+    transform: scale(0.97);
     transition: max-width 0.4s cubic-bezier(0.25, 1, 0.5, 1),
-                opacity 0.3s ease-in-out, 
+                opacity 0.3s ease-in-out,
                 transform 0.3s ease-in-out !important;
 }
 
-/* Обов'язково перевизначаємо відкритий стан, щоб не повернувся translateX */
+/* 2. Відкритий стан:
+   - transform: scale(1) щоб не повернувся translateX(-50%) з .container.active
+   - height/min-height з !important щоб @media .container.active (на 1366x768) не розтягнув блок на 100% */
 .container.gpon-commands-container.active {
+    height: auto !important;
+    min-height: 0 !important;
+    padding-bottom: 0 !important;
     transform: scale(1);
 }
 
-/* container */
+/* 3. Картка всередині (скрол тільки в .command-list, плюс відступ знизу) */
+.container.gpon-commands-container .content-card {
+    height: auto !important;
+    max-height: 100% !important;
+    display: flex !important;
+    flex-direction: column;
+    min-height: 0;
+    padding-bottom: 13px;
+    overflow: hidden !important;
+}
+
+/* === РОЗУМНІ КОЛОНКИ ДЛЯ КОМАНД (АВТО-ШИРИНА) === */
 .container.gpon-commands-container:has(.segment-btn.active[onclick*="'gpon'"])  { --dynamic-width: 98%; }
 .container.gpon-commands-container:has(.segment-btn.active[onclick*="'epon'"])  { --dynamic-width: 58%; }
 .container.gpon-commands-container:has(.segment-btn.active[onclick*="'bdcom'"]) { --dynamic-width: 58%; }
@@ -5936,16 +5658,7 @@ body.dark .hist-close-btn:active {
 
 /* Розширений стан контейнера (на великих моніторах) */
 .container.gpon-commands-container.expanded-layout {
-    --dynamic-width: 94%; 
-}
-
-.container[data-content="gpon-commands"] .content-card {
-    height: 100%;
-    overflow: hidden;      /* картка більше не скролиться сама */
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-    padding-bottom: 13px;
+    --dynamic-width: 94%;
 }
 
 /* Стилі для статичного напису-підказки */
@@ -6038,10 +5751,6 @@ body.dark #static-clarification-message {
     transform: translate(0, -50%) scale(1);
 }
 
-body.dark .info-tooltip-wrapper:hover .info-icon {
-    color: var(--secondary-accent-color);
-}
-
 /* Сама бульбашка з текстом */
 .info-tooltip-text {
     position: absolute;
@@ -6083,14 +5792,7 @@ body.dark .info-tooltip-wrapper:hover .info-icon {
 }
 
 body.dark .info-tooltip-text {
-    background-color: var(--input-bg-color);
-    color: var(--text-color);
-    border: 1px solid var(--input-border-color);
     box-shadow: 0 4px 25px rgba(0, 0, 0, 0.6);
-}
-
-body.dark .info-tooltip-text::after {
-    border-color: transparent var(--input-bg-color) transparent transparent;
 }
 
 /* Рамка для хвостика в темній темі, щоб не зливався */
@@ -6175,16 +5877,6 @@ body.dark .info-tooltip-text::before {
 .command-item:hover {
     background-color: var(--text-hover); 
     box-shadow: none; 
-}
-
-/* Темна тема: command item — ховер */
-body.dark .command-item:hover {
-    background-color: var(--text-hover); 
-}
-
-/* command item — активний стан */
-.command-item:active {
-    background-color: var(--btn-bg-hover);
 }
 
 .command-text {
@@ -6311,11 +6003,6 @@ body.dark .sub-command-item:active {
     color: var(--primary-accent-color); /* Інший колір для підкоманд */
 }
 
-/* Темна тема: sub command item */
-body.dark .sub-command-item .command-text {
-    color: var(--secondary-accent-color); /* Інший колір для підкоманд */
-}
-
 /* Іконка стрілочки (Chevron) */
 .chevron-icon {
     margin-left: 10px;
@@ -6340,12 +6027,6 @@ body.dark .sub-command-item .command-text {
 .command-item.has-subcommands .command-text:hover {
     color: var(--text-color);
     border-bottom-color: var(--primary-accent-color);
-}
-
-/* Темна тема: command item — ховер */
-body.dark .command-item.has-subcommands .command-text:hover {
-    color: var(--text-color);
-    border-bottom-color: var(--secondary-accent-color);
 }
 
 /* Сама плашка тепер має курсор "pointer" (рука), що натякає на відкриття */
@@ -6544,13 +6225,11 @@ body.dark #qn-input {
 /* Фокус поля вводу (Світіння) */
 #qn-input:focus { 
     background: #fff;
-    border-color: var(--primary-accent-color); 
 }
 
 /* Темна тема: qn input — фокус */
 body.dark #qn-input:focus { 
     background: var(--input-bg-color);
-    border-color: var(--secondary-accent-color); 
 }
 
 .qn-add-btn {
@@ -6751,8 +6430,8 @@ body.dark .qn-placeholder {
 }
 
 .qn-action-btn i {
-    font-size: var(--btn-ghost-icon-size);;
-    line-height: var(--btn-ghost-icon-size);;
+    font-size: var(--btn-ghost-icon-size);
+    line-height: var(--btn-ghost-icon-size);
     text-align: center;
 }
 
