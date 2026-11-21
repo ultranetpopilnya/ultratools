@@ -684,6 +684,12 @@ select:focus,
    ================================================================ */
 
 :root {
+    --btn-gap-xs: 2px;
+    --btn-gap-sm: 4px;
+    --btn-gap: 6px;
+    --btn-gap-lg: 10px;
+    --btn-ghost-icon-size: 14px;
+
     --fx-rgb: 79, 109, 245;
     --btn-accent-rgb: 79, 109, 245;
     --btn-ring-speed: 0.4s;
@@ -994,7 +1000,7 @@ body :is(
     .calc-copy-btn,
     .hist-clear-btn
 ) {
-    background-color: var(--btn-ghost-bg);
+    background-color: transparent;
     border: none;
     box-shadow: none;
     color: var(--btn-solid-text);
@@ -1006,7 +1012,7 @@ body :is(
 
 /* Хрестик на вкладці: Ghost-стиль зі збереженням плавної появи */
 body .close-tab-btn {
-    background-color: var(--btn-ghost-bg);
+    background-color: transparent;
     border: none;
     box-shadow: none;
     color: var(--btn-solid-text);
@@ -1829,7 +1835,8 @@ body.dark .add-tab-menu {
 /* --- КНОПКА-РУЧКА --- */
 .drag-handle {
     cursor: grab;
-    padding: 0 4px;
+    padding: 0;
+    width: 26px;
     color: var(--text-color);
     opacity: 0.35;
     display: flex;
@@ -2127,7 +2134,7 @@ body.dark .version-number {
 }
 
 /* extension buttons group */
-.extension-buttons-group { display: flex; align-items: center; gap: 6px; }
+.extension-buttons-group { display: flex; align-items: center; gap: var(--btn-gap); }
 
 .extension-download-btn {
     display: inline-flex;
@@ -2693,9 +2700,9 @@ body.dark .login-generator-container .result-type-badge {
 .login-generator-container .result-item .actions-wrapper {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: var(--btn-gap);
     flex-shrink: 0; 
-    align-self: center; /* замість flex-end */
+    align-self: center; 
 }
 
 /* --- КНОПКИ РЕЗУЛЬТАТУ ЛОГІНІВ --- */
@@ -2708,7 +2715,7 @@ body.dark .login-generator-container .result-type-badge {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 0.95rem;
+    font-size: var(--btn-ghost-icon-size);
     cursor: pointer;
 }
 
@@ -2827,7 +2834,7 @@ body.dark .history-toggle-btn.active #history-arrow {
     height: 32px;
     margin: 0 7px 0 0;
     border-radius: 50%;
-    font-size: 1rem;
+    font-size: var(--btn-ghost-icon-size);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2934,6 +2941,7 @@ body.dark .history-item::before {
     width: 28px;
     height: 28px;
     padding: 0;
+    font-size: var(--btn-ghost-icon-size);
     border-radius: 50%;
     flex-shrink: 0;
     display: flex;
@@ -3472,7 +3480,7 @@ body.dark .fancy-divider {
 .template-global-actions {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: var(--btn-gap-lg);
     margin-bottom: 11px;
     padding-right: 20px;
 }
@@ -3553,9 +3561,9 @@ body.dark .fancy-divider {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 4px;
-    flex-shrink: 0; 
-    padding: 5px;
+    gap: var(--btn-gap);
+    flex-shrink: 0;
+    padding: 5px; 
     user-select: none;
 }
 
@@ -3577,9 +3585,9 @@ body.dark .fancy-divider {
     justify-content: flex-end;
     display: flex;
     align-items: center;
-    gap: 1px;
-    margin-top: 0; 
-    flex-shrink: 0; 
+    gap: var(--btn-gap-xs);
+    margin-top: 0;
+    flex-shrink: 0;
 }
 
 .template-actions button {
@@ -3591,7 +3599,7 @@ body.dark .fancy-divider {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 0.95rem;
+    font-size: var(--btn-ghost-icon-size);
     position: relative;
     z-index: 1;
     transform: translateZ(0);
@@ -3602,9 +3610,9 @@ body.dark .fancy-divider {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 16px;
-    height: 16px;
-    font-size: 0.95rem;
+    width: var(--btn-ghost-icon-size);
+height: var(--btn-ghost-icon-size);
+font-size: var(--btn-ghost-icon-size);
     line-height: 1;
     pointer-events: none;
     transform: translateZ(0);
@@ -3622,11 +3630,11 @@ body.dark .fancy-divider {
 
 /* --- СУЧАСНІ РОЗДІЛЮВАЧІ МІЖ КНОПКАМИ --- */
 .action-separator {
-    width: 1px; /* Зробили дуже тонким */
-    height: 14px; /* Коротшим за кнопки */
-    background-color: rgba(0, 0, 0, 0.2); /* Дуже прозорий */
+    width: 1px;
+    height: 14px;
+    background-color: rgba(0, 0, 0, 0.2);
     border-radius: 2px;
-    margin: 0 2px;
+    margin: 0;
 }
 
 /* Для темної теми */
@@ -3847,40 +3855,34 @@ body.dark .line-marker {
 
 /* === ІДЕАЛЬНИЙ ІНТЕГРОВАНИЙ СТИЛЬ ПОШУКУ (ДВОКОЛОНКОВИЙ) === */
 .template-search-bar {
-    position: relative; 
-    
+    position: relative;
     align-self: stretch;
     width: auto;
-    margin: 0 6px; 
-    
-    z-index: 5; 
+    margin: 0 5px;
+    z-index: 5;
     display: flex;
     flex-direction: column;
-    align-items: center; 
+    align-items: center;
     justify-content: center;
-    
     background-color: var(--panel-bg);
     border-radius: 12px;
     border: 0px solid transparent;
     box-sizing: border-box;
-    
-    /* Анімація (закрито) */
     max-height: 0;
     min-height: 0;
     opacity: 0;
-    overflow: hidden; 
+    overflow: hidden;
     padding: 0 6px;
-    transform: translateY(-10px) scale(0.98); 
-    pointer-events: none; 
-    
+    transform: translateY(-10px) scale(0.98);
+    pointer-events: none;
     transition:
-    max-height 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-    min-height 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-    opacity 0.2s ease-in-out,
-    transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-    margin 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-    padding 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-    border-color 0.25s ease;
+        max-height 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+        min-height 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+        opacity 0.2s ease-in-out,
+        transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+        margin 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+        padding 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+        border-color 0.25s ease;
 }
 
 .template-search-bar.active {
@@ -3905,32 +3907,29 @@ body.dark .line-marker {
 /* 4. Внутрішня сітка пошуку (АБСОЛЮТНЕ ЦЕНТРУВАННЯ ВМІСТУ) */
 .search-panel-columns {
     display: flex;
-    width: max-content; /* ВАЖЛИВО: тримає кнопки разом по центру */
-    max-width: 100%;    /* ВАЖЛИВО: не дає їм вилізти за 6px при звуженні */
-    margin: 0px;   
-    gap: 5px;
+    width: max-content;
+    max-width: 100%;
+    margin: 0;
+    gap: var(--btn-gap);
     box-sizing: border-box;
-    align-items: flex-end; 
+    align-items: flex-end;
 }
 
-/* 5. Ліва колонка пошуку */
 .search-col-left {
-    flex: 0 1 420px; /* БУЛО 384px. Збільшили через додані іконки */
+    flex: 0 1 420px;
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: var(--btn-gap);
 }
 
-/* 6. Права колонка швидкості */
 .search-col-right {
-    /* Фіксуємо праву колонку, щоб вона не стискалась і не розширювалась */
-    flex: 0 0 110px; 
+    flex: 0 0 110px;
     width: 110px;
-    padding-left: 5px; /* Зсунули трохи вправо від пунктирної лінії */
+    padding-left: var(--btn-gap);
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: var(--btn-gap);
     border-left: 1px dashed var(--input-border-color);
 }
 
@@ -3968,7 +3967,7 @@ body.dark .line-marker {
 .search-buttons-row {
     display: flex;
     width: 100%;
-    gap: 5px;
+    gap: var(--btn-gap);
 }
 
 /* ІНПУТИ ТА СЕЛЕКТ (однаковий стиль) */
@@ -4031,7 +4030,7 @@ body.dark .search-inputs-row select option {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 14px;
+    font-size: var(--btn-ghost-icon-size);
     cursor: pointer;
 }
 
@@ -4039,11 +4038,11 @@ body.dark .search-inputs-row select option {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 16px;
-    height: 16px;
+    width: var(--btn-ghost-icon-size);
+    height: var(--btn-ghost-icon-size);
+    font-size: var(--btn-ghost-icon-size);
     margin: 0;
     padding: 0;
-    font-size: 14px;
     line-height: 1;
     transform-origin: 50% 50%;
     transform: translateZ(0);
@@ -4069,21 +4068,16 @@ body.dark .search-inputs-row select option {
     position: relative;
     width: calc(100% - 10px);
     margin: 0 5px !important;
-    
     background-color: var(--panel-bg);
     border-radius: 12px;
     border: 0px solid var(--input-border-color);
-    
     max-height: 0;
     opacity: 0;
     overflow: hidden;
-    padding-top: 0;
-    padding-bottom: 0;
-    transform: translateY(-10px) scale(0.98); 
+    padding: 0 6px;
+    transform: translateY(-10px) scale(0.98);
     pointer-events: none;
-    
-    /* Універсальний плавний таймінг (0.25s) */
-    transition: 
+    transition:
         max-height 0.25s cubic-bezier(0.4, 0, 0.2, 1),
         opacity 0.2s ease-in-out,
         transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
@@ -4115,32 +4109,30 @@ body.dark .search-inputs-row select option {
 }
 
 .template-field-group:has(.template-search-bar.active) {
-    min-width: 553px !important;
+    min-width: 556px !important;
 }
 
 .config-rows-wrapper {
     display: flex;
-    flex-direction: column; /* Змінено з row на column */
-    gap: 5px;
+    flex-direction: column;
+    gap: var(--btn-gap);
     width: 100%;
-    height: auto; /* Змінено з 100% на auto */
+    height: auto;
     justify-content: center;
 }
 
-/* Ліва колонка з полями вводу */
 .config-inputs-col {
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: var(--btn-gap);
     flex: 1;
-    min-width: 0; 
+    min-width: 0;
 }
 
-/* Кожен окремий ряд */
 .config-row {
     display: flex;
     flex-direction: row;
-    gap: 5px;
+    gap: var(--btn-gap);
     width: 100%;
     height: 30px;
     justify-content: center;
@@ -4387,24 +4379,20 @@ body.dark .variant-badge {
 /* Контейнер, що тримає дві кнопки разом справа */
 .config-login-actions {
     position: absolute;
-    right: 6px;
+    right: 4px;
     height: calc(100% - 4px);
-    gap: 6px;
-    z-index: 2;
-    display: flex; /* Тепер завжди flex */
+    gap: var(--btn-gap-xs);
+    display: flex;
     align-items: center;
     border-top-right-radius: 4px;
     border-bottom-right-radius: 4px;
     background-color: transparent;
-    
-    /* Початковий прихований стан кнопок */
     opacity: 0;
     visibility: hidden;
-    transform: translateX(10px) scale(0.9); /* Кнопки трохи зменшені та зсунуті вправо */
-    
-    transition: 
-        opacity 0.3s ease, 
-        transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), /* Легкий ефект пружинки */
+    transform: translateX(10px) scale(0.9);
+    transition:
+        opacity 0.3s ease,
+        transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
         visibility 0.3s;
 }
 
@@ -4416,17 +4404,17 @@ body.dark .variant-badge {
 
 /* Стан, коли кнопки з'явилися */
 .config-login-input.has-actions {
-    padding-right: 58px !important; 
+    padding-right: 66px !important;
 }
 
 .config-login-regen-btn,
 .config-login-copy-btn {
-    width: 22px;
-    height: 22px;
+    width: 24px;
+    height: 24px;
     padding: 0;
     border-radius: 50%;
     cursor: pointer;
-    font-size: 13px;
+    font-size: var(--btn-ghost-icon-size);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -4440,11 +4428,11 @@ body.dark .variant-badge {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 12px;
-    height: 12px;
+    width: var(--btn-ghost-icon-size);    
+    height: var(--btn-ghost-icon-size);   
     margin: 0;
     padding: 0;
-    font-size: 12px;
+    font-size: var(--btn-ghost-icon-size); 
     line-height: 1;
     transform-origin: 50% 50%;
     will-change: transform;
@@ -4679,7 +4667,7 @@ body.dark .olt-group-header {
 /* Стрілка ОЛТ-дропдауна */
 .olt-dropdown-arrow {
     position: absolute;
-    right: 10px;
+    right: 8px;
     top: 50%;
     transform: translateY(-50%);
     font-size: 10px;
@@ -4735,7 +4723,7 @@ body.dark .olt-dropdown-item.active {
     right: 50px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: var(--btn-gap-lg);
     z-index: 2000; /* Поверх шаблонів */
     pointer-events: none; /* Щоб область навколо кнопок пропускала кліки */
 }
@@ -5190,8 +5178,16 @@ body.dark .date-calculator-container #result-section h2 {
     z-index: 1;
 }
 
-.quick-add-row { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; align-items: center; width: 100%; }
-.actions-floor { display: flex; justify-content: center; align-items: center; gap: 6px; row-gap: 12px; width: 344px; }
+.quick-add-row { display: flex; gap: var(--btn-gap); flex-wrap: wrap; justify-content: center; align-items: center; width: 100%; }
+
+.actions-floor {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--btn-gap);
+    row-gap: 12px;
+    width: 100%;
+}
 
 body.dark .action-divider { 
     background-color: rgba(255, 255, 255, 0.15); 
@@ -5342,6 +5338,12 @@ body.dark #auto-reset-button:focus-visible {
 /* Темна тема: calc title */
 body.dark .calc-title { color: var(--text-color); }
 
+.calc-header-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--btn-gap);
+}
+
 .calc-head-history-btn {
     width: 30px;
     height: 30px;
@@ -5360,9 +5362,9 @@ body.dark .calc-title { color: var(--text-color); }
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 18px;
-    height: 18px;
-    font-size: 18px;
+    width: var(--btn-ghost-icon-size);
+    height: var(--btn-ghost-icon-size);
+    font-size: var(--btn-ghost-icon-size);
     line-height: 1;
     pointer-events: none;
     transform: translateZ(0);
@@ -5372,44 +5374,43 @@ body.dark .calc-title { color: var(--text-color); }
 /* Кнопка автоочищення */
 #calc-auto-clear-btn {
     position: relative;
+    border: none;
+    outline: var(--btn-ring-width) solid transparent;
+    outline-offset: var(--btn-ring-offset);
+    transition:
+        background-color 0.22s cubic-bezier(0.4, 0, 0.2, 1),
+        color 0.22s cubic-bezier(0.4, 0, 0.2, 1),
+        outline-color var(--btn-ring-speed) ease !important;
 }
 
-/* Стан увімкненої кнопки (червоний акцент, як у решти небезпечних кнопок) */
+/* Увімкнений стан: акцент теми + зовнішнє 1px кільце (без старої червоної inset-рамки) */
 #calc-auto-clear-btn.active {
-    --fx-rgb: 226, 85, 85;
-    color: rgb(var(--fx-rgb));
-    background-color: rgba(var(--fx-rgb), 0.12);
-    box-shadow: inset 0 0 0 1px rgba(var(--fx-rgb), 0.30);
-}
-
-body.dark #calc-auto-clear-btn.active {
-    --fx-rgb: 240, 90, 80;
+    background-color: var(--btn-ghost-bg);
+    color: rgb(var(--btn-accent-rgb));
+    box-shadow: none;
+    outline-color: var(--btn-active-ring-color);
 }
 
 @media (hover: hover) {
     #calc-auto-clear-btn.active:hover {
-        background-color: rgba(var(--fx-rgb), 0.20);
-        color: rgb(var(--fx-rgb));
-        box-shadow: inset 0 0 0 1px rgba(var(--fx-rgb), 0.48);
+        background-color: var(--btn-ghost-bg-hover);
+        color: rgb(var(--btn-accent-rgb));
+        box-shadow: none;
     }
 }
 
 #calc-auto-clear-btn.active:active {
-    background-color: rgba(var(--fx-rgb), 0.28);
-    color: rgb(var(--fx-rgb));
-    box-shadow: inset 0 0 0 2px rgba(var(--fx-rgb), 0.55) !important;
+    background-color: var(--btn-ghost-bg-active);
+    color: rgb(var(--btn-accent-rgb));
+    box-shadow: none;
 }
 
-/* Стан "Тільки що стерто" (Зелена галочка) */
+/* Стан "Тільки що стерто" (зелена галочка + зелене 1px кільце) */
 #calc-auto-clear-btn.just-cleared {
-    --fx-rgb: 22, 163, 122;
-    color: rgb(var(--fx-rgb)) !important;
-    background-color: rgba(var(--fx-rgb), 0.14);
-    box-shadow: inset 0 0 0 1px rgba(var(--fx-rgb), 0.35);
-}
-
-body.dark #calc-auto-clear-btn.just-cleared {
-    --fx-rgb: 56, 161, 123;
+    background-color: var(--btn-ghost-bg);
+    color: var(--success-color) !important;
+    box-shadow: none;
+    outline-color: var(--success-color);
 }
 
 /* === ЕКРАН === */
@@ -5484,7 +5485,7 @@ body.dark .calc-display-container {
     justify-content: center;
     border-radius: 50%;
     cursor: pointer;
-    font-size: 18px;
+    font-size: var(--btn-ghost-icon-size);
     line-height: 1;
 }
 
@@ -5498,8 +5499,8 @@ body.dark .calc-display-container {
 .calc-buttons-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 8px; 
-    padding: 5px 2px; 
+    gap: 8px;
+    padding: 5px 0;
 }
 
 /* Базові кнопки (Цифри) */
@@ -5709,7 +5710,7 @@ body.dark .calc-history-panel {
     justify-content: center;
     border-radius: 50%;
     cursor: pointer;
-    font-size: 15px;
+    font-size: var(--btn-ghost-icon-size);
 }
 
 .hist-empty {
@@ -5740,39 +5741,58 @@ body.dark .hist-item:hover {
     border-right-color: var(--secondary-accent-color);
 }
 
-/* Кнопка "Приховати" */
+/* Кнопка "Приховати" у стилі клавіш калькулятора Win11 */
 .hist-close-btn {
     width: 100%;
-    padding: 10px;
-    background: transparent;
-    border: 1px dashed var(--input-border-color);
-    border-radius: 8px;
-    color: var(--text-color);
-    opacity: 0.75;
+    height: 40px;
+    padding: 0 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-family: inherit;
     font-size: 14px;
+    font-weight: 500;
+    border-radius: 8px;
     cursor: pointer;
-    transition: all 0.2s;
+
+    background-color: #ffffff;
+    color: #1e293b;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    transition: all 0.15s ease-out;
 }
 
 @media (hover: hover) {
     .hist-close-btn:hover {
-        opacity: 1;
-        background-color: rgba(var(--fx-rgb), 0.14);
-        border-style: solid;
-        border-color: rgba(var(--fx-rgb), 0.35);
-        color: rgb(var(--fx-rgb));
+        background-color: #f8fafc;
+        border-color: #cbd5e1;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.06);
     }
 }
 
 .hist-close-btn:active {
-    opacity: 1;
-    background-color: rgba(var(--fx-rgb), 0.22);
-    border-style: solid;
-    border-color: rgba(var(--fx-rgb), 0.45);
-    color: rgb(var(--fx-rgb));
-    box-shadow: inset 0 0 0 1px rgba(var(--fx-rgb), 0.45) !important;
-    filter: brightness(0.95);
-    transition: box-shadow 0.08s ease-out, filter 0.08s ease-out, background-color 0.08s ease-out !important;
+    background-color: #f1f5f9;
+    transform: scale(0.98);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+body.dark .hist-close-btn {
+    background-color: #3A3A3A;
+    color: #EAEAEA;
+    border-color: rgba(255, 255, 255, 0.06);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+@media (hover: hover) {
+    body.dark .hist-close-btn:hover {
+        background-color: #454545;
+        border-color: rgba(255, 255, 255, 0.10);
+    }
+}
+
+body.dark .hist-close-btn:active {
+    background-color: #303030;
 }
 
 .hist-op { font-size: 12px; color: var(--inactive-text); margin-bottom: 3px; }
@@ -6041,7 +6061,7 @@ body.dark .info-tooltip-text::before {
     border: 1px solid var(--input-border-color);
     border-radius: 12px;
     padding: 5px;
-    gap: 4px;
+    gap: var(--btn-gap);
     box-shadow: var(--glass-shadow-inner);
 }
 
@@ -6653,7 +6673,7 @@ body.dark .qn-placeholder {
     display: flex;
     flex-direction: row; 
     align-items: center; 
-    gap: 4px;
+    gap: var(--btn-gap);
     flex-shrink: 0; 
 }
 
@@ -6670,22 +6690,22 @@ body.dark .qn-placeholder {
 
 .qn-action-btn i,
 .qn-action-btn svg {
-    width: 14px;
-    height: 14px;
+    width: var(--btn-ghost-icon-size);
+    height: var(--btn-ghost-icon-size);
     display: block;
     margin: 0;
     pointer-events: none;
 }
 
 .qn-action-btn i {
-    font-size: 14px;
-    line-height: 14px;
+    font-size: var(--btn-ghost-icon-size);;
+    line-height: var(--btn-ghost-icon-size);;
     text-align: center;
 }
 
 .qn-action-btn i::before {
     display: block;
-    line-height: 14px;
+    line-height: var(--btn-ghost-icon-size);
 }
 
 /* ================================================================
