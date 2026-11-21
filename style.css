@@ -943,6 +943,16 @@ body :is(
     outline-color: var(--btn-active-ring-color);
 }
 
+body :is(
+    #login-autoclear-btn.active,
+    #auto-reset-button.active,
+    .config-replace-mode-btn.active,
+    .config-pon-onu-btn.active,
+    .config-show-signal-btn.active
+) i {
+    color: rgb(var(--btn-accent-rgb)) !important;
+}
+
 /* 1.4. Натискання (:active): глибший фон + плавний зовнішній ореол 1px */
 body :is(
     .extension-download-btn,
@@ -2614,7 +2624,7 @@ body.dark .actions-block-title::after {
 
 #login-autoclear-btn i {
     font-size: 14px;
-    transition: transform 0.22s ease;
+    transition: transform 0.22s ease, color 0.25s ease;
 }
 
 #login-autoclear-btn.active i {
