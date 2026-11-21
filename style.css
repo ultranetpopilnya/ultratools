@@ -373,6 +373,20 @@ color-scheme: dark;
     display: none;
 }
 
+/* Відступ 4px зверху і знизу для скролу всередині самих шаблонів */
+.template-field-group textarea::-webkit-scrollbar-track:vertical,
+.template-field-group .highlighter-backdrop::-webkit-scrollbar-track:vertical {
+    margin: 5px 0;
+}
+
+/* Відступ 4px зверху і знизу для скролів у генераторі логінів */
+.login-generator-container .content-card::-webkit-scrollbar-track:vertical,
+.login-generator-container textarea::-webkit-scrollbar-track:vertical {
+    margin: 5px 0;
+}
+
+
+
 *, *::before, *::after {
     box-sizing: border-box;
 }
