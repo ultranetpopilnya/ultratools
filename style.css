@@ -6345,13 +6345,13 @@ body.dark #static-clarification-message {
 
 #controls-and-clarification {
     position: relative;
-    height: 38px;
+    height: 40px;
+    min-height: 40px !important;
     width: 100%;
     display: flex;
     justify-content: center;
-    align-items: flex-start;
+    align-items: center;
     flex-shrink: 0 !important;
-    min-height: 38px !important;
     z-index: 20;
     margin-bottom: 16px;
 }
@@ -6364,17 +6364,37 @@ body.dark #static-clarification-message {
 
 .info-tooltip-wrapper {
     position: relative;
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: help;
 }
 
-.info-icon {
-    margin-bottom: 0px;
-    font-size: 21px;
+.info-tooltip-wrapper .info-icon {
+    margin-bottom: 0;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    line-height: 1;
     color: var(--inactive-text);
-    transition: color 0.2s ease, transform 0.2s ease;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    transition: color 0.2s ease;
+}
+
+.info-icon {
+    margin-bottom: 0;
+    font-size: 20px;        /* парний розмір: (40 - 20) / 2 = рівно 10px без півпікселів */
+    line-height: 1;         /* прибирає зсув від метрик основного шрифту */
+    display: block;
+    color: var(--inactive-text);
+    transition: color 0.2s ease;
 }
 
 .info-tooltip-wrapper:hover .info-icon {
@@ -6394,8 +6414,8 @@ body.dark .info-tooltip-wrapper:hover .info-icon {
 /* Сама бульбашка з текстом */
 .info-tooltip-text {
     position: absolute;
-    left: calc(100% + 14px); /* Відстань від іконки зправа */
-    top: 50%; 
+    left: calc(100% + 14px);
+    top: 50%;
     
     width: max-content;
     max-width: 220px;
@@ -6413,7 +6433,6 @@ body.dark .info-tooltip-wrapper:hover .info-icon {
     
     pointer-events: none;
     opacity: 0;
-    /* ЗМІНЕНО: Початкова позиція зміщена вліво (translate X: -8px) для плавної появи, по осі Y центровано (-50%) */
     transform: translate(-8px, -50%) scale(0.95);
     transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
     z-index: 999;
