@@ -1664,6 +1664,46 @@ body.dark .tab-button:hover:not(.active) {
 /* =========================================
    КЕРУВАННЯ ВКЛАДКАМИ (ЗАКРИТТЯ ТА ДОДАВАННЯ)
    ========================================= */
+/* --- 2. КНОПКА ЗАКРИТТЯ ВКЛАДКИ (ХРЕСТИК) --- */
+.close-tab-btn {
+    position: absolute;
+    right: 14px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    cursor: pointer;
+    padding: 0;
+    opacity: 0;
+    z-index: 3 !important;
+}
+
+/* Приховуємо стандартні іконки/текст (якщо є в HTML) */
+.close-tab-btn i,
+.close-tab-btn span {
+    display: none !important;
+}
+
+/* Малюємо хрестик через CSS */
+.close-tab-btn::before,
+.close-tab-btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 14px;
+    height: 1.5px;
+    background-color: currentColor;
+    border-radius: 1px;
+}
+
+.close-tab-btn::before { transform: translate(-50%, -50%) rotate(45deg); }
+.close-tab-btn::after  { transform: translate(-50%, -50%) rotate(-45deg); }
+
+/* Показуємо при наведенні на вкладку або коли вона активна */
+.tab-button:hover .close-tab-btn,
+.tab-button.active .close-tab-btn {
+    opacity: 0.75;
+}
 
 /* --- Пункти меню --- */
 .add-tab-item {
