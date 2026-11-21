@@ -5284,15 +5284,18 @@ function openQuickNotes(event) {
     
     // --- РОЗУМНЕ ПОЗИЦІОНУВАННЯ ---
     const rect = btn.getBoundingClientRect();
-    
+    const popWidth = popover.offsetWidth || 504;
+
     let topPos = rect.bottom + 8;
-    let leftPos = rect.left - 150 + (rect.width / 2);
+    let leftPos = rect.left - (popWidth / 2) + (rect.width / 2);
 
     if (leftPos < 10) leftPos = 10;
-    if (leftPos + 320 > window.innerWidth) leftPos = window.innerWidth - 330;
-    
+    if (leftPos + popWidth > window.innerWidth - 10) {
+        leftPos = Math.max(10, window.innerWidth - popWidth - 10);
+    }
+
     if (topPos + 350 > window.innerHeight) {
-        topPos = rect.top - 360; 
+        topPos = rect.top - 360;
     }
 
     // 1. Тимчасово вимикаємо будь-які анімації

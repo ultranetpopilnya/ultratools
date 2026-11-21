@@ -280,14 +280,12 @@ color-scheme: dark;
 :root {
     --scrollbar-corridor: 16px;          /* Загальна ширина зони скролу */
     --scrollbar-thumb-width: 6px;        /* Ширина повзунка (краще парне число) */
-    --scrollbar-thumb-width-hover: 8px; /* Ширина при наведенні (краще парне число) */
-    --scrollbar-line: 2px;               /* Товщина лінії треку (змінено на 2px для чіткості) */
+    --scrollbar-thumb-width-hover: 8px;  /* Ширина при наведенні (краще парне число) */
+    --scrollbar-line: 2px;               /* Товщина лінії треку */
 }
 
 /* ================================================================
    2. СКИДАННЯ СТИЛІВ, БАЗОВІ ТЕГИ ТА СКРОЛБАР
-   Налаштування базового вигляду сторінки, шрифтів, плейсхолдерів
-   та кастомного скролбару для всіх браузерів.
    ================================================================ */
 
 /* 1. Ширина та висота скролбару */
@@ -296,7 +294,7 @@ color-scheme: dark;
     height: var(--scrollbar-corridor);
 }
 
-/* 2. ТРЕК — лінія ідеально по центру коридору (50%) */
+/* 2. ТРЕК — без відступів зверху та знизу */
 *::-webkit-scrollbar-track {
     background-image: linear-gradient(
         to right,
@@ -307,9 +305,7 @@ color-scheme: dark;
         transparent calc(50% + (var(--scrollbar-line) / 2)),
         transparent 100%
     );
-    /* ВИПРАВЛЕННЯ: Відступ треку зверху і знизу тепер точно дорівнює відступу повзунка */
-    border-top: calc((var(--scrollbar-corridor) - var(--scrollbar-thumb-width)) / 2) solid transparent;
-    border-bottom: calc((var(--scrollbar-corridor) - var(--scrollbar-thumb-width)) / 2) solid transparent;
+    border: none;
     background-clip: padding-box;
 }
 
@@ -324,48 +320,48 @@ color-scheme: dark;
         transparent calc(50% + (var(--scrollbar-line) / 2)),
         transparent 100%
     );
-    border-top: none;
-    border-bottom: none;
-    /* Синхронізуємо бокові відступи для горизонтального скролу */
-    border-left: calc((var(--scrollbar-corridor) - var(--scrollbar-thumb-width)) / 2) solid transparent;
-    border-right: calc((var(--scrollbar-corridor) - var(--scrollbar-thumb-width)) / 2) solid transparent;
+    border: none;
 }
 
-/* 3. THUMB (Повзунок) — звичайний стан */
+/* 3. THUMB (Повзунок) — рівні півкола на кінцях без виступів треку */
 *::-webkit-scrollbar-thumb {
     background-color: var(--scrollbar-thumb);
-    border-radius: 100px !important;
-    
-    background-clip: padding-box !important; 
-    
-    /* ВИПРАВЛЕННЯ: Однакова невидима рамка з УСІХ сторін. 
-       Це змушує браузер малювати ідеально круглі кінці (таблетку). */
-    border: calc((var(--scrollbar-corridor) - var(--scrollbar-thumb-width)) / 2) solid transparent !important;
-    
-    transition: background-color 0.2s ease; 
-    min-height: 40px;
+    border-radius: calc(var(--scrollbar-corridor) / 2) / calc(var(--scrollbar-thumb-width) / 2) !important;
+    background-clip: padding-box !important;
+
+    border-style: solid !important;
+    border-color: transparent !important;
+    border-width: 0 calc((var(--scrollbar-corridor) - var(--scrollbar-thumb-width)) / 2) !important;
+
+    transition: background-color 0.2s ease;
+    min-height: 30px;
 }
 
-/* 4. HOVER — розширюється */
+/* 4. HOVER — розширюється і зберігає форму півкола */
 *::-webkit-scrollbar-thumb:hover {
     background-color: var(--scrollbar-thumb-hover);
-    /* Зменшуємо рамку з усіх боків, щоб повзунок рівномірно став товщим */
-    border: calc((var(--scrollbar-corridor) - var(--scrollbar-thumb-width-hover)) / 2) solid transparent !important;
+    border-radius: calc(var(--scrollbar-corridor) / 2) / calc(var(--scrollbar-thumb-width-hover) / 2) !important;
+    border-width: 0 calc((var(--scrollbar-corridor) - var(--scrollbar-thumb-width-hover)) / 2) !important;
 }
 
 /* 5. ACTIVE */
 *::-webkit-scrollbar-thumb:active {
     background-color: var(--scrollbar-thumb-active);
-    border: calc((var(--scrollbar-corridor) - var(--scrollbar-thumb-width-hover)) / 2) solid transparent !important;
+    border-radius: calc(var(--scrollbar-corridor) / 2) / calc(var(--scrollbar-thumb-width-hover) / 2) !important;
+    border-width: 0 calc((var(--scrollbar-corridor) - var(--scrollbar-thumb-width-hover)) / 2) !important;
 }
 
-/* =======================================
-   Адаптація для ГОРИЗОНТАЛЬНОГО скролу
-   ======================================= */
+/* Адаптація для ГОРИЗОНТАЛЬНОГО скролу */
 *::-webkit-scrollbar-thumb:horizontal {
-    /* Для горизонтального тепер діє та сама логіка рівних рамок, 
-       залишається тільки задати мінімальну ширину */
-    min-width: 40px;
+    border-radius: calc(var(--scrollbar-thumb-width) / 2) / calc(var(--scrollbar-corridor) / 2) !important;
+    border-width: calc((var(--scrollbar-corridor) - var(--scrollbar-thumb-width)) / 2) 0 !important;
+    min-width: 30px;
+}
+
+*::-webkit-scrollbar-thumb:horizontal:hover,
+*::-webkit-scrollbar-thumb:horizontal:active {
+    border-radius: calc(var(--scrollbar-thumb-width-hover) / 2) / calc(var(--scrollbar-corridor) / 2) !important;
+    border-width: calc((var(--scrollbar-corridor) - var(--scrollbar-thumb-width-hover)) / 2) 0 !important;
 }
 
 /* 6. КУТОК ТА КНОПКИ (Стрілочки) */
@@ -374,14 +370,7 @@ color-scheme: dark;
 }
 
 *::-webkit-scrollbar-button {
-    display: none; /* Приховуємо стандартні стрілочки для чистоти дизайну */
-}
-
-*::-webkit-scrollbar-button:vertical:start:decrement,
-*::-webkit-scrollbar-button:vertical:end:increment {
-    display: block;
-    height: var(--scrollbar-edge-gap);
-    background-color: transparent;
+    display: none;
 }
 
 *, *::before, *::after {
@@ -577,7 +566,7 @@ body.dark ::placeholder {
  
     box-shadow: var(--content-card-shadow);
 
-    overflow: auto;
+    overflow: hidden;
 
     backdrop-filter: blur(6px) saturate(150%);
 -webkit-backdrop-filter: blur(6px) saturate(150%);
@@ -758,14 +747,6 @@ body.dark {
 .qn-add-btn:active,
 #auto-reset-button:active {
     box-shadow: 0 0 0 4px rgba(var(--fx-rgb), 0.22) !important;
-    filter: brightness(0.95) !important;
-    transition: box-shadow 0.08s ease-out, filter 0.08s ease-out !important;
-}
-
-/* Малі іконкові кнопки */
-.qn-drag-handle:active,
-.qn-close-btn:active {
-   box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.22) !important;
     filter: brightness(0.95) !important;
     transition: box-shadow 0.08s ease-out, filter 0.08s ease-out !important;
 }
@@ -1327,30 +1308,38 @@ body.dark .add-tab-menu {
     cursor: grab;
     padding: 0 4px;
     color: var(--text-color);
+    opacity: 0.35;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.3em;
-    /* Додаємо transform та filter у transition для плавності */
-    transition: color 0.2s ease, transform 0.1s ease, filter 0.2s ease;
+    transition: color 0.2s ease, opacity 0.2s ease, transform 0.15s ease;
     will-change: transform;
 }
 
-/* drag handle — ховер */
-.drag-handle:hover { 
-    color: var(--primary-accent-color);
+/* Коли курсор на шаблоні — ручка трохи помітніша */
+.template-field-group:hover .drag-handle {
+    opacity: 0.65;
 }
 
-body.dark .drag-handle:hover { 
-    color: var(--secondary-accent-color);
+@media (hover: hover) {
+    .drag-handle:hover {
+        opacity: 1 !important;
+    }
 }
 
 /* Ефект при натисненні (утриманні) */
 .drag-handle:active,
-.drag-handle.is-dragging { 
-    cursor: grabbing; 
-    color: var(--primary-accent-color);
-    transform: translateY(1px) scale(0.92);
+.drag-handle.is-dragging {
+    cursor: grabbing;
+    opacity: 1 !important;
+    color: rgb(var(--fx-rgb));
+    transform: scale(0.9);
+}
+
+.template-field-group:has(.drag-handle:active) {
+    border-color: rgba(var(--fx-rgb), 0.55);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 /* --- Бічні пігулки --- */
@@ -3395,39 +3384,76 @@ body.dark #clear-all-templates-button {
 
 /* 1. БАЗОВИЙ (СПОКІЙНИЙ) СТАН КНОПОК */
 .template-actions button {
-    padding: 0;
-    border: none;
-    border-radius: 8px; 
-    background-color: transparent; 
-    color: var(--text-color);
-    box-shadow: none; /* Прибираємо тінь */
-    cursor: pointer;
-    
     width: 26px;
     height: 26px;
-    
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background-color: transparent;
+    color: var(--text-color);
+    box-shadow: none;
+    cursor: pointer;
+
     display: flex;
     justify-content: center;
     align-items: center;
     font-size: 0.95rem;
-    
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
     position: relative;
     z-index: 1;
+    transform: translateZ(0);
+    backface-visibility: hidden;
 }
 
-/* 3. ХОВЕР-ЕФЕКТИ (КОЛЬОРИ З'ЯВЛЯЮТЬСЯ ТІЛЬКИ ТУТ) */
-.template-actions button:hover {
-    color: white;
-    z-index: 2;
+.template-actions button i {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    font-size: 0.95rem;
+    line-height: 1;
+    pointer-events: none;
+    transform: translateZ(0);
+    backface-visibility: hidden;
 }
 
-/* Призначаємо конкретні кольори фону при наведенні */
-.config-template-btn:hover { background-color: #17a2b8; }
+/* 2. ОРИГІНАЛЬНІ КОЛЬОРИ КОЖНОЇ КНОПКИ */
+.template-actions .config-template-btn  { --fx-rgb: 23, 162, 184; }  /* #17a2b8 */
+.template-actions .copy-template-btn    { --fx-rgb: 22, 163, 122; }  /* var(--success-color) */
+.template-actions .paste-login-btn     { --fx-rgb: 13, 148, 136; }  /* var(--button-paste-bg) */
+.template-actions .paste-clipboard-btn { --fx-rgb: 253, 126, 20; }  /* #fd7e14 */
+.template-actions .search-template-btn  { --fx-rgb: 111, 66, 193; }  /* #6f42c1 */
+.template-actions .quick-notes-btn     { --fx-rgb: 243, 156, 18; }  /* #f39c12 */
+/* .clear-template-btn бере стандартний --fx-rgb теми (var(--primary-accent-color): синій у світлій, бурштиновий у темній) */
+.template-actions .delete-template-btn  { --fx-rgb: 226, 85, 85; }   /* var(--danger-color) */
 
-/* copy template btn — ховер */
-.copy-template-btn:hover { background-color: var(--success-color); }
+/* Темна тема: адаптовані значення для кращої яскравості на темному фоні */
+body.dark .template-actions .copy-template-btn   { --fx-rgb: 56, 161, 123; }  /* dark --success-color */
+body.dark .template-actions .search-template-btn { --fx-rgb: 155, 114, 242; } /* читабельний фіолетовий для dark */
+body.dark .template-actions .delete-template-btn { --fx-rgb: 240, 90, 80; }   /* як в інших delete-кнопках dark */
 
+/* 3. ХОВЕР ТА НАТИСКАННЯ (ідентично .swap-inputs-btn) */
+@media (hover: hover) {
+    .template-actions button:hover {
+        opacity: 1;
+        background-color: rgba(var(--fx-rgb), 0.14);
+        color: rgb(var(--fx-rgb));
+        box-shadow: inset 0 0 0 1px rgba(var(--fx-rgb), 0.35);
+        z-index: 2;
+    }
+}
+
+.template-actions button:active {
+    opacity: 1;
+    background-color: rgba(var(--fx-rgb), 0.22);
+    color: rgb(var(--fx-rgb));
+    box-shadow: inset 0 0 0 2px rgba(var(--fx-rgb), 0.45) !important;
+    filter: brightness(0.95);
+    transition: box-shadow 0.08s ease-out, filter 0.08s ease-out, background-color 0.08s ease-out !important;
+}
+
+/* Зелена галочка після копіювання */
 .copy-template-btn:disabled {
     opacity: 1;
 }
@@ -3435,24 +3461,6 @@ body.dark #clear-all-templates-button {
 .copy-template-btn:disabled i {
     color: var(--success-color);
 }
-
-/* paste login btn — ховер */
-.paste-login-btn:hover { background-color: var(--button-paste-bg); }
-
-/* paste clipboard btn — ховер */
-.paste-clipboard-btn:hover { background-color: #fd7e14; }
-
-/* search template btn — ховер */
-.search-template-btn:hover { background-color: #6f42c1; }
-
-/* quick notes btn — ховер */
-.quick-notes-btn:hover { background-color: #f39c12; }
-
-/* clear template btn — ховер */
-.clear-template-btn:hover { background-color: var(--primary-accent-color); }
-
-/* delete template btn — ховер */
-.delete-template-btn:hover { background-color: var(--danger-color); }
 
 /* --- СУЧАСНІ РОЗДІЛЮВАЧІ МІЖ КНОПКАМИ --- */
 .action-separator {
@@ -6767,15 +6775,15 @@ body.dark .dynamic-center-divider {
    Стилі для попапу швидких нотаток, що викликається з шаблонів.
    Поле вводу, список нотаток, кнопки дій та логіка Drag & Drop.
    ================================================================ */
-
 /* Основне вікно попапу */
 .qn-popover {
     position: fixed;
-    width: 420px; /* Трішки ширше для комфорту */
-    height: auto; 
+    width: 504px;
+    max-width: calc(100vw - 20px);
+    height: auto;
     max-height: 540px;
     z-index: 10000;
-    overflow-y: auto;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     
@@ -6789,7 +6797,7 @@ body.dark .dynamic-center-divider {
     box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.05);
     
     /* Анімація появи */
-     transform-origin: top center;
+    transform-origin: top center;
     opacity: 0;
     visibility: hidden;
     transform: translateY(-10px) scale(0.95);
@@ -6838,6 +6846,7 @@ body.dark .qn-header { border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
 }
 
 .qn-close-btn {
+    --fx-rgb: 226, 85, 85;
     position: relative; 
     left: 2px;
 
@@ -6855,6 +6864,8 @@ body.dark .qn-header { border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
     color: var(--text-color);
     transition: transform 0.2s ease, opacity 0.2s ease, background-color 0.2s ease, color 0.2s ease;
 }
+
+body.dark .qn-close-btn { --fx-rgb: 240, 90, 80; }
 
 /* Приховуємо стандартні іконки/текст (якщо є в HTML) */
 .qn-close-btn i, 
@@ -6881,31 +6892,27 @@ body.dark .qn-header { border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
 /* qn close btn — псевдоелемент ::after */
 .qn-close-btn::after { transform: translate(-50%, -50%) rotate(-45deg); }
 
-.qn-close-btn { --fx-rgb: 226, 85, 85; }
+@media (hover: hover) {
+    .qn-close-btn:hover {
+        opacity: 1 !important;
+        background-color: rgba(var(--fx-rgb), 0.14);
+        color: rgb(var(--fx-rgb));
+        box-shadow: 0 0 0 2px rgba(var(--fx-rgb), 0.12);
+    }
 
-.qn-close-btn:hover {
-    opacity: 1 !important;
-    background-color: rgba(var(--fx-rgb), 0.14);
-    color: rgb(var(--fx-rgb));
-    box-shadow: 0 0 0 2px rgba(var(--fx-rgb), 0.12);
+    body.dark .qn-close-btn:hover {
+        background-color: rgba(var(--fx-rgb), 0.18);
+        color: #ffffff;
+    }
 }
 
-/* Активний стан (клік) - стискається і стає червоним */
+/* Активний стан (клік) - стискається, стає червоним + 3px кільце */
 .qn-close-btn:active {
     background-color: var(--danger-color) !important;
     color: white !important;
-}
-
-body.dark .qn-close-btn { --fx-rgb: 240, 90, 80; }
-
-body.dark .qn-close-btn:hover {
-    background-color: rgba(var(--fx-rgb), 0.18);
-    color: #ffffff;
-}
-
-/* Темна тема: qn close btn — активний стан */
-body.dark .qn-close-btn:active {
-    background-color: var(--danger-color) !important; 
+    box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.22) !important;
+    filter: brightness(0.95) !important;
+    transition: box-shadow 0.08s ease-out, filter 0.08s ease-out !important;
 }
 
 /* Зона введення тексту */
@@ -6992,7 +6999,7 @@ body.dark .qn-add-btn {
         box-shadow: 0 0 0 3px rgba(var(--fx-rgb), 0.12);
     }
 
-    body.dark .qn-add-btn:hover {
+     body.dark .qn-add-btn:hover {
         background-color: var(--secondary-accent-color);
         border-color: var(--secondary-accent-color);
         filter: brightness(1.12);
@@ -7003,7 +7010,7 @@ body.dark .qn-add-btn {
 
 /* Список збережених нотаток */
 .qn-list {
-    padding: 0 16px 26px;
+    padding: 0 calc(26px - var(--scrollbar-corridor)) 26px;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
@@ -7021,7 +7028,7 @@ body.dark .qn-add-btn {
     border: 1px solid rgba(0, 0, 0, 0.05);
     border-radius: 12px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
-    transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease, border-color 0.2s ease;
     cursor: default;
 }
 
@@ -7075,30 +7082,58 @@ body.dark .qn-item.qn-drag-over {
     opacity: 0.7;
 }
 
-/* Ручка для перетягування (іконка ⋮⋮) */
+/* Ручка для перетягування (розмір як у .qn-action-btn справа, без кольорового ховеру) */
 .qn-drag-handle {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 4px 2px;
-    cursor: grab; /* Курсор "рука" */
-    color: #ccc;
-    transition: color 0.2s;
+    border-radius: 50%;
+    background: transparent;
+    cursor: grab;
+    color: var(--text-color);
+    opacity: 0.35;
+    transition: color 0.2s ease, opacity 0.2s ease, background-color 0.2s ease, transform 0.15s ease;
 }
 
-.qn-drag-handle {
-    border-radius: 8px;
+.qn-drag-handle i {
+    width: 14px;
+    height: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    line-height: 14px;
+    pointer-events: none;
 }
 
-.qn-drag-handle:hover {
-    color: rgb(var(--fx-rgb));
-    background-color: rgba(var(--fx-rgb), 0.14);
-    box-shadow: 0 0 0 2px rgba(var(--fx-rgb), 0.12);
+/* Коли курсор на нотатці — ручка трохи помітніша */
+.qn-item:hover .qn-drag-handle {
+    opacity: 0.65;
 }
 
-/* qn drag handle — активний стан */
+@media (hover: hover) {
+    .qn-drag-handle:hover {
+        opacity: 1 !important;
+        background-color: transparent;
+    }
+}
+
+/* Фізичний «хват» при натисканні й утриманні */
 .qn-drag-handle:active {
-    cursor: grabbing; /* Курсор "затиснута рука" */
+    cursor: grabbing;
+    opacity: 1 !important;
+    color: rgb(var(--fx-rgb));
+    background-color: transparent;
+    transform: scale(0.9);
+}
+
+.qn-item:has(.qn-drag-handle:active) {
+    border-color: rgba(var(--fx-rgb), 0.55);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .qn-placeholder {
