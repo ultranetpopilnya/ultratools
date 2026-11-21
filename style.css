@@ -679,10 +679,10 @@ select:focus,
     --btn-accent-rgb: 79, 109, 245;
     --btn-ring-speed: 0.4s;
 
-    /* Кольори світлої теми */
+/* Кольори світлої теми */
     --btn-solid-bg: #eef1f6;
-    --btn-solid-bg-hover: #f8fafd;
-    --btn-solid-bg-active: #dfe5ee;
+    --btn-solid-bg-hover: #e3e8f0;
+    --btn-solid-bg-active: #d4dce8;
     --btn-solid-border: rgba(15, 23, 42, 0.12);
     --btn-solid-border-hover: rgba(15, 23, 42, 0.18);
     --btn-solid-text: #334155;
@@ -713,10 +713,10 @@ body.dark {
     --fx-rgb: 214, 155, 45;
     --btn-accent-rgb: 214, 155, 45;
 
-    /* Кольори темної теми */
+/* Кольори темної теми */
     --btn-solid-bg: rgba(255, 255, 255, 0.16);
     --btn-solid-bg-hover: rgba(255, 255, 255, 0.24);
-    --btn-solid-bg-active: rgba(255, 255, 255, 0.09);
+    --btn-solid-bg-active: rgba(255, 255, 255, 0.34);
     --btn-solid-border: rgba(255, 255, 255, 0.15);
     --btn-solid-border-hover: rgba(255, 255, 255, 0.24);
     --btn-solid-text: #f1f5f9;
@@ -731,9 +731,9 @@ body.dark {
     --btn-ghost-bg-hover: rgba(255, 255, 255, 0.16);
     --btn-ghost-bg-active: rgba(255, 255, 255, 0.25);
 
-    /* Сегменти панелі місяців (компенсують накладання на напівпрозорий фон) */
+/* Сегменти панелі місяців (компенсують накладання на напівпрозорий фон) */
     --btn-stepper-seg-hover: rgba(255, 255, 255, 0.10);
-    --btn-stepper-seg-active: rgba(0, 0, 0, 0.20);
+    --btn-stepper-seg-active: rgba(255, 255, 255, 0.22);
 
     /* Червоний акцент при натисканні на кнопки з кошиком */
     --btn-danger-rgb: 240, 90, 80;
@@ -795,8 +795,9 @@ body .unified-pill .pill-content {
 
 .config-generate-btn {
     --btn-solid-bg: #4f8f6e;
-    --btn-solid-bg-hover: #589c79;
-    --btn-solid-bg-active: #437b5e;
+    --btn-solid-bg-hover: #5ba17d;
+    --btn-solid-bg-active: #6ab58e;
+
     --btn-solid-border: rgba(15, 23, 42, 0.12);
     --btn-solid-border-hover: rgba(15, 23, 42, 0.18);
     --btn-solid-text: #ffffff;
@@ -808,8 +809,9 @@ body .unified-pill .pill-content {
 
 body.dark .config-generate-btn {
     --btn-solid-bg: #33664e;
-    --btn-solid-bg-hover: #3b755a;
-    --btn-solid-bg-active: #2a5440;
+    --btn-solid-bg-hover: #3d7a5e;
+    --btn-solid-bg-active: #499170;
+
     --btn-solid-border: rgba(255, 255, 255, 0.14);
     --btn-solid-border-hover: rgba(255, 255, 255, 0.22);
     --btn-solid-text: #f1f5f9;
@@ -997,8 +999,8 @@ body .template-global-actions #clear-all-templates-button:active i {
 
 .extension-download-btn {
     --btn-solid-bg: #2f6cc4;
-    --btn-solid-bg-hover: #3776d1;
-    --btn-solid-bg-active: #2558a3;
+    --btn-solid-bg-hover: #3b7ad6;
+    --btn-solid-bg-active: #4d8be6;
     --btn-solid-border: rgba(15, 23, 42, 0.12);
     --btn-solid-border-hover: rgba(15, 23, 42, 0.18);
     --btn-solid-text: #ffffff;
@@ -1009,8 +1011,8 @@ body .template-global-actions #clear-all-templates-button:active i {
 
 body.dark .extension-download-btn {
     --btn-solid-bg: #29528a;
-    --btn-solid-bg-hover: #3161a3;
-    --btn-solid-bg-active: #214373;
+    --btn-solid-bg-hover: #3365ab;
+    --btn-solid-bg-active: #3f79cc;
     --btn-solid-border: rgba(255, 255, 255, 0.14);
     --btn-solid-border-hover: rgba(255, 255, 255, 0.22);
     --btn-solid-text: #f1f5f9;
@@ -5364,8 +5366,19 @@ body.dark .calc-title { color: var(--text-color); }
 }
 
 .c-btn:active {
+    background-color: #f1f5f9;
     transform: translateY(0) scale(0.96);
     box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.c-btn.operator:active {
+    background-color: #cde9fe;
+}
+.c-btn.func:active {
+    background-color: #cbd5e1;
+}
+.c-btn.action-clear:active, .c-btn.action-back:active {
+    background-color: #fecaca;
 }
 
 /* Оператори (+, -, *, /) - Світло-синій акцент */
@@ -5448,6 +5461,22 @@ body.dark .c-btn:hover {
     border-color: rgba(255, 255, 255, 0.08);
 }
 
+body.dark .c-btn:active {
+    background-color: #525252;
+}
+
+/* Додати одразу після body.dark .c-btn.operator:hover ... */
+body.dark .c-btn.operator:active,
+body.dark .c-btn.func:active,
+body.dark .c-btn.action-clear:active,
+body.dark .c-btn.action-back:active {
+    background-color: #424242;
+}
+
+body.dark .hist-close-btn:active {
+    background-color: #525252; /* було #303030 */
+}
+
 body.dark .c-btn.operator,
 body.dark .c-btn.func,
 body.dark .c-btn.action-clear,
@@ -5459,6 +5488,13 @@ body.dark .c-btn.func:hover,
 body.dark .c-btn.action-clear:hover,
 body.dark .c-btn.action-back:hover {
     background-color: #363636;
+}
+
+body.dark .c-btn.operator:active,
+body.dark .c-btn.func:active,
+body.dark .c-btn.action-clear:active,
+body.dark .c-btn.action-back:active {
+    background-color: #424242;
 }
 
 body.dark .c-btn.operator { color: #D8D8D8; }
@@ -5628,10 +5664,6 @@ body.dark .hist-close-btn {
         background-color: #454545;
         border-color: rgba(255, 255, 255, 0.10);
     }
-}
-
-body.dark .hist-close-btn:active {
-    background-color: #303030;
 }
 
 .hist-op { font-size: 12px; color: var(--inactive-text); margin-bottom: 3px; }
