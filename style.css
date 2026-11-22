@@ -1419,6 +1419,10 @@ body .add-tab-btn.menu-open:active {
    ==================================================================== */
 
 /* 1. Готуємо елементи: позиціонування та обрізка хвилі по краях */
+.config-clear-fields-btn,
+.config-replace-mode-btn,
+.config-pon-onu-btn,
+.config-show-signal-btn,
 .config-generate-btn,
 .btn-find,
 .btn-replace,
@@ -1444,6 +1448,10 @@ body .add-tab-btn.menu-open:active {
 }
 
 /* 2. Піднімаємо всі внутрішні елементи (текст, іконки), щоб хвиля протікала ПІД ними */
+.config-clear-fields-btn > :not(.ripple),
+.config-replace-mode-btn > :not(.ripple),
+.config-pon-onu-btn > :not(.ripple),
+.config-show-signal-btn > :not(.ripple),
 .config-generate-btn > :not(.ripple),
 .btn-find > :not(.ripple),
 .btn-replace > :not(.ripple),
@@ -3195,7 +3203,11 @@ body.dark .empty-templates-message {
     transform: scale(1);
 }
 
-#user-info-wrapper { max-width: 220px; gap: 6px; }
+#user-info-wrapper { 
+    max-width: 220px;
+    padding: 0 2px;
+    gap: 6px;
+}
 
 /* --- СТАН ПРИХОВУВАННЯ --- */
 .pill-content.auth-hidden {
@@ -3224,15 +3236,10 @@ body.dark .empty-templates-message {
     
 }
 
-#user-info-wrapper {
-    padding: 0 4px 0 4px;
-    gap: 6px;
-}
-
 /* =========================================
    ЕЛЕМЕНТИ ПРОФІЛЮ (Аватарка, текст, вихід)
    ========================================= */
-.user-avatar-wrapper { width: 22px; height: 22px; flex-shrink: 0; }
+.user-avatar-wrapper { width: 24px; height: 24px; flex-shrink: 0; }
 .user-avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
 .user-info-text { max-width: 110px; overflow: hidden; text-overflow: ellipsis; font-size: 12.5px; }
 

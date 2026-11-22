@@ -5620,7 +5620,8 @@ document.addEventListener('DOMContentLoaded', () => {
 // УНІВЕРСАЛЬНИЙ ЕФЕКТ ХВИЛІ (RIPPLE EFFECT)
 // ==========================================
 const RIPPLE_SELECTOR = `
-    .unified-pill:has(#login-google-btn:not(.auth-hidden)),
+.config-clear-fields-btn, .config-replace-mode-btn, .config-pon-onu-btn,
+.config-show-signal-btn, .unified-pill:has(#login-google-btn:not(.auth-hidden)),
     .variant-dropdown-item, .speed-dropdown-item, .add-tab-item,
     .command-item, .sub-command-item, .tab-button, .olt-dropdown-item,
     #login-autoclear-btn, .calc-action-button, .stepper-btn,
