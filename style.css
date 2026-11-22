@@ -864,7 +864,7 @@ body :is(
 
 /* Кільце таймера в автоскиданні */
 body #auto-reset-button .progress-ring-fg {
-    stroke: rgb(var(--btn-accent-rgb));
+     stroke: currentColor;
 }
 body #auto-reset-button .progress-ring-bg {
     stroke: rgba(128, 128, 128, 0.25);
@@ -1056,7 +1056,6 @@ body.dark .extension-download-btn {
 
 /* 2.1. Спокійний стан: легке коло фонове + іконка кольору головних кнопок */
 body :is(
-    .btn-replace-speed,
     .template-actions button,
     .qn-actions .qn-action-btn,
     .qn-close-btn,
@@ -1095,7 +1094,6 @@ body .close-tab-btn {
 /* 2.2. Наведення: світла темнішає / темна світлішає */
 @media (hover: hover) {
     body :is(
-        .btn-replace-speed,
         .close-tab-btn,
         .template-actions button,
         .qn-actions .qn-action-btn,
@@ -1119,7 +1117,6 @@ body .close-tab-btn {
 
 /* 2.3. Натискання: ще сильніший тон (без внутрішньої обводки) */
 body :is(
-    .btn-replace-speed,
     .close-tab-btn,
     .template-actions button,
     .qn-actions .qn-action-btn,
@@ -3927,10 +3924,25 @@ body.dark .line-marker {
     border: none;
     border-left: 1px solid var(--input-border-color);
     border-radius: 0 7px 7px 0;
+    background-color: var(--btn-solid-bg);
+    color: var(--btn-solid-text);
     cursor: pointer;
     user-select: none;
     outline: none;
     -webkit-tap-highlight-color: transparent;
+    transition:
+        background-color 0.22s cubic-bezier(0.4, 0, 0.2, 1),
+        color 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (hover: hover) {
+    .speed-field .btn-replace-speed:hover {
+        background-color: var(--btn-solid-bg-hover);
+    }
+}
+
+.speed-field .btn-replace-speed:active {
+    background-color: var(--btn-solid-bg-active);
 }
 
 .speed-field .btn-replace-speed i {
