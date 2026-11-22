@@ -677,7 +677,7 @@ select:focus,
 
     --fx-rgb: 79, 109, 245;
     --btn-accent-rgb: 79, 109, 245;
-    --btn-ring-speed: 0.4s;
+    --btn-ring-speed: 0.22s;
 
     /* Кольори світлої теми */
     --btn-solid-bg:           #eef1fa;
@@ -1266,7 +1266,8 @@ body:is(.dark, :not(.dark)) .config-onu-mode-btn:is(.is-reg, .is-switch) {
         padding 0.35s cubic-bezier(0.34, 1.4, 0.64, 1),
         background-color 0.22s cubic-bezier(0.4, 0, 0.2, 1),
         border-color 0.22s cubic-bezier(0.4, 0, 0.2, 1),
-        box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1),
+        color 0.22s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* 4.2. Повзунок (крапка): приглушені бірюзовий / фіолетовий */
@@ -1360,6 +1361,12 @@ body:is(.dark, :not(.dark)) .segment-btn.active {
         background-color: var(--btn-inv-bg-hover);
         border-color: var(--btn-inv-bg-hover);
     }
+}
+
+/* 5.4c. Активний сегмент: натискання */
+body:is(.dark, :not(.dark)) .segment-btn.active:active {
+    background-color: var(--btn-inv-bg-active);
+    border-color: var(--btn-inv-bg-active);
 }
 
 /* ================================================================
@@ -1593,7 +1600,14 @@ body.dark .tabs {
 
     isolation: isolate;
 
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    transition:
+        background-color 0.22s cubic-bezier(0.4, 0, 0.2, 1),
+        color 0.22s cubic-bezier(0.4, 0, 0.2, 1),
+        box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1),
+        max-width 0.3s cubic-bezier(0.25, 0.8, 0.25, 1),
+        padding 0.3s cubic-bezier(0.25, 0.8, 0.25, 1),
+        margin 0.3s cubic-bezier(0.25, 0.8, 0.25, 1),
+        opacity 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 .tab-button i {
@@ -2564,7 +2578,9 @@ body.dark .actions-block-title::after {
 
 #login-autoclear-btn i {
     font-size: 14px;
-    transition: transform 0.22s ease, color 0.25s ease;
+    transition:
+    transform 0.22s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.22s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 #login-autoclear-btn.active i {
@@ -4506,10 +4522,12 @@ body.dark .variant-badge {
     flex: 0 0 auto !important;
     display: inline-flex;
     align-items: center;
-    width: fit-content;
+    justify-content: center;
+    width: 92px;
+    white-space: nowrap;
     box-sizing: border-box;
     border-radius: 999px !important;
-    font-family: inherit;      /* додано */
+    font-family: inherit;
     font-size: 13px;
     cursor: pointer;
     position: relative;
@@ -4649,17 +4667,26 @@ body.dark .olt-dropdown-list {
     position: absolute;
     right: 8px;
     top: 50%;
-    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 10px;
+    height: 10px;
     font-size: 10px;
+    line-height: 1;
     color: var(--text-color);
     opacity: 0.5;
     pointer-events: none;
-    transition: transform 0.2s;
+    transform-origin: 50% 50%;
+    transform: translate3d(0, -50%, 0);
+    will-change: transform;
+    backface-visibility: hidden;
+    transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Обертання стрілки, коли список відкритий */
 .olt-dropdown-wrapper:has(.olt-dropdown-list.open) .olt-dropdown-arrow {
-    transform: translateY(-50%) rotate(180deg);
+    transform: translate3d(0, -50%, 0) rotate(180deg);
 }
 
 /* Місце під стрілку, щоб текст в інпуті не наїжджав на неї */
@@ -4758,14 +4785,30 @@ body.dark .olt-dropdown-list {
 
 .speed-dropdown-arrow {
     margin-left: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 10px;
+    height: 10px;
     font-size: 10px;
+    line-height: 1;
     opacity: 0.55;
     flex: none;
-    transition: transform 0.2s;
+    transform-origin: 50% 50%;
+    transform: translateZ(0);
+    will-change: transform;
+    backface-visibility: hidden;
+    transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .speed-dropdown.open .speed-dropdown-arrow {
-    transform: rotate(180deg);
+    transform: translateZ(0) rotate(180deg);
+}
+
+.olt-dropdown-arrow::before,
+.speed-dropdown-arrow::before {
+    display: block;
+    line-height: 1;
 }
 
 .speed-dropdown-list {
@@ -5231,7 +5274,7 @@ body.dark #auto-reset-button:focus-visible {
 .progress-ring circle {
     fill: transparent;
     stroke-width: 2px;
-    transition: stroke-dashoffset 0.5s, stroke 0.3s ease;
+    transition: stroke-dashoffset 0.5s, stroke 0.22s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Спокійний стан кільця */
@@ -5973,7 +6016,9 @@ body.dark .info-tooltip-text::before {
     padding: 5px 7px; 
     background-color: transparent; 
     cursor: pointer;
-    transition: background-color 0.2s, box-shadow 0.2s;
+    transition:
+        background-color 0.22s cubic-bezier(0.4, 0, 0.2, 1),
+        box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1);
     border-radius: 8px;
     border-bottom: none;
     margin: 0 10px;
@@ -6080,7 +6125,7 @@ body.dark .command-item.static-header .command-text:hover {
     align-items: center;
     padding: 5px 7px;
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: background-color 0.22s cubic-bezier(0.4, 0, 0.2, 1);
     border-radius: 8px;
     margin: 0 10px 0 10px; 
     font-size: 1em;
@@ -6093,16 +6138,6 @@ body.dark .command-item.static-header .command-text:hover {
 /* sub command item — ховер */
 .sub-command-item:hover {
     background-color: var(--text-hover);
-}
-
-/* sub command item — активний стан (імітація кліку/копіювання) */
-.sub-command-item:active {
-    background-color: #e0e0e0;
-}
-
-/* Темна тема: sub command item — активний стан */
-body.dark .sub-command-item:active {
-    background-color: #444444;
 }
 
 /* sub command item */
