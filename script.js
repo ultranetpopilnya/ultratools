@@ -126,7 +126,6 @@ auth.onAuthStateChanged(async (user) => {
             userAvatar.style.display = user.photoURL ? 'block' : 'none';
         }
 
-        localStorage.removeItem('tombstones');
         checkEmptyTemplatesState();
 
         const cached = localStorage.getItem('lastSyncTime');
@@ -259,14 +258,6 @@ const debouncedSaveTemplates = () => {
     }, 400);
 };
 
-let saveLocalDebounceTimer;
-const debouncedSaveLocal = () => {
-    clearTimeout(saveLocalDebounceTimer);
-    saveLocalDebounceTimer = setTimeout(() => {
-        saveTemplates(false);
-    }, 300);
-};
-
 // --- ФУНКЦІЯ ОЧИЩЕННЯ ВІД ДУБЛІКАТІВ ---
 function cleanDuplicates(arr, type) {
     if (!arr || !Array.isArray(arr)) return [];
@@ -324,18 +315,6 @@ async function loadUserDataFromCloud() {
             let cloudTemplates = cleanDuplicates(cloudData.templates || [], 'templates');
             let cloudNotes = cleanDuplicates(cloudData.quickNotes || [], 'notes');
             let cloudHistory = cloudData.loginHistory || [];
-
-            // Зберігаємо локальний стан полів генератора (щоб очищення або ввід не затиралися старою хмарою при F5)
-            cloudTemplates.forEach(ct => {
-                const local = localTemplates.find(lt => lt.id === ct.id);
-                if (local) {
-                    ct.configLogin = local.configLogin ?? '';
-                    ct.configOlt = local.configOlt ?? '';
-                    ct.configSn = local.configSn ?? '';
-                    ct.configPort = local.configPort ?? '';
-                    ct.configVlan = local.configVlan ?? '';
-                }
-            });
 
             // ОБ'ЄДНАННЯ ПРАЦЮЄ ТІЛЬКИ ЯКЩО КОРИСТУВАЧ ЩОЙНО НАТИСНУВ "УВІЙТИ"
             // (при звичайному F5 воно НЕ спрацює і не воскресить видалені шаблони)
@@ -408,7 +387,7 @@ async function loadUserDataFromCloud() {
         localStorage.setItem('lastSyncTime', syncDate.toISOString());
         updateSyncTimeDisplay(syncDate, 'success');
 
-        console.log(`✅ [LOAD DONE] Інтерфейс узгоджено з хмарою. Шаблонів: ${JSON.parse(localStorage.getItem('textTemplates')).length}`);
+        console.log(`✅ [LOAD DONE] Інтерфейс узгоджено з хмарою. Шаблонів: ${JSON.parse(localStorage.getItem('textTemplates') || '[]').length}`);
 
     } catch (error) {
         console.error("❌ [LOAD ERROR] Помилка завантаження з хмари:", error);
@@ -1733,16 +1712,11 @@ function centerActiveDropdownItem(dropdownNode) {
         lastGeneratedConfig = '', lastConfigStart = -1, lastConfigEnd = -1,
         ponOnuMode = false, replaceMode = true,
         showSignalMode = false,
-        onuMode = '', regMode = false, switchMode = false,
+        onuMode = '', switchMode = false,
         isSearchOpen = false,
         isConfigOpen = false, 
         id = generateUUID(), 
-        updatedAt = Date.now(),
-        configLogin = '',
-        configOlt = '',
-        configSn = '',
-        configPort = '',
-        configVlan = '',
+        updatedAt = Date.now()
     } = data;
 
     const container = document.getElementById('templates-grid-wrapper'); 
@@ -1787,8 +1761,6 @@ fieldGroup.dataset.replaceMode         = replaceMode;
 fieldGroup.dataset.showSignalMode      = showSignalMode;
 fieldGroup.dataset.onuMode             = onuMode || (switchMode ? 'SWITCH' : 'REG');
     
-    fieldGroup.style.width = width;
-    fieldGroup.style.height = height;
           
     const headerDiv = document.createElement('div');
     headerDiv.className = 'template-header';
@@ -2535,23 +2507,6 @@ snInputBox.addEventListener('input', (e) => {
         });
     });
 
-    // === ВІДНОВЛЕННЯ ТА ЗБЕРЕЖЕННЯ ЗНАЧЕНЬ ПІСЛЯ F5 ===
-    if (configLogin) loginInputBox.value = configLogin;
-    if (configOlt) {
-        oltInputNode.value = configOlt;
-        lastConfirmedOltName = configOlt;
-    }
-    if (configSn) snInputBox.value = configSn;
-    if (configPort) portInputBox.value = configPort;
-    if (configVlan) vlanInputNode.value = configVlan;
-
-    // Зберігаємо тихо без хмари (для відновлення при F5)
-    configPanel.querySelectorAll('input').forEach(input => {
-        input.addEventListener('input', () => {
-            debouncedSaveLocal();
-        });
-    });
-
 function renderOltDropdown(filter = '') {
     const query = filter.toLowerCase().trim();
     oltDropdownList.innerHTML = '';
@@ -2773,9 +2728,8 @@ btnClearFields.addEventListener('click', (e) => {
 
     // === ГОЛОВНА ЛОГІКА ГЕНЕРАЦІЇ ===
     const btnGenerate = configPanel.querySelector('.config-generate-btn');
-    btnGenerate.addEventListener('click', (e) => {
+btnGenerate.addEventListener('click', (e) => {
         e.preventDefault();
-        const select = configPanel.querySelector('.config-olt-select');
         const loginVal = configPanel.querySelector('.config-login-input').value.trim();
         const speedVal = configPanel.querySelector('.config-speed-dropdown').dataset.value;
         const portVal = configPanel.querySelector('.config-port-input').value.trim();
@@ -3035,32 +2989,33 @@ if (!oltObj) {
                 </div>
             </div>
             
-            <!-- Права колонка: Заміна швидкості -->
+                        <!-- Права колонка: Заміна швидкості -->
             <div class="search-col-right">
-                <span class="speed-label">Швидкість:</span>
-                <div class="speed-dropdown search-speed-dropdown" data-value="100M">
-    <button type="button" class="speed-dropdown-toggle">
-    <span class="speed-dropdown-emoji">⚡</span>
-        <span class="speed-dropdown-value">100M</span>
-        <i class="fa-solid fa-chevron-down speed-dropdown-arrow"></i>
-    </button>
-    <div class="speed-dropdown-list">
-        <div class="speed-dropdown-item" data-value="10M">10M</div>
-        <div class="speed-dropdown-item" data-value="20M">20M</div>
-        <div class="speed-dropdown-item" data-value="30M">30M</div>
-        <div class="speed-dropdown-item" data-value="40M">40M</div>
-        <div class="speed-dropdown-item" data-value="50M">50M</div>
-        <div class="speed-dropdown-item" data-value="60M">60M</div>
-        <div class="speed-dropdown-item active" data-value="100M">100M</div>
-        <div class="speed-dropdown-item" data-value="200M">200M</div>
-        <div class="speed-dropdown-item" data-value="300M">300M</div>
-        <div class="speed-dropdown-item" data-value="500M">500M</div>
-        <div class="speed-dropdown-item" data-value="1G">1G</div>
-    </div>
-</div>
-                <button class="search-cmd-btn btn-replace-speed" title="Заміна швидкості в конфігу на обрану">
-                    <i class="fa-solid fa-arrow-right-arrow-left"></i> Замінити
-                </button>
+                <div class="speed-field">
+                    <div class="speed-dropdown search-speed-dropdown" data-value="100M">
+                        <button type="button" class="speed-dropdown-toggle">
+                            <span class="speed-dropdown-emoji">⚡</span>
+                            <span class="speed-dropdown-value">100M</span>
+                            <i class="fa-solid fa-chevron-down speed-dropdown-arrow"></i>
+                        </button>
+                        <div class="speed-dropdown-list">
+                            <div class="speed-dropdown-item" data-value="10M">10M</div>
+                            <div class="speed-dropdown-item" data-value="20M">20M</div>
+                            <div class="speed-dropdown-item" data-value="30M">30M</div>
+                            <div class="speed-dropdown-item" data-value="40M">40M</div>
+                            <div class="speed-dropdown-item" data-value="50M">50M</div>
+                            <div class="speed-dropdown-item" data-value="60M">60M</div>
+                            <div class="speed-dropdown-item active" data-value="100M">100M</div>
+                            <div class="speed-dropdown-item" data-value="200M">200M</div>
+                            <div class="speed-dropdown-item" data-value="300M">300M</div>
+                            <div class="speed-dropdown-item" data-value="500M">500M</div>
+                            <div class="speed-dropdown-item" data-value="1G">1G</div>
+                        </div>
+                    </div>
+                    <button class="btn-replace-speed" title="Замінити швидкість у конфігу на обрану" aria-label="Замінити швидкість">
+                        <i class="fa-solid fa-arrow-right-arrow-left"></i>
+                    </button>
+                </div>
             </div>
         </div>
     `;
@@ -3162,11 +3117,13 @@ document.addEventListener('click', (e) => {
             const isActive = searchPanel.classList.contains('active');
             if (isActive) {
                 searchPanel.classList.remove('active');
+                fieldGroup.dataset.isSearchOpen = 'false';
+                fieldGroup.dataset.updatedAt = Date.now();
                 // Після закриття пошуку повертаємо курсор назад у текст, щоб можна було відразу друкувати
                 const textarea = fieldGroup.querySelector('textarea');
                 if (textarea) textarea.focus();
                 
-                saveTemplates(); // ДОДАНО: зберігаємо стан
+                saveTemplates(); // Зберігаємо стан
             }
         }
     });
@@ -3539,12 +3496,11 @@ function addTemplate() {
     // 1. Фіксуємо поточну висоту, щоб уникнути ривків
     container.style.height = container.offsetHeight + 'px';
 
-    const newData = { name: '', content: '', width: '300px', height: '90px' };
+    const newData = { name: '', content: '', width: '450px', height: '90px' };
     const newField = createTemplateField(newData);
     
     // Тимчасово вимикаємо анімацію появи
     newField.style.transition = 'none';
-    container.appendChild(newField);
     
     // 3. Через мить (коли тетріс відпрацював) робимо магію
     requestAnimationFrame(() => {
@@ -3559,16 +3515,14 @@ function addTemplate() {
         checkEmptyTemplatesState();
 
         // --- НАДІЙНА ПРОКРУТКА ---
-        // Знаходимо саме той контейнер, який має скрол (біла картка)
         const scrollContainer = newField.closest('.content-card');
 
         if (scrollContainer) {
-            // Даємо ще один кадр на перерахунок висоти після зміни container.style.height
             requestAnimationFrame(() => {
                 newField.scrollIntoView({ behavior: 'smooth', block: 'center' });
             });
         }
-    }, { once: true });
+    });
 }
     
     function saveTemplates(syncToCloud = true) {
@@ -3633,8 +3587,7 @@ function addTemplate() {
                     if (!template) return; 
                     
                     try {
-                        const field = createTemplateField(template);
-                        templatesGrid.appendChild(field); 
+                        createTemplateField(template);
                     } catch (err) {
                         console.error(`Помилка малювання шаблону №${index + 1}:`, err);
                     }
@@ -4130,9 +4083,6 @@ function initTabManagement() {
 
     updateAddMenu();
 }
-
-// === ЗМІННІ ДЛЯ ДОДАТКОВИХ КОНФІГІВ (PON-ONU) ===
-let EXTRA_CONFIG_TEMPLATES = { gpon: "", epon: "" };
 
     document.addEventListener('DOMContentLoaded', () => {
 	// 1. Відновлення порядку при завантаженні
@@ -5263,9 +5213,6 @@ document.addEventListener('DOMContentLoaded', () => {
 /* =========================================
    ЛОГІКА ШВИДКИХ НОТАТОК (POPOVER) + РЕДАГУВАННЯ
    ========================================= */
-const qnPlaceholder = document.createElement('div');
-qnPlaceholder.className = 'qn-placeholder';
-
 let currentActiveQnBtn = null;
 let editingNoteIndex = -1; // -1 означає "додаємо нову", інакше - індекс нотатки, яку редагуємо
 
@@ -5327,13 +5274,6 @@ function closeQuickNotes() {
     resetQuickNoteForm(); // Очищаємо поле при закритті
 }
 
-// 3. Закриття при кліку поза вікном
-document.addEventListener('click', (e) => {
-    const popover = document.getElementById('qn-popover');
-    if (popover.classList.contains('active') && !popover.contains(e.target) && !e.target.closest('.quick-notes-btn')) {
-        closeQuickNotes();
-    }
-});
 document.getElementById('qn-popover')?.addEventListener('click', (e) => {
     e.stopPropagation();
 });
@@ -5485,14 +5425,13 @@ function renderQuickNotes() {
             item.classList.remove('qn-dragging');
             item.setAttribute('draggable', 'false');
             
-            // НОВЕ: Відновлюємо правильний масив об'єктів після перетягування
+            // Відновлюємо порядок масиву, зберігаючи оригінальний текст без спотворень
             const currentItems = [...list.querySelectorAll('.qn-text')];
             quickNotesArray = currentItems.map(el => {
-                return {
-                    id: el.dataset.id,
-                    text: el.innerText,
-                    updatedAt: Date.now()
-                };
+                const existing = quickNotesArray.find(n => n.id === el.dataset.id);
+                return existing
+                    ? { ...existing, updatedAt: Date.now() }
+                    : { id: el.dataset.id, text: el.textContent, updatedAt: Date.now() };
             });
             
             localStorage.setItem('quickNotesData', JSON.stringify(quickNotesArray));
@@ -5626,7 +5565,7 @@ const RIPPLE_SELECTOR = `
     .command-item, .sub-command-item, .tab-button, .olt-dropdown-item,
     #login-autoclear-btn, .calc-action-button, .stepper-btn,
     #auto-reset-button, .segment-btn, .qn-add-btn, .btn-find, 
-    .btn-replace, .btn-replace-all, .btn-replace-speed, .config-generate-btn`;
+    .btn-replace, .btn-replace-all, .config-generate-btn`;
 
 document.addEventListener('mousedown', function (e) {
     if (e.button !== 0) return;                          // тільки ліва кнопка

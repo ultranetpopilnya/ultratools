@@ -1056,6 +1056,7 @@ body.dark .extension-download-btn {
 
 /* 2.1. Спокійний стан: легке коло фонове + іконка кольору головних кнопок */
 body :is(
+    .btn-replace-speed,
     .template-actions button,
     .qn-actions .qn-action-btn,
     .qn-close-btn,
@@ -1094,6 +1095,7 @@ body .close-tab-btn {
 /* 2.2. Наведення: світла темнішає / темна світлішає */
 @media (hover: hover) {
     body :is(
+        .btn-replace-speed,
         .close-tab-btn,
         .template-actions button,
         .qn-actions .qn-action-btn,
@@ -1117,6 +1119,7 @@ body .close-tab-btn {
 
 /* 2.3. Натискання: ще сильніший тон (без внутрішньої обводки) */
 body :is(
+    .btn-replace-speed,
     .close-tab-btn,
     .template-actions button,
     .qn-actions .qn-action-btn,
@@ -1427,7 +1430,6 @@ body .add-tab-btn.menu-open:active {
 .btn-find,
 .btn-replace,
 .btn-replace-all,
-.btn-replace-speed,
 .qn-add-btn,
 .unified-pill:has(#login-google-btn:not(.auth-hidden)),
 .variant-dropdown-item,
@@ -1456,7 +1458,6 @@ body .add-tab-btn.menu-open:active {
 .btn-find > :not(.ripple),
 .btn-replace > :not(.ripple),
 .btn-replace-all > :not(.ripple),
-.btn-replace-speed > :not(.ripple),
 .qn-add-btn > :not(.ripple),
 .unified-pill #login-google-btn:not(.auth-hidden) > :not(.ripple),
 .variant-dropdown-item > :not(.ripple),
@@ -3866,44 +3867,88 @@ body.dark .line-marker {
     overflow: visible;
 }
 
-/* 4. Внутрішня сітка пошуку (АБСОЛЮТНЕ ЦЕНТРУВАННЯ ВМІСТУ) */
+/* 4. Внутрішня сітка пошуку: ряд 1 - поля вводу + швидкість, ряд 2 - кнопки */
 .search-panel-columns {
-    display: flex;
-    width: max-content;
-    max-width: 100%;
-    margin: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 124px;
     gap: var(--btn-gap);
-    box-sizing: border-box;
-    align-items: flex-end;
-}
-
-.search-col-left {
-    flex: 0 1 420px;
+    align-items: start;
     width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: var(--btn-gap);
+    max-width: none;
+    margin: 0;
+    box-sizing: border-box;
 }
 
+/* Колонки «прозорі»: їхній вміст іде прямо в сітку */
+.search-col-left,
 .search-col-right {
-    flex: 0 0 110px;
-    width: 110px;
-    padding-left: var(--btn-gap);
-    display: flex;
-    flex-direction: column;
-    gap: var(--btn-gap);
-    border-left: 1px dashed var(--input-border-color);
+    display: contents;
 }
 
+.search-inputs-row {
+    grid-column: 1;
+    grid-row: 1;
+}
+
+.speed-field {
+    grid-column: 2;
+    grid-row: 1;
+    position: relative;
+    width: 100%;
+}
+
+.search-buttons-row {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    justify-content: center;
+    padding: 6px;
+    box-sizing: border-box;
+    border-radius: 12px;
+    border: 1px solid var(--glass-border-bright);
+}
+
+/* Селектор швидкості: місце праворуч під кнопку-іконку */
+.speed-field .speed-dropdown .speed-dropdown-toggle {
+    padding-right: 36px;
+}
+
+/* Кнопка заміни швидкості: вбудована в праву частину селектора */
+.speed-field .btn-replace-speed {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 1px;
+    right: 1px;
+    z-index: 1;
+    width: 30px;
+    height: 28px;
+    padding: 0;
+    border: none;
+    border-left: 1px solid var(--input-border-color);
+    border-radius: 0 7px 7px 0;
+    cursor: pointer;
+    user-select: none;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.speed-field .btn-replace-speed i {
+    font-size: var(--btn-ghost-icon-size);
+    line-height: 1;
+    pointer-events: none;
+}
+
+/* Кнопки пошуку: природна ширина, не розтягуються */
 .search-cmd-btn {
-    flex: 1;
+    flex: 0 0 auto;
     min-width: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 6px;
     height: 30px;
-    padding: 0 12px;
+    padding: 0 14px;
     box-sizing: border-box;
     border-radius: 999px;
     font-family: inherit;
@@ -3919,12 +3964,7 @@ body.dark .line-marker {
     font-size: 14px;
 }
 
-.btn-replace-speed {
-    flex: none;
-    width: 100%;
-}
-
-/* Обгортки всередині лівої колонки */
+/* Обгортки рядів */
 .search-inputs-row,
 .search-buttons-row {
     display: flex;
@@ -3933,8 +3973,7 @@ body.dark .line-marker {
 }
 
 /* ІНПУТИ ТА СЕЛЕКТ (однаковий стиль) */
-.search-inputs-row input,
-.search-inputs-row select {
+.search-inputs-row input {
     padding: 3px 8px;
     height: 30px; 
     border-radius: 8px; 
@@ -3953,28 +3992,6 @@ body.dark .line-marker {
 .search-inputs-row input {
     flex: 1; 
     min-width: 60px;
-}
-
-/* search inputs row */
-.search-inputs-row select {
-    cursor: pointer;
-    flex: 1;
-}
-
-/* Темна тема: search inputs row */
-body.dark .search-inputs-row select option {
-    background-color: var(--input-bg-color);
-    color: var(--text-color);
-}
-
-/* Маленький напис "Швидкість:" */
-.speed-label {
-    font-size: 11px;
-    color: var(--inactive-text);
-    font-weight: 500;
-    text-transform: uppercase;
-    line-height: 1;  
-    margin: 0 0 0px 6px;
 }
 
 /* Кнопка SWAP (стрілочки) */
@@ -4077,6 +4094,15 @@ body.dark .search-inputs-row select option {
     justify-content: center;
 }
 
+/* Панель керування: останній ряд з кнопками, тільки рамка */
+.config-rows-wrapper > :last-child:not(:first-child) {
+    padding: 6px;
+    height: auto; 
+    box-sizing: border-box;
+    border-radius: 12px;
+    border: 1px solid var(--glass-border-bright);
+}
+
 .config-inputs-col {
     display: flex;
     flex-direction: column;
@@ -4111,12 +4137,6 @@ body.dark .search-inputs-row select option {
     outline: none;
     transition: border-color 0.2s, box-shadow 0.2s;
     min-width: 0; 
-}
-
-/* config row — фокус */
-.config-row input:focus,
-.config-row select:focus {
-    box-shadow: 0 0 0 2px rgba(79, 109, 245, 0.15);
 }
 
 .config-row .olt-dropdown-wrapper {
@@ -4187,11 +4207,6 @@ body.dark .search-inputs-row select option {
 
 .config-row input.has-emoji {
     padding-left: 28px;
-}
-
-/* --- Швидкість: емодзі в потоці, всередині кнопки --- */
-.speed-dropdown .speed-dropdown-toggle {
-    padding: 3px 8px 3px 6px;
 }
 
 .speed-dropdown-emoji {
@@ -4711,7 +4726,7 @@ body.dark .olt-dropdown-list {
     gap: 0px;
     width: 100%;
     height: 30px;
-    padding: 3px 8px;
+    padding: 3px 6px;
     border-radius: 8px;
     border: 1px solid var(--input-border-color);
     background-color: var(--input-bg-color);
@@ -4820,15 +4835,7 @@ body.dark .speed-dropdown-list {
 
 /* Ширина під конкретні місця використання */
 .config-row .speed-dropdown.config-speed-dropdown {
-    flex: 0 0 100px;
-}
-
-.config-row .config-speed-dropdown .speed-dropdown-toggle {
-    background-color: var(--input-bg-color);
-}
-
-.search-col-right .speed-dropdown.search-speed-dropdown {
-    width: 100%;
+    flex: 0 0 94px;
 }
 
 /* ================================================================
@@ -5502,14 +5509,6 @@ body.dark .c-btn:active {
     background-color: #525252;
 }
 
-/* Додати одразу після body.dark .c-btn.operator:hover ... */
-body.dark .c-btn.operator:active,
-body.dark .c-btn.func:active,
-body.dark .c-btn.action-clear:active,
-body.dark .c-btn.action-back:active {
-    background-color: #424242;
-}
-
 body.dark .hist-close-btn:active {
     background-color: #525252; /* було #303030 */
 }
@@ -5838,15 +5837,6 @@ body.dark #static-clarification-message {
     color: var(--inactive-text);
     transform: translateZ(0);
     backface-visibility: hidden;
-    transition: color 0.2s ease;
-}
-
-.info-icon {
-    margin-bottom: 0;
-    font-size: 20px;        /* парний розмір: (40 - 20) / 2 = рівно 10px без півпікселів */
-    line-height: 1;         /* прибирає зсув від метрик основного шрифту */
-    display: block;
-    color: var(--inactive-text);
     transition: color 0.2s ease;
 }
 
