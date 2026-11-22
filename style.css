@@ -734,11 +734,11 @@ body.dark {
     --btn-stepper-seg-hover:  var(--btn-solid-bg-hover);
     --btn-stepper-seg-active: var(--btn-solid-bg-active);
 
-        /* Увімкнений стан: інверсія (темна тема — світла кнопка) */
-    --btn-inv-bg:        #e6edf5;
---btn-inv-bg-hover:  #f4f7fb;
---btn-inv-bg-active: #c9d3df;
---btn-inv-text:      #1a1d21;
+/* Увімкнений стан: інверсія (темна тема — світла кнопка) */
+    --btn-inv-bg:        #cfd8e3;
+    --btn-inv-bg-hover:  #ebf0f7;
+    --btn-inv-bg-active: #b6c3d4;
+    --btn-inv-text:      #1a1d21;
 --btn-inv-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.65),
     0 1px 3px rgba(0, 0, 0, 0.40);
