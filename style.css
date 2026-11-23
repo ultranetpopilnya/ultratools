@@ -4089,7 +4089,7 @@ body.dark .line-marker {
 
 /* template config bar — активний стан */
 .template-config-bar.active {
-    max-height: 100%; 
+    max-height: 300px;
     opacity: 1;
     transform: translateY(0) scale(1); 
     pointer-events: auto; 
@@ -4106,7 +4106,8 @@ body.dark .line-marker {
 
 /* --- ЗАХИСТ ВІД ЗЛАМУ КАРТКИ --- */
 .template-field-group:has(.template-config-bar.active) {
-    min-width: max-content !important; 
+    min-width: max-content !important;
+    min-height: 310px;
 }
 
 .template-field-group:has(.template-search-bar.active) {
@@ -4129,6 +4130,13 @@ body.dark .line-marker {
     box-sizing: border-box;
     border-radius: 12px;
     border: 1px solid var(--glass-border-bright);
+}
+
+.config-actions-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--btn-gap);
+    width: 100%;
 }
 
 .config-inputs-col {
