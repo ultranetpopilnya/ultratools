@@ -3359,16 +3359,18 @@ document.addEventListener('click', (e) => {
     resizeHandle.className = 'resize-handle';    
     
     fieldGroup.appendChild(headerDiv); 
-    
-    // Вставляємо панель пошуку ВІДРАЗУ після заголовка,
-    // перед обгорткою тексту. Це забезпечить правильне "витіснення".
     fieldGroup.appendChild(configPanel);
-
     fieldGroup.appendChild(searchPanel); 
-    
     fieldGroup.appendChild(textareaWrapper);
     fieldGroup.appendChild(resizeHandle);
-    
+
+    // Встановлюємо відкритий стан ДО додавання в DOM, щоб не спрацьовувала анімація
+    fieldGroup.dataset.isSearchOpen = isSearchOpen ? 'true' : 'false';
+    fieldGroup.dataset.isConfigOpen = isConfigOpen ? 'true' : 'false';
+
+    if (isSearchOpen) searchPanel.classList.add('active');
+    if (isConfigOpen) configPanel.classList.add('active');
+
     container.appendChild(fieldGroup); 
     
     initDraggableAndResizable(fieldGroup);
@@ -3382,6 +3384,8 @@ document.addEventListener('click', (e) => {
             lastFocusedElement = e.target;
         }
     });
+    
+    return fieldGroup;
     
     // НАДІЙНЕ ВІДКРИТТЯ: Записуємо стан в пам'ять елемента і візуально відкриваємо
     fieldGroup.dataset.isSearchOpen = isSearchOpen ? 'true' : 'false';
