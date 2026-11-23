@@ -74,7 +74,8 @@ select {
     /* TABS */
     --template-strip-bg: #fbfbff;
     --inactive-text: #7b97be;
-    --text-hover: rgb(238, 242, 247);
+    --text-hover: rgba(15, 23, 42, 0.06);
+    --list-active-bg: rgba(15, 23, 42, 0.11);
 
     /* SCROLLBAR */
 --scrollbar-track: #e0e0e0;
@@ -183,6 +184,7 @@ color-scheme: dark;
     /* TABS */
 --template-strip-bg: #2B2B2B; 
     --text-hover: rgba(255, 255, 255, 0.07);
+    --list-active-bg: rgba(255, 255, 255, 0.12);
 
     /* SCROLLBAR */
 --scrollbar-track: #3a3a3a;
@@ -1534,12 +1536,38 @@ button:disabled, input:disabled, select:disabled {
 }
 
 /* ================================================================
+   ЄДИНА СИСТЕМА СПИСКІВ (HOVER + ACTIVE)
+   ================================================================ */
+:is(
+    .add-tab-item,
+    .olt-dropdown-item,
+    .speed-dropdown-item,
+    .command-item,
+    .sub-command-item,
+    .hist-item
+):hover {
+    background-color: var(--text-hover);
+}
+
+.hist-item:hover {
+    border-right-color: var(--primary-accent-color);
+}
+
+:is(
+    .olt-dropdown-item,
+    .speed-dropdown-item
+).active {
+    background-color: var(--list-active-bg);
+    color: var(--primary-accent-color);
+    font-weight: 500;
+}
+
+/* ================================================================
    4. ГЛОБАЛЬНИЙ UI: ВКЛАДКИ, ПІГУЛКИ ТА СПОВІЩЕННЯ
    Елементи інтерфейсу, що не належать до конкретного інструменту:
    панель вкладок (Tabs), бічні кнопки історії версій, розширення,
    перемикач теми та Toast-сповіщення знизу.
    ================================================================ */
-
 /* Контейнер, що створює ефект "треку" для кнопок-пігулок */
 .tabs {
     display: flex;
@@ -1767,18 +1795,6 @@ body.dark .tab-button:hover:not(.active) {
     font-size: 14px;
     color: var(--inactive-text);
     transition: color 0.2s ease;
-}
-
-/* --- СУЧАСНИЙ ХОВЕР (Без різкої заливки) --- */
-.add-tab-item:hover {
-    /* Легкий акцентний фон замість суцільного кольору */
-    background-color: var(--text-hover); 
-    color: var(--primary-accent-color);
-}
-
-/* add tab item — ховер */
-.add-tab-item:hover i {
-    color: var(--primary-accent-color);
 }
 
 /* Ефект фізичного кліку */
@@ -4714,13 +4730,6 @@ body.dark .olt-dropdown-list {
     text-overflow: ellipsis;
 }
 
-
-.olt-dropdown-item:hover,
-.olt-dropdown-item.active {
-    background-color: var(--text-hover);
-    color: var(--primary-accent-color);
-}
-
 /* === КНОПКИ ПРОКРУТКИ ДЛЯ ШАБЛОНІВ === */
 .scroll-nav-buttons {
     position: absolute;
@@ -4885,12 +4894,6 @@ body.dark .speed-dropdown-list {
     margin: 1px 0;
     transition: background 0.12s, color 0.12s;
     white-space: nowrap;
-}
-
-.speed-dropdown-item:hover,
-.speed-dropdown-item.active {
-    background-color: var(--text-hover);
-    color: var(--primary-accent-color);
 }
 
 /* Ширина під конкретні місця використання */
@@ -5701,17 +5704,6 @@ body.dark .calc-history-panel {
     border-right: 4px solid transparent;
 }
 
-/* hist item — ховер */
-.hist-item:hover {
-    background-color: rgba(0,0,0,0.05);
-    border-right-color: var(--primary-accent-color);
-}
-
-/* Темна тема: hist item — ховер */
-body.dark .hist-item:hover {
-    background-color: rgba(255,255,255,0.08);
-}
-
 /* Кнопка "Приховати" у стилі клавіш калькулятора Win11 */
 .hist-close-btn {
     width: 100%;
@@ -6030,12 +6022,6 @@ body.dark .info-tooltip-text::before {
     font-size: 1em;
 }
 
-/* command item — ховер */
-.command-item:hover {
-    background-color: var(--text-hover); 
-    box-shadow: none; 
-}
-
 .command-text {
     font-family: 'FixelDisplay', monospace;
     font-weight: 400;
@@ -6100,27 +6086,10 @@ body.dark .info-tooltip-text::before {
     cursor: pointer; /* Курсор-стрілка, бо плашка не згортається */
 }
 
-/* Підсвітка фону при наведенні, як у всіх інших команд */
-.command-item.static-header:hover {
-    background-color: var(--text-hover); 
-}
-
 /* 3. Текст команди: можна копіювати, АЛЕ БЕЗ ПІДКРЕСЛЕННЯ */
 .command-item.static-header .command-text {
     cursor: pointer;
     border-bottom: none !important; /* Примусово прибираємо лінію */
-}
-
-/* command item — ховер */
-.command-item.static-header .command-text:hover {
-    color: var(--description-color);
-    border-bottom: none !important;
-}
-
-/* Темна тема: command item — ховер */
-body.dark .command-item.static-header .command-text:hover {
-    color: var(--secondary-accent-color);
-    border-bottom: none !important;
 }
 
 /* Стиль елемента підкоманди */
@@ -6138,11 +6107,6 @@ body.dark .command-item.static-header .command-text:hover {
 
 .sub-command-item .command-description {
     font-size: 0.9em !important;
-}
-
-/* sub command item — ховер */
-.sub-command-item:hover {
-    background-color: var(--text-hover);
 }
 
 /* sub command item */
