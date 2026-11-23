@@ -2431,22 +2431,17 @@ body.dark .moon-icon {
 .notification.warning { --notification-accent: #ff9500; }
 .notification.info    { --notification-accent: #4a90e2; }
 
-/* --- Прогрес-бар автозникнення (опційно) --- */
-.notification__progress {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    height: 2px;
-    width: 100%;
-    background: var(--notification-accent, currentColor);
-    opacity: 0.4;
-    transform-origin: left;
-    animation: notification-progress 4s linear forwards;
-}
-
-@keyframes notification-progress {
-    from { transform: scaleX(1); }
-    to   { transform: scaleX(0); }
+/* --- Лічильник повторів (×N) --- */
+.notification__count {
+    flex-shrink: 0;
+    padding: 1px 7px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--notification-text);
+    background: rgba(128, 128, 128, 0.2);
+    background: color-mix(in srgb, var(--notification-accent, #4a90e2) 24%, transparent);
 }
 
 /* ================================================================
@@ -4470,6 +4465,7 @@ body.dark .variant-badge {
     transition: transform 0.08s ease-out;
 }
 
+.config-onu-mode-btn,
 .config-clear-fields-btn,
 .config-replace-mode-btn,
 .config-pon-onu-btn,
@@ -4497,29 +4493,6 @@ body.dark .variant-badge {
 .config-pon-onu-btn i,
 .config-show-signal-btn i {
     font-size: 14px;
-}
-
-/* =========================================================
-   КНОПКА РЕЖИМІВ ОНУ (РЕЄСТРАЦІЯ / ЗАМІНА) — ГЕОМЕТРІЯ
-   ========================================================= */
-.config-onu-mode-btn {
-    flex: 0 0 auto !important;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    width: 104px;
-    height: 30px;
-    padding: 0 12px;
-    box-sizing: border-box;
-    border-radius: 999px !important;
-    font-family: inherit;
-    font-size: 13px;
-    letter-spacing: 0.1px;
-    white-space: nowrap;
-    cursor: pointer;
-    user-select: none;
-    -webkit-tap-highlight-color: transparent;
 }
 
 /* Повідомлення "нічого не знайдено" */

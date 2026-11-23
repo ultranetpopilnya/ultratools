@@ -1434,20 +1434,75 @@ if (activeTab === 'gpon-commands') {
         }
     }
 
-    // Стару функцію handleCommandClick можна видалити, 
-    // оскільки логіка тепер вбудована прямо в displayCommands через copyCommandToClipboard
+// === СПОВІЩЕННЯ (TOAST) ===
+const NOTIFICATION_DURATIONS = { success: 2200, info: 2200, warning: 3000, error: 4000 };
+const NOTIFICATION_TYPES = Object.keys(NOTIFICATION_DURATIONS);
+let notificationHideTimer = null;
+let notificationLastKey = null;   // "тип|текст" поточного сповіщення
+let notificationRepeat = 1;       // скільки разів підряд показано однакове
 
-       function showNotification(message, type = 'info') {
+function showNotification(message, type = 'info', duration) {
     const notification = document.getElementById('notification');
     if (!notification) return;
 
-    // Прибираємо попередній тип, ставимо новий
-    notification.classList.remove('success', 'error', 'warning', 'info');
+    if (!NOTIFICATION_TYPES.includes(type)) type = 'info';
+    const ms = duration || NOTIFICATION_DURATIONS[type];
+    const key = type + '|' + message;
+    const wasVisible = notification.classList.contains('show');
+
+    // Те саме сповіщення підряд — лічильник ×N, інакше рахуємо спочатку
+    if (wasVisible && key === notificationLastKey) {
+        notificationRepeat = Math.min(notificationRepeat + 1, 99);
+    } else {
+        notificationRepeat = 1;
+    }
+    notificationLastKey = key;
+
+    // Скасовуємо старий таймер, щоб він не сховав нове сповіщення
+    clearTimeout(notificationHideTimer);
+
+    // Тип
+    notification.classList.remove(...NOTIFICATION_TYPES);
     notification.classList.add(type);
 
-    notification.textContent = message;
+    // Доступність (скрінрідери)
+    if (!notification.hasAttribute('role')) {
+        notification.setAttribute('role', 'status');
+        notification.setAttribute('aria-live', 'polite');
+        notification.setAttribute('aria-atomic', 'true');
+    }
+
+    // Вміст перебудовуємо щоразу, щоб текст і лічильник завжди були актуальні
+    notification.textContent = '';
+
+    const text = document.createElement('span');
+    text.className = 'notification__text';
+    text.textContent = message;
+    notification.appendChild(text);
+
+    if (notificationRepeat > 1) {
+        const count = document.createElement('span');
+        count.className = 'notification__count';
+        count.textContent = '×' + notificationRepeat;
+        notification.appendChild(count);
+    }
+
     notification.classList.add('show');
-    setTimeout(() => notification.classList.remove('show'), 2000);
+
+    // Легкий "поштовх", якщо сповіщення вже було на екрані
+    if (wasVisible && notification.animate) {
+        notification.animate([
+            { transform: 'translate(-50%, 0) scale(1)' },
+            { transform: 'translate(-50%, -3px) scale(1.04)' },
+            { transform: 'translate(-50%, 0) scale(1)' }
+        ], { duration: 220, easing: 'ease-out' });
+    }
+
+    notificationHideTimer = setTimeout(() => {
+        notification.classList.remove('show');
+        notificationLastKey = null;
+        notificationRepeat = 1;
+    }, ms);
 }
     
 function initDraggableAndResizable(element) {
