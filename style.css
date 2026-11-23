@@ -1949,7 +1949,6 @@ body.dark .add-tab-menu {
     display: flex;
     flex-direction: column;
     
-    /* Твої оригінальні анімації збережено */
     transition: 
         width 0.5s cubic-bezier(0.34, 1.2, 0.64, 1), 
         max-height 0.5s cubic-bezier(0.34, 1.2, 0.64, 1), 
@@ -1964,8 +1963,7 @@ body.dark .add-tab-menu {
 .version-pill:hover:not(.is-open), 
 .extension-pill:hover:not(.is-open) {
     background-color: var(--glass-white-md);
-    border-color: var(--glass-white-lg); 
-    transform: translateY(-2px);
+    border-color: var(--glass-white-lg);
     box-shadow: 
         var(--shadow-float), 
         var(--reflection-inner);
@@ -2306,7 +2304,6 @@ body.dark .history-separator {
     background-color: var(--glass-white-md);
     border-color: var(--glass-white-lg);
     box-shadow: var(--shadow-float), var(--reflection-inner);
-    transform: translateY(-2px);
 }
 
 /* ТЕМНЕ СКЛО ДЛЯ ТЕМНОЇ ТЕМИ */
@@ -4285,8 +4282,8 @@ body.dark .line-marker {
     /* 2. Анімація: закритий стан */
     visibility: hidden;
     opacity: 0;
-    transform: translateY(-4px); /* Змінив з -10px на -4px, щоб висота "випадання" була ідентичною до OLT */
-    pointer-events: none; /* ЗАХИСТ: щоб не можна було клікнути по невидимому меню */
+    transform: translateY(-4px);
+    pointer-events: none; 
     
     /* Таймінги синхронізовані з OLT (0.15s), але max-width залишено трохи довшим для ефекту розгортання */
     transition: 
