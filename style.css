@@ -3854,7 +3854,7 @@ body.dark .line-marker {
 /* 4. Внутрішня сітка пошуку: ряд 1 - поля вводу + швидкість, ряд 2 - кнопки */
 .search-panel-columns {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 124px;
+    grid-template-columns: minmax(0, 1fr) 118px;
     gap: var(--btn-gap);
     align-items: start;
     width: 100%;
@@ -3889,11 +3889,6 @@ body.dark .line-marker {
     box-sizing: border-box;
     border-radius: 12px;
     border: 1px solid var(--glass-border-bright);
-}
-
-/* Селектор швидкості: місце праворуч під кнопку-іконку */
-.speed-field .speed-dropdown .speed-dropdown-toggle {
-    padding-right: 36px;
 }
 
 /* Кнопка заміни швидкості: вбудована в праву частину селектора */
@@ -4705,7 +4700,7 @@ body.dark .olt-dropdown-list {
 }
 
 .speed-dropdown-arrow {
-    margin-left: auto;
+    margin-left: 6px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -4805,7 +4800,7 @@ body.dark .speed-dropdown-list {
 
 /* Ширина під конкретні місця використання */
 .config-row .speed-dropdown.config-speed-dropdown {
-    flex: 0 0 94px;
+    flex: 0 0 88px;
 }
 
 /* ================================================================
