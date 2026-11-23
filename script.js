@@ -2122,7 +2122,7 @@ let lastConfirmedOltName = null;
             <!-- 3-4 РЯДОК: Перемикачі зверху, дії (Очистити + Згенерувати) знизу -->
             <div class="config-actions-group">
                 <div class="config-row">
-                    <button type="button" class="config-onu-mode-btn" title="Режим (Реєстрація або Заміна ону)">РЕЄСТРАЦІЯ</button>
+                    <button type="button" class="config-onu-mode-btn" title="Режим (Реєстрація або Заміна ону)"><i class="fa-solid fa-user-plus"></i><span class="onu-mode-label">Реєстр</span></button>
 
                     <button type="button" class="config-replace-mode-btn active" title="Заміняти попередньо доданий конфіг на новий">
                         <i class="fa-solid fa-arrows-rotate"></i>
@@ -2657,13 +2657,20 @@ oltInputNode.addEventListener('blur', () => {
 const btnOnuMode = configPanel.querySelector('.config-onu-mode-btn');
 
 function updateOnuModeUI() {
-    if (currentOnuMode === 'REG') {
-        btnOnuMode.textContent = 'Реєстр';
-        btnOnuMode.className = 'config-onu-mode-btn active is-reg'; // Додаємо класи для твого майбутнього CSS
-    } else {
-        btnOnuMode.textContent = 'Заміна';
-        btnOnuMode.className = 'config-onu-mode-btn active is-switch';
-    }
+            const isReg = (currentOnuMode === 'REG');
+
+    // Лейбл міняємо напряму (ripple-span всередині кнопки не чіпаємо)
+    btnOnuMode.querySelector('.onu-mode-label').textContent = isReg ? 'Реєстр' : 'Заміна';
+
+    // Нова іконка → анімація onuIconPop спрацьовує при кожному перемиканні
+    const oldIcon = btnOnuMode.querySelector('i');
+    const newIcon = document.createElement('i');
+    newIcon.className = 'fa-solid ' + (isReg ? 'fa-user-plus' : 'fa-right-left');
+    oldIcon.replaceWith(newIcon);
+
+    btnOnuMode.classList.add('active');
+    btnOnuMode.classList.toggle('is-reg', isReg);
+    btnOnuMode.classList.toggle('is-switch', !isReg);
     
     // Синхронізуємо змінні для генератора
     isRegMode = (currentOnuMode === 'REG');
@@ -5578,7 +5585,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // УНІВЕРСАЛЬНИЙ ЕФЕКТ ХВИЛІ (RIPPLE EFFECT)
 // ==========================================
 const RIPPLE_SELECTOR = `
-.config-clear-fields-btn, .config-replace-mode-btn, .config-pon-onu-btn,
+.config-onu-mode-btn.active, .config-clear-fields-btn, .config-replace-mode-btn, .config-pon-onu-btn,
 .config-show-signal-btn, .unified-pill:has(#login-google-btn:not(.auth-hidden)),
     .variant-dropdown-item, .speed-dropdown-item, .add-tab-item,
     .command-item, .sub-command-item, .tab-button, .olt-dropdown-item,

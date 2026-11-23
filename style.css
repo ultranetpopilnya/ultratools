@@ -765,6 +765,8 @@ body.dark {
 
 /* 1.1. Базовий вигляд */
 body :is(
+    .config-onu-mode-btn,
+    .config-onu-mode-btn.active,
     .extension-download-btn,
     #login-autoclear-btn,
     #login-autoclear-btn.active,
@@ -926,6 +928,7 @@ body :is(#scroll-up-btn.scroll-nav-btn, #scroll-down-btn.scroll-nav-btn) {
 
 /* 1.3. Увімкнений тумблер (.active): тільки зовнішній ореол 1px */
 body :is(
+    .config-onu-mode-btn.active,
     #login-autoclear-btn.active,
     #auto-reset-button.active,
     .config-replace-mode-btn.active,
@@ -939,6 +942,7 @@ body :is(
 }
 
 body :is(
+    .config-onu-mode-btn.active,
     #login-autoclear-btn.active,
     #auto-reset-button.active,
     .config-replace-mode-btn.active,
@@ -981,6 +985,7 @@ body :is(
    html + подвійний псевдоклас піднімають специфічність над загальними правилами 1.2 / 1.4 */
 @media (hover: hover) {
     html body :is(
+        .config-onu-mode-btn.active,
         #login-autoclear-btn.active,
         #auto-reset-button.active,
         .config-replace-mode-btn.active,
@@ -995,6 +1000,7 @@ body :is(
 }
 
 html body :is(
+    .config-onu-mode-btn.active,
     #login-autoclear-btn.active,
     #auto-reset-button.active,
     .config-replace-mode-btn.active,
@@ -1254,61 +1260,16 @@ body .stepper-btn:active {
 
 /* ================================================================
    4. ПЕРЕМИКАЧ РЕЖИМІВ ОНУ (РЕЄСТРАЦІЯ / ЗАМІНА)
+   Вигляд — зі спільних стилів кнопок (розділ 1), тут лише іконка
    ================================================================ */
-
-/* 4.1. База самої пігулки (спільна для обох режимів) */
-body:is(.dark, :not(.dark)) .config-onu-mode-btn:is(.is-reg, .is-switch) {
-    background-color: var(--btn-solid-bg);
-    border: 1px solid var(--btn-solid-border);
-    color: var(--btn-solid-text);
-    font-weight: 500;
-    box-shadow: var(--btn-solid-shadow);
-
-    transition:
-        padding 0.35s cubic-bezier(0.34, 1.4, 0.64, 1),
-        background-color 0.22s cubic-bezier(0.4, 0, 0.2, 1),
-        border-color 0.22s cubic-bezier(0.4, 0, 0.2, 1),
-        box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1),
-        color 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+.config-onu-mode-btn i {
+    font-size: 14px;
+    animation: onuIconPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* 4.2. Повзунок (крапка): приглушені бірюзовий / фіолетовий */
-body:is(.dark, :not(.dark)) .config-onu-mode-btn.is-reg::before {
-    background-color: rgba(13, 148, 136, 0.42);
-    box-shadow: none;
-}
-
-body:is(.dark, :not(.dark)) .config-onu-mode-btn.is-switch::before {
-    background-color: rgba(124, 58, 237, 0.38);
-    box-shadow: none;
-}
-
-body.dark .config-onu-mode-btn.is-reg::before {
-    background-color: rgba(45, 212, 191, 0.40);
-}
-
-body.dark .config-onu-mode-btn.is-switch::before {
-    background-color: rgba(167, 139, 250, 0.40);
-}
-
-/* 4.3. Наведення: просто освітлюємо кнопку */
-@media (hover: hover) {
-    body:is(.dark, :not(.dark)) .config-onu-mode-btn:is(.is-reg, .is-switch):hover {
-        background-color: var(--btn-solid-bg-hover);
-        border-color: var(--btn-solid-border-hover);
-        color: var(--btn-solid-text);
-        filter: none;
-        box-shadow: var(--btn-solid-shadow);
-    }
-}
-
-/* 4.4. Натискання: глибший фон + зовнішнє 1px кільце */
-body:is(.dark, :not(.dark)) .config-onu-mode-btn:is(.is-reg, .is-switch):active {
-    background-color: var(--btn-solid-bg-active);
-    border-color: var(--btn-solid-border);
-    color: var(--btn-solid-text);
-    filter: none;
-    box-shadow: var(--btn-solid-shadow);
+@keyframes onuIconPop {
+    from { opacity: 0; transform: rotate(-90deg) scale(0.4); }
+    to   { opacity: 1; transform: rotate(0) scale(1); }
 }
 
 /* ================================================================
@@ -1428,6 +1389,7 @@ body .add-tab-btn.menu-open:active {
    ==================================================================== */
 
 /* 1. Готуємо елементи: позиціонування та обрізка хвилі по краях */
+.config-onu-mode-btn.active,
 .config-clear-fields-btn,
 .config-replace-mode-btn,
 .config-pon-onu-btn,
@@ -1456,6 +1418,7 @@ body .add-tab-btn.menu-open:active {
 }
 
 /* 2. Піднімаємо всі внутрішні елементи (текст, іконки), щоб хвиля протікала ПІД ними */
+.config-onu-mode-btn.active > :not(.ripple),
 .config-clear-fields-btn > :not(.ripple),
 .config-replace-mode-btn > :not(.ripple),
 .config-pon-onu-btn > :not(.ripple),
@@ -4544,48 +4507,19 @@ body.dark .variant-badge {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 92px;
-    white-space: nowrap;
+    gap: 6px;
+    width: 104px;
+    height: 30px;
+    padding: 0 12px;
     box-sizing: border-box;
     border-radius: 999px !important;
     font-family: inherit;
     font-size: 13px;
+    letter-spacing: 0.1px;
+    white-space: nowrap;
     cursor: pointer;
-    position: relative;
-    overflow: hidden;
-}
-
-.config-onu-mode-btn::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 14px;
-    transform: translateY(-50%);
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    opacity: 1;
-    transition: left 0.35s cubic-bezier(0.34, 1.4, 0.64, 1),
-                background-color 0.35s ease,
-                box-shadow 0.35s ease;
-}
-
-/* Відступи: 12px по краях, 6px між крапкою (14px) і текстом.
-   Текст зсунутий на 12 + 14 + 6 = 32px від краю з боку крапки */
-.config-onu-mode-btn.is-reg {
-    padding: 0 12px 0 32px !important;
-}
-
-.config-onu-mode-btn.is-reg::before {
-    left: 12px;
-}
-
-.config-onu-mode-btn.is-switch {
-    padding: 0 32px 0 12px !important;
-}
-
-.config-onu-mode-btn.is-switch::before {
-    left: calc(100% - 26px); /* 12px поле + 14px ширина крапки */
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
 /* Повідомлення "нічого не знайдено" */
