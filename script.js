@@ -1908,7 +1908,6 @@ fieldGroup.dataset.onuMode             = onuMode || (switchMode ? 'SWITCH' : 'RE
             
             // Запускаємо подію 'input', щоб спрацювали автоформатування (напр. порту)
             target.dispatchEvent(new Event('input', { bubbles: true }));
-            saveTemplates();
         }
     };
 
@@ -2016,14 +2015,17 @@ fieldGroup.dataset.onuMode             = onuMode || (switchMode ? 'SWITCH' : 'RE
     const configPanel = document.createElement('div');
     configPanel.className = 'template-config-bar'; 
     
-    let isReplaceMode = (fieldGroup.dataset.replaceMode !== 'false');
-let isPonOnuMode  = (fieldGroup.dataset.ponOnuMode === 'true');
-let isShowSignalMode = (fieldGroup.dataset.showSignalMode === 'true');
+    const storageKey = 'cfg_inputs_' + id;
+    const savedInputs = JSON.parse(localStorage.getItem(storageKey) || '{}');
 
-// НОВА ЛОГІКА: Єдиний стан режиму ОНУ
-let currentOnuMode = fieldGroup.dataset.onuMode; 
-let isRegMode = (currentOnuMode === 'REG');
-let isSwitchMode = (currentOnuMode === 'SWITCH');
+    let isReplaceMode    = savedInputs.replaceMode !== undefined ? savedInputs.replaceMode : true;
+    let isPonOnuMode     = Boolean(savedInputs.ponOnuMode);
+    let isShowSignalMode = Boolean(savedInputs.showSignalMode);
+
+    // НОВА ЛОГІКА: Єдиний стан режиму ОНУ
+    let currentOnuMode = savedInputs.onuMode || 'REG';
+    let isRegMode = (currentOnuMode === 'REG');
+    let isSwitchMode = (currentOnuMode === 'SWITCH');
 
     // Генеруємо унікальний ID для списку, щоб шаблони не конфліктували
     let selectedOltObj = null;
@@ -2134,8 +2136,6 @@ let lastConfirmedOltName = null;
     configPanel.addEventListener('mousedown', (e) => e.stopPropagation());
 
     
-    const storageKey = 'cfg_inputs_' + id;
-
     function saveInputsLocally() {
         const dataToSave = {
             login: configPanel.querySelector('.config-login-input')?.value || '',
@@ -2143,7 +2143,11 @@ let lastConfirmedOltName = null;
             sn: configPanel.querySelector('.config-sn-input')?.value || '',
             port: configPanel.querySelector('.config-port-input')?.value || '',
             vlan: configPanel.querySelector('.config-vlan-input')?.value || '',
-            speed: configPanel.querySelector('.config-speed-dropdown')?.dataset.value || '100M'
+            speed: configPanel.querySelector('.config-speed-dropdown')?.dataset.value || '100M',
+            onuMode: currentOnuMode,
+            replaceMode: isReplaceMode,
+            ponOnuMode: isPonOnuMode,
+            showSignalMode: isShowSignalMode
         };
         localStorage.setItem(storageKey, JSON.stringify(dataToSave));
     }
@@ -2485,7 +2489,6 @@ snInputBox.addEventListener('input', (e) => {
 });
 
     // === ВІДНОВЛЕННЯ ПОЛІВ ПРИ ЗАВАНТАЖЕННІ (F5) ===
-    const savedInputs = JSON.parse(localStorage.getItem(storageKey) || '{}');
     if (savedInputs.login) loginInputBox.value = savedInputs.login;
     if (savedInputs.olt) {
         oltInputNode.value = savedInputs.olt;
@@ -2575,7 +2578,6 @@ function renderOltDropdown(filter = '') {
                     
                 }
                 saveInputsLocally();
-                saveTemplates(false);
             });
             oltDropdownList.appendChild(item);
         });
@@ -2655,8 +2657,7 @@ btnOnuMode.addEventListener('click', (e) => {
     // Перемикаємо між двома станами
     currentOnuMode = (currentOnuMode === 'REG') ? 'SWITCH' : 'REG';
     updateOnuModeUI();
-    fieldGroup.dataset.updatedAt = Date.now();
-    saveTemplates();
+    saveInputsLocally();
     showNotification(currentOnuMode === 'REG' ? "Режим: РЕЄСТРАЦІЯ ОНУ" : "Режим: ПЕРЕНЕСЕННЯ (ЗАМІНА) ОНУ");
 });
 
@@ -2670,8 +2671,7 @@ updateOnuModeUI();
     isReplaceMode = !isReplaceMode;
     btnReplaceMode.classList.toggle('active', isReplaceMode);
     fieldGroup.dataset.replaceMode = isReplaceMode;
-    fieldGroup.dataset.updatedAt = Date.now();
-    saveTemplates();
+    saveInputsLocally();
     showNotification(isReplaceMode ? "Режим: ПОВНЕ ОЧИЩЕННЯ ТА ВСТАВКА" : "Режим: ДОДАВАННЯ ДО ТЕКСТУ");
 });
 
@@ -2682,8 +2682,7 @@ btnPonOnu.addEventListener('click', (e) => {
     isPonOnuMode = !isPonOnuMode;
     btnPonOnu.classList.toggle('active', isPonOnuMode);
     fieldGroup.dataset.ponOnuMode = isPonOnuMode;
-    fieldGroup.dataset.updatedAt = Date.now();
-    saveTemplates();
+    saveInputsLocally();
     showNotification(isPonOnuMode ? "Команди PON-ONU УВІМКНЕНО" : "Команди PON-ONU ВИМКНЕНО");
 });
 
@@ -2694,8 +2693,7 @@ btnShowSignal.addEventListener('click', (e) => {
     isShowSignalMode = !isShowSignalMode;
     btnShowSignal.classList.toggle('active', isShowSignalMode);
     fieldGroup.dataset.showSignalMode = isShowSignalMode;
-    fieldGroup.dataset.updatedAt = Date.now();
-    saveTemplates();
+    saveInputsLocally();
     showNotification(isShowSignalMode ? "Команди Pon-power та Write додаються" : "Команди Pon-power та Write не додаються");
 });
 
@@ -2722,8 +2720,8 @@ btnClearFields.addEventListener('click', (e) => {
     
     vlanInputNode.placeholder = 'VLAN';
     
-    // 2. ПОВНІСТЮ ВИДАЛЯЄМО ЗБЕРЕЖЕНІ ПОЛЯ З ЛОКАЛЬНОЇ ПАМ'ЯТІ
-    localStorage.removeItem(storageKey);
+    // 2. Перезаписуємо локальну пам'ять порожніми полями (щоб зберегти стан тумблерів)
+    saveInputsLocally();
     
     showNotification("Поля очищено");
 });
@@ -3555,13 +3553,6 @@ function addTemplate() {
             width: group.style.width,
             height: group.style.height,
             bookmarks: JSON.parse(group.dataset.bookmarks || '[]'),
-            lastGeneratedConfig: group.dataset.lastGeneratedConfig || '',
-            lastConfigStart: parseInt(group.dataset.lastConfigStart ?? '-1', 10),
-            lastConfigEnd:   parseInt(group.dataset.lastConfigEnd   ?? '-1', 10),
-            ponOnuMode:  group.dataset.ponOnuMode  === 'true',
-            replaceMode: group.dataset.replaceMode !== 'false',
-            showSignalMode: group.dataset.showSignalMode === 'true',
-            onuMode: group.dataset.onuMode || 'REG',
             isSearchOpen: group.dataset.isSearchOpen === 'true',
             isConfigOpen: group.dataset.isConfigOpen === 'true'
         });
