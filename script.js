@@ -486,17 +486,38 @@ function clearAllTemplates() {
 }
 
 let lastGeneratedLogin = ''; // Зберігатиме останній згенерований логін
-    // Отримує поточний обраний тип (читає текст активної кнопки)
-function getActiveDeviceType() {
-    const activeBtn = document.querySelector('.segmented-control .segment-btn.active');
-    return activeBtn ? activeBtn.textContent.trim().toLowerCase() : 'gpon';
+function restoreActiveDeviceType() {
+    const savedDevice = localStorage.getItem('activeDeviceType');
+    if (!savedDevice) return;
+
+    const buttons = document.querySelectorAll('.segmented-control .segment-btn');
+    const targetBtn = Array.from(buttons).find(btn => {
+        const onclickAttr = btn.getAttribute('onclick') || '';
+        return onclickAttr.includes(`'${savedDevice}'`) || btn.textContent.trim().toLowerCase() === savedDevice;
+    });
+
+    if (targetBtn) {
+        buttons.forEach(btn => btn.classList.remove('active'));
+        targetBtn.classList.add('active');
+    }
 }
 
-// Зпрацьовує при кліку на кнопки-вкладки
+// Отримує поточний обраний тип
+function getActiveDeviceType() {
+    const activeBtn = document.querySelector('.segmented-control .segment-btn.active');
+    if (activeBtn) {
+        const match = (activeBtn.getAttribute('onclick') || '').match(/'([^']+)'/);
+        return match ? match[1].toLowerCase() : activeBtn.textContent.trim().toLowerCase();
+    }
+    return localStorage.getItem('activeDeviceType') || 'gpon';
+}
+
+// Спрацьовує при кліку на кнопки-вкладки
 window.changeDeviceType = function(event, deviceName) {
     const buttons = event.currentTarget.parentElement.querySelectorAll('.segment-btn');
     buttons.forEach(btn => btn.classList.remove('active'));
     event.currentTarget.classList.add('active');
+    localStorage.setItem('activeDeviceType', deviceName);
     displayCommands(deviceName);
 };
     
@@ -4188,6 +4209,7 @@ function initTabManagement() {
     // ЗАПУСК
     try { loadTemplates(); } catch(e) { console.error("Помилка при loadTemplates:", e); }
 
+    restoreActiveDeviceType();
     loadTabOrder();
     initTabDragging();
     initTabManagement();

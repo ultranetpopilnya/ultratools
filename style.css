@@ -6076,8 +6076,6 @@ body.dark .info-tooltip-text::before {
     opacity: 1;
     transform: none;
     transition: none; 
-    
-    /* Зміна бокової лінії на штрихпунктирну */
     border-left: 2px dashed var(--input-border-color); 
 }
 
@@ -6150,8 +6148,6 @@ body.dark .info-tooltip-text::before {
     column-count: 2;
     column-gap: 0px;
     position: relative;
-    
-    /* ОЧИЩАЄМО все зайве */
     background-image: none !important;
     column-rule: none !important;
 }
