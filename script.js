@@ -1222,13 +1222,17 @@ function areDatesInDefaultState() {
     
     let COMMANDS = { gpon: [], epon: [], bdcom: [] }; // Тепер це порожній об'єкт, який заповниться сам
     // === РОЗУМНИЙ ПАРСЕР КОМАНД ===
+let lastCommandsText = null;
 function loadCommandsFromFile() {
-    fetch('commands.txt?v=' + Date.now())
+    return fetch('commands.txt?v=' + Date.now(), { cache: 'no-store' })
         .then(response => {
             if (!response.ok) throw new Error("Файл команд не знайдено");
             return response.text();
         })
         .then(text => {
+            if (text === lastCommandsText) return; // нічого не змінилось
+            lastCommandsText = text;
+
             let currentType = null;
             let lastCommand = null;
             const lines = text.split('\n');
@@ -1286,15 +1290,20 @@ function loadCommandsFromFile() {
                 }
             });
 
-            const activeTab = localStorage.getItem('activeTab');
-if (activeTab === 'gpon-commands') {
-    displayCommands(getActiveDeviceType());
-}
+                        const activeTab = localStorage.getItem('activeTab');
+            if (activeTab === 'gpon-commands') {
+                displayCommands(getActiveDeviceType());
+            } else {
+                // вкладка неактивна: очищаємо, щоб при відкритті перемалювалось з новими даними
+                const out = document.getElementById('command-output');
+                if (out) out.innerHTML = '';
+            }
         })
         .catch(err => {
             // ... (помилка залишається як була)
-            console.error("Помилка завантаження команд:", err);
-            document.getElementById('command-output').innerHTML = 
+                        console.error("Помилка завантаження команд:", err);
+            if (lastCommandsText !== null) return; // при фоновому оновленні не затираємо список помилкою
+            document.getElementById('command-output').innerHTML =
                 '<p style="text-align: center; color: #dc3545; padding: 20px;">Не вдалося завантажити файл commands.txt</p>';
         });
 }
@@ -3927,13 +3936,17 @@ let SIGNAL_TEMPLATES = { gpon: "", epon: "" };
 let REG_TEMPLATES = { gpon: "", epon: "" };    // ДОДАНО
 let SWITCH_TEMPLATES = { gpon: "", epon: "" }; // ДОДАНО
 
+let lastOltText = null;
 function loadOltConfigs() {
-     return fetch('olt_configs.txt?v=' + Date.now())
+     return fetch('olt_configs.txt?v=' + Date.now(), { cache: 'no-store' })
         .then(res => {
             if (!res.ok) throw new Error("Файл olt_configs.txt не знайдено");
             return res.text();
         })
         .then(text => {
+            if (text === lastOltText) return; // нічого не змінилось
+            lastOltText = text;
+
             OLT_CONFIGS = { ultranet: [], energy: [] };
             OLT_TEMPLATES = {};
             PON_ONU_TEMPLATES = { gpon: "", epon: "" }; 
@@ -5133,13 +5146,17 @@ document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' || e.key === 'Delete') calcClear(); // І Esc, і Delete очищають екран
 });
 // === РОЗУМНИЙ ПАРСЕР (ЧИТАЄ ЗНИЗУ ВГОРУ) ===
+    let lastChangelogText = null;
     function initChangelog() {
-        fetch('changelog.txt?v=' + Date.now())
+                fetch('changelog.txt?v=' + Date.now(), { cache: 'no-store' })
             .then(response => {
                 if (!response.ok) throw new Error("Файл не знайдено");
                 return response.text();
             })
             .then(text => {
+                if (text === lastChangelogText) return; // нічого не змінилось
+                lastChangelogText = text;
+
                 // 1. Розбиваємо весь текст на рядки
                 const lines = text.split('\n').map(l => l.trim()).filter(l => l);
                 
@@ -5219,7 +5236,8 @@ document.addEventListener('keydown', (e) => {
                 });
             })
             .catch(err => {
-                console.warn(err);
+                                console.warn(err);
+                if (lastChangelogText !== null) return; // не ламаємо вже показаний changelog
                 document.getElementById('ver-number').textContent = "v?.?";
             });
     }
@@ -5892,7 +5910,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     window.location.href,
                     ...Array.from(document.querySelectorAll('script[src], link[rel="stylesheet"]'))
                         .map(el => el.src || el.href)
-                        .filter(u => u.startsWith(window.location.origin))
+                        .filter(u => u.startsWith(window.location.origin) && !/\.txt(\?|$)/i.test(u))
                 ];
 
                 // cache: 'reload' = завантажити з сервера в обхід кешу і оновити кеш
@@ -5918,7 +5936,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.location.pathname,
                 ...Array.from(document.querySelectorAll('script[src], link[rel="stylesheet"]'))
                     .map(el => el.src || el.href)
-                    .filter(u => u.startsWith(window.location.origin))
+                    .filter(u => u.startsWith(window.location.origin) && !/\.txt(\?|$)/i.test(u))
             ];
 
             const responses = await Promise.all(watchedUrls.map(u => {
@@ -6143,3 +6161,15 @@ function enableOltAutoScroll(input) {
         if (!isFocused) restart(400);
     };
 }
+
+// === АВТООНОВЛЕННЯ ДАНИХ З TXT-ФАЙЛІВ (без перезавантаження сторінки) ===
+function refreshDataFiles() {
+    if (document.visibilityState !== 'visible') return;
+    loadCommandsFromFile();
+    loadOltConfigs();
+    initChangelog();
+}
+setInterval(refreshDataFiles, 30000); // кожні 30 секунд
+document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') refreshDataFiles();
+});
