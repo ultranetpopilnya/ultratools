@@ -675,7 +675,6 @@ select:focus,
     --btn-gap-sm: 4px;
     --btn-gap: 6px;
     --btn-gap-lg: 10px;
-    --btn-ghost-icon-size: 14px;
 
 --btn-ghost-size: 28px;
 --btn-ghost-sm-size: 24px;
@@ -776,7 +775,6 @@ body :is(
     #login-autoclear-btn.active,
     .regenerate-login-btn,
     .copy-login-btn,
-    .clear-history-footer-btn,
     .unified-pill,
     #add-template-button,
     #import-templates-button,
@@ -896,7 +894,6 @@ body :is(#scroll-up-btn.scroll-nav-btn, #scroll-down-btn.scroll-nav-btn) {
         #login-autoclear-btn,
         .regenerate-login-btn,
         .copy-login-btn,
-        .clear-history-footer-btn,
         .unified-pill:has(#login-google-btn:not(.auth-hidden)),
         #add-template-button,
         #import-templates-button,
@@ -962,7 +959,6 @@ body :is(
     #login-autoclear-btn,
     .regenerate-login-btn,
     .copy-login-btn,
-    .clear-history-footer-btn,
     .unified-pill:has(#login-google-btn:not(.auth-hidden)),
     #add-template-button,
     #import-templates-button,
@@ -1350,60 +1346,97 @@ body .stepper-btn:active {
    5. ПЕРЕМИКАЧ ОБЛАДНАННЯ (GPON / EPON / BDCOM / MX80)
    ================================================================ */
 
-/* 5.1. Неактивні кнопки в спокої (сірий стиль системи) */
-body:is(.dark, :not(.dark)) .segment-btn {
+.segmented-control {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    padding: 4px;
+    gap: 4px;
+    border-radius: 9999px;
     background-color: var(--btn-solid-bg);
     border: 1px solid var(--btn-solid-border);
-    color: var(--btn-solid-text);
-    font-weight: 500;
-    box-shadow: var(--btn-solid-shadow);
+    box-shadow: var(--glass-shadow-inner);
+    isolation: isolate;
+}
 
+/* Суцільна ковзна пігулка під активним пунктом */
+.segmented-control::before {
+    content: '';
+    position: absolute;
+    top: 4px;
+    left: 0;
+    height: 30px;
+    width: var(--seg-w, 90px);
+    transform: translateX(var(--seg-x, 4px));
+    border-radius: 9999px;
+    background-color: var(--btn-inv-bg);
+    box-shadow: var(--btn-inv-shadow);
+    z-index: 0;
+    pointer-events: none;
+}
+
+.segmented-control.is-ready::before {
+    transition:
+        transform 0.34s cubic-bezier(0.34, 1.15, 0.64, 1),
+        width 0.34s cubic-bezier(0.34, 1.15, 0.64, 1),
+        background-color 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 5.1. Сегменти в спокої: прозорі, без окремих рамок */
+body:is(.dark, :not(.dark)) .segment-btn {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 90px;
+    height: 30px;
+    padding: 0;
+    border: none;
+    border-radius: 9999px;
+    background-color: transparent;
+    box-shadow: none;
+    color: var(--btn-solid-text);
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transform: translateZ(0);
     transition:
         background-color 0.22s cubic-bezier(0.4, 0, 0.2, 1),
-        border-color 0.22s cubic-bezier(0.4, 0, 0.2, 1),
-        box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1),
         color 0.22s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* 5.2. Наведення на неактивну кнопку: просто світлішає */
+/* 5.2. Наведення на неактивний сегмент */
 @media (hover: hover) {
     body:is(.dark, :not(.dark)) .segment-btn:not(.active):hover {
-        background-color: var(--btn-solid-bg-hover);
-        border-color: var(--btn-solid-border-hover);
+        background-color: var(--text-hover);
         color: var(--btn-solid-text);
-        box-shadow: var(--btn-solid-shadow);
+    }
+
+    .segmented-control:has(.segment-btn.active:hover)::before {
+        background-color: var(--btn-inv-bg-hover);
     }
 }
 
-/* 5.3. Натискання на неактивну кнопку: глибший фон + плавне 1px кільце */
+/* 5.3. Натискання */
 body:is(.dark, :not(.dark)) .segment-btn:not(.active):active {
-    background-color: var(--btn-solid-bg-active);
-    border-color: var(--btn-solid-border);
+    background-color: var(--list-active-bg);
     color: var(--btn-solid-text);
-    box-shadow: var(--btn-solid-shadow);
 }
 
-/* 5.4. Активна кнопка: зберігає акцентну заливку + 1px зовнішнє кільце */
+.segmented-control:has(.segment-btn.active:active)::before {
+    background-color: var(--btn-inv-bg-active);
+}
+
+/* 5.4. Активний сегмент (фон малює ::before) */
 body:is(.dark, :not(.dark)) .segment-btn.active {
-    background-color: var(--btn-inv-bg);
-    border-color: var(--btn-inv-bg);
+    background-color: transparent;
     color: var(--btn-inv-text);
     font-weight: 600;
-    box-shadow: var(--btn-inv-shadow);
-}
-
-/* 5.4b. Активний сегмент: hover */
-@media (hover: hover) {
-    body:is(.dark, :not(.dark)) .segment-btn.active:hover {
-        background-color: var(--btn-inv-bg-hover);
-        border-color: var(--btn-inv-bg-hover);
-    }
-}
-
-/* 5.4c. Активний сегмент: натискання */
-body:is(.dark, :not(.dark)) .segment-btn.active:active {
-    background-color: var(--btn-inv-bg-active);
-    border-color: var(--btn-inv-bg-active);
 }
 
 /* ================================================================
@@ -1483,7 +1516,6 @@ body .add-tab-btn.menu-open:active {
 .calc-action-button,
 .stepper-btn,
 #auto-reset-button,
-.segment-btn,
 .command-item,
 .sub-command-item {
     position: relative;
@@ -1512,7 +1544,6 @@ body .add-tab-btn.menu-open:active {
 .calc-action-button > :not(.ripple),
 .stepper-btn > :not(.ripple),
 #auto-reset-button > :not(.ripple),
-.segment-btn > :not(.ripple),
 .command-item > :not(.ripple),
 .sub-command-item > :not(.ripple) {
     position: relative;
@@ -2235,6 +2266,10 @@ body.dark .version-number {
     cursor: pointer;
     user-select: none;
     -webkit-tap-highlight-color: transparent;
+}
+
+.extension-download-btn i {
+    font-size: var(--btn-ghost-icon-size);
 }
 
 /* =========================================================
@@ -3001,17 +3036,6 @@ width: var(--btn-ghost-size);
     cursor: pointer;
 }
 
-.clear-history-footer-btn {
-    width: 100%;
-    margin-top: 12px;
-    padding: 10px;
-    border-radius: 12px;
-    font-family: inherit;
-    font-size: 0.85rem;
-    letter-spacing: 0.2px;
-    cursor: pointer;
-}
-
 /* ================================================================
    АНІМАЦІЯ ПОЯВИ ЗГЕНЕРОВАНИХ ЛОГІНІВ ТА ПОМИЛОК (ШВИДКИЙ ВИЇЗД)
    ================================================================ */
@@ -3532,7 +3556,7 @@ body.dark .fancy-divider {
 #clear-all-templates-button {
     position: relative;
     top: 5px;
-    width: 56px;
+    width: 60px;
     height: 30px;
     padding: 0;
     box-sizing: border-box;
@@ -3540,16 +3564,12 @@ body.dark .fancy-divider {
     justify-content: center;
     align-items: center;
     border-radius: 9999px;
-    font-size: 1.1rem;
+    font-size: 18px;
+    line-height: 1;
+    font-weight: 700;
     cursor: pointer;
     user-select: none;
     -webkit-tap-highlight-color: transparent;
-}
-
-#add-template-button {
-    font-weight: 700;
-    font-size: 1.4rem;
-    line-height: 1;
 }
 
 #templates-grid-wrapper {
@@ -5858,8 +5878,8 @@ body.dark #static-clarification-message {
 
 .info-tooltip-wrapper {
     position: relative;
-    width: var(--btn-ghost-size);
-    height: var(--btn-ghost-size);
+    width: var(--btn-ghost-sm-size);
+    height: var(--btn-ghost-sm-size);
     flex-shrink: 0;
     display: flex;
     align-items: center;
@@ -5868,12 +5888,12 @@ body.dark #static-clarification-message {
 }
 
 .info-tooltip-wrapper .info-icon {
-    width: var(--btn-ghost-size);
-    height: var(--btn-ghost-size);
+    width: var(--btn-ghost-sm-size);
+    height: var(--btn-ghost-sm-size);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: var(--btn-ghost-size);
+    font-size: 20px;
     line-height: 1;
     color: var(--inactive-text);
     transform: translateZ(0);
@@ -5947,33 +5967,6 @@ body.dark .info-tooltip-text::before {
     border-style: solid;
     border-color: transparent var(--input-border-color) transparent transparent;
     z-index: -1;
-}
-
-/* === СЕГМЕНТОВАНИЙ ПЕРЕМИКАЧ (СВІТЛА ТЕМА) === */
-.segmented-control {
-    display: inline-flex;
-    background-color: var(--panel-bg); 
-    border: 1px solid var(--input-border-color);
-    border-radius: 12px;
-    padding: 5px;
-    gap: var(--btn-gap);
-    box-shadow: var(--glass-shadow-inner);
-}
-
-/* --- КНОПКИ ПЕРЕМИКАЧА --- */
-.segment-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 90px;
-    height: 28px;
-    padding: 0;
-    border-radius: 8px;
-    font-family: inherit;
-    font-size: 14px;
-    line-height: 1;
-    cursor: pointer;
-    transform: translateZ(0);
 }
 
 .command-list {

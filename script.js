@@ -486,20 +486,42 @@ function clearAllTemplates() {
 }
 
 let lastGeneratedLogin = ''; // Зберігатиме останній згенерований логін
-function restoreActiveDeviceType() {
-    const savedDevice = localStorage.getItem('activeDeviceType');
-    if (!savedDevice) return;
 
-    const buttons = document.querySelectorAll('.segmented-control .segment-btn');
-    const targetBtn = Array.from(buttons).find(btn => {
-        const onclickAttr = btn.getAttribute('onclick') || '';
-        return onclickAttr.includes(`'${savedDevice}'`) || btn.textContent.trim().toLowerCase() === savedDevice;
-    });
+function updateSegmentIndicator(control, animate = true) {
+    if (!control) return;
+    const activeBtn = control.querySelector('.segment-btn.active');
+    if (!activeBtn) return;
 
-    if (targetBtn) {
-        buttons.forEach(btn => btn.classList.remove('active'));
-        targetBtn.classList.add('active');
+    if (!animate) {
+        control.classList.remove('is-ready');
     }
+
+    control.style.setProperty('--seg-x', `${activeBtn.offsetLeft}px`);
+    control.style.setProperty('--seg-w', `${activeBtn.offsetWidth}px`);
+
+    if (!animate) {
+        requestAnimationFrame(() => control.classList.add('is-ready'));
+    }
+}
+
+function restoreActiveDeviceType() {
+    const control = document.querySelector('.segmented-control');
+    const savedDevice = localStorage.getItem('activeDeviceType');
+
+    if (savedDevice && control) {
+        const buttons = control.querySelectorAll('.segment-btn');
+        const targetBtn = Array.from(buttons).find(btn => {
+            const onclickAttr = btn.getAttribute('onclick') || '';
+            return onclickAttr.includes(`'${savedDevice}'`) || btn.textContent.trim().toLowerCase() === savedDevice;
+        });
+
+        if (targetBtn) {
+            buttons.forEach(btn => btn.classList.remove('active'));
+            targetBtn.classList.add('active');
+        }
+    }
+
+        updateSegmentIndicator(control, false);
 }
 
 // Отримує поточний обраний тип
@@ -514,9 +536,11 @@ function getActiveDeviceType() {
 
 // Спрацьовує при кліку на кнопки-вкладки
 window.changeDeviceType = function(event, deviceName) {
-    const buttons = event.currentTarget.parentElement.querySelectorAll('.segment-btn');
+    const control = event.currentTarget.parentElement;
+    const buttons = control.querySelectorAll('.segment-btn');
     buttons.forEach(btn => btn.classList.remove('active'));
     event.currentTarget.classList.add('active');
+    updateSegmentIndicator(control, true);
     localStorage.setItem('activeDeviceType', deviceName);
     displayCommands(deviceName);
 };
@@ -5685,7 +5709,7 @@ const RIPPLE_SELECTOR = `
     .variant-dropdown-item, .speed-dropdown-item, .add-tab-item,
     .command-item, .sub-command-item, .tab-button, .olt-dropdown-item,
     #login-autoclear-btn, .calc-action-button, .stepper-btn,
-    #auto-reset-button, .segment-btn, .qn-add-btn, .btn-find, 
+    #auto-reset-button, .qn-add-btn, .btn-find, 
     .btn-replace, .btn-replace-all, .config-generate-btn`;
 
 document.addEventListener('mousedown', function (e) {
