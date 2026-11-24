@@ -3854,7 +3854,7 @@ body.dark .line-marker {
 /* 4. Внутрішня сітка пошуку: ряд 1 - поля вводу + швидкість, ряд 2 - кнопки */
 .search-panel-columns {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 118px;
+    grid-template-columns: minmax(0, 1fr) 120px;
     gap: var(--btn-gap);
     align-items: start;
     width: 100%;
@@ -3891,17 +3891,46 @@ body.dark .line-marker {
     border: 1px solid var(--glass-border-bright);
 }
 
-/* Кнопка заміни швидкості: вбудована в праву частину селектора */
+/* Поле швидкості в пошуку: одна рамка, всередині flex-рядок [селектор | кнопка] */
+.speed-field {
+    position: relative;
+    display: flex;
+    align-items: stretch;
+    height: 30px;
+    border: 1px solid var(--input-border-color);
+    border-radius: 8px;
+    background-color: var(--input-bg-color);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.03);
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.speed-field:has(.speed-dropdown.open) {
+    border-color: var(--input-focus-border-color);
+    box-shadow: var(--glass-shadow-input-focus);
+}
+
+/* static, щоб випадаючий список розтягувався на всю ширину .speed-field */
+.speed-field .speed-dropdown {
+    position: static;
+    flex: 1 1 0;
+    min-width: 0;
+}
+
+/* Рамку тепер малює .speed-field, а не сам селектор */
+.speed-field .speed-dropdown-toggle,
+.speed-field .speed-dropdown.open .speed-dropdown-toggle {
+    height: 100%;
+    border: none !important;
+    box-shadow: none;
+    background: transparent;
+    border-radius: 7px 0 0 7px;
+}
+
 .speed-field .btn-replace-speed {
+    flex: 0 0 30px;
     display: flex;
     align-items: center;
     justify-content: center;
-    position: absolute;
-    top: 1px;
-    right: 1px;
-    z-index: 1;
-    width: 30px;
-    height: 28px;
     padding: 0;
     border: none;
     border-left: 1px solid var(--input-border-color);
@@ -3909,23 +3938,16 @@ body.dark .line-marker {
     background-color: var(--btn-solid-bg);
     color: var(--btn-solid-text);
     cursor: pointer;
-    user-select: none;
     outline: none;
     -webkit-tap-highlight-color: transparent;
-    transition:
-        background-color 0.22s cubic-bezier(0.4, 0, 0.2, 1),
-        color 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: background-color 0.22s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @media (hover: hover) {
-    .speed-field .btn-replace-speed:hover {
-        background-color: var(--btn-solid-bg-hover);
-    }
+    .speed-field .btn-replace-speed:hover { background-color: var(--btn-solid-bg-hover); }
 }
 
-.speed-field .btn-replace-speed:active {
-    background-color: var(--btn-solid-bg-active);
-}
+.speed-field .btn-replace-speed:active { background-color: var(--btn-solid-bg-active); }
 
 .speed-field .btn-replace-speed i {
     font-size: var(--btn-ghost-icon-size);
@@ -3968,8 +3990,8 @@ body.dark .line-marker {
 
 /* ІНПУТИ ТА СЕЛЕКТ (однаковий стиль) */
 .search-inputs-row input {
-    padding: 3px 8px;
-    height: 30px; 
+    padding: 0 6px;
+    height: 30px;
     border-radius: 8px; 
     border: 1px solid var(--input-border-color);
     background-color: var(--input-bg-color); 
@@ -4349,7 +4371,7 @@ body.dark .variant-badge {
 /* Контейнер, що тримає дві кнопки разом справа */
 .config-login-actions {
     position: absolute;
-    right: 4px;
+    right: 7px;
     height: calc(100% - 4px);
     gap: var(--btn-gap-xs);
     display: flex;
@@ -4374,7 +4396,7 @@ body.dark .variant-badge {
 
 /* Стан, коли кнопки з'явилися */
 .config-login-input.has-actions {
-    padding-right: 66px !important;
+    padding-right: 62px !important;
 }
 
 .config-login-regen-btn,
@@ -4614,7 +4636,7 @@ body.dark .olt-dropdown-list {
 
 /* Місце під стрілку, щоб текст в інпуті не наїжджав на неї */
 .config-olt-select {
-    padding-right: 26px !important;
+    padding-right: 22px !important;
 }
 
 /* Рядок з назвою ОЛТ */
@@ -4681,7 +4703,7 @@ body.dark .olt-dropdown-list {
     gap: 0px;
     width: 100%;
     height: 30px;
-    padding: 3px 6px;
+    padding: 0px 7px 0px 6px;
     border-radius: 8px;
     border: 1px solid var(--input-border-color);
     background-color: var(--input-bg-color);
@@ -4694,13 +4716,16 @@ body.dark .olt-dropdown-list {
 }
 
 .speed-dropdown-value {
+    flex: 0 1 auto;
+    min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    margin-right: 6px;
 }
 
 .speed-dropdown-arrow {
-    margin-left: 6px;
+        margin-left: auto;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -4800,7 +4825,7 @@ body.dark .speed-dropdown-list {
 
 /* Ширина під конкретні місця використання */
 .config-row .speed-dropdown.config-speed-dropdown {
-    flex: 0 0 88px;
+    flex: 0 0 90px;
 }
 
 /* ================================================================
