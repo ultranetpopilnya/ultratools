@@ -758,6 +758,28 @@ function generateAlternativeLogin(buttonElement) {
         icon.style.transform = 'rotate(0deg)';
     }, 400);
 }
+
+function showCopyCheckmark(button, duration = 1500) {
+    if (!button) return;
+    const icon = button.querySelector('i');
+    if (!icon) return;
+
+    if (!button.dataset.origIconClass) {
+        button.dataset.origIconClass = icon.className;
+    }
+
+    clearTimeout(button._copyTimer);
+    button.disabled = true;
+    icon.className = 'fa-solid fa-check';
+    button.classList.add('copied');
+
+    button._copyTimer = setTimeout(() => {
+        icon.className = button.dataset.origIconClass || 'fa-solid fa-copy';
+        button.classList.remove('copied');
+        button.disabled = false;
+        button._copyTimer = null;
+    }, duration);
+}
 	
 	function copyLogin(button) {
     const resultItem = button.closest('.result-item');
@@ -766,9 +788,7 @@ function generateAlternativeLogin(buttonElement) {
     const originalName = resultItem.querySelector('.original-name')?.textContent || 'Вручну';
 
     navigator.clipboard.writeText(loginText).then(() => {
-        button.innerHTML = '<i class="fa-solid fa-check"></i>';
-        button.classList.add('copied');
-        
+        showCopyCheckmark(button, 1500);
         showNotification(`Логін скопійовано: ${loginText}`, 'success');
 
         // === ДОДАЄМО В ІСТОРІЮ ===
@@ -782,11 +802,6 @@ function generateAlternativeLogin(buttonElement) {
         document.querySelectorAll('.config-login-input').forEach(input => {
             input.value = loginText;
         });
-
-        setTimeout(() => {
-            button.innerHTML = '<i class="fas fa-copy"></i>';
-            button.classList.remove('copied');
-        }, 1500);
     }).catch(err => {
         console.error('Помилка:', err);
         showNotification('Помилка копіювання!', 'error');
@@ -1936,9 +1951,7 @@ fieldGroup.dataset.onuMode             = onuMode || (switchMode ? 'SWITCH' : 'RE
 
         if (!textToCopy.trim()) return; 
         navigator.clipboard.writeText(textToCopy).then(() => {
-            copyButton.innerHTML = '<i class="fas fa-check"></i>';
-            copyButton.disabled = true;
-            setTimeout(() => { copyButton.innerHTML = '<i class="fas fa-copy"></i>'; copyButton.disabled = false; }, 1500);
+            showCopyCheckmark(copyButton, 1500);
         }).catch(err => console.error('Error:', err));
     };
     
@@ -2389,18 +2402,8 @@ saveInputsLocally();
             if (!textToCopy) return;
 
             navigator.clipboard.writeText(textToCopy).then(() => {
-                const icon = btnConfigCopy.querySelector('i');
-                const originalClass = icon.className;
-                
-                icon.className = 'fa-solid fa-check';
-                icon.classList.add('success-copy'); 
-                
+                showCopyCheckmark(btnConfigCopy, 1500);
                 showNotification(`Логін скопійовано: ${textToCopy}`, 'success');
-
-                setTimeout(() => {
-                    icon.className = originalClass;
-                    icon.classList.remove('success-copy');
-                }, 1500);
             }).catch(err => {
                 console.error('Помилка копіювання:', err);
                 showNotification('Помилка копіювання!', 'error');
@@ -3474,8 +3477,6 @@ document.addEventListener('click', (e) => {
 
     if (isSearchOpen) searchPanel.classList.add('active');
     if (isConfigOpen) configPanel.classList.add('active');
-    
-    return fieldGroup;
 }
 
 function renderLineMarkers(fieldGroup) {
@@ -3891,7 +3892,7 @@ function renderHistory(history) {
                     ${item.originalName}
                 </small>
             </div>
-            <button class="history-copy-btn" onclick="copyFromHistory('${item.login}')" title="Копіювати знову">
+            <button class="history-copy-btn" onclick="copyFromHistory('${item.login}', this)" title="Копіювати знову">
                 <i class="fas fa-copy"></i>
             </button>
         `;
@@ -3899,8 +3900,14 @@ function renderHistory(history) {
     });
 }
 
-function copyFromHistory(text) {
-    navigator.clipboard.writeText(text).then(() => showNotification(`Скопійовано: ${text}`, 'success'));
+function copyFromHistory(text, button) {
+    navigator.clipboard.writeText(text).then(() => {
+        showCopyCheckmark(button, 1500);
+        showNotification(`Скопійовано: ${text}`, 'success');
+    }).catch(err => {
+        console.error('Помилка копіювання:', err);
+        showNotification('Помилка копіювання!', 'error');
+    });
 }
 
 document.getElementById('clear-history-btn').addEventListener('click', () => {
@@ -4983,11 +4990,12 @@ function calcDelete() {
 
 function copyCalcResult() {
     if (calcCurrent === 'Помилка') return;
-    navigator.clipboard.writeText(calcCurrent.replace('.', ','));
     const btn = document.querySelector('.calc-copy-btn');
-    const originalHtml = btn.innerHTML;
-    btn.innerHTML = '<i class="fas fa-check" style="color:var(--success-color)"></i>';
-    setTimeout(() => btn.innerHTML = originalHtml, 1200);
+    navigator.clipboard.writeText(calcCurrent.replace('.', ',')).then(() => {
+        showCopyCheckmark(btn, 1200);
+    }).catch(err => {
+        console.error('Помилка копіювання:', err);
+    });
 }
 
 /* === АВТООЧИЩЕННЯ ЕКРАНУ КАЛЬКУЛЯТОРА === */
@@ -5296,10 +5304,12 @@ document.addEventListener('DOMContentLoaded', () => {
    ========================================= */
 let currentActiveQnBtn = null;
 let editingNoteIndex = -1; // -1 означає "додаємо нову", інакше - індекс нотатки, яку редагуємо
+let qnCloseTimer = null;
 
 // 1. Відкрити вікно під кнопкою
 function openQuickNotes(event) {
     event.stopPropagation();
+    clearTimeout(qnCloseTimer);
     
     const popover = document.getElementById('qn-popover');
     const btn = event.currentTarget;
@@ -5350,6 +5360,7 @@ function openQuickNotes(event) {
 
 // 2. Закрити вікно
 function closeQuickNotes() {
+    clearTimeout(qnCloseTimer);
     document.getElementById('qn-popover').classList.remove('active');
     currentActiveQnBtn = null;
     resetQuickNoteForm(); // Очищаємо поле при закритті
@@ -5413,11 +5424,22 @@ document.getElementById('qn-input')?.addEventListener('keydown', (e) => {
 });
 
 // 6. Скопіювати нотатку
-function copyQuickNote(index) {
-    const text = quickNotesArray[index].text; // ЗМІНЕНО
+function copyQuickNote(index, button) {
+    const text = quickNotesArray[index].text;
     navigator.clipboard.writeText(text).then(() => {
+        showCopyCheckmark(button, 1500);
         showNotification("Нотатку скопійовано!", 'success');
-        closeQuickNotes(); 
+
+        const openedForBtn = currentActiveQnBtn;
+        clearTimeout(qnCloseTimer);
+        qnCloseTimer = setTimeout(() => {
+            if (currentActiveQnBtn === openedForBtn) {
+                closeQuickNotes();
+            }
+        }, 600);
+    }).catch(err => {
+        console.error('Помилка копіювання:', err);
+        showNotification('Помилка копіювання!', 'error');
     });
 }
 
@@ -5480,7 +5502,7 @@ function renderQuickNotes() {
             <div class="qn-drag-handle" title="Потягніть, щоб перемістити"><i class="fa-solid fa-grip-vertical"></i></div>
             <div class="qn-text" data-id="${note.id}">${escapeHtml(note.text)}</div>
             <div class="qn-actions">
-                <button class="qn-action-btn qn-copy-btn" onclick="copyQuickNote(${index})" title="Копіювати"><i class="fa-solid fa-copy"></i></button>
+                <button class="qn-action-btn qn-copy-btn" onclick="copyQuickNote(${index}, this)" title="Копіювати"><i class="fa-solid fa-copy"></i></button>
                 <button class="qn-action-btn qn-edit-btn" onclick="editQuickNote(${index})" title="Редагувати"><i class="fa-solid fa-pen"></i></button>
                 <button class="qn-action-btn qn-del-btn" onclick="deleteQuickNote(${index})" title="Видалити"><i class="fa-solid fa-trash"></i></button>
             </div>

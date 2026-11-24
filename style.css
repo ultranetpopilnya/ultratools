@@ -1018,6 +1018,26 @@ body #results-container .copy-login-btn.copied {
     color: var(--success-color);
     outline-color: var(--success-color);
     filter: none;
+    opacity: 1;
+}
+
+/* Зелене підтвердження після копіювання для всіх ghost-кнопок */
+html body :is(
+    .copy-template-btn,
+    .config-login-copy-btn,
+    .history-copy-btn,
+    .calc-copy-btn,
+    .qn-copy-btn
+).copied.copied,
+html body :is(
+    .copy-template-btn,
+    .config-login-copy-btn,
+    .history-copy-btn,
+    .calc-copy-btn,
+    .qn-copy-btn
+).copied.copied i {
+    color: var(--success-color) !important;
+    opacity: 1;
 }
 
 /* Червоне підтвердження при натисканні на кнопку «Видалити всі шаблони» */
@@ -3584,15 +3604,6 @@ font-size: var(--btn-ghost-icon-size);
     backface-visibility: hidden;
 }
 
-/* Зелена галочка після копіювання */
-.copy-template-btn:disabled {
-    opacity: 1;
-}
-
-.copy-template-btn:disabled i {
-    color: var(--success-color);
-}
-
 /* --- СУЧАСНІ РОЗДІЛЮВАЧІ МІЖ КНОПКАМИ --- */
 .action-separator {
     width: 1px;
@@ -4436,12 +4447,6 @@ body.dark .variant-badge {
 .config-login-copy-btn i::before {
     display: block;
     line-height: 1;
-}
-
-.config-login-copy-btn .success-copy {
-    color: var(--success-color);
-    transform: scale(1.1);
-    transition: transform 0.2s ease;
 }
 
 .config-generate-btn {
