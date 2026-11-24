@@ -1579,7 +1579,7 @@ function initDraggableAndResizable(element) {
                 // min/max теж у візуальних пікселях, тому множимо на zoom
                 min: () => {
                     const z = getZoom(element);
-                    return { width: 450 * z, height: 90 * z };
+                    return { width: 454 * z, height: 90 * z };
                 },
                 max: () => {
                     const z = getZoom(element);

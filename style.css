@@ -677,6 +677,9 @@ select:focus,
     --btn-gap-lg: 10px;
     --btn-ghost-icon-size: 14px;
 
+    --btn-ghost-size: 28px;
+--btn-ghost-icon-size: 14px;
+
     --fx-rgb: 79, 109, 245;
     --btn-accent-rgb: 79, 109, 245;
     --btn-ring-speed: 0.22s;
@@ -1015,28 +1018,10 @@ html body :is(
 
 /* 1.5. Зелене підтвердження після копіювання логіна */
 body #results-container .copy-login-btn.copied {
+    background-color: color-mix(in srgb, var(--success-color) 12%, transparent);
+    border-color: color-mix(in srgb, var(--success-color) 45%, transparent);
     color: var(--success-color);
-    outline-color: var(--success-color);
-    filter: none;
-    opacity: 1;
-}
-
-/* Зелене підтвердження після копіювання для всіх ghost-кнопок */
-html body :is(
-    .copy-template-btn,
-    .config-login-copy-btn,
-    .history-copy-btn,
-    .calc-copy-btn,
-    .qn-copy-btn
-).copied.copied,
-html body :is(
-    .copy-template-btn,
-    .config-login-copy-btn,
-    .history-copy-btn,
-    .calc-copy-btn,
-    .qn-copy-btn
-).copied.copied i {
-    color: var(--success-color) !important;
+    box-shadow: none;
     opacity: 1;
 }
 
@@ -1117,6 +1102,47 @@ body .close-tab-btn {
         opacity 0.2s ease,
         background-color 0.22s cubic-bezier(0.4, 0, 0.2, 1),
         color 0.22s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Центрування іконок усередині всіх ghost-кнопок */
+body :is(
+    .template-actions button,
+    .qn-actions .qn-action-btn,
+    .config-login-regen-btn,
+    .config-login-copy-btn,
+    .swap-inputs-btn,
+    .clear-history-header-btn,
+    .history-copy-btn,
+    .logout-action-btn,
+    .calc-head-history-btn,
+    .calc-copy-btn,
+    .hist-clear-btn
+) i {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--btn-ghost-icon-size);
+    height: var(--btn-ghost-icon-size);
+    line-height: 1;
+    margin: 0;
+    pointer-events: none;
+}
+
+body :is(
+    .template-actions button,
+    .qn-actions .qn-action-btn,
+    .config-login-regen-btn,
+    .config-login-copy-btn,
+    .swap-inputs-btn,
+    .clear-history-header-btn,
+    .history-copy-btn,
+    .logout-action-btn,
+    .calc-head-history-btn,
+    .calc-copy-btn,
+    .hist-clear-btn
+) i::before {
+    display: block;
+    line-height: 1;
 }
 
 /* 2.2. Наведення: світла темнішає / темна світлішає */
@@ -1222,6 +1248,31 @@ body #calc-auto-clear-btn.just-cleared {
     color: var(--success-color) !important;
     border-color: var(--success-color);
     box-shadow: none;
+}
+
+/* ================================================================
+   2.6. ЗЕЛЕНЕ ПІДТВЕРДЖЕННЯ КОПІЮВАННЯ ДЛЯ GHOST-КНОПОК (.copied)
+   ================================================================ */
+html body :is(
+    .copy-template-btn,
+    .config-login-copy-btn,
+    .history-copy-btn,
+    .calc-copy-btn,
+    .qn-copy-btn
+).copied.copied {
+    background-color: color-mix(in srgb, var(--success-color) 12%, transparent);
+    color: var(--success-color) !important;
+    opacity: 1;
+}
+
+html body :is(
+    .copy-template-btn,
+    .config-login-copy-btn,
+    .history-copy-btn,
+    .calc-copy-btn,
+    .qn-copy-btn
+).copied.copied i {
+    color: var(--success-color) !important;
 }
 
 /* ================================================================
@@ -2829,8 +2880,8 @@ body.dark .history-toggle-btn.active #history-arrow {
 }
 
 .clear-history-header-btn {
-    width: 32px;
-    height: 32px;
+width: var(--btn-ghost-size);
+    height: var(--btn-ghost-size);
     margin: 0 7px 0 0;
     border-radius: 50%;
     font-size: var(--btn-ghost-icon-size);
@@ -2933,8 +2984,8 @@ body.dark .history-item {
 }
 
 .history-copy-btn {
-    width: 28px;
-    height: 28px;
+width: var(--btn-ghost-size);
+    height: var(--btn-ghost-size);
     padding: 0;
     font-size: var(--btn-ghost-icon-size);
     border-radius: 50%;
@@ -3538,7 +3589,7 @@ body.dark .fancy-divider {
     contain: layout paint;
     
     min-height: 90px;
-    min-width: 450px;
+    min-width: 454px;
     transition: box-shadow 0.2s ease, transform 0.2s ease, min-width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -3576,8 +3627,8 @@ body.dark .fancy-divider {
 }
 
 .template-actions button {
-    width: 26px;
-    height: 26px;
+width: var(--btn-ghost-size);
+    height: var(--btn-ghost-size);
     padding: 0;
     border-radius: 50%;
     cursor: pointer;
@@ -3995,6 +4046,7 @@ body.dark .line-marker {
 .search-inputs-row,
 .search-buttons-row {
     display: flex;
+    align-items: center;
     width: 100%;
     gap: var(--btn-gap);
 }
@@ -4024,8 +4076,8 @@ body.dark .line-marker {
 /* Кнопка SWAP (стрілочки) */
 .swap-inputs-btn {
     flex: 0 0 auto;
-    width: 30px;
-    height: 30px;
+    width: var(--btn-ghost-size);
+    height: var(--btn-ghost-size);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -5273,8 +5325,8 @@ body.dark .calc-title { color: var(--text-color); }
 }
 
 .calc-head-history-btn {
-    width: 30px;
-    height: 30px;
+width: var(--btn-ghost-size);
+    height: var(--btn-ghost-size);
     border-radius: 50%;
     display: flex;
     justify-content: center;
@@ -5358,8 +5410,8 @@ body.dark .calc-title { color: var(--text-color); }
     top: 8px;
     left: 8px;
     z-index: 10;
-    width: 28px;
-    height: 28px;
+width: var(--btn-ghost-size);
+    height: var(--btn-ghost-size);
     padding: 0;
     display: flex;
     align-items: center;
@@ -5608,8 +5660,8 @@ body.dark .calc-history-panel {
 .hist-header span { font-weight: bold; font-size: 16px; color: var(--text-color); }
 
 .hist-clear-btn {
-    width: 30px;
-    height: 30px;
+width: var(--btn-ghost-size);
+    height: var(--btn-ghost-size);
     padding: 0;
     flex-shrink: 0;
     display: flex;
@@ -6363,8 +6415,8 @@ body.dark .qn-item.qn-drag-over {
 
 /* Ручка для перетягування (розмір як у .qn-action-btn справа, без кольорового ховеру) */
 .qn-drag-handle {
-    width: 30px;
-    height: 30px;
+width: var(--btn-ghost-size);
+    height: var(--btn-ghost-size);
     padding: 0;
     flex-shrink: 0;
     display: flex;
@@ -6385,7 +6437,7 @@ body.dark .qn-item.qn-drag-over {
     align-items: center;
     justify-content: center;
     font-size: 14px;
-    line-height: 14px;
+    line-height: 1;
     pointer-events: none;
 }
 
@@ -6433,7 +6485,7 @@ body.dark .qn-placeholder {
     flex: 1;
     min-width: 0;
     font-size: 14px;
-    line-height: 1.4;
+    line-height: 20px;
     color: var(--text-color);
     word-break: break-word;
     white-space: pre-wrap; /* Зберігає пробіли та переноси рядків */
@@ -6449,34 +6501,15 @@ body.dark .qn-placeholder {
 }
 
 .qn-action-btn {
-    width: 30px;
-    height: 30px;
+width: var(--btn-ghost-size);
+    height: var(--btn-ghost-size);
+    font-size: var(--btn-ghost-icon-size);
     padding: 0;
     border-radius: 50%;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-}
-
-.qn-action-btn i,
-.qn-action-btn svg {
-    width: var(--btn-ghost-icon-size);
-    height: var(--btn-ghost-icon-size);
-    display: block;
-    margin: 0;
-    pointer-events: none;
-}
-
-.qn-action-btn i {
-    font-size: var(--btn-ghost-icon-size);
-    line-height: var(--btn-ghost-icon-size);
-    text-align: center;
-}
-
-.qn-action-btn i::before {
-    display: block;
-    line-height: var(--btn-ghost-icon-size);
 }
 
 /* ================================================================
