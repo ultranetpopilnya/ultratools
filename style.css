@@ -677,7 +677,8 @@ select:focus,
     --btn-gap-lg: 10px;
     --btn-ghost-icon-size: 14px;
 
-    --btn-ghost-size: 28px;
+--btn-ghost-size: 28px;
+--btn-ghost-sm-size: 24px;
 --btn-ghost-icon-size: 14px;
 
     --fx-rgb: 79, 109, 245;
@@ -1123,9 +1124,12 @@ body :is(
     justify-content: center;
     width: var(--btn-ghost-icon-size);
     height: var(--btn-ghost-icon-size);
+    font-size: var(--btn-ghost-icon-size);
     line-height: 1;
     margin: 0;
     pointer-events: none;
+    transform: translateZ(0);
+    backface-visibility: hidden;
 }
 
 body :is(
@@ -3332,12 +3336,12 @@ body.dark .empty-templates-message {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 24px;
-    height: 24px;
+    width: var(--btn-ghost-sm-size);
+    height: var(--btn-ghost-sm-size);
     padding: 0;
     flex-shrink: 0;
     border-radius: 50%;
-    font-size: 12.5px;
+    font-size: var(--btn-ghost-icon-size);
     cursor: pointer;
 }
 
@@ -4467,8 +4471,8 @@ body.dark .variant-badge {
 
 .config-login-regen-btn,
 .config-login-copy-btn {
-    width: 24px;
-    height: 24px;
+    width: var(--btn-ghost-sm-size);
+    height: var(--btn-ghost-sm-size);
     padding: 0;
     border-radius: 50%;
     cursor: pointer;
