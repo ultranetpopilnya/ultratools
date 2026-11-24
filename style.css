@@ -2819,7 +2819,7 @@ body.dark .login-generator-container .result-type-badge {
     flex-grow: 1;
     background: transparent;
     border: none;
-    padding: 14px 0;
+    padding: 12px 0; /* 12 + 28 + 12 + 4 (row padding) = 56px (парна висота, як було ~55px) */
     cursor: pointer;
     text-align: left;
     display: flex;
@@ -2828,12 +2828,31 @@ body.dark .login-generator-container .result-type-badge {
     color: var(--text-color);
     font-weight: 700;
     font-size: 16px;
-    line-height: 1.2;
+    line-height: 20px;
     letter-spacing: 0.2px;
     outline: none;
     transition: color 0.2s ease;
     transform: translateZ(0);
     backface-visibility: hidden;
+}
+
+#history-arrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    align-self: center;
+    width: var(--btn-ghost-size);
+    height: var(--btn-ghost-size);
+    flex-shrink: 0;
+    border-radius: 50%; /* або 50%, якщо хочеш таке ж коло, як у кнопок */
+    background: var(--primary-accent-shadow);
+    color: var(--primary-accent-color);
+    font-size: var(--btn-ghost-icon-size);
+    line-height: 1;
+    margin-right: 8px;
+    margin-left: -4px;
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.25s ease, color 0.25s ease;
+    will-change: transform;
 }
 
 .history-toggle-btn:hover { color: var(--primary-accent-color); }
@@ -2842,25 +2861,6 @@ body.dark .login-generator-container .result-type-badge {
     display: inline-flex;
     align-items: center;
     font-weight: 600;
-}
-
-#history-arrow {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    align-self: center;
-    width: 23px;
-    height: 23px;
-    flex-shrink: 0;
-    border-radius: 8px;
-    background: var(--primary-accent-shadow);
-    color: var(--primary-accent-color);
-    font-size: 1em;
-    line-height: 22px;
-    margin-right: 8px;
-    margin-left: -4px;
-    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.25s ease, color 0.25s ease;
-    will-change: transform;
 }
 
 body.dark #history-arrow {
@@ -2882,13 +2882,15 @@ body.dark .history-toggle-btn.active #history-arrow {
 .clear-history-header-btn {
 width: var(--btn-ghost-size);
     height: var(--btn-ghost-size);
-    margin: 0 7px 0 0;
+    margin: 0 6px 0 0;
+    padding: 0;
     border-radius: 50%;
     font-size: var(--btn-ghost-icon-size);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    line-height: 1;
 }
 
 .empty-history-msg {
@@ -4079,6 +4081,7 @@ body.dark .line-marker {
     width: var(--btn-ghost-size);
     height: var(--btn-ghost-size);
     border-radius: 50%;
+     padding: 0;
     display: flex;
     align-items: center;
     justify-content: center;
