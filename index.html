@@ -130,35 +130,6 @@
 </button>
 </div>
 
-    <script>
-        (function () {
-            var activeTab = localStorage.getItem('activeTab') || 'login-generator';
-            var targetBtn = document.querySelector('.tab-button[data-tab="' + activeTab + '"]');
-            var targetContent = document.querySelector('.container[data-content="' + activeTab + '"]');
-
-            if (!targetBtn || !targetContent) {
-                activeTab = 'login-generator';
-                targetBtn = document.querySelector('.tab-button[data-tab="login-generator"]');
-                targetContent = document.querySelector('.container[data-content="login-generator"]');
-            }
-
-            if (targetBtn) targetBtn.classList.add('active');
-            if (targetContent) {
-                targetContent.classList.add('active');
-                targetContent.style.setProperty('--local-width', targetContent.getAttribute('data-default-width') || '100%');
-                targetContent.style.setProperty('--local-height', targetContent.getAttribute('data-default-height') || '600px');
-            }
-
-            try {
-                var closedTabs = JSON.parse(localStorage.getItem('closedTabsData') || '[]');
-                closedTabs.forEach(function (id) {
-                    var btn = document.querySelector('.tab-button[data-tab="' + id + '"]');
-                    if (btn) btn.classList.add('is-closed');
-                });
-            } catch (e) {}
-        })();
-    </script>
-
         <div class="tab-content-wrapper"> 
 
             <div class="container login-generator-container" data-content="login-generator" data-default-width="780px">
@@ -482,11 +453,11 @@
             <div class="switch-with-info">
                 
                 <div class="segmented-control">
-                    <button class="segment-btn active" onclick="changeDeviceType(event, 'gpon')">GPON</button>
-                    <button class="segment-btn" onclick="changeDeviceType(event, 'epon')">EPON</button>
-                    <button class="segment-btn" onclick="changeDeviceType(event, 'bdcom')">BDCOM</button>
-                    <button class="segment-btn" onclick="changeDeviceType(event, 'mx80')">MX80</button>
-                </div>
+    <button class="segment-btn" onclick="changeDeviceType(event, 'gpon')">GPON</button>
+    <button class="segment-btn" onclick="changeDeviceType(event, 'epon')">EPON</button>
+    <button class="segment-btn" onclick="changeDeviceType(event, 'bdcom')">BDCOM</button>
+    <button class="segment-btn" onclick="changeDeviceType(event, 'mx80')">MX80</button>
+</div>
                 
                 <!-- ІКОНКА З ПІДКАЗКОЮ -->
                 <div class="info-tooltip-wrapper" title="">
@@ -505,6 +476,73 @@
 </div> <!-- Кінець gpon-commands-container -->
     </div>
 </div>	
+
+<script>
+    (function () {
+        var tplContainer = document.querySelector('.container[data-content="text-templates"]');
+        if (tplContainer) {
+            var isTplEmpty = true;
+            try {
+                var tpls = JSON.parse(localStorage.getItem('textTemplates') || '[]');
+                if (Array.isArray(tpls) && tpls.some(Boolean)) {
+                    isTplEmpty = false;
+                }
+            } catch (e) {}
+
+            if (isTplEmpty) {
+                tplContainer.classList.add('is-empty');
+                var grid = document.getElementById('templates-grid-wrapper');
+                var emptyMsg = document.getElementById('empty-templates-message');
+                if (grid) grid.style.display = 'none';
+                if (emptyMsg) emptyMsg.style.display = 'flex';
+            }
+        }
+
+        var activeTab = localStorage.getItem('activeTab') || 'login-generator';
+        var targetBtn = document.querySelector('.tab-button[data-tab="' + activeTab + '"]');
+        var targetContent = document.querySelector('.container[data-content="' + activeTab + '"]');
+
+        if (!targetBtn || !targetContent) {
+            activeTab = 'login-generator';
+            targetBtn = document.querySelector('.tab-button[data-tab="login-generator"]');
+            targetContent = document.querySelector('.container[data-content="login-generator"]');
+        }
+
+        if (targetBtn) targetBtn.classList.add('active');
+        if (targetContent) {
+            targetContent.classList.add('active');
+            targetContent.style.setProperty('--local-width', targetContent.getAttribute('data-default-width') || '100%');
+            targetContent.style.setProperty('--local-height', targetContent.getAttribute('data-default-height') || '600px');
+        }
+
+        var savedDevice = localStorage.getItem('activeDeviceType') || 'gpon';
+        var segControl = document.querySelector('.segmented-control');
+        if (segControl) {
+            var segBtns = segControl.querySelectorAll('.segment-btn');
+            var matchedSegBtn = null;
+            segBtns.forEach(function (btn) {
+                var attr = btn.getAttribute('onclick') || '';
+                if (attr.indexOf("'" + savedDevice + "'") !== -1) {
+                    matchedSegBtn = btn;
+                }
+            });
+            if (!matchedSegBtn && segBtns.length) matchedSegBtn = segBtns[0];
+            if (matchedSegBtn) {
+                matchedSegBtn.classList.add('active');
+                segControl.style.setProperty('--seg-x', matchedSegBtn.offsetLeft + 'px');
+                segControl.style.setProperty('--seg-w', matchedSegBtn.offsetWidth + 'px');
+            }
+        }
+
+        try {
+            var closedTabs = JSON.parse(localStorage.getItem('closedTabsData') || '[]');
+            closedTabs.forEach(function (id) {
+                var btn = document.querySelector('.tab-button[data-tab="' + id + '"]');
+                if (btn) btn.classList.add('is-closed');
+            });
+        } catch (e) {}
+    })();
+</script>
     
     <div id="notification" class="notification">
         Команда скопійована!
