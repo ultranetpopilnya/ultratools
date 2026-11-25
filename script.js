@@ -570,20 +570,26 @@ window.changeDeviceType = function(event, deviceName) {
                         document.querySelector('.tab-content-wrapper').style.minHeight = '0px';
             
             if (tabId === 'gpon-commands') {
-     const commandOutput = document.getElementById('command-output');
-     if (commandOutput && commandOutput.children.length === 0) {
-        displayCommands(getActiveDeviceType());
-     }
-}
+                const commandOutput = document.getElementById('command-output');
+                if (commandOutput && commandOutput.children.length === 0) {
+                    displayCommands(getActiveDeviceType());
+                }
+                requestAnimationFrame(() => {
+                    updateSegmentIndicator(document.querySelector('.segmented-control'), false);
+                });
+            }
         }
         if (activeButton) {
             activeButton.classList.add('active');
         }
     }
 
-    function setupTabs() {
+function setupTabs() {
         const tabs = document.querySelectorAll('.tab-button');
         let initialTab = localStorage.getItem('activeTab') || 'login-generator';
+        if (!document.querySelector(`.container[data-content="${initialTab}"]`)) {
+            initialTab = 'login-generator';
+        }
 
         tabs.forEach(tab => {
             tab.addEventListener('click', () => {
@@ -591,21 +597,14 @@ window.changeDeviceType = function(event, deviceName) {
                 switchTab(tabId);
             });
         });
-        
-         setTimeout(() => {
-        // --- ПОЧАТОК ДОДАНОГО КОДУ ---
-        // Спочатку встановлюємо дати
-        setDatesToTodayAndTomorrowAtMidnight();
-        // Тепер завантажуємо налаштування та робимо перший розрахунок
-        loadAutoResetState(); 
-        calculateDifference(); 
-        if (isAutoResetEnabled) startResetTimer();
-        // --- КІНЕЦЬ ДОДАНОГО КОДУ ---
 
-        // І лише тепер показуємо потрібну вкладку
-        switchTab(initialTab); 
-    }, 50); 
-}
+        setDatesToTodayAndTomorrowAtMidnight();
+        loadAutoResetState();
+        calculateDifference();
+        if (isAutoResetEnabled) startResetTimer();
+
+        switchTab(initialTab);
+    }
 
     function transliterate(text) {
     const mapping = {

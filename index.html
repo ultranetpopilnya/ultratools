@@ -93,7 +93,7 @@
     <div class="main-content-wrapper"> 
     <div class="tabs"> 
     <!-- 1. Генератор логінів -->
-    <div class="tab-button active" data-tab="login-generator">
+    <div class="tab-button" data-tab="login-generator">
         <i class="fa-solid fa-id-card-clip"></i>Генератор логінів
         <span class="close-tab-btn" title="Закрити вкладку"><i class="fa-solid fa-xmark"></i></span>
     </div>
@@ -130,9 +130,38 @@
 </button>
 </div>
 
+    <script>
+        (function () {
+            var activeTab = localStorage.getItem('activeTab') || 'login-generator';
+            var targetBtn = document.querySelector('.tab-button[data-tab="' + activeTab + '"]');
+            var targetContent = document.querySelector('.container[data-content="' + activeTab + '"]');
+
+            if (!targetBtn || !targetContent) {
+                activeTab = 'login-generator';
+                targetBtn = document.querySelector('.tab-button[data-tab="login-generator"]');
+                targetContent = document.querySelector('.container[data-content="login-generator"]');
+            }
+
+            if (targetBtn) targetBtn.classList.add('active');
+            if (targetContent) {
+                targetContent.classList.add('active');
+                targetContent.style.setProperty('--local-width', targetContent.getAttribute('data-default-width') || '100%');
+                targetContent.style.setProperty('--local-height', targetContent.getAttribute('data-default-height') || '600px');
+            }
+
+            try {
+                var closedTabs = JSON.parse(localStorage.getItem('closedTabsData') || '[]');
+                closedTabs.forEach(function (id) {
+                    var btn = document.querySelector('.tab-button[data-tab="' + id + '"]');
+                    if (btn) btn.classList.add('is-closed');
+                });
+            } catch (e) {}
+        })();
+    </script>
+
         <div class="tab-content-wrapper"> 
 
-            <div class="container login-generator-container active" data-content="login-generator" data-default-width="780px">
+            <div class="container login-generator-container" data-content="login-generator" data-default-width="780px">
 			<div class="content-card">
                 <h2 style="text-align: center;"><img src="images/locked_with_key_3d.png" class="emoji-png">Генератор логінів</h2>
                 <p style="text-align: center;">Введіть повністю одне або декілька ПІБ, кожне — з нового рядка.<br>Також можливий трансліт: ФОП, ТОВ, ТзОВ, ПП, АТ, ПрАТ, ПАТ, ВАТ, ЗАТ, ТДВ, КБ, ГО, <br>ГС, КП, ДП, ФГ, СФГ, ОСББ, ЖБК, БФ, НВП, ЗОШ, НВК, ДНЗ, ЦРЛ.</p>
