@@ -1243,89 +1243,100 @@ function areDatesInDefaultState() {
     `;
 }
     
-    let COMMANDS = { gpon: [], epon: [], bdcom: [] }; // Тепер це порожній об'єкт, який заповниться сам
+let COMMANDS = { gpon: [], epon: [], bdcom: [] };
     // === РОЗУМНИЙ ПАРСЕР КОМАНД ===
 let lastCommandsText = null;
+
+function parseCommandsText(text) {
+    if (text === lastCommandsText) return false; // нічого не змінилось
+    lastCommandsText = text;
+
+    let currentType = null;
+    let lastCommand = null;
+    const lines = text.split('\n');
+
+    COMMANDS = { gpon: [], epon: [], bdcom: [] };
+
+    lines.forEach(line => {
+        line = line.trim();
+
+        if (!line || line.startsWith('#')) return;
+
+        const sectionMatch = line.match(/^\[(.*)\]$/);
+        if (sectionMatch) {
+            currentType = sectionMatch[1].toLowerCase();
+            if (!COMMANDS[currentType]) COMMANDS[currentType] = [];
+            lastCommand = null;
+            return;
+        }
+
+        if (!currentType) return;
+
+        const isSub = line.startsWith('>');
+        let isAlwaysExpanded = false;
+        let actualLine = line;
+
+        if (isSub) {
+            actualLine = line.substring(1).trim();
+        } else if (line.startsWith('*')) {
+            isAlwaysExpanded = true;
+            actualLine = line.substring(1).trim();
+        }
+
+        let splitIndex = actualLine.indexOf('::');
+        let cmdText, cmdDesc;
+
+        if (splitIndex !== -1) {
+            cmdText = actualLine.substring(0, splitIndex).trim();
+            cmdDesc = actualLine.substring(splitIndex + 2).trim();
+        } else {
+            cmdText = actualLine;
+            cmdDesc = "";
+        }
+
+        const cmdObj = { command: cmdText, description: cmdDesc, alwaysExpanded: isAlwaysExpanded };
+
+        if (isSub && lastCommand) {
+            if (!lastCommand.subCommands) lastCommand.subCommands = [];
+            lastCommand.subCommands.push(cmdObj);
+        } else {
+            cmdObj.subCommands = [];
+            COMMANDS[currentType].push(cmdObj);
+            lastCommand = cmdObj;
+        }
+    });
+
+    return true;
+}
+
 function loadCommandsFromFile() {
+    if (lastCommandsText === null) {
+        try {
+            const cached = localStorage.getItem('cachedCommandsText');
+            if (cached && cached.trim()) parseCommandsText(cached);
+        } catch (e) {}
+    }
+
     return fetch('commands.txt?v=' + Date.now(), { cache: 'no-store' })
         .then(response => {
             if (!response.ok) throw new Error("Файл команд не знайдено");
             return response.text();
         })
         .then(text => {
-            if (text === lastCommandsText) return; // нічого не змінилось
-            lastCommandsText = text;
+            if (!parseCommandsText(text)) return;
+            try { localStorage.setItem('cachedCommandsText', text); } catch (e) {}
 
-            let currentType = null;
-            let lastCommand = null;
-            const lines = text.split('\n');
-            
-            COMMANDS = { gpon: [], epon: [], bdcom: [] };
-
-            lines.forEach(line => {
-                line = line.trim();
-                
-                if (!line || line.startsWith('#')) return; 
-
-                const sectionMatch = line.match(/^\[(.*)\]$/);
-                if (sectionMatch) {
-                    currentType = sectionMatch[1].toLowerCase();
-                    if (!COMMANDS[currentType]) COMMANDS[currentType] = [];
-                    lastCommand = null; 
-                    return;
-                }
-
-                if (!currentType) return;
-
-                // === НОВЕ: Перевірка на постійно розгорнутий список ===
-                const isSub = line.startsWith('>');
-                let isAlwaysExpanded = false;
-                let actualLine = line;
-
-                if (isSub) {
-                    actualLine = line.substring(1).trim();
-                } else if (line.startsWith('*')) {
-                    isAlwaysExpanded = true;
-                    actualLine = line.substring(1).trim();
-                }
-
-                let splitIndex = actualLine.indexOf('::');
-                let cmdText, cmdDesc;
-                
-                if (splitIndex !== -1) {
-                    cmdText = actualLine.substring(0, splitIndex).trim();
-                    cmdDesc = actualLine.substring(splitIndex + 2).trim();
-                } else {
-                    cmdText = actualLine;
-                    cmdDesc = "";
-                }
-
-                // === НОВЕ: Зберігаємо статус alwaysExpanded ===
-                const cmdObj = { command: cmdText, description: cmdDesc, alwaysExpanded: isAlwaysExpanded };
-
-                if (isSub && lastCommand) {
-                    if (!lastCommand.subCommands) lastCommand.subCommands = [];
-                    lastCommand.subCommands.push(cmdObj);
-                } else {
-                    cmdObj.subCommands = [];
-                    COMMANDS[currentType].push(cmdObj);
-                    lastCommand = cmdObj; 
-                }
-            });
-
-                        const activeTab = localStorage.getItem('activeTab');
+            const activeTab = localStorage.getItem('activeTab');
             if (activeTab === 'gpon-commands') {
                 displayCommands(getActiveDeviceType());
             } else {
-                // вкладка неактивна: очищаємо, щоб при відкритті перемалювалось з новими даними
                 const out = document.getElementById('command-output');
                 if (out) out.innerHTML = '';
             }
         })
         .catch(err => {
-            // ... (помилка залишається як була)
-                        console.error("Помилка завантаження команд:", err);
-            if (lastCommandsText !== null) return; // при фоновому оновленні не затираємо список помилкою
+            console.error("Помилка завантаження команд:", err);
+            if (lastCommandsText !== null) return;
             document.getElementById('command-output').innerHTML =
                 '<p style="text-align: center; color: #dc3545; padding: 20px;">Не вдалося завантажити файл commands.txt</p>';
         });
@@ -1351,6 +1362,10 @@ function loadCommandsFromFile() {
     }
 
     if (commands.length === 0) {
+        if (lastCommandsText === null) {
+            commandOutput.innerHTML = '';
+            return;
+        }
         commandOutput.innerHTML = '<p style="text-align: center; color: #888; padding: 20px;">Команди для цього типу обладнання ще не додано.</p>';
         return;
     }
@@ -4319,9 +4334,9 @@ function initTabManagement() {
     loadTabOrder();
     initTabDragging();
     initTabManagement();
-    setupTabs();
-	loadHistory();
     loadCommandsFromFile();
+    setupTabs();
+    loadHistory();
     loadCalcAutoClearState();
     loadOltConfigs();
 
@@ -4537,10 +4552,13 @@ if (importButton && importFileInput) importButton.onclick = () => importFileInpu
 if (importFileInput) importFileInput.addEventListener('change', handleFileImport);
 if (clearAllButton) clearAllButton.onclick = clearAllTemplates;
 
-    const initialTab = localStorage.getItem('activeTab') || 'login-generator';
+const initialTab = localStorage.getItem('activeTab') || 'login-generator';
 if (initialTab === 'login-generator') generateLogins(); 
 if (initialTab === 'gpon-commands') {
-     displayCommands(getActiveDeviceType());
+     const commandOutput = document.getElementById('command-output');
+     if (commandOutput && commandOutput.children.length === 0) {
+         displayCommands(getActiveDeviceType());
+     }
 }
 	
 // === СВЯТКОВИЙ РЕЖИМ (керується з Firebase: config/site → holidayMode) ===
