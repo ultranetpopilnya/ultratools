@@ -2250,6 +2250,7 @@ let lastConfirmedOltName = null;
                     <!-- Кнопка генерації -->
                     <button type="button" class="config-generate-btn" title="Згенерувати конфіг">
                         <i class="fa-solid fa-code"></i>
+                        <span>Згенерувати</span>
                     </button>
                 </div>
             </div>
@@ -5706,18 +5707,23 @@ document.addEventListener('DOMContentLoaded', () => {
 const RIPPLE_SELECTOR = `
 .config-onu-mode-btn.active, .config-clear-fields-btn, .config-replace-mode-btn, .config-pon-onu-btn,
 .config-show-signal-btn, .unified-pill:has(#login-google-btn:not(.auth-hidden)),
-    .variant-dropdown-item, .speed-dropdown-item, .add-tab-item,
-    .command-item, .sub-command-item, .tab-button, .olt-dropdown-item,
-    #login-autoclear-btn, .calc-action-button, .stepper-btn,
-    #auto-reset-button, .qn-add-btn, .btn-find, 
-    .btn-replace, .btn-replace-all, .config-generate-btn`;
+.variant-dropdown-item, .speed-dropdown-item, .add-tab-item,
+.command-item, .sub-command-item, .tab-button, .olt-dropdown-item,
+#login-autoclear-btn, .calc-action-button, .stepper-btn,
+#auto-reset-button, .qn-add-btn, .btn-find,
+.btn-replace, .btn-replace-all, .config-generate-btn,
+#add-template-button, #import-templates-button, #export-templates-button,
+#clear-all-templates-button, .regenerate-login-btn, .copy-login-btn,
+.extension-download-btn, .scroll-nav-btn, .btn-replace-speed,
+.hist-close-btn, .hist-item`;
+
 
 document.addEventListener('mousedown', function (e) {
     if (e.button !== 0) return;                          // тільки ліва кнопка
     if (e.target.closest('.close-tab-btn')) return;      // не запускаємо хвилю при кліку по хрестику
 
     const btn = e.target.closest(RIPPLE_SELECTOR);
-    if (!btn) return;
+    if (!btn || btn.disabled) return;
 
     const rect = btn.getBoundingClientRect();
     const w = btn.offsetWidth, h = btn.offsetHeight;

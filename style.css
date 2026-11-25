@@ -1517,7 +1517,18 @@ body .add-tab-btn.menu-open:active {
 .stepper-btn,
 #auto-reset-button,
 .command-item,
-.sub-command-item {
+.sub-command-item,
+#add-template-button,
+#import-templates-button,
+#export-templates-button,
+#clear-all-templates-button,
+.regenerate-login-btn,
+.copy-login-btn,
+.extension-download-btn,
+.scroll-nav-btn,
+.btn-replace-speed,
+.hist-close-btn,
+.hist-item {
     position: relative;
     overflow: hidden;
     isolation: isolate;
@@ -1545,7 +1556,18 @@ body .add-tab-btn.menu-open:active {
 .stepper-btn > :not(.ripple),
 #auto-reset-button > :not(.ripple),
 .command-item > :not(.ripple),
-.sub-command-item > :not(.ripple) {
+.sub-command-item > :not(.ripple),
+#add-template-button > :not(.ripple),
+#import-templates-button > :not(.ripple),
+#export-templates-button > :not(.ripple),
+#clear-all-templates-button > :not(.ripple),
+.regenerate-login-btn > :not(.ripple),
+.copy-login-btn > :not(.ripple),
+.extension-download-btn > :not(.ripple),
+.scroll-nav-btn > :not(.ripple),
+.btn-replace-speed > :not(.ripple),
+.hist-close-btn > :not(.ripple),
+.hist-item > :not(.ripple) {
     position: relative;
     z-index: 2;
     pointer-events: none;
@@ -1555,6 +1577,15 @@ body .add-tab-btn.menu-open:active {
 .tab-button .close-tab-btn {
     z-index: 3 !important;
     pointer-events: auto !important;
+}
+
+.copy-login-btn.copied .ripple-wave {
+    background: radial-gradient(
+        circle,
+        color-mix(in srgb, var(--success-color) 32%, transparent) 0%,
+        color-mix(in srgb, var(--success-color) 18%, transparent) 55%,
+        transparent 100%
+    );
 }
 
 /* 3. Маска-контейнер хвилі (повторює точні заокруглення кожної кнопки) */
@@ -4527,37 +4558,16 @@ body.dark .variant-badge {
     line-height: 1;
 }
 
-.config-generate-btn {
-    flex: 0 0 100px;
-    height: 30px;
-    padding: 0;
-    box-sizing: border-box;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 18px;
-    border-radius: 999px;
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-}
-
 .config-generate-btn > i {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 18px;
-    height: 18px;
     line-height: 1;
     transform-origin: 50% 50%;
     transform: translateZ(0);
     will-change: transform;
     backface-visibility: hidden;
     transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.config-generate-btn > i::before {
-    display: block;
-    line-height: 1;
 }
 
 .config-generate-btn:active > i {
@@ -4569,7 +4579,8 @@ body.dark .variant-badge {
 .config-clear-fields-btn,
 .config-replace-mode-btn,
 .config-pon-onu-btn,
-.config-show-signal-btn {
+.config-show-signal-btn,
+.config-generate-btn {
     flex: 0 0 auto;
     height: 30px;
     padding: 0 12px;
@@ -4582,16 +4593,17 @@ body.dark .variant-badge {
     gap: 6px;
     font-family: inherit;
     font-size: 13px;
-    letter-spacing: 0.1px;     /* додано */
+    letter-spacing: 0.1px;
     white-space: nowrap;
-    user-select: none;         /* додано */
+    user-select: none;
     -webkit-tap-highlight-color: transparent;
 }
 
 .config-clear-fields-btn i,
 .config-replace-mode-btn i,
 .config-pon-onu-btn i,
-.config-show-signal-btn i {
+.config-show-signal-btn i,
+.config-generate-btn i {
     font-size: 14px;
 }
 
