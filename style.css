@@ -4450,7 +4450,9 @@ body.dark .speed-dropdown-list {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 8px;
+    gap: var(--btn-gap);
+    height: 32px;
+    padding: 0 8px 0 14px;
 }
 
 .variant-login-text {
@@ -4464,7 +4466,7 @@ body.dark .speed-dropdown-list {
 
 .variant-badge {
     font-size: 11px;
-    line-height: 1.2;
+    line-height: 14px;
     padding: 2px 7px;
     background: #e9e4f5;
     color: #5a32a3;
