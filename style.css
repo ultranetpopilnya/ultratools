@@ -4027,11 +4027,11 @@ body.dark .line-marker {
     box-shadow: var(--glass-shadow-input-focus);
 }
 
-/* static, щоб випадаючий список розтягувався на всю ширину .speed-field */
-.speed-field .speed-dropdown {
-    position: static;
-    flex: 1 1 0;
-    min-width: 0;
+.speed-dropdown-value {
+    flex: 0 0 auto;
+    white-space: nowrap;
+    text-align: left;
+    margin-right: 0;
 }
 
 /* Рамку тепер малює .speed-field, а не сам селектор */
@@ -4752,7 +4752,7 @@ body.dark .variant-badge {
     gap: 6px;
     width: 100%;
     height: 30px;
-    padding: 0 6px;
+    padding: 0 7px 0 6px;
     border-radius: 8px;
     border: 1px solid var(--input-border-color);
     background-color: var(--input-bg-color);
@@ -4765,13 +4765,17 @@ body.dark .variant-badge {
 }
 
 .speed-dropdown-value {
-    flex: 0 0 auto;
+    flex: 0 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
     white-space: nowrap;
+    text-align: left;
     margin-right: 0;
 }
 
 .speed-dropdown-arrow {
-    margin-left: 0;
+    margin-left: auto;
     display: flex;
     align-items: center;
     justify-content: center;
