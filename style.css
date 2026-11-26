@@ -3972,7 +3972,7 @@ body.dark .line-marker {
 /* 4. Внутрішня сітка пошуку: ряд 1 - поля вводу + швидкість, ряд 2 - кнопки */
 .search-panel-columns {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 120px;
+    grid-template-columns: minmax(0, 1fr) 122px;
     gap: var(--btn-gap);
     align-items: start;
     width: 100%;
@@ -4045,7 +4045,7 @@ body.dark .line-marker {
 }
 
 .speed-field .btn-replace-speed {
-    flex: 0 0 30px;
+    flex: 0 0 33px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -4355,7 +4355,6 @@ body.dark .line-marker {
 
 .speed-dropdown-emoji {
     flex: none;
-    margin-right: 6px;
 }
 
 /* --- Яскраві у фокусі / коли список відкритий --- */
@@ -4750,10 +4749,10 @@ body.dark .variant-badge {
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    gap: 0px;
+    gap: 6px;
     width: 100%;
     height: 30px;
-    padding: 0px 7px 0px 6px;
+    padding: 0 6px;
     border-radius: 8px;
     border: 1px solid var(--input-border-color);
     background-color: var(--input-bg-color);
@@ -4766,16 +4765,13 @@ body.dark .variant-badge {
 }
 
 .speed-dropdown-value {
-    flex: 0 1 auto;
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    flex: 0 0 auto;
     white-space: nowrap;
-    margin-right: 6px;
+    margin-right: 0;
 }
 
 .speed-dropdown-arrow {
-        margin-left: auto;
+    margin-left: 0;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -4815,7 +4811,7 @@ body.dark .variant-badge {
 
 /* Ширина під конкретні місця використання */
 .config-row .speed-dropdown.config-speed-dropdown {
-    flex: 0 0 90px;
+    flex: 0 0 89px;
 }
 
 /* ================================================================
