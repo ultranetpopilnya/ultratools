@@ -3251,7 +3251,6 @@ body.dark .empty-templates-message {
 
 .auth-container {
     position: relative;
-    top: 5px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -3565,15 +3564,15 @@ body.dark .fancy-divider {
     white-space: nowrap;
     text-align: center;
     font-size: 1.5rem;
-    line-height: 1.2;
+    line-height: 30px;
 }
 
 .template-global-actions {
     display: flex;
     align-items: center;
     gap: var(--btn-gap-lg);
-    margin-bottom: 11px;
-    padding-right: 20px;
+    margin-bottom: 0;
+    padding-right: 14px;
 }
 
 #add-template-button,
@@ -3581,7 +3580,6 @@ body.dark .fancy-divider {
 #export-templates-button,
 #clear-all-templates-button {
     position: relative;
-    top: 5px;
     width: 60px;
     height: 30px;
     padding: 0;
@@ -3599,20 +3597,18 @@ body.dark .fancy-divider {
 }
 
 #templates-grid-wrapper {
-    flex-grow: 1;           
-    min-height: 0; /* Критично важливо для скролу всередині flex */
-    overflow-y: auto;       
+    flex-grow: 1;
+    min-height: 0;
+    overflow-y: auto;
     overflow-x: hidden;
     scrollbar-gutter: stable;
-    
     display: flex;
     flex-wrap: wrap;
     align-content: flex-start;
     align-items: flex-start;
-    gap: 5px; 
+    gap: 6px;
     width: 100%;
- 
-    padding: 12px 6px 150px 6px;
+    padding: 14px 0 150px 14px;
 }
 
 #templates-grid-wrapper .template-field-group .highlighting-container textarea,
@@ -4500,7 +4496,7 @@ body.dark .variant-badge {
 /* Контейнер, що тримає дві кнопки разом справа */
 .config-login-actions {
     position: absolute;
-    right: 7px;
+    right: 6px;
     height: calc(100% - 4px);
     gap: var(--btn-gap-xs);
     display: flex;
