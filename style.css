@@ -2618,15 +2618,13 @@ body.dark .moon-icon {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    padding: 10px 14px; 
+    padding: 10px 14px;
     border-radius: 12px; 
-    
     background-color: var(--panel-bg); 
     border: 1px solid var(--input-border-color); 
     width: 90%; 
     box-sizing: border-box;
     margin: 0 auto 16px auto;
-
     box-shadow: var(--glass-shadow-outer); 
 }
 
@@ -2763,29 +2761,26 @@ body.dark .actions-block-title::after {
     flex-direction: row; 
     justify-content: space-between; 
     align-items: center;
-    padding: 10px 10px 10px 10px; 
+    padding: 10px 14px; 
     border: 1px solid var(--input-border-color); 
     border-radius: 12px;
     background-color: var(--panel-bg); 
-    min-height: 52px;
+    min-height: 48px;
     margin: 0 0 16px 0;
-    
     box-shadow: var(--glass-shadow-outer);
 }
 
 /* --- ПІДПИС (БЕЙДЖ) ВРІЗАНИЙ В РАМКУ --- */
 .login-generator-container .result-type-badge {
     position: absolute;
-    top: -9px; /* Піднімаємо його на рамку */
-    left: 12px; /* Відступ зліва */
+    top: -9px;
+    left: 14px;
     font-size: 0.65rem;
     text-transform: uppercase;
     font-weight: 800;
     padding: 2px 8px;
     border-radius: 8px;
     line-height: 1;
-    
-    /* Світла тема: кольори бейджа */
     color: #5a32a3;
     background: #e9e4f5;
     border: 1px solid #d4c5f0;
@@ -2881,14 +2876,14 @@ body.dark .login-generator-container .result-type-badge {
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    padding: 2px 10px 2px 18px;
+    padding: 0 14px;
 }
 
 .history-toggle-btn {
     flex-grow: 1;
     background: transparent;
     border: none;
-    padding: 12px 0; /* 12 + 28 + 12 + 4 (row padding) = 56px (парна висота, як було ~55px) */
+    padding: 10px 0;
     cursor: pointer;
     text-align: left;
     display: flex;
@@ -2919,7 +2914,7 @@ body.dark .login-generator-container .result-type-badge {
     font-size: var(--btn-ghost-icon-size);
     line-height: 1;
     margin-right: 8px;
-    margin-left: -4px;
+        margin-left: 0;
     transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.25s ease, color 0.25s ease;
     will-change: transform;
 }
@@ -2951,7 +2946,7 @@ body.dark .history-toggle-btn.active #history-arrow {
 .clear-history-header-btn {
 width: var(--btn-ghost-size);
     height: var(--btn-ghost-size);
-    margin: 0 6px 0 0;
+    margin: 0;
     padding: 0;
     border-radius: 50%;
     font-size: var(--btn-ghost-icon-size);
@@ -2975,8 +2970,8 @@ width: var(--btn-ghost-size);
 .history-content-wrapper {
     display: flex;
     flex-direction: column;
-    max-height: 0; /* Замість grid-template-rows: 0fr */
-    visibility: hidden; /* Повністю вимикає блок, щоб відступи всередині не розтягували висоту */
+    max-height: 0;
+    visibility: hidden;
     overflow: hidden;
     opacity: 0;
     transform: translateY(-10px);
@@ -2986,7 +2981,7 @@ width: var(--btn-ghost-size);
                 transform 0.3s ease-out, 
                 padding 0.4s ease-out, 
                 visibility 0.4s;
-    border-top: 1px solid transparent;
+    border-top: none;
 }
 
 .history-content-wrapper.open {
@@ -2995,13 +2990,13 @@ width: var(--btn-ghost-size);
     opacity: 1;
     transform: translateY(0);
     width: 100%;
-    padding: 14px;
+    padding: 10px 14px;
     border-top: 1px solid var(--input-border-color);
     background-color: var(--input-bg-color);            
 }
 
 #history-list {
-    padding: 2px 2px 2px 0;
+    padding: 0;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 10px 10px;
@@ -6771,8 +6766,7 @@ body.holiday-mode .page-title .isp-e-color-s {
     }
 
     .login-actions-block {
-        margin-bottom: 10px !important;
-        padding: 8px 12px !important;
+        margin-bottom: 10px !important
     }
 
     .container.login-generator-container.active .content-card {
